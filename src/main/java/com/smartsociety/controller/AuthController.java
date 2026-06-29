@@ -78,8 +78,9 @@ public class AuthController {
             Map<String, DashboardCredential> credentials = new HashMap<>();
             for (DashboardRoute route : ROUTES) {
                 String prefix = "DASHBOARD_LOGIN_" + route.platform().toUpperCase() + "_" + route.role().toUpperCase();
-                String username = environment.getProperty(prefix + "_USERNAME");
-                String password = environment.getProperty(prefix + "_PASSWORD");
+                DefaultCredential defaultCredential = DefaultCredential.forRoute(route.platform(), route.role());
+                String username = environment.getProperty(prefix + "_USERNAME", defaultCredential.username());
+                String password = environment.getProperty(prefix + "_PASSWORD", defaultCredential.password());
                 if (!safe(username).isBlank() && !safe(password).isBlank()) {
                     DashboardCredential credential = new DashboardCredential(
                             route.platform(),
@@ -100,5 +101,21 @@ public class AuthController {
     }
 
     private record DashboardRoute(String platform, String role, String redirect) {
+    }
+
+    private record DefaultCredential(String username, String password) {
+        private static DefaultCredential forRoute(String platform, String role) {
+            return switch (safe(platform).toLowerCase() + ":" + safe(role).toLowerCase()) {
+                case "smartsociety:superadmin" -> new DefaultCredential("superadmin@smartsociety", "superadmin123");
+                case "smartsociety:admin" -> new DefaultCredential("admin@smartsociety", "admin123");
+                case "smartsociety:resident" -> new DefaultCredential("resident@smartsociety", "resident123");
+                case "smartsociety:security" -> new DefaultCredential("security@smartsociety", "security123");
+                case "smartsociety:maintenance" -> new DefaultCredential("maintenance@smartsociety", "maintenance123");
+                case "propertydirect:superadmin" -> new DefaultCredential("superadmin@propertydirect", "superadmin123");
+                case "propertydirect:admin" -> new DefaultCredential("admin@propertydirect", "admin123");
+                case "propertydirect:customer" -> new DefaultCredential("customer@propertydirect", "customer123");
+                default -> new DefaultCredential("", "");
+            };
+        }
     }
 }
