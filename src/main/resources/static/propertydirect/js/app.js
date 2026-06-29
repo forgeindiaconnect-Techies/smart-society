@@ -116,18 +116,13 @@ const modeFilters = document.getElementById("modeFilters");
 const localityInput = document.getElementById("locality");
 const searchButton = document.getElementById("searchButton");
 
-const superadminCredentials = {
-    username: "superadmin@propertydirect.com",
-    password: "Super@123"
-};
-
 let pendingDashboardLogin = null;
 let activeModalKind = "contact";
 
 const dashboardLoginHints = {
-    superadmin: ["PropertyDirect Super Admin Login", "Username: superadmin@propertydirect.com | Password: Super@123"],
-    admin: ["PropertyDirect Admin Login", "Username: admin@propertydirect.com | Password: Admin@123"],
-    customer: ["PropertyDirect Customer Login", "Username: customer@propertydirect.com | Password: Customer@123"]
+    superadmin: ["PropertyDirect Super Admin Login", "Sign in to open the platform dashboard."],
+    admin: ["PropertyDirect Admin Login", "Sign in to open the admin dashboard."],
+    customer: ["PropertyDirect Customer Login", "Sign in to open the customer dashboard."]
 };
 
 const dashboardTargets = {
@@ -226,7 +221,7 @@ function readModalFieldValues() {
 
 function openDashboardLogin({ platform, role, target }) {
     pendingDashboardLogin = { platform, role, target };
-    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Enter credentials to open this dashboard."];
+    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."];
     if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
     if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
     if (dashboardUsername) dashboardUsername.value = "";
@@ -364,16 +359,8 @@ superadminModal.addEventListener("click", (event) => {
     if (event.target === superadminModal) superadminModal.classList.add("hidden");
 });
 submitSuperadminLogin.addEventListener("click", () => {
-    const username = superadminUsername.value.trim();
-    const password = superadminPassword.value;
-
-    if (username === superadminCredentials.username && password === superadminCredentials.password) {
-        superadminModal.classList.add("hidden");
-        window.location.href = "/propertydirect/dashboards/superadmin";
-        return;
-    }
-
-    showToast("Invalid Super Admin username or password");
+    superadminModal.classList.add("hidden");
+    openDashboardLogin({ platform: "propertydirect", role: "superadmin", target: "/propertydirect/dashboards/superadmin" });
 });
 closeDashboardLoginModal?.addEventListener("click", () => dashboardLoginModal?.classList.add("hidden"));
 dashboardLoginModal?.addEventListener("click", (event) => {

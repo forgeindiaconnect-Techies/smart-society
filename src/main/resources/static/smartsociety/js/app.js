@@ -91,11 +91,6 @@ const roleSearchPanels = {
 let activeRole = "Admin";
 let pendingDashboardLogin = null;
 
-const superadminCredentials = {
-    username: "superadmin@smartsociety.com",
-    password: "Super@123"
-};
-
 const roleAuth = {
     Admin: "admin",
     Resident: "resident",
@@ -103,11 +98,11 @@ const roleAuth = {
 };
 
 const dashboardLoginHints = {
-    superadmin: ["Super Admin Login", "Username: superadmin@smartsociety.com | Password: Super@123"],
-    admin: ["Society Admin Login", "Username: admin@smartsociety.com | Password: Admin@123"],
-    resident: ["Resident Login", "Username: resident@smartsociety.com | Password: Resident@123"],
-    security: ["Security Login", "Username: security@smartsociety.com | Password: Security@123"],
-    maintenance: ["Maintenance Login", "Username: maintenance@smartsociety.com | Password: Maintenance@123"]
+    superadmin: ["Super Admin Login", "Sign in to open the platform owner dashboard."],
+    admin: ["Society Admin Login", "Sign in to open the society admin dashboard."],
+    resident: ["Resident Login", "Sign in to open the resident dashboard."],
+    security: ["Security Login", "Sign in to open the security dashboard."],
+    maintenance: ["Maintenance Login", "Sign in to open the maintenance dashboard."]
 };
 
 const dashboardTargets = {
@@ -222,7 +217,7 @@ function openRoleSearch() {
 
 function openDashboardLogin({ platform, role, target }) {
     pendingDashboardLogin = { platform, role, target };
-    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Enter credentials to open this dashboard."];
+    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."];
     if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
     if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
     if (dashboardUsername) dashboardUsername.value = "";
@@ -304,16 +299,8 @@ superadminModal?.addEventListener("click", (event) => {
     if (event.target === superadminModal) superadminModal.classList.add("hidden");
 });
 submitSuperadminLogin?.addEventListener("click", () => {
-    const username = superadminUsername?.value.trim();
-    const password = superadminPassword?.value;
-
-    if (username === superadminCredentials.username && password === superadminCredentials.password) {
-        superadminModal?.classList.add("hidden");
-        window.location.href = "/dashboards/superadmin";
-        return;
-    }
-
-    showToast("Invalid Super Admin username or password");
+    superadminModal?.classList.add("hidden");
+    openDashboardLogin({ platform: "smartsociety", role: "superadmin", target: "/dashboards/superadmin" });
 });
 closeDashboardLoginModal?.addEventListener("click", () => dashboardLoginModal?.classList.add("hidden"));
 dashboardLoginModal?.addEventListener("click", (event) => {

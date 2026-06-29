@@ -18,9 +18,11 @@ import com.smartsociety.repository.TenantRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Configuration
 public class DataLoader {
@@ -33,9 +35,15 @@ public class DataLoader {
                                ApartmentRepository apartments,
                                ResidentRepository residents,
                                ComplaintRepository complaints,
-                               PasswordEncoder encoder) {
+                               PasswordEncoder encoder,
+                               Environment environment) {
         return args -> {
-            if (users.findByEmail("superadmin@smartsociety.com").isPresent()) {
+            String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "platform-owner@localhost.invalid");
+            String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", UUID.randomUUID().toString());
+            String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@localhost.invalid");
+            String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", UUID.randomUUID().toString());
+
+            if (users.findByEmail(superAdminEmail).isPresent()) {
                 return;
             }
 
@@ -64,16 +72,16 @@ public class DataLoader {
             AppUser superAdmin = new AppUser();
             superAdmin.setTenantId("platform");
             superAdmin.setFullName("Platform Super Admin");
-            superAdmin.setEmail("superadmin@smartsociety.com");
-            superAdmin.setPasswordHash(encoder.encode("admin123"));
+            superAdmin.setEmail(superAdminEmail);
+            superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
             superAdmin.setRole(UserRole.SUPER_ADMIN);
             users.save(superAdmin);
 
             AppUser residentUser = new AppUser();
             residentUser.setTenantId("green-heights");
             residentUser.setFullName("Demo Resident");
-            residentUser.setEmail("resident@greenheights.com");
-            residentUser.setPasswordHash(encoder.encode("resident123"));
+            residentUser.setEmail(residentEmail);
+            residentUser.setPasswordHash(encoder.encode(residentPassword));
             residentUser.setRole(UserRole.RESIDENT);
             users.save(residentUser);
 

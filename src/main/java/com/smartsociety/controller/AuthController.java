@@ -6,7 +6,9 @@ import com.smartsociety.dto.RegisterTenantRequest;
 import com.smartsociety.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final Map<String, DashboardCredential> dashboardCredentials;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, Environment environment) {
         this.authService = authService;
+        this.dashboardCredentials = DashboardCredential.load(environment);
     }
 
     @PostMapping("/register-tenant")
@@ -35,7 +39,7 @@ public class AuthController {
 
     @PostMapping("/dashboard-login")
     public ResponseEntity<Map<String, String>> dashboardLogin(@RequestBody DashboardLoginRequest request, HttpSession session) {
-        DemoDashboardCredential credential = DemoDashboardCredential.find(request.platform(), request.role());
+        DashboardCredential credential = dashboardCredentials.get(DashboardCredential.key(request.platform(), request.role()));
 
         if (credential == null
                 || !credential.username().equalsIgnoreCase(safe(request.username()))
@@ -58,27 +62,43 @@ public class AuthController {
     public record DashboardLoginRequest(String platform, String role, String username, String password) {
     }
 
-    private record DemoDashboardCredential(String platform, String role, String username, String password, String redirect) {
-        private static final DemoDashboardCredential[] CREDENTIALS = {
-                new DemoDashboardCredential("smartsociety", "superadmin", "superadmin@smartsociety.com", "Super@123", "/dashboards/superadmin"),
-                new DemoDashboardCredential("smartsociety", "admin", "admin@smartsociety.com", "Admin@123", "/dashboards/society-admin"),
-                new DemoDashboardCredential("smartsociety", "resident", "resident@smartsociety.com", "Resident@123", "/dashboards/resident"),
-                new DemoDashboardCredential("smartsociety", "security", "security@smartsociety.com", "Security@123", "/dashboards/security"),
-                new DemoDashboardCredential("smartsociety", "maintenance", "maintenance@smartsociety.com", "Maintenance@123", "/dashboards/maintenance"),
-                new DemoDashboardCredential("propertydirect", "superadmin", "superadmin@propertydirect.com", "Super@123", "/propertydirect/dashboards/superadmin"),
-                new DemoDashboardCredential("propertydirect", "admin", "admin@propertydirect.com", "Admin@123", "/propertydirect/dashboards/admin"),
-                new DemoDashboardCredential("propertydirect", "customer", "customer@propertydirect.com", "Customer@123", "/propertydirect/dashboards/customer")
+    private record DashboardCredential(String platform, String role, String username, String password, String redirect) {
+        private static final DashboardRoute[] ROUTES = {
+                new DashboardRoute("smartsociety", "superadmin", "/dashboards/superadmin"),
+                new DashboardRoute("smartsociety", "admin", "/dashboards/society-admin"),
+                new DashboardRoute("smartsociety", "resident", "/dashboards/resident"),
+                new DashboardRoute("smartsociety", "security", "/dashboards/security"),
+                new DashboardRoute("smartsociety", "maintenance", "/dashboards/maintenance"),
+                new DashboardRoute("propertydirect", "superadmin", "/propertydirect/dashboards/superadmin"),
+                new DashboardRoute("propertydirect", "admin", "/propertydirect/dashboards/admin"),
+                new DashboardRoute("propertydirect", "customer", "/propertydirect/dashboards/customer")
         };
 
-        private static DemoDashboardCredential find(String platform, String role) {
-            String safePlatform = safe(platform);
-            String safeRole = safe(role);
-            for (DemoDashboardCredential credential : CREDENTIALS) {
-                if (credential.platform().equalsIgnoreCase(safePlatform) && credential.role().equalsIgnoreCase(safeRole)) {
-                    return credential;
+        private static Map<String, DashboardCredential> load(Environment environment) {
+            Map<String, DashboardCredential> credentials = new HashMap<>();
+            for (DashboardRoute route : ROUTES) {
+                String prefix = "DASHBOARD_LOGIN_" + route.platform().toUpperCase() + "_" + route.role().toUpperCase();
+                String username = environment.getProperty(prefix + "_USERNAME");
+                String password = environment.getProperty(prefix + "_PASSWORD");
+                if (!safe(username).isBlank() && !safe(password).isBlank()) {
+                    DashboardCredential credential = new DashboardCredential(
+                            route.platform(),
+                            route.role(),
+                            username,
+                            password,
+                            route.redirect()
+                    );
+                    credentials.put(key(route.platform(), route.role()), credential);
                 }
             }
-            return null;
+            return credentials;
         }
+
+        private static String key(String platform, String role) {
+            return safe(platform).toLowerCase() + ":" + safe(role).toLowerCase();
+        }
+    }
+
+    private record DashboardRoute(String platform, String role, String redirect) {
     }
 }
