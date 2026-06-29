@@ -7,6 +7,7 @@ spring:
     password: ${DB_PASSWORD:}
     driver-class-name: ${DB_DRIVER:org.h2.Driver}
   jpa:
+    open-in-view: ${OPEN_IN_VIEW:false}
     hibernate:
       ddl-auto: ${DDL_AUTO:create-drop}
     show-sql: false
@@ -15,7 +16,7 @@ spring:
         format_sql: true
   h2:
     console:
-      enabled: true
+      enabled: ${H2_CONSOLE_ENABLED:true}
   mail:
     host: ${MAIL_HOST:}
     port: ${MAIL_PORT:587}
