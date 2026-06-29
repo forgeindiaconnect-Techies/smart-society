@@ -43,82 +43,94 @@ public class DataLoader {
             String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@localhost.invalid");
             String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", UUID.randomUUID().toString());
 
-            if (users.findByEmail(superAdminEmail).isPresent()) {
-                return;
-            }
+            plans.findByTenantIdAndName("platform", "Premium Plan").orElseGet(() -> {
+                SubscriptionPlan plan = new SubscriptionPlan();
+                plan.setTenantId("platform");
+                plan.setName("Premium Plan");
+                plan.setMonthlyPrice(new BigDecimal("4999"));
+                plan.setMaxApartments(500);
+                plan.setMaxResidents(1500);
+                plan.setVisitorManagement(true);
+                plan.setAmenityBooking(true);
+                plan.setAnalytics(true);
+                return plans.save(plan);
+            });
 
-            SubscriptionPlan plan = new SubscriptionPlan();
-            plan.setTenantId("platform");
-            plan.setName("Premium Plan");
-            plan.setMonthlyPrice(new BigDecimal("4999"));
-            plan.setMaxApartments(500);
-            plan.setMaxResidents(1500);
-            plan.setVisitorManagement(true);
-            plan.setAmenityBooking(true);
-            plan.setAnalytics(true);
-            plans.save(plan);
+            tenants.findByCode("green-heights").orElseGet(() -> {
+                Tenant tenant = new Tenant();
+                tenant.setTenantId("green-heights");
+                tenant.setCode("green-heights");
+                tenant.setSocietyName("Green Heights Apartment");
+                tenant.setContactEmail("admin@greenheights.com");
+                tenant.setPhone("9876543210");
+                tenant.setAddress("Main Road");
+                tenant.setCity("Chennai");
+                tenant.setApproved(true);
+                return tenants.save(tenant);
+            });
 
-            Tenant tenant = new Tenant();
-            tenant.setTenantId("green-heights");
-            tenant.setCode("green-heights");
-            tenant.setSocietyName("Green Heights Apartment");
-            tenant.setContactEmail("admin@greenheights.com");
-            tenant.setPhone("9876543210");
-            tenant.setAddress("Main Road");
-            tenant.setCity("Chennai");
-            tenant.setApproved(true);
-            tenants.save(tenant);
+            users.findByEmail(superAdminEmail).orElseGet(() -> {
+                AppUser superAdmin = new AppUser();
+                superAdmin.setTenantId("platform");
+                superAdmin.setFullName("Platform Super Admin");
+                superAdmin.setEmail(superAdminEmail);
+                superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
+                superAdmin.setRole(UserRole.SUPER_ADMIN);
+                return users.save(superAdmin);
+            });
 
-            AppUser superAdmin = new AppUser();
-            superAdmin.setTenantId("platform");
-            superAdmin.setFullName("Platform Super Admin");
-            superAdmin.setEmail(superAdminEmail);
-            superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
-            superAdmin.setRole(UserRole.SUPER_ADMIN);
-            users.save(superAdmin);
+            AppUser residentUser = users.findByEmail(residentEmail).orElseGet(() -> {
+                AppUser user = new AppUser();
+                user.setTenantId("green-heights");
+                user.setFullName("Demo Resident");
+                user.setEmail(residentEmail);
+                user.setPasswordHash(encoder.encode(residentPassword));
+                user.setRole(UserRole.RESIDENT);
+                return users.save(user);
+            });
 
-            AppUser residentUser = new AppUser();
-            residentUser.setTenantId("green-heights");
-            residentUser.setFullName("Demo Resident");
-            residentUser.setEmail(residentEmail);
-            residentUser.setPasswordHash(encoder.encode(residentPassword));
-            residentUser.setRole(UserRole.RESIDENT);
-            users.save(residentUser);
+            Block block = blocks.findByTenantIdAndName("green-heights", "Block A").orElseGet(() -> {
+                Block newBlock = new Block();
+                newBlock.setTenantId("green-heights");
+                newBlock.setName("Block A");
+                newBlock.setTotalFloors(10);
+                return blocks.save(newBlock);
+            });
 
-            Block block = new Block();
-            block.setTenantId("green-heights");
-            block.setName("Block A");
-            block.setTotalFloors(10);
-            blocks.save(block);
+            Apartment apartment = apartments.findByTenantIdAndUnitNo("green-heights", "A-204").orElseGet(() -> {
+                Apartment newApartment = new Apartment();
+                newApartment.setTenantId("green-heights");
+                newApartment.setBlock(block);
+                newApartment.setFloorNo(2);
+                newApartment.setUnitNo("A-204");
+                newApartment.setUnitType("2BHK");
+                newApartment.setOccupancyStatus("OCCUPIED");
+                newApartment.setOwnerName("Demo Owner");
+                newApartment.setOwnerPhone("9876543210");
+                return apartments.save(newApartment);
+            });
 
-            Apartment apartment = new Apartment();
-            apartment.setTenantId("green-heights");
-            apartment.setBlock(block);
-            apartment.setFloorNo(2);
-            apartment.setUnitNo("A-204");
-            apartment.setUnitType("2BHK");
-            apartment.setOccupancyStatus("OCCUPIED");
-            apartment.setOwnerName("Demo Owner");
-            apartment.setOwnerPhone("9876543210");
-            apartments.save(apartment);
+            Resident resident = residents.findByUser(residentUser).orElseGet(() -> {
+                Resident newResident = new Resident();
+                newResident.setTenantId("green-heights");
+                newResident.setUser(residentUser);
+                newResident.setApartment(apartment);
+                newResident.setResidentType("OWNER");
+                newResident.setVehicleNumber("TN01AB1234");
+                return residents.save(newResident);
+            });
 
-            Resident resident = new Resident();
-            resident.setTenantId("green-heights");
-            resident.setUser(residentUser);
-            resident.setApartment(apartment);
-            resident.setResidentType("OWNER");
-            resident.setVehicleNumber("TN01AB1234");
-            residents.save(resident);
-
-            Complaint complaint = new Complaint();
-            complaint.setTenantId("green-heights");
-            complaint.setResident(resident);
-            complaint.setTitle("Water leakage");
-            complaint.setCategory("Plumbing");
-            complaint.setPriority("HIGH");
-            complaint.setDescription("Leakage near kitchen sink");
-            complaint.setStatus("OPEN");
-            complaints.save(complaint);
+            complaints.findByTenantIdAndTitle("green-heights", "Water leakage").orElseGet(() -> {
+                Complaint complaint = new Complaint();
+                complaint.setTenantId("green-heights");
+                complaint.setResident(resident);
+                complaint.setTitle("Water leakage");
+                complaint.setCategory("Plumbing");
+                complaint.setPriority("HIGH");
+                complaint.setDescription("Leakage near kitchen sink");
+                complaint.setStatus("OPEN");
+                return complaints.save(complaint);
+            });
         };
     }
 }
