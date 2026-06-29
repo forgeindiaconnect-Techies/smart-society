@@ -972,6 +972,7 @@ html[data-theme="dark"] .receipt-line {
     display: block;
     margin-bottom: 14px;
     padding: 4px 6px;
+    color: var(--ink);
     font-size: 1.15rem;
 }
 
@@ -986,8 +987,10 @@ html[data-theme="dark"] .receipt-line {
     min-height: 46px;
     padding: 11px 14px;
     border-radius: 14px;
+    color: var(--ink);
     box-shadow: none;
-    background: transparent;
+    background: rgba(255, 255, 255, .58);
+    font-weight: 950;
 }
 
 .dashboard-body[data-dashboard-role="security"] .sidebar button.active,
@@ -1002,8 +1005,16 @@ html[data-theme="dark"] .receipt-line {
     min-height: 44px;
     padding: 10px 14px;
     border-radius: 14px;
+    color: var(--primary-dark);
     box-shadow: none;
     background: var(--surface-2);
+    font-weight: 850;
+}
+
+html[data-theme="dark"] .dashboard-body[data-dashboard-role="security"] .sidebar button,
+html[data-theme="dark"] .dashboard-body[data-dashboard-role="maintenance"] .sidebar button {
+    color: #e8fff8;
+    background: rgba(255, 255, 255, .055);
 }
 
 .main,
