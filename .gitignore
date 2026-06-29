@@ -1,0 +1,12 @@
+target/
+*.class
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+.vscode/
+.idea/
+*.iml
+
+.DS_Store
+Thumbs.db

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Owner/Admin Dashboard - PropertyDirect</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="admin">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">PropertyDirect</a>
+    <nav class="sidebar-nav" aria-label="Dashboard sections">
+    <button class="active" data-panel="overview">Overview</button>
+    <button data-panel="post">Post Apartment</button>
+    <button data-panel="listings">My Apartments</button>
+    <button data-panel="leads">Apartment Leads</button>
+    <button data-panel="visits">Visit Schedule</button>
+    <button data-panel="plans">My Plan</button>
+    <button data-panel="services">Apartment Services</button>
+    <button data-panel="payments">Payments</button>
+    <button data-panel="profile">Profile</button>
+    </nav>
+    <a class="logout" href="/propertydirect">Logout</a>
+</aside>
+
+<main class="dash-main">
+    <header class="dash-header">
+        <div>
+            <p class="eyebrow">Owner/Admin</p>
+            <h1 id="panelTitle">Owner Overview</h1>
+        </div>
+        <button class="primary" data-action="post-property">Post Apartment</button>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article><span>Live Apartments</span><strong data-stat="live">4</strong></article>
+            <article><span>New Leads</span><strong data-stat="leads">23</strong></article>
+            <article><span>Scheduled Visits</span><strong data-stat="visits">7</strong></article>
+            <article><span>Plan Status</span><strong>Premium</strong></article>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Today's Apartment Tasks</h3>
+                <button class="primary small" data-action="download-owner-report">Download Report</button>
+            </div>
+            <ul class="task-list" id="ownerTasks">
+                <li>Call back Priya for Whitefield apartment</li>
+                <li>Upload balcony photos for Koramangala listing</li>
+                <li>Confirm Sunday visit with Kiran</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="post">
+        <div class="dash-card">
+            <h3>Post Apartment</h3>
+            <div class="form-grid" id="postApartmentForm">
+                <input name="title" placeholder="Apartment title">
+                <input name="city" placeholder="City" value="Bangalore">
+                <input name="locality" placeholder="Society / locality">
+                <input name="price" placeholder="Rent / Price">
+                <select name="type"><option>Rent Apartment</option><option>Sale Apartment</option><option>Premium Apartment</option></select>
+                <select name="bhk"><option>1 BHK</option><option selected>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
+                <input name="deposit" placeholder="Deposit">
+                <input name="sqft" placeholder="Built-up sqft">
+                <button class="primary" data-action="post-property">Publish Apartment</button>
+                <button class="ghost" data-action="preview-apartment">Preview</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="listings">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>My Apartment Listings</h3>
+                <button class="primary small" data-action="post-property">Add Apartment</button>
+            </div>
+            <table data-table="listings">
+                <tbody>
+                <tr><th>Apartment</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+                <tr><td>2 BHK Whitefield</td><td>Rent</td><td><span class="status live">Live</span></td><td><button data-action="edit-row">Edit</button> <button data-action="deactivate-row">Deactivate</button></td></tr>
+                <tr><td>4 BHK Koramangala</td><td>Premium Rent</td><td><span class="status pending">Pending</span></td><td><button data-action="edit-row">Edit</button> <button data-action="activate-row">Make Live</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="leads">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Verified Apartment Leads</h3>
+                <button class="primary small" data-action="add-lead">Add Lead</button>
+            </div>
+            <table data-table="leads">
+                <tbody>
+                <tr><th>Name</th><th>Need</th><th>Status</th><th>Actions</th></tr>
+                <tr><td>Priya</td><td>2 BHK in Whitefield</td><td>New</td><td><button data-action="call-lead">Call</button> <button data-action="schedule-lead">Schedule</button></td></tr>
+                <tr><td>Rahul</td><td>Premium apartment</td><td>Contacted</td><td><button data-action="call-lead">Call</button> <button data-action="schedule-lead">Schedule</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="visits">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Visit Schedule</h3>
+                <button class="primary small" data-action="new-visit">Schedule Visit</button>
+            </div>
+            <div class="pill-row" id="visitList">
+                <span>Today 5 PM - Asha</span>
+                <span>Tomorrow 11 AM - Raj</span>
+                <span>Sunday 4 PM - Kiran</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="plans">
+        <div class="dash-card">
+            <h3>My Plan</h3>
+            <p>Premium Owner Plan active until next month.</p>
+            <div class="dash-grid three">
+                <article><span>Free</span><strong>₹0</strong><button data-action="select-plan">Select</button></article>
+                <article><span>Premium</span><strong>₹2499</strong><button data-action="current-plan">Current</button></article>
+                <article><span>Assisted</span><strong>₹4999</strong><button data-action="upgrade">Upgrade</button></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="services">
+        <div class="dash-card">
+            <h3>Apartment Services</h3>
+            <div class="service-actions">
+                <button data-action="book-service">Tenant Agreement</button>
+                <button data-action="book-service">Painting</button>
+                <button data-action="book-service">Cleaning</button>
+                <button data-action="book-service">Apartment Management</button>
+                <button data-action="book-service">Photo Shoot</button>
+                <button data-action="book-service">Rental Inspection</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="payments">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Payments</h3>
+                <button class="primary small" data-action="add-payment">Add Payment</button>
+            </div>
+            <table data-table="payments">
+                <tbody>
+                <tr><th>Item</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+                <tr><td>Premium Plan</td><td>₹2499</td><td>Paid</td><td><button data-action="receipt">Receipt</button></td></tr>
+                <tr><td>Cleaning Service</td><td>₹1299</td><td>Pending</td><td><button data-action="mark-paid">Mark Paid</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="profile">
+        <div class="dash-card">
+            <h3>Profile</h3>
+            <label>Name<input value="Demo Owner"></label>
+            <label>Phone<input value="9876543210"></label>
+            <label>Email<input value="owner@propertydirect.test"></label>
+            <label>Preferred City<input value="Bangalore"></label>
+            <button class="primary" data-action="save">Save Profile</button>
+        </div>
+    </section>
+</main>
+
+<div class="modal hidden" id="dashboardModal">
+    <div class="modal-card">
+        <button class="close" data-action="close-modal">x</button>
+        <h2 id="modalTitle">Action</h2>
+        <p id="modalText">Complete this action.</p>
+        <div id="modalFields"></div>
+        <button class="primary full" id="modalSave">Save</button>
+    </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/dashboard.js?v=20260626-button-actions"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

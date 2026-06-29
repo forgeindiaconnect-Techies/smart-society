@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartSociety - Apartment Community Management SaaS</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body>
+<header class="topbar">
+    <div class="header-inner">
+        <a class="brand" href="#home">
+            <span class="brand-mark">SS</span>
+            <span>SmartSociety</span>
+        </a>
+        <nav class="nav" id="nav">
+            <div class="nav-main">
+                <a href="#modules">Modules</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#plans">Plans</a>
+                <a href="/propertydirect">PropertyDirect</a>
+            </div>
+            <span class="nav-divider" aria-hidden="true"></span>
+            <div class="nav-account">
+                <button class="link-button" data-dashboard-login data-platform="smartsociety" data-role="superadmin" data-target="/dashboards/superadmin">Super Admin</button>
+                <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Admin</a>
+                <a href="/dashboards/resident" data-dashboard-login data-platform="smartsociety" data-role="resident" data-target="/dashboards/resident">Resident</a>
+            </div>
+            <button class="primary small nav-cta" data-action="register">Register Society</button>
+        </nav>
+        <button class="menu-button" id="menuButton" aria-label="Toggle navigation">Menu</button>
+    </div>
+</header>
+
+<main id="home">
+    <section class="hero">
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+        <p class="trust-line"><span></span> Built for modern communities</p>
+        <h1>One calmer place to run your <em>entire community.</em></h1>
+        <p class="hero-copy">Bring billing, visitors, complaints, announcements, amenities and reports into one beautifully simple workspace.</p>
+        <figure class="hero-photo">
+            <img src="/shared/images/smartsociety-cinematic-1.webp" alt="Modern apartment society with landscaped community space">
+            <figcaption>Apartment community operations in one simple workspace</figcaption>
+        </figure>
+        <div class="search-card" id="roleExperience" data-current-role="admin">
+            <div class="tabs" role="tablist">
+                <button class="tab active" data-mode="Admin" role="tab" aria-selected="true">Society Admin</button>
+                <button class="tab" data-mode="Resident" role="tab" aria-selected="false">Resident</button>
+                <button class="tab" data-mode="Security" role="tab" aria-selected="false">Security</button>
+            </div>
+            <div class="search-row">
+                <select id="city">
+                    <option>Chennai</option>
+                    <option>Bangalore</option>
+                    <option>Hyderabad</option>
+                    <option>Pune</option>
+                    <option>Mumbai</option>
+                    <option>Delhi NCR</option>
+                </select>
+                <input id="societySearch" placeholder="Search your society or a module...">
+                <button class="primary" id="roleSearchButton" data-action="search">Search Admin Tools</button>
+            </div>
+            <div class="quick-filters" id="roleFilters">
+                <button data-action="filter">Billing</button>
+                <button data-action="filter">Residents</button>
+                <button data-action="filter">Complaints</button>
+                <button data-action="filter">Reports</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="owner-banner">
+        <div class="owner-copy">
+            <span class="banner-label">For management committees</span>
+            <h2>Running an apartment community or gated society?</h2>
+            <p>Create a tenant workspace, invite residents, assign security staff, and start managing daily operations.</p>
+        </div>
+        <button class="primary" data-action="register">Register Society</button>
+    </section>
+
+    <section class="section" id="modules">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Core Modules</p>
+                <h2>Everything your society needs</h2>
+            </div>
+            <button class="ghost" data-action="platform">View Platform</button>
+        </div>
+        <div class="service-grid">
+            <a class="service-card" href="/dashboards/society-admin#billing"><span>Bill</span><strong>Maintenance Billing</strong><p>Generate dues, receipts, late fees, and payment reports.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#visitors"><span>Gate</span><strong>Visitor Management</strong><p>Approve guests, QR passes, check-in, and check-out.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#complaints"><span>Help</span><strong>Complaints</strong><p>Raise issues, assign staff, track status, and close tickets.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#amenities"><span>Book</span><strong>Amenities</strong><p>Book clubhouse, gym, party hall, parking, and guest rooms.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#announcements"><span>Post</span><strong>Announcements</strong><p>Publish notices, alerts, and community updates.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#payments"><span>Pay</span><strong>Payments</strong><p>Collect maintenance, rent, utilities, and other charges.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#expenses"><span>Cost</span><strong>Expenses</strong><p>Track vendors, approvals, monthly spend, and categories.</p></a>
+            <a class="service-card" href="/dashboards/society-admin#reports"><span>Data</span><strong>Reports</strong><p>View billing, visitor, complaint, and occupancy analytics.</p></a>
+        </div>
+    </section>
+
+    <section class="split-section" id="plans">
+        <div class="assist-card">
+            <p class="eyebrow">Subscription Plans</p>
+            <h2>Choose a SaaS plan based on community size.</h2>
+            <ul>
+                <li>Starter plan for small societies and evaluation workspaces</li>
+                <li>Standard plan for billing, visitors, and resident workflows</li>
+                <li>Premium plan for analytics, expenses, and priority support</li>
+            </ul>
+            <button class="primary" data-action="plan">Explore Plans</button>
+        </div>
+        <div class="assist-card dark">
+            <p class="eyebrow">Dashboards</p>
+            <h2>Open role-based portals for each user type.</h2>
+            <div class="payment-list">
+                <a href="/dashboards/superadmin" data-dashboard-login data-platform="smartsociety" data-role="superadmin" data-target="/dashboards/superadmin">Super Admin Dashboard</a>
+                <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Society Admin Dashboard</a>
+                <a href="/dashboards/resident" data-dashboard-login data-platform="smartsociety" data-role="resident" data-target="/dashboards/resident">Resident Dashboard</a>
+                <a href="/dashboards/security" data-dashboard-login data-platform="smartsociety" data-role="security" data-target="/dashboards/security">Security Dashboard</a>
+                <a href="/dashboards/maintenance" data-dashboard-login data-platform="smartsociety" data-role="maintenance" data-target="/dashboards/maintenance">Maintenance Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="workflow">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">System Workflow</p>
+                <h2>From onboarding to daily operations</h2>
+            </div>
+            <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Open admin flow</a>
+        </div>
+        <div class="link-columns">
+            <div>
+                <h3>Onboarding</h3>
+                <a href="/terms/onboarding#society-registration">Society registration</a>
+                <a href="/terms/onboarding#subscription-selection">Subscription selection</a>
+                <a href="/terms/onboarding#tenant-id-creation">Tenant id creation</a>
+                <a href="/terms/onboarding#blocks-flats-setup">Blocks and flats setup</a>
+            </div>
+            <div>
+                <h3>Daily Operations</h3>
+                <a href="/terms/daily-operations#resident-onboarding">Resident onboarding</a>
+                <a href="/terms/daily-operations#visitor-approvals">Visitor approvals</a>
+                <a href="/terms/daily-operations#complaint-assignment">Complaint assignment</a>
+                <a href="/terms/daily-operations#amenity-booking">Amenity booking</a>
+            </div>
+            <div>
+                <h3>Finance & Reports</h3>
+                <a href="/terms/finance-reports#maintenance-billing">Maintenance billing</a>
+                <a href="/terms/finance-reports#online-payments">Online payments</a>
+                <a href="/terms/finance-reports#expense-approvals">Expense approvals</a>
+                <a href="/terms/finance-reports#reports-analytics">Reports and analytics</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>SmartSociety</strong>
+    <span>Apartment community management for modern residential teams.</span>
+</footer>
+
+<div class="modal hidden" id="registerModal">
+    <div class="modal-card">
+        <button class="close" id="closeRegisterModal">x</button>
+        <h2 id="registerModalTitle">Register Society</h2>
+        <p>Create your apartment community workspace and start the onboarding flow.</p>
+        <label>Society Name<input id="societyName" placeholder="Example: Green Nest Apartments"></label>
+        <label>Admin Name<input placeholder="Committee/admin name"></label>
+        <label>Email<input placeholder="admin@community.com"></label>
+        <label>Phone<input placeholder="Mobile number"></label>
+        <label>City
+            <select>
+                <option>Chennai</option>
+                <option>Bangalore</option>
+                <option>Hyderabad</option>
+                <option>Pune</option>
+                <option>Mumbai</option>
+            </select>
+        </label>
+        <label>Plan
+            <select>
+                <option>Free Trial</option>
+                <option>Standard</option>
+                <option>Premium</option>
+            </select>
+        </label>
+        <button class="primary full" id="submitSociety">Submit Registration</button>
+    </div>
+</div>
+
+<div class="modal hidden" id="superadminModal">
+    <div class="modal-card">
+        <button class="close" id="closeSuperadminModal">x</button>
+        <h2>Super Admin Login</h2>
+        <p>Enter the Super Admin username and password to open the platform owner dashboard.</p>
+        <label>Username<input id="superadminUsername" placeholder="superadmin@smartsociety.com"></label>
+        <label>Password<input id="superadminPassword" type="password" placeholder="Super@123"></label>
+        <button class="primary full" id="submitSuperadminLogin">Login</button>
+    </div>
+</div>
+
+<div class="modal hidden" id="dashboardLoginModal">
+    <div class="modal-card">
+        <button class="close" id="closeDashboardLoginModal">x</button>
+        <h2 id="dashboardLoginTitle">Dashboard Login</h2>
+        <p id="dashboardLoginHelp">Enter credentials to open this dashboard.</p>
+        <label>Username<input id="dashboardUsername" placeholder="username"></label>
+        <label>Password<input id="dashboardPassword" type="password" placeholder="password"></label>
+        <button class="primary full" id="submitDashboardLogin">Login & Open Dashboard</button>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/app.js?v=20260626-button-actions"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

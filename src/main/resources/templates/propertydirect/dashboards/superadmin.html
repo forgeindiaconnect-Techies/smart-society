@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super Admin Dashboard - PropertyDirect</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">PropertyDirect</a>
+    <nav class="sidebar-nav" aria-label="Dashboard sections">
+    <button class="active" data-panel="overview">Overview</button>
+    <button data-panel="users">Users</button>
+    <button data-panel="properties">Properties</button>
+    <button data-panel="subscriptions">Plans</button>
+    <button data-panel="payments">Payments</button>
+    <button data-panel="services">Services</button>
+    <button data-panel="analytics">Analytics</button>
+    <button data-panel="support">Support</button>
+    <button data-panel="settings">Settings</button>
+    </nav>
+    <a class="logout" href="/propertydirect">Logout</a>
+</aside>
+
+<main class="dash-main">
+    <header class="dash-header">
+        <div>
+            <p class="eyebrow">Super Admin</p>
+            <h1 id="panelTitle">Platform Overview</h1>
+        </div>
+        <button class="primary" data-action="export">Export Report</button>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article><span>Total Users</span><strong>48,920</strong></article>
+            <article><span>Active Listings</span><strong>12,480</strong></article>
+            <article><span>Monthly Revenue</span><strong>₹82.4L</strong></article>
+            <article><span>Open Tickets</span><strong>126</strong></article>
+        </div>
+        <div class="dash-card"><h3>Platform Flow</h3><div class="pill-row"><span>Search</span><span>Contact Owner</span><span>Plan Purchase</span><span>Service Booking</span><span>Payment</span></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="users">
+        <div class="dash-card"><div class="card-head"><h3>User Management</h3><button class="primary small" data-action="add-row">Add User</button></div><table><tbody><tr><th>Name</th><th>Role</th><th>Status</th></tr><tr><td>Arun Kumar</td><td>Customer</td><td>Active</td></tr><tr><td>Meena Rao</td><td>Owner</td><td>Verified</td></tr></tbody></table></div>
+    </section>
+    <section class="dash-panel hidden" data-view="properties">
+        <div class="dash-card"><div class="card-head"><h3>Apartment Approvals</h3><button class="primary small" data-action="approve">Approve Selected</button></div><table><tbody><tr><th>Apartment</th><th>City</th><th>Status</th></tr><tr><td>2 BHK Whitefield</td><td>Bangalore</td><td>Pending</td></tr><tr><td>3 BHK Hitech City</td><td>Hyderabad</td><td>Live</td></tr></tbody></table></div>
+    </section>
+    <section class="dash-panel hidden" data-view="subscriptions"><div class="dash-card"><h3>Subscription Plans</h3><div class="dash-grid three"><article><span>Basic</span><strong>₹999</strong></article><article><span>Premium</span><strong>₹2499</strong></article><article><span>Assisted</span><strong>₹4999</strong></article></div></div></section>
+    <section class="dash-panel hidden" data-view="payments"><div class="dash-card"><h3>Payments</h3><div class="report-bars"><div><span>Rent Payments</span><b></b></div><div><span>Plan Revenue</span><b></b></div><div><span>Home Services</span><b></b></div></div></div></section>
+    <section class="dash-panel hidden" data-view="services"><div class="dash-card"><h3>Home Services</h3><div class="pill-row"><span>Painting</span><span>Cleaning</span><span>Packers</span><span>Electrician</span><span>Plumbing</span></div></div></section>
+    <section class="dash-panel hidden" data-view="analytics"><div class="dash-card"><h3>Analytics</h3><div class="dash-grid"><article><span>Searches</span><strong>2.8L</strong></article><article><span>Owner Contacts</span><strong>38K</strong></article><article><span>Conversions</span><strong>8.7%</strong></article><article><span>Complaints Solved</span><strong>91%</strong></article></div></div></section>
+    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><h3>Support Tickets</h3><ul class="task-list"><li>Refund request from Chennai user</li><li>Owner verification pending</li><li>Payment callback failed</li></ul></div></section>
+    <section class="dash-panel hidden" data-view="settings"><div class="dash-card"><h3>Platform Settings</h3><label>Commission Mode<input value="Zero Brokerage"></label><label>Support Email<input value="support@propertydirect.test"></label><button class="primary" data-action="save">Save Settings</button></div></section>
+</main>
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/dashboard.js?v=20260626-button-actions"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

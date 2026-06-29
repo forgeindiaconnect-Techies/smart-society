@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Dashboard - PropertyDirect</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">PropertyDirect</a>
+    <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="search">Search Apartments</button>
+        <button data-panel="shortlist">Shortlisted</button>
+        <button data-panel="contacts">Owner Contacts</button>
+        <button data-panel="visits">Site Visits</button>
+        <button data-panel="rentpay">Rent Pay</button>
+        <button data-panel="services">Home Services</button>
+        <button data-panel="plans">Plans</button>
+        <button data-panel="support">Support</button>
+    </nav>
+    <a class="logout" href="/propertydirect">Logout</a>
+</aside>
+
+<main class="dash-main">
+    <header class="dash-header">
+        <div><p class="eyebrow">Customer</p><h1 id="panelTitle">Customer Overview</h1></div>
+        <button class="primary" data-action="search">Search Property</button>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article><span>Shortlisted</span><strong>8</strong></article>
+            <article><span>Owner Contacts</span><strong>12</strong></article>
+            <article><span>Visits</span><strong>3</strong></article>
+            <article><span>Rent Payments</span><strong>2</strong></article>
+        </div>
+        <div class="activity-log" id="propertyActivityLog" aria-live="polite">
+            <h3>Customer activity</h3>
+            <ul>
+                <li><strong>Ready</strong><span>Use each PropertyDirect customer tab. Completed actions will appear here.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="search">
+        <div class="dash-card">
+            <h3>Search Apartments</h3>
+            <div class="form-grid">
+                <input placeholder="City" value="Bangalore">
+                <input placeholder="Apartment society or locality">
+                <select><option>Rent Apartment</option><option>Buy Apartment</option></select>
+                <select><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
+                <button class="primary" data-action="search-listings">Search Apartments</button>
+                <a class="primary" href="/propertydirect/apartments">Open Apartment Listings</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="shortlist">
+        <div class="dash-card">
+            <h3>Shortlisted Apartments</h3>
+            <ul class="task-list actionable-list">
+                <li><span>2 BHK Manifest Heights - ₹28,000</span><button data-action="contact-owner">Contact Owner</button><button data-action="schedule">Visit</button><button data-action="remove-shortlist">Remove</button></li>
+                <li><span>3 BHK Lake View Residency - ₹50,000</span><button data-action="contact-owner">Contact Owner</button><button data-action="schedule">Visit</button><button data-action="remove-shortlist">Remove</button></li>
+                <li><span>1 BHK Rajaji Nagar Apartment - ₹25,000</span><button data-action="contact-owner">Contact Owner</button><button data-action="schedule">Visit</button><button data-action="remove-shortlist">Remove</button></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="contacts">
+        <div class="dash-card">
+            <h3>Owner Contacts</h3>
+            <table>
+                <tbody>
+                <tr><th>Owner</th><th>Property</th><th>Status</th><th>Action</th></tr>
+                <tr><td>Ramesh</td><td>Whitefield Flat</td><td><span class="status pending">Locked</span></td><td><button class="primary small" data-action="call">Call</button></td></tr>
+                <tr><td>Priya</td><td>Adyar Home</td><td><span class="status pending">Locked</span></td><td><button class="primary small" data-action="call">Call</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="visits">
+        <div class="dash-card">
+            <div class="card-head"><h3>Site Visits</h3><button class="primary" data-action="schedule">Schedule Visit</button></div>
+            <div class="pill-row" id="visitList">
+                <span>Whitefield - Today 5 PM <button data-action="complete-visit">Complete</button></span>
+                <span>Adyar - Saturday 10 AM <button data-action="complete-visit">Complete</button></span>
+                <span>Powai - Sunday 12 PM <button data-action="complete-visit">Complete</button></span>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="rentpay">
+        <div class="dash-card">
+            <div class="card-head"><h3>Rent Pay</h3><span class="inline-state" id="rentPayState">No payment recorded yet</span></div>
+            <p>Pay rent securely and keep payment history in one place.</p>
+            <button class="primary" data-action="pay">Pay Rent</button>
+            <h3>Payment History</h3>
+            <ul class="task-list" id="rentPaymentHistory"><li>June rent - ₹28,000 - Paid</li></ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="services">
+        <div class="dash-card">
+            <h3>Home Services</h3>
+            <div class="pill-row"><span>Packers</span><span>Cleaning</span><span>Painting</span><span>Electrician</span><span>Plumbing</span></div>
+            <h3>Service Requests</h3>
+            <ul class="task-list" id="serviceRequests"><li>No new service requests</li></ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="plans">
+        <div class="dash-card">
+            <h3>Buyer / Tenant Plans</h3>
+            <div class="dash-grid three">
+                <article><span>Basic</span><strong>₹999</strong><span class="status pending">Available</span><button data-action="select-plan">Select Plan</button></article>
+                <article><span>Relax</span><strong>₹1999</strong><span class="status active">Current Plan</span><button data-action="current-plan">Current Plan</button></article>
+                <article><span>MoneyBack</span><strong>₹4999</strong><span class="status pending">Available</span><button data-action="select-plan">Select Plan</button></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="support">
+        <div class="dash-card">
+            <div class="card-head"><h3>Support</h3><span class="inline-state" id="supportState">Ready</span></div>
+            <label>Issue<input placeholder="Describe your issue"></label>
+            <button class="primary" data-action="support">Raise Ticket</button>
+            <h3>Tickets</h3>
+            <ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul>
+        </div>
+    </section>
+</main>
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/dashboard.js?v=20260627-property-customer-flow-v3"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

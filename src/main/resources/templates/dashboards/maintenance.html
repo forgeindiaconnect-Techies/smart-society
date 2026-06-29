@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSociety Maintenance</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="dashboard-body" data-platform="smartsociety" data-dashboard-role="maintenance">
+    <aside class="sidebar">
+        <a class="brand" href="/">SmartSociety</a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="tasks">Tasks</button>
+        <button data-panel="complaints">Complaints</button>
+        <button data-panel="profile">Profile</button>
+        </nav>
+        <a class="logout" href="/">Back to Home</a>
+    </aside>
+    <main class="main">
+        <header class="header"><div><p class="eyebrow">Maintenance Team</p><h1 id="title">Overview</h1></div><button data-action="save">Update Availability</button></header>
+        <section data-view="overview"><div class="stats"><article><span>Assigned</span><strong>14</strong></article><article><span>In Progress</span><strong>5</strong></article><article><span>Completed Today</span><strong>9</strong></article><article><span>SLA Breach</span><strong>1</strong></article></div></section>
+        <section class="hidden" data-view="tasks"><div class="card"><div class="card-head"><h2>Assigned Tasks</h2><button data-action="add" data-table="tasks">Add Task</button></div><table data-table="tasks"><thead><tr><th>Task</th><th>Location</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Fix water leak</td><td>A-101</td><td>High</td><td><span class="status progress">In Progress</span></td><td><button data-action="complete">Complete</button></td></tr><tr><td>Lift inspection</td><td>B Block</td><td>Medium</td><td><span class="status pending">Pending</span></td><td><button data-action="complete">Complete</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="complaints"><div class="card"><h2>Complaint Queue</h2><table><thead><tr><th>Issue</th><th>Flat</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Parking light not working</td><td>Basement</td><td><span class="status open">Open</span></td><td><button data-action="assign">Take Task</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="profile"><div class="card"><h2>Team Profile</h2><div class="form-grid"><input value="Maintenance Team A"><input value="Plumbing, Electrical"><input value="Available"><input value="team-a@example.com"></div><p><button data-action="save">Save Profile</button></p></div></section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/dashboard.js?v=20260627-resident-profile-save"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

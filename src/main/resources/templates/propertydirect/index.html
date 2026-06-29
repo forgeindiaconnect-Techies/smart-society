@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PropertyDirect - Owner Properties Without Brokerage</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body>
+<header class="topbar">
+    <div class="header-inner">
+        <a class="brand" href="#home">
+            <span class="brand-mark">PD</span>
+            <span>PropertyDirect</span>
+        </a>
+        <nav class="nav" id="nav">
+            <div class="nav-main">
+                <a href="/propertydirect/apartments">Apartments</a>
+                <a href="/propertydirect/terms/services-payments#home-services">Services</a>
+                <a href="/propertydirect/terms/services-payments#bill-payments">Payments</a>
+                <a href="/propertydirect/terms/plans-dashboards#assisted-plans">Plans</a>
+                <a href="/propertydirect/terms/apartment-search">Terms</a>
+            </div>
+            <span class="nav-divider" aria-hidden="true"></span>
+            <div class="nav-account">
+                <button class="link-button" data-dashboard-login data-platform="propertydirect" data-role="superadmin" data-target="/propertydirect/dashboards/superadmin">Super Admin</button>
+                <a href="/propertydirect/dashboards/admin" data-dashboard-login data-platform="propertydirect" data-role="admin" data-target="/propertydirect/dashboards/admin">Admin</a>
+                <a href="/propertydirect/dashboards/customer" data-dashboard-login data-platform="propertydirect" data-role="customer" data-target="/propertydirect/dashboards/customer">Customer</a>
+            </div>
+            <button class="primary small nav-cta" data-open-modal="post">Post Property</button>
+        </nav>
+        <button class="menu-button" id="menuButton" aria-label="Toggle navigation">Menu</button>
+    </div>
+</header>
+
+<main id="home">
+    <section class="hero">
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+        <p class="trust-line"><span></span> Verified owners. Zero brokerage.</p>
+        <h1>A better way to find a place that <em>feels like home.</em></h1>
+        <p class="hero-copy">Discover verified owner-listed apartments across India, schedule visits and move in without the brokerage.</p>
+        <figure class="hero-photo">
+            <img src="/shared/images/propertydirect-cinematic-1.webp" alt="Premium apartment towers with warm evening lights">
+            <figcaption>Verified owner-listed apartments with direct contact</figcaption>
+        </figure>
+        <div class="search-card" id="propertyExperience" data-current-mode="buy">
+            <div class="tabs" role="tablist">
+                <button class="tab active" data-mode="Buy" role="tab" aria-selected="true">Buy Apartment</button>
+                <button class="tab" data-mode="Rent" role="tab" aria-selected="false">Rent Apartment</button>
+                <button class="tab" data-mode="Premium" role="tab" aria-selected="false">Premium Apartments</button>
+            </div>
+            <div class="search-row">
+                <select id="city">
+                    <option>Bangalore</option>
+                    <option>Chennai</option>
+                    <option>Mumbai</option>
+                    <option>Pune</option>
+                    <option>Hyderabad</option>
+                    <option>Delhi NCR</option>
+                </select>
+                <input id="locality" placeholder="Search homes for sale, locality or landmark...">
+                <button class="primary" id="searchButton">Search Homes to Buy</button>
+            </div>
+            <div class="quick-filters" id="modeFilters">
+                <button data-filter="Ready to Move">Ready to Move</button>
+                <button data-filter="New Project">New Projects</button>
+                <button data-filter="Owner Listed">Owner Listed</button>
+                <button data-filter="Gated Society">Gated Society</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="owner-banner">
+        <div class="owner-copy">
+            <span class="banner-label">List directly. Close faster.</span>
+            <h2>Looking for tenants or buyers for your apartment?</h2>
+            <p>Post your apartment for free and connect with verified apartment seekers faster.</p>
+            <a class="terms-link" href="/propertydirect/terms/post-property#owner-listing">Read property posting terms</a>
+        </div>
+        <button class="primary" data-open-modal="post">Post Property</button>
+    </section>
+
+    <section class="section" id="properties">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Featured Listings</p>
+                <h2>Owner-listed apartments near you</h2>
+            </div>
+            <button class="ghost" id="resetListings">Reset</button>
+        </div>
+        <div class="property-grid" id="propertyGrid"></div>
+    </section>
+
+    <section class="section" id="services">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Home Services</p>
+                <h2>Everything after finding a home</h2>
+            </div>
+            <a href="/propertydirect/terms/services-payments#home-services">See all terms</a>
+        </div>
+        <div class="service-grid">
+            <a class="service-card" href="/propertydirect/terms/services-payments#painting"><span>Paint</span><strong>Painting</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#home-cleaning"><span>Clean</span><strong>Home Cleaning</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#moving"><span>Move</span><strong>Apartment Moving</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#repairs"><span>Fix</span><strong>Plumbing & Carpentry</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#electrician"><span>Power</span><strong>Electrician</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#sofa-cleaning"><span>Care</span><strong>Sofa Cleaning</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#kitchen-cleaning"><span>Cook</span><strong>Kitchen Cleaning</strong></a>
+            <a class="service-card" href="/propertydirect/terms/services-payments#bathroom-cleaning"><span>Bath</span><strong>Bathroom Cleaning</strong></a>
+        </div>
+    </section>
+
+    <section class="split-section" id="plans">
+        <div class="assist-card">
+            <p class="eyebrow">Assisted Plans</p>
+            <h2>Dedicated expert to guide your apartment search.</h2>
+            <ul>
+                <li><a href="/propertydirect/terms/plans-dashboards#property-support">Guaranteed property support</a></li>
+                <li><a href="/propertydirect/terms/plans-dashboards#matching-alerts">Instant matching alerts</a></li>
+                <li><a href="/propertydirect/terms/plans-dashboards#owner-contact">Owner contact assistance</a></li>
+            </ul>
+            <button class="primary" data-open-modal="plan">Explore Plans</button>
+        </div>
+        <div class="assist-card dark" id="payments">
+            <p class="eyebrow">Payments</p>
+            <h2>One place for apartment rent, maintenance, and utility payments.</h2>
+            <div class="payment-list">
+                <a href="/propertydirect/terms/services-payments#rent-payment">Rent Payment</a>
+                <a href="/propertydirect/terms/services-payments#maintenance-payment">Maintenance Payment</a>
+                <a href="/propertydirect/terms/services-payments#utility-bills">Utility Bills</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section city-links">
+        <p class="eyebrow">City Real Estate</p>
+        <h2>Popular localities</h2>
+        <div class="link-columns">
+            <div>
+                <h3>Bangalore</h3>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Koramangala</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Whitefield</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in HSR Layout</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Indiranagar</a>
+            </div>
+            <div>
+                <h3>Chennai</h3>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Velachery</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Adyar</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Sholinganallur</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in T Nagar</a>
+            </div>
+            <div>
+                <h3>Mumbai</h3>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Andheri</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Powai</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Thane</a>
+                <a href="/propertydirect/terms/apartment-search#popular-localities">Apartments in Bandra</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>PropertyDirect</strong>
+    <span>Owner-first property search for serious home seekers.</span>
+</footer>
+
+<div class="modal hidden" id="appModal">
+    <div class="modal-card">
+        <button class="close" id="closeModal">x</button>
+        <h2 id="modalTitle">Get Started</h2>
+        <p id="modalText">Fill the form and we will continue.</p>
+        <div id="modalFields">
+            <label>Name<input placeholder="Your name"></label>
+            <label>Phone<input placeholder="Mobile number"></label>
+            <label>Email<input placeholder="Email address"></label>
+        </div>
+        <button class="primary full" id="modalSubmit">Submit</button>
+    </div>
+</div>
+
+<div class="modal hidden" id="superadminModal">
+    <div class="modal-card">
+        <button class="close" id="closeSuperadminModal">x</button>
+        <h2>Super Admin Login</h2>
+        <p>Enter the PropertyDirect Super Admin username and password to open the platform dashboard.</p>
+        <label>Username<input id="superadminUsername" placeholder="superadmin@propertydirect.com"></label>
+        <label>Password<input id="superadminPassword" type="password" placeholder="Super@123"></label>
+        <button class="primary full" id="submitSuperadminLogin">Login</button>
+    </div>
+</div>
+
+<div class="modal hidden" id="dashboardLoginModal">
+    <div class="modal-card">
+        <button class="close" id="closeDashboardLoginModal">x</button>
+        <h2 id="dashboardLoginTitle">Dashboard Login</h2>
+        <p id="dashboardLoginHelp">Enter credentials to open this dashboard.</p>
+        <label>Username<input id="dashboardUsername" placeholder="username"></label>
+        <label>Password<input id="dashboardPassword" type="password" placeholder="password"></label>
+        <button class="primary full" id="submitDashboardLogin">Login & Open Dashboard</button>
+    </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/app.js?v=20260626-button-actions"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

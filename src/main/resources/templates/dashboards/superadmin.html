@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSociety Super Admin</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="dashboard-body" data-platform="smartsociety" data-dashboard-role="superadmin">
+    <aside class="sidebar">
+        <a class="brand" href="/">SmartSociety</a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="societies">Societies</button>
+        <button data-panel="subscriptions">Subscriptions</button>
+        <button data-panel="users">Users</button>
+        <button data-panel="analytics">Analytics</button>
+        <button data-panel="settings">Settings</button>
+        </nav>
+        <a class="logout" href="/">Back to Home</a>
+    </aside>
+    <main class="main">
+        <header class="header">
+            <div><p class="eyebrow">Platform Owner Console</p><h1 id="title">Overview</h1></div>
+            <div class="header-actions">
+                <span class="inline-state" id="platformNoticeState">Ready to notify</span>
+                <button data-action="notify">Send Platform Notice</button>
+            </div>
+        </header>
+        <section data-view="overview">
+            <div class="stats">
+                <article><span>Active Societies</span><strong>128</strong></article>
+                <article><span>Monthly Revenue</span><strong>Rs. 8.4L</strong></article>
+                <article><span>Trial Accounts</span><strong>19</strong></article>
+                <article><span>Open Tickets</span><strong>7</strong></article>
+            </div>
+            <div class="grid">
+                <article class="card"><h3>Tenant Isolation</h3><p>Every society uses a tenant id across users, flats, payments, complaints, visitors, and reports.</p></article>
+                <article class="card"><h3>SaaS Plans</h3><p>Free, Standard, and Premium plans control apartments, modules, payment features, and analytics.</p></article>
+                <article class="card"><h3>Operations</h3><p>Track onboarding, subscriptions, billing health, security activity, and support tickets.</p></article>
+            </div>
+        </section>
+        <section class="hidden" data-view="societies">
+            <div class="card"><div class="card-head"><h2>Registered Societies</h2><button data-action="add" data-table="societies">Add Society</button></div>
+                <table data-table="societies"><thead><tr><th>Society</th><th>City</th><th>Plan</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                    <tr><td>Green Nest Apartments</td><td>Chennai</td><td>Premium</td><td><span class="status active">Active</span></td><td><button data-action="suspend">Suspend</button></td></tr>
+                    <tr><td>Lakeview Residency</td><td>Bangalore</td><td>Standard</td><td><span class="status pending">Pending</span></td><td><button data-action="approve">Approve</button></td></tr>
+                </tbody></table>
+            </div>
+        </section>
+        <section class="hidden subscriptions-panel" data-view="subscriptions">
+            <div class="subscription-grid">
+                <article class="card subscription-plan-card" data-plan="Free">
+                    <span class="plan-kicker">Starter</span>
+                    <div class="plan-title-row">
+                        <h3>Free</h3>
+                        <span class="status active">Trial</span>
+                    </div>
+                    <p>1 block, 50 flats, complaints, notices.</p>
+                    <ul>
+                        <li>Small society onboarding</li>
+                        <li>Basic announcements</li>
+                        <li>Email support</li>
+                    </ul>
+                    <button data-action="update-plan" data-plan="Free">Update Plan</button>
+                </article>
+                <article class="card subscription-plan-card featured-plan" data-plan="Standard">
+                    <span class="plan-kicker">Most used</span>
+                    <div class="plan-title-row">
+                        <h3>Standard</h3>
+                        <span class="status approved">Live</span>
+                    </div>
+                    <p>5 blocks, 500 flats, billing, visitors, amenities.</p>
+                    <ul>
+                        <li>Resident and admin workflows</li>
+                        <li>Billing and visitor desk</li>
+                        <li>Priority onboarding</li>
+                    </ul>
+                    <button data-action="update-plan" data-plan="Standard">Update Plan</button>
+                </article>
+                <article class="card subscription-plan-card" data-plan="Premium">
+                    <span class="plan-kicker">Scale</span>
+                    <div class="plan-title-row">
+                        <h3>Premium</h3>
+                        <span class="status pending">Upgradeable</span>
+                    </div>
+                    <p>Unlimited flats, analytics, expenses, payment gateway.</p>
+                    <ul>
+                        <li>Advanced analytics</li>
+                        <li>Expense and payment controls</li>
+                        <li>Premium support channel</li>
+                    </ul>
+                    <button data-action="update-plan" data-plan="Premium">Update Plan</button>
+                </article>
+            </div>
+        </section>
+        <section class="hidden" data-view="users">
+            <div class="card"><div class="card-head"><h2>Platform Users</h2><button data-action="add" data-table="users">Create User</button></div>
+                <table data-table="users"><thead><tr><th>Name</th><th>Role</th><th>Society</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                    <tr><td>Arun Kumar</td><td>Society Admin</td><td>Green Nest</td><td><span class="status active">Active</span></td><td><button data-action="notify">Notify</button></td></tr>
+                    <tr><td>Priya S</td><td>Resident</td><td>Lakeview</td><td><span class="status pending">Invite Sent</span></td><td><button data-action="approve">Activate</button></td></tr>
+                </tbody></table>
+            </div>
+        </section>
+        <section class="hidden" data-view="analytics">
+            <div class="card">
+                <div class="card-head">
+                    <h2>Platform Analytics</h2>
+                    <button data-action="notify">Export Analytics</button>
+                </div>
+                <div class="pill-row"><span>MRR +18%</span><span>Visitor Logs 42K</span><span>Payments 96% Success</span><span>Avg Complaint SLA 14h</span></div>
+            </div>
+        </section>
+        <section class="hidden" data-view="settings">
+            <div class="card superadmin-settings-card">
+                <div class="card-head">
+                    <h2>Platform Settings</h2>
+                    <span class="inline-state" id="settingsSavedAt">No changes saved yet</span>
+                </div>
+                <div class="form-grid">
+                    <label>Support email<input value="support@smartsociety.local"></label>
+                    <label>Approval rule<select><option>Auto approve paid tenants</option><option>Manual review</option></select></label>
+                </div>
+                <p><button data-action="save">Save Settings</button></p>
+                <div class="activity-log" id="platformActivityLog" aria-live="polite">
+                    <h3>Recent platform activity</h3>
+                    <ul>
+                        <li><strong>Ready</strong><span>Use each Super Admin section from top to bottom. Actions will appear here.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/dashboard.js?v=20260627-resident-profile-save"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

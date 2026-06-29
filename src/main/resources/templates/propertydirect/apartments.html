@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apartments for Rent and Sale - PropertyDirect</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="apartment-page">
+<header class="topbar compact">
+    <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> PropertyDirect</a>
+    <div class="apartment-searchbar">
+        <select id="listingCity"><option>Bangalore</option><option>Chennai</option><option>Mumbai</option><option>Pune</option></select>
+        <input id="listingSearch" placeholder="Add localities, societies or landmarks">
+        <button class="primary small" id="listingSearchButton">Search</button>
+    </div>
+    <nav class="nav">
+        <a href="/propertydirect/dashboards/customer">Customer Dashboard</a>
+        <button class="primary small post-apartment-trigger" data-open-modal="post"><span aria-hidden="true">＋</span> Post Apartment</button>
+    </nav>
+</header>
+
+<main class="listing-shell">
+    <aside class="filters">
+        <div class="filter-head">
+            <strong>Filters</strong>
+            <button id="clearFilters">Reset</button>
+        </div>
+        <label>BHK Type</label>
+        <div class="check-grid">
+            <button data-filter-group="bhk" data-filter="1 BHK">1 BHK</button>
+            <button data-filter-group="bhk" data-filter="2 BHK">2 BHK</button>
+            <button data-filter-group="bhk" data-filter="3 BHK">3 BHK</button>
+            <button data-filter-group="bhk" data-filter="4 BHK">4 BHK</button>
+        </div>
+        <label>Budget Range</label>
+        <input id="budgetRange" type="range" min="10000" max="150000" value="80000">
+        <p class="range-copy">Up to <span id="budgetValue">₹80,000</span></p>
+        <label>Availability</label>
+        <div class="filter-list">
+            <button data-filter-group="availability" data-filter="Ready to Move">Immediate</button>
+            <button data-filter-group="availability" data-filter="15 Days">Within 15 Days</button>
+            <button data-filter-group="availability" data-filter="30 Days">Within 30 Days</button>
+        </div>
+        <label>Furnishing</label>
+        <div class="filter-list">
+            <button data-filter-group="furnishing" data-filter="Fully Furnished">Full</button>
+            <button data-filter-group="furnishing" data-filter="Semi Furnished">Semi</button>
+            <button data-filter-group="furnishing" data-filter="Unfurnished">None</button>
+        </div>
+        <label>Parking</label>
+        <div class="filter-list">
+            <button data-filter-group="parking" data-filter="Bike Parking">2 Wheeler</button>
+            <button data-filter-group="parking" data-filter="Car Parking">4 Wheeler</button>
+        </div>
+        <label>Apartment Type</label>
+        <div class="filter-list">
+            <button data-filter-group="apartmentType" data-filter="Gated Society">Gated Society</button>
+            <button data-filter-group="apartmentType" data-filter="Standalone Apartment">Standalone Apartment</button>
+        </div>
+    </aside>
+
+    <section class="listing-content">
+        <div class="listing-toolbar">
+            <div>
+                <p class="breadcrumb">Home / Apartments / Bangalore</p>
+                <h1><span id="resultCount">0</span> verified apartments without brokerage</h1>
+                <p>Owner-listed apartment homes with rent, deposit, furnishing, availability, nearby places and visit options.</p>
+            </div>
+            <div class="view-toggle">
+                <button class="active" data-view-mode="list">List</button>
+                <button data-view-mode="map">Map</button>
+            </div>
+        </div>
+
+        <div class="society-strip">
+            <strong>Top societies in your search</strong>
+            <div id="societyStrip"></div>
+        </div>
+
+        <div id="apartmentResults" class="apartment-results"></div>
+        <div id="mapView" class="map-view hidden">
+            <div class="map-card">Map preview of apartment locations</div>
+        </div>
+    </section>
+</main>
+
+<div class="modal hidden" id="appModal">
+    <div class="modal-card">
+        <button class="close" id="closeModal">x</button>
+        <h2 id="modalTitle">Get Owner Details</h2>
+        <p id="modalText">Share your details to continue.</p>
+        <div id="modalFields">
+            <label>Name<input placeholder="Your name"></label>
+            <label>Phone<input placeholder="Mobile number"></label>
+            <label>Email<input placeholder="Email address"></label>
+        </div>
+        <button class="primary full" id="modalSubmit">Submit</button>
+    </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/apartments.js?v=20260626-report-mail"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

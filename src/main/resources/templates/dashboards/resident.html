@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSociety Resident</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="dashboard-body" data-platform="smartsociety" data-dashboard-role="resident">
+    <aside class="sidebar">
+        <a class="brand" href="/">SmartSociety</a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="billing">My Bills</button>
+        <button data-panel="pass">Visitor Pass</button>
+        <button data-panel="complaints">Complaints</button>
+        <button data-panel="amenities">Amenities</button>
+        <button data-panel="announcements">Announcements</button>
+        <button data-panel="profile">Profile</button>
+        </nav>
+        <a class="logout" href="/">Back to Home</a>
+    </aside>
+    <main class="main">
+        <header class="header"><div><p class="eyebrow">Resident Portal - Flat A-101</p><h1 id="title">Overview</h1></div><button data-action="notify">Contact Admin</button></header>
+        <section data-view="overview"><div class="stats"><article><span>Due Amount</span><strong>Rs. 2,500</strong></article><article><span>Visitors Today</span><strong>3</strong></article><article><span>Open Complaints</span><strong>1</strong></article><article><span>Bookings</span><strong>2</strong></article></div></section>
+        <section class="hidden" data-view="billing"><div class="card"><h2>My Maintenance Bills</h2><table data-table="billing"><thead><tr><th>Month</th><th>Type</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>June</td><td>Maintenance</td><td>Rs. 2,500</td><td><span class="status pending">Unpaid</span></td><td><button data-action="pay">Pay Now</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="pass"><div class="card"><h2>Create Visitor Pass</h2><div class="form-grid"><input value="Visitor name"><input value="Mobile number"><input value="Purpose"><input value="Expected time"></div><p><button data-action="add" data-table="passes">Create Pass</button></p><table data-table="passes"><tbody></tbody></table></div></section>
+        <section class="hidden" data-view="complaints"><div class="card"><div class="card-head"><h2>My Complaints</h2><button data-action="add" data-table="complaints">Raise Complaint</button></div><table data-table="complaints"><thead><tr><th>Issue</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Bathroom leak</td><td>Plumbing</td><td><span class="status open">Open</span></td><td><button data-action="close">Close</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="amenities"><div class="grid"><article class="card"><h3>Gym</h3><p>6 AM to 10 PM</p><button data-action="book">Book</button></article><article class="card"><h3>Clubhouse</h3><p>Available tonight</p><button data-action="book">Book</button></article><article class="card"><h3>Guest Parking</h3><p>4 slots free</p><button data-action="book">Reserve</button></article></div></section>
+        <section class="hidden" data-view="announcements"><div class="card"><h2>Latest Announcements</h2><p>Water supply maintenance tomorrow from 10 AM to 12 PM.</p><p>Festival decoration meeting this Sunday.</p></div></section>
+        <section class="hidden" data-view="profile">
+            <div class="card">
+                <div class="card-head">
+                    <h2>Profile</h2>
+                    <span class="inline-state" id="residentProfileState">Profile ready</span>
+                </div>
+                <div class="form-grid">
+                    <label>Name<input data-profile-field="name" value="Kavya N"></label>
+                    <label>Flat<input data-profile-field="flat" value="A-101"></label>
+                    <label>Resident type<input data-profile-field="type" value="Owner"></label>
+                    <label>Email<input data-profile-field="email" value="kavya@example.com"></label>
+                </div>
+                <p><button data-action="save">Save Profile</button></p>
+            </div>
+        </section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/dashboard.js?v=20260627-resident-profile-save"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

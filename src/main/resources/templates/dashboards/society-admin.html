@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSociety Society Admin</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="dashboard-body" data-platform="smartsociety" data-dashboard-role="admin">
+    <aside class="sidebar">
+        <a class="brand" href="/">SmartSociety</a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="flats">Blocks & Flats</button>
+        <button data-panel="residents">Residents</button>
+        <button data-panel="billing">Billing</button>
+        <button data-panel="visitors">Visitors</button>
+        <button data-panel="complaints">Complaints</button>
+        <button data-panel="amenities">Amenities</button>
+        <button data-panel="announcements">Announcements</button>
+        <button data-panel="expenses">Expenses</button>
+        <button data-panel="payments">Payments</button>
+        <button data-panel="reports">Reports</button>
+        </nav>
+        <a class="logout" href="/">Back to Home</a>
+    </aside>
+    <main class="main">
+        <header class="header">
+            <div><p class="eyebrow">Green Nest Apartments</p><h1 id="title">Overview</h1></div>
+            <div class="header-actions">
+                <span class="inline-state" id="societySyncState">Ready to sync</span>
+                <button data-action="save">Sync Society Data</button>
+            </div>
+        </header>
+        <section data-view="overview">
+            <div class="stats"><article><span>Total Flats</span><strong>320</strong></article><article><span>Residents</span><strong>912</strong></article><article><span>Unpaid Bills</span><strong>46</strong></article><article><span>Open Complaints</span><strong>12</strong></article></div>
+            <div class="card"><h2>Today</h2><div class="pill-row"><span>18 visitors approved</span><span>6 amenity bookings</span><span>3 expenses waiting approval</span></div></div>
+            <div class="activity-log" id="societyActivityLog" aria-live="polite">
+                <h3>Admin activity</h3>
+                <ul>
+                    <li><strong>Ready</strong><span>Use the Admin tabs from top to bottom. Completed actions will appear here.</span></li>
+                </ul>
+            </div>
+        </section>
+        <section class="hidden" data-view="flats"><div class="card"><div class="card-head"><h2>Blocks and Flats</h2><button data-action="add" data-table="flats">Add Flat</button></div><table data-table="flats"><thead><tr><th>Flat</th><th>Owner</th><th>Occupancy</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>A-101</td><td>Ramesh</td><td>Family</td><td><span class="status active">Occupied</span></td><td><button data-action="save">Edit</button></td></tr><tr><td>B-204</td><td>Meena</td><td>Vacant</td><td><span class="status pending">Setup</span></td><td><button data-action="approve">Activate</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="residents"><div class="card"><div class="card-head"><h2>Residents</h2><button data-action="add" data-table="residents">Invite Resident</button></div><table data-table="residents"><thead><tr><th>Name</th><th>Flat</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Kavya N</td><td>A-101</td><td>Owner</td><td><span class="status active">Active</span></td><td><button data-action="notify">Notify</button></td></tr><tr><td>Vijay P</td><td>C-303</td><td>Tenant</td><td><span class="status pending">Pending KYC</span></td><td><button data-action="approve">Approve</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="billing"><div class="card"><div class="card-head"><h2>Maintenance Billing</h2><button data-action="generate">Generate Monthly Bills</button></div><div class="stats compact-stats billing-stats"><article><span>Total Billed</span><strong>Rs. 5,000</strong></article><article><span>Collected</span><strong>Rs. 2,500</strong></article><article><span>Pending</span><strong>Rs. 2,500</strong></article></div><table data-table="billing"><thead><tr><th>Flat</th><th>Month</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>A-101</td><td>June</td><td>Rs. 2,500</td><td><span class="status paid">Paid</span></td><td><button data-action="receipt">Receipt</button></td></tr><tr><td>B-204</td><td>June</td><td>Rs. 2,500</td><td><span class="status pending">Unpaid</span></td><td><button data-action="pay">Mark Paid</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="visitors"><div class="card"><div class="card-head"><h2>Visitor Management</h2><button data-action="add" data-table="visitors">Add Visitor</button></div><div class="stats compact-stats"><article><span>Waiting</span><strong>1</strong></article><article><span>Inside</span><strong>1</strong></article><article><span>Checked Out</span><strong>0</strong></article></div><table data-table="visitors"><thead><tr><th>Visitor</th><th>Flat</th><th>Purpose</th><th>Expected Time</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Courier</td><td>A-101</td><td>Delivery</td><td>Today 2:30 PM</td><td><span class="status pending">Waiting</span></td><td><button data-action="checkin">Check In</button></td></tr><tr><td>Electrician</td><td>C-303</td><td>Service</td><td>Today 4:00 PM</td><td><span class="status progress">Inside</span></td><td><button data-action="checkout">Check Out</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="complaints"><div class="card"><div class="card-head"><h2>Complaints</h2><button data-action="add" data-table="complaints">Create Ticket</button></div><table data-table="complaints"><thead><tr><th>Issue</th><th>Flat</th><th>Team</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Water leakage</td><td>A-101</td><td>Plumbing</td><td><span class="status open">Open</span></td><td><button data-action="assign">Assign</button> <button data-action="close">Close</button></td></tr><tr><td>Lift noise</td><td>B Block</td><td>Maintenance</td><td><span class="status progress">In Progress</span></td><td><button data-action="close">Close</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="amenities"><div class="grid"><article class="card"><div class="plan-title-row"><h3>Clubhouse</h3><span class="status pending">Available</span></div><p>8 bookings today</p><button data-action="book">Book Slot</button></article><article class="card"><div class="plan-title-row"><h3>Badminton Court</h3><span class="status pending">Available</span></div><p>12 bookings today</p><button data-action="book">Book Slot</button></article><article class="card"><div class="plan-title-row"><h3>Guest Room</h3><span class="status pending">Waiting Approval</span></div><p>2 active bookings</p><button data-action="approve">Approve</button></article></div></section>
+        <section class="hidden" data-view="announcements"><div class="card"><div class="card-head"><h2>Announcement Center</h2><span class="inline-state" id="announcementState">Draft ready</span></div><div class="form-grid"><label>Title<input value="Water supply maintenance"></label><label>Schedule<input value="Tomorrow 10 AM to 12 PM"></label></div><p><button data-action="notify">Publish Announcement</button></p></div></section>
+        <section class="hidden" data-view="expenses"><div class="card"><div class="card-head"><h2>Expense Approvals</h2><button data-action="add" data-table="expenses">Add Expense</button></div><table data-table="expenses"><thead><tr><th>Expense</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Generator service</td><td>PowerCare</td><td>Rs. 18,000</td><td><span class="status pending">Pending</span></td><td><button data-action="approve">Approve</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="payments"><div class="card"><div class="card-head"><h2>Payment Summary</h2><button data-action="notify">Export Payments</button></div><div class="pill-row"><span>Collected Rs. 6.8L</span><span>Pending Rs. 1.1L</span><span>Gateway Success 98%</span></div></div></section>
+        <section class="hidden" data-view="reports"><div class="card"><div class="card-head"><h2>Reports and Analytics</h2><button data-action="notify">Export Report</button></div><div class="stats"><article><span>Billing Collection</span><strong>86%</strong></article><article><span>Visitor Entries</span><strong>1,248</strong></article><article><span>Complaint SLA</span><strong>14h</strong></article><article><span>Occupancy</span><strong>94%</strong></article></div><div class="pill-row"><span>Monthly billing report</span><span>Visitor trend report</span><span>Complaint category report</span><span>Expense summary</span></div></div></section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/dashboard.js?v=20260627-resident-profile-save"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>

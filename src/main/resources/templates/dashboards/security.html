@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSociety Security</title>
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260629-premium-finish">
+</head>
+<body class="dashboard-body" data-platform="smartsociety" data-dashboard-role="security">
+    <aside class="sidebar">
+        <a class="brand" href="/">SmartSociety</a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="entries">Gate Entries</button>
+        <button data-panel="pass">Visitor Passes</button>
+        <button data-panel="visitors">Visitors</button>
+        </nav>
+        <a class="logout" href="/">Back to Home</a>
+    </aside>
+    <main class="main">
+        <header class="header"><div><p class="eyebrow">Security Desk</p><h1 id="title">Overview</h1></div><button data-action="notify">Raise Alert</button></header>
+        <section data-view="overview"><div class="stats"><article><span>Inside Visitors</span><strong>22</strong></article><article><span>Pending Approvals</span><strong>8</strong></article><article><span>Deliveries</span><strong>34</strong></article><article><span>Service Staff</span><strong>16</strong></article></div></section>
+        <section class="hidden" data-view="entries"><div class="card"><div class="card-head"><h2>Gate Entries</h2><button data-action="add" data-table="entries">New Entry</button></div><table data-table="entries"><thead><tr><th>Visitor</th><th>Mobile</th><th>Flat</th><th>Purpose</th><th>Approved By</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Arun Kumar</td><td>98765 43210</td><td>A-101</td><td>Food delivery</td><td>Kavya N</td><td><span class="status pending">Waiting</span></td><td><button data-action="checkin">Check In</button></td></tr><tr><td>Meena Electricals</td><td>98400 11223</td><td>C-303</td><td>Electrical service</td><td>Vijay P</td><td><span class="status progress">Inside</span></td><td><button data-action="checkout">Check Out</button></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="pass"><div class="card"><div class="card-head"><h2>Approved Visitor Passes</h2><button data-action="add" data-table="passes">Create Pass</button></div><table data-table="passes"><thead><tr><th>Visitor</th><th>Flat</th><th>Valid Until</th><th>Purpose</th><th>Status</th></tr></thead><tbody><tr><td>Rohit Sharma</td><td>B-204</td><td>Today 8:00 PM</td><td>Family guest</td><td><span class="status approved">Approved</span></td></tr><tr><td>QuickCart Delivery</td><td>A-101</td><td>Today 6:30 PM</td><td>Parcel pickup</td><td><span class="status approved">Approved</span></td></tr></tbody></table></div></section>
+        <section class="hidden" data-view="visitors"><div class="card"><h2>Current Visitors Inside</h2><table><thead><tr><th>Visitor</th><th>Mobile</th><th>Flat</th><th>In Time</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Meena Electricals</td><td>98400 11223</td><td>C-303</td><td>10:25 AM</td><td><span class="status progress">Inside</span></td><td><button data-action="checkout">Check Out</button></td></tr><tr><td>Housekeeping Team</td><td>90031 77882</td><td>Clubhouse</td><td>09:40 AM</td><td><span class="status progress">Inside</span></td><td><button data-action="checkout">Check Out</button></td></tr></tbody></table></div></section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+<script src="/smartsociety/js/dashboard.js?v=20260627-resident-profile-save"></script>
+<script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
+</body>
+</html>
