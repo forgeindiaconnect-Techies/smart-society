@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in | SmartSociety</title>
+    <link rel="stylesheet" th:href="@{/shared/css/theme.css?v=20260629-premium-finish}">
+</head>
+<body>
+<main class="auth-page">
+    <section class="auth-shell">
+        <div class="brand-lockup">
+            <span class="brand-mark">SS</span>
+            <span>SmartSociety</span>
+        </div>
+        <div class="auth-copy">
+            <p class="eyebrow">Secure access</p>
+            <h1>Sign in to your workspace</h1>
+            <p>Access dashboards, society operations, resident tools, and PropertyDirect workflows from one secure account.</p>
+        </div>
+        <form class="auth-form" th:action="@{/login}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div th:if="${param.error}" class="form-alert">Invalid email or password.</div>
+            <div th:if="${param.logout}" class="form-alert success">You have been signed out.</div>
+
+            <label>
+                <span>Email</span>
+                <input type="email" name="username" autocomplete="email" required>
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" name="password" autocomplete="current-password" required>
+            </label>
+            <button class="primary full" type="submit">Sign in</button>
+        </form>
+        <div class="auth-links">
+            <a th:href="@{/}">SmartSociety</a>
+            <a th:href="@{/propertydirect}">PropertyDirect</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -77,7 +77,7 @@ public class DashboardController {
         return "terms/finance-reports";
     }
 
-    @GetMapping("/propertydirect")
+    @GetMapping({"/propertydirect", "/propertydirect/"})
     public String propertyDirectHome() {
         return "propertydirect/index";
     }

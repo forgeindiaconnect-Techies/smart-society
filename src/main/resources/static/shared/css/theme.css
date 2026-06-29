@@ -3204,3 +3204,120 @@ footer {
         max-width: calc(100vw - 32px);
     }
 }
+
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 32px 18px;
+    background:
+        linear-gradient(145deg, rgba(248, 252, 250, .94), rgba(226, 238, 233, .88)),
+        url("/shared/images/smartsociety-cinematic-1.webp") center / cover;
+}
+
+.auth-shell {
+    width: min(100%, 440px);
+    padding: 34px;
+    border: 1px solid rgba(255, 255, 255, .76);
+    border-radius: 24px;
+    background: rgba(250, 253, 251, .88);
+    box-shadow: 0 26px 90px rgba(17, 52, 43, .18);
+    backdrop-filter: blur(18px);
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #102820;
+    font-weight: 900;
+    font-size: 1.16rem;
+}
+
+.brand-mark {
+    display: inline-grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 16px;
+    color: #fff;
+    background: linear-gradient(135deg, #20b394, #08725d);
+    box-shadow: 0 14px 32px rgba(16, 128, 105, .26);
+}
+
+.auth-copy {
+    margin: 34px 0 26px;
+}
+
+.auth-copy h1 {
+    margin: 8px 0 10px;
+    color: #102820;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.02;
+}
+
+.auth-copy p:not(.eyebrow) {
+    margin: 0;
+    color: #5e746d;
+    line-height: 1.6;
+}
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-form label {
+    display: grid;
+    gap: 8px;
+    color: #102820;
+    font-weight: 800;
+}
+
+.auth-form input {
+    width: 100%;
+    border: 1px solid rgba(31, 69, 58, .16);
+    border-radius: 14px;
+    padding: 14px 15px;
+    color: #102820;
+    background: rgba(255, 255, 255, .78);
+    font: inherit;
+    outline: none;
+}
+
+.auth-form input:focus {
+    border-color: #15967e;
+    box-shadow: 0 0 0 4px rgba(32, 179, 148, .14);
+}
+
+.form-alert {
+    border-radius: 14px;
+    padding: 12px 14px;
+    color: #8a1f1f;
+    background: rgba(255, 232, 232, .86);
+    font-weight: 800;
+}
+
+.form-alert.success {
+    color: #0b6e4f;
+    background: rgba(222, 247, 238, .9);
+}
+
+.auth-links {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 22px;
+    font-weight: 800;
+}
+
+.auth-links a {
+    color: #0b6e4f;
+}
+
+@media (max-width: 560px) {
+    .auth-shell {
+        padding: 24px;
+        border-radius: 18px;
+    }
+}
