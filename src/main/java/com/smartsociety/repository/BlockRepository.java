@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
     List<Block> findByTenantId(String tenantId);
-    Optional<Block> findByTenantIdAndName(String tenantId, String name);
+    Optional<Block> findFirstByTenantIdAndNameOrderByIdAsc(String tenantId, String name);
 }

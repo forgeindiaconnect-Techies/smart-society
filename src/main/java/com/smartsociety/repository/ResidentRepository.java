@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ResidentRepository extends JpaRepository<Resident, Long> {
     long countByTenantId(String tenantId);
-    Optional<Resident> findByUser(AppUser user);
+    Optional<Resident> findFirstByUserOrderByIdAsc(AppUser user);
 }

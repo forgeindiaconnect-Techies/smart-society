@@ -43,7 +43,7 @@ public class DataLoader {
             String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@localhost.invalid");
             String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", UUID.randomUUID().toString());
 
-            plans.findByTenantIdAndName("platform", "Premium Plan").orElseGet(() -> {
+            plans.findFirstByTenantIdAndNameOrderByIdAsc("platform", "Premium Plan").orElseGet(() -> {
                 SubscriptionPlan plan = new SubscriptionPlan();
                 plan.setTenantId("platform");
                 plan.setName("Premium Plan");
@@ -89,7 +89,7 @@ public class DataLoader {
                 return users.save(user);
             });
 
-            Block block = blocks.findByTenantIdAndName("green-heights", "Block A").orElseGet(() -> {
+            Block block = blocks.findFirstByTenantIdAndNameOrderByIdAsc("green-heights", "Block A").orElseGet(() -> {
                 Block newBlock = new Block();
                 newBlock.setTenantId("green-heights");
                 newBlock.setName("Block A");
@@ -97,7 +97,7 @@ public class DataLoader {
                 return blocks.save(newBlock);
             });
 
-            Apartment apartment = apartments.findByTenantIdAndUnitNo("green-heights", "A-204").orElseGet(() -> {
+            Apartment apartment = apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc("green-heights", "A-204").orElseGet(() -> {
                 Apartment newApartment = new Apartment();
                 newApartment.setTenantId("green-heights");
                 newApartment.setBlock(block);
@@ -110,7 +110,7 @@ public class DataLoader {
                 return apartments.save(newApartment);
             });
 
-            Resident resident = residents.findByUser(residentUser).orElseGet(() -> {
+            Resident resident = residents.findFirstByUserOrderByIdAsc(residentUser).orElseGet(() -> {
                 Resident newResident = new Resident();
                 newResident.setTenantId("green-heights");
                 newResident.setUser(residentUser);
@@ -120,7 +120,7 @@ public class DataLoader {
                 return residents.save(newResident);
             });
 
-            complaints.findByTenantIdAndTitle("green-heights", "Water leakage").orElseGet(() -> {
+            complaints.findFirstByTenantIdAndTitleOrderByIdAsc("green-heights", "Water leakage").orElseGet(() -> {
                 Complaint complaint = new Complaint();
                 complaint.setTenantId("green-heights");
                 complaint.setResident(resident);

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     long countByTenantIdAndStatus(String tenantId, String status);
-    Optional<Complaint> findByTenantIdAndTitle(String tenantId, String title);
+    Optional<Complaint> findFirstByTenantIdAndTitleOrderByIdAsc(String tenantId, String title);
 }

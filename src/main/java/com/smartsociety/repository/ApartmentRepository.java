@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
     List<Apartment> findByTenantId(String tenantId);
     long countByTenantId(String tenantId);
-    Optional<Apartment> findByTenantIdAndUnitNo(String tenantId, String unitNo);
+    Optional<Apartment> findFirstByTenantIdAndUnitNoOrderByIdAsc(String tenantId, String unitNo);
 }
