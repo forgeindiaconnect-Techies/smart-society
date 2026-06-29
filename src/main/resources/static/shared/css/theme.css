@@ -88,15 +88,15 @@ p {
 }
 
 h1 {
-    font-size: clamp(2.5rem, 6vw, 5.6rem);
-    line-height: .98;
-    letter-spacing: -.07em;
+    font-size: clamp(2.1rem, 4.8vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: -.045em;
 }
 
 h2 {
-    font-size: clamp(1.8rem, 3vw, 3rem);
+    font-size: clamp(1.55rem, 2.5vw, 2.45rem);
     line-height: 1.08;
-    letter-spacing: -.045em;
+    letter-spacing: -.025em;
 }
 
 h3 {
@@ -141,7 +141,7 @@ main,
     position: sticky;
     top: 0;
     z-index: 20;
-    padding: 18px 20px;
+    padding: 12px 18px;
     background: rgba(237, 245, 241, .82);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, .7);
@@ -283,8 +283,8 @@ button:active,
 .hero {
     position: relative;
     width: min(var(--max), calc(100% - 40px));
-    margin: 34px auto 28px;
-    padding: clamp(36px, 7vw, 88px);
+    margin: 22px auto 22px;
+    padding: clamp(26px, 4.8vw, 58px);
     text-align: center;
     border-radius: 48px;
     background:
@@ -702,7 +702,7 @@ textarea:focus {
 
 .detail-hero,
 .detail-layout {
-    padding: 28px;
+    padding: 22px;
 }
 
 .detail-layout {
@@ -1007,8 +1007,8 @@ html[data-theme="dark"] .receipt-line {
 
 .header,
 .dash-header {
-    padding: 28px;
-    border-radius: 34px;
+    padding: 22px 24px;
+    border-radius: 26px;
     background: var(--surface);
     box-shadow: var(--raised);
 }
@@ -1696,7 +1696,7 @@ html[data-theme="dark"] .post-type-tabs button.active {
 
 .apartment-page .topbar.compact {
     grid-template-columns: minmax(230px, 340px) minmax(360px, 620px) minmax(300px, 1fr);
-    padding: 20px 28px;
+    padding: 12px 18px;
 }
 
 .apartment-page .topbar.compact .nav {
@@ -1867,7 +1867,7 @@ h3 {
 }
 
 .hero h1 {
-    font-size: clamp(2.35rem, 5.2vw, 5rem);
+    font-size: clamp(2rem, 4.3vw, 4.1rem);
 }
 
 .brand,
@@ -1989,7 +1989,7 @@ button,
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    padding: 34px 36px;
+    padding: 22px 24px;
 }
 
 .dashboard-body .header-actions,
@@ -2089,13 +2089,13 @@ button,
 .dashboard-body .header h1,
 .app-dashboard .dash-header h1 {
     margin: 0;
-    font-size: clamp(2.4rem, 4.5vw, 4.1rem);
-    line-height: .95;
+    font-size: clamp(1.55rem, 3vw, 2.6rem);
+    line-height: 1;
 }
 
 .dashboard-body .header .eyebrow,
 .app-dashboard .dash-header .eyebrow {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 
 .dashboard-body [data-view],
@@ -2652,7 +2652,7 @@ html[data-theme="dark"] .terms-nav {
 
 .header-inner,
 .topbar.compact {
-    min-height: 74px;
+    min-height: 58px;
 }
 
 .hero,
@@ -3024,10 +3024,10 @@ h4,
 }
 
 .topbar {
-    padding: 14px 20px;
+    padding: 9px 16px;
     background: rgba(247, 251, 248, .88) !important;
     border-bottom: 1px solid var(--premium-border);
-    box-shadow: 0 16px 40px rgba(26, 53, 44, .08) !important;
+    box-shadow: 0 10px 26px rgba(26, 53, 44, .07) !important;
 }
 
 html[data-theme="dark"] .topbar {
@@ -3035,8 +3035,8 @@ html[data-theme="dark"] .topbar {
 }
 
 .brand-mark {
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     border-radius: 8px;
     box-shadow: 0 14px 28px rgba(15, 102, 86, .2);
 }
@@ -3066,8 +3066,8 @@ html[data-theme="dark"] .meta {
 }
 
 .hero {
-    margin-top: 28px;
-    padding: clamp(34px, 6vw, 72px);
+    margin-top: 18px;
+    padding: clamp(24px, 4.2vw, 48px);
     border-radius: 8px;
     background:
         linear-gradient(135deg, rgba(255, 255, 255, .86), rgba(255, 255, 255, .54)),
@@ -3086,7 +3086,7 @@ html[data-theme="dark"] .hero {
 
 .hero-copy {
     max-width: 720px;
-    font-size: clamp(1.05rem, 1.6vw, 1.32rem);
+    font-size: clamp(.98rem, 1.25vw, 1.12rem);
 }
 
 .trust-line,
@@ -3257,7 +3257,7 @@ footer {
 
 @media (max-width: 920px) {
     .hero {
-        padding: 28px;
+        padding: 22px;
     }
 
     .theme-toggle {
