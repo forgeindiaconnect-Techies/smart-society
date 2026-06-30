@@ -4911,3 +4911,117 @@ html[data-theme="dark"] .apartment-page .topbar.compact {
         grid-template-columns: 1fr 1fr !important;
     }
 }
+
+/* Public header tab alignment fix */
+body:not(.apartment-page) > .topbar:not(.compact) .header-inner {
+    width: min(100% - 48px, 1820px) !important;
+    min-height: 52px !important;
+    margin-inline: auto !important;
+}
+
+body:not(.apartment-page) > .topbar:not(.compact) .nav {
+    position: static !important;
+    overflow: visible !important;
+    flex: 0 1 auto !important;
+    max-width: calc(100% - 260px) !important;
+}
+
+body:not(.apartment-page) > .topbar:not(.compact) .nav-main,
+body:not(.apartment-page) > .topbar:not(.compact) .nav-account {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+}
+
+body:not(.apartment-page) > .topbar:not(.compact) .nav-cta {
+    position: static !important;
+    inset: auto !important;
+    right: auto !important;
+    top: auto !important;
+    flex: 0 0 auto !important;
+    margin-left: 4px !important;
+    transform: none !important;
+}
+
+body:not(.apartment-page) > .topbar:not(.compact) .nav a,
+body:not(.apartment-page) > .topbar:not(.compact) .nav button,
+body:not(.apartment-page) > .topbar:not(.compact) .link-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+@media (max-width: 1240px) {
+    body:not(.apartment-page) > .topbar:not(.compact) .nav {
+        max-width: none !important;
+    }
+}
+
+/* Selected filter/tab contrast fix */
+.filters button.active,
+.filters button[aria-pressed="true"],
+.filter-list button.active,
+.filter-list button[aria-pressed="true"],
+.check-grid button.active,
+.check-grid button[aria-pressed="true"],
+.view-toggle button.active,
+.post-type-tabs button.active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+    border-color: #b91c1c !important;
+    box-shadow: 0 12px 28px rgba(153, 27, 27, .22) !important;
+    text-shadow: none !important;
+}
+
+.filters button.active *,
+.filters button[aria-pressed="true"] *,
+.filter-list button.active *,
+.filter-list button[aria-pressed="true"] *,
+.check-grid button.active *,
+.check-grid button[aria-pressed="true"] *,
+.view-toggle button.active *,
+.post-type-tabs button.active * {
+    color: inherit !important;
+}
+
+.filters button:focus-visible:not(.active):not([aria-pressed="true"]),
+.filter-list button:focus-visible:not(.active):not([aria-pressed="true"]),
+.check-grid button:focus-visible:not(.active):not([aria-pressed="true"]) {
+    color: var(--primary-dark) !important;
+    background: #fff1f2 !important;
+    border-color: rgba(220, 38, 38, .42) !important;
+}
+
+html[data-theme="dark"] .filters button.active,
+html[data-theme="dark"] .filters button[aria-pressed="true"],
+html[data-theme="dark"] .filter-list button.active,
+html[data-theme="dark"] .filter-list button[aria-pressed="true"],
+html[data-theme="dark"] .check-grid button.active,
+html[data-theme="dark"] .check-grid button[aria-pressed="true"],
+html[data-theme="dark"] .view-toggle button.active,
+html[data-theme="dark"] .post-type-tabs button.active {
+    color: #21080a !important;
+    background: linear-gradient(135deg, #ff8a8a, #fb4b4b) !important;
+}
+
+/* Theme toggle red accent */
+.theme-toggle {
+    color: var(--ink) !important;
+    border-color: rgba(220, 38, 38, .18) !important;
+}
+
+.theme-toggle-icon {
+    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+}
+
+.theme-toggle-icon::after {
+    background: #fff7f7 !important;
+}
+
+html[data-theme="dark"] .theme-toggle-icon {
+    background: linear-gradient(135deg, #ff8a8a, #fb4b4b) !important;
+}
+
+html[data-theme="dark"] .theme-toggle-icon::after {
+    background: #21080a !important;
+    box-shadow: -5px 0 0 #fff4f4 !important;
+}
