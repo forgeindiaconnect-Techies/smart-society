@@ -5399,3 +5399,70 @@ html[data-theme="dark"] .dashboard-body .logout {
         white-space: normal !important;
     }
 }
+
+/* Sky-blue sidebar states across dashboards */
+.sidebar button,
+.dash-sidebar button,
+.dashboard-body .sidebar button,
+.app-dashboard .dash-sidebar button,
+.dashboard-body[data-dashboard-role="security"] .sidebar button,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar button,
+.logout,
+.dashboard-body .logout,
+.app-dashboard .logout,
+.dashboard-body[data-dashboard-role="security"] .logout,
+.dashboard-body[data-dashboard-role="maintenance"] .logout {
+    color: #08243d !important;
+    background: linear-gradient(135deg, #8dbbed, #72aee5) !important;
+    border-color: rgba(47, 117, 182, .2) !important;
+    box-shadow: 0 8px 20px rgba(47, 117, 182, .16) !important;
+}
+
+.sidebar button:hover,
+.dash-sidebar button:hover,
+.dashboard-body .sidebar button:hover,
+.app-dashboard .dash-sidebar button:hover,
+.dashboard-body[data-dashboard-role="security"] .sidebar button:hover,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar button:hover,
+.sidebar button.active,
+.dash-sidebar button.active,
+.dashboard-body .sidebar button.active,
+.app-dashboard .dash-sidebar button.active,
+.dashboard-body[data-dashboard-role="security"] .sidebar button.active,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar button.active,
+.logout:hover,
+.dashboard-body .logout:hover,
+.app-dashboard .logout:hover,
+.dashboard-body[data-dashboard-role="security"] .logout:hover,
+.dashboard-body[data-dashboard-role="maintenance"] .logout:hover {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2f75b6, #174f86) !important;
+    border-color: rgba(23, 79, 134, .34) !important;
+    box-shadow: 0 12px 26px rgba(23, 79, 134, .24) !important;
+}
+
+html[data-theme="dark"] .sidebar button,
+html[data-theme="dark"] .dash-sidebar button,
+html[data-theme="dark"] .dashboard-body .sidebar button,
+html[data-theme="dark"] .app-dashboard .dash-sidebar button,
+html[data-theme="dark"] .logout,
+html[data-theme="dark"] .dashboard-body .logout,
+html[data-theme="dark"] .app-dashboard .logout {
+    color: #06192b !important;
+    background: linear-gradient(135deg, #9fd0f7, #6fb4eb) !important;
+}
+
+html[data-theme="dark"] .sidebar button:hover,
+html[data-theme="dark"] .dash-sidebar button:hover,
+html[data-theme="dark"] .dashboard-body .sidebar button:hover,
+html[data-theme="dark"] .app-dashboard .dash-sidebar button:hover,
+html[data-theme="dark"] .sidebar button.active,
+html[data-theme="dark"] .dash-sidebar button.active,
+html[data-theme="dark"] .dashboard-body .sidebar button.active,
+html[data-theme="dark"] .app-dashboard .dash-sidebar button.active,
+html[data-theme="dark"] .logout:hover,
+html[data-theme="dark"] .dashboard-body .logout:hover,
+html[data-theme="dark"] .app-dashboard .logout:hover {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2f75b6, #0e3d6d) !important;
+}
