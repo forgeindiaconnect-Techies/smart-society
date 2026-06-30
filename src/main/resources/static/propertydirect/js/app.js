@@ -265,7 +265,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
         tab.setAttribute("aria-selected", "true");
         activeMode = tab.dataset.mode;
         renderModeView(activeMode);
-        renderListings(listings.filter((item) => item.type === activeMode));
+        renderListings();
     });
 });
 
@@ -303,7 +303,7 @@ document.addEventListener("click", (event) => {
     const filterButton = event.target.closest("[data-filter]");
     if (filterButton) {
         const filter = filterButton.dataset.filter.toLowerCase();
-        const filtered = listings.filter((item) => item.type === activeMode && item.meta.join(" ").toLowerCase().includes(filter));
+        const filtered = listings.filter((item) => item.meta.join(" ").toLowerCase().includes(filter));
         document.querySelectorAll("[data-filter]").forEach((button) => button.classList.toggle("active", button === filterButton));
         renderListings(filtered);
         showToast(`${filtered.length} ${filterButton.dataset.filter} homes found`);
@@ -370,7 +370,7 @@ submitDashboardLogin?.addEventListener("click", submitDashboardCredentials);
 dashboardPassword?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") submitDashboardCredentials();
 });
-document.getElementById("resetListings").addEventListener("click", () => renderListings(listings.filter((item) => item.type === activeMode)));
+document.getElementById("resetListings").addEventListener("click", () => renderListings());
 document.getElementById("menuButton").addEventListener("click", () => document.querySelector(".nav").classList.toggle("open"));
 
 const requiredDashboardRole = new URLSearchParams(window.location.search).get("loginRequired");
@@ -382,7 +382,7 @@ if (requiredDashboardRole && dashboardTargets[requiredDashboardRole]) {
     });
 }
 
-renderListings(listings.filter((item) => item.type === activeMode));
+renderListings();
 
 setupMotion();
 
