@@ -39,7 +39,9 @@ public class AuthController {
 
     @PostMapping("/dashboard-login")
     public ResponseEntity<Map<String, String>> dashboardLogin(@RequestBody DashboardLoginRequest request, HttpSession session) {
-        DashboardCredential credential = dashboardCredentials.get(DashboardCredential.key(request.platform(), request.role()));
+        DashboardCredential credential = safe(request.role()).isBlank()
+                ? findCredential(request.platform(), request.username(), request.password())
+                : dashboardCredentials.get(DashboardCredential.key(request.platform(), request.role()));
 
         if (credential == null
                 || !credential.username().equalsIgnoreCase(safe(request.username()))
@@ -53,6 +55,15 @@ public class AuthController {
                 "redirect", credential.redirect(),
                 "role", credential.role()
         ));
+    }
+
+    private DashboardCredential findCredential(String platform, String username, String password) {
+        return dashboardCredentials.values().stream()
+                .filter(credential -> credential.platform().equalsIgnoreCase(safe(platform)))
+                .filter(credential -> credential.username().equalsIgnoreCase(safe(username)))
+                .filter(credential -> credential.password().equals(password))
+                .findFirst()
+                .orElse(null);
     }
 
     private static String safe(String value) {

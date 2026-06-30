@@ -203,6 +203,11 @@ document.addEventListener("click", (event) => {
         return;
     }
 
+    if (action === "dashboard-login") {
+        openDashboardLogin({ platform: "smartsociety" });
+        return;
+    }
+
     if (action === "search") {
         openRoleSearch();
         return;
@@ -235,7 +240,9 @@ function openRoleSearch() {
 
 function openDashboardLogin({ platform, role, target }) {
     pendingDashboardLogin = { platform, role, target };
-    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."];
+    const [title, help] = role
+        ? dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."]
+        : ["Login", "Enter your credentials to open your workspace."];
     if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
     if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
     if (dashboardUsername) dashboardUsername.value = "";
@@ -336,6 +343,8 @@ if (requiredDashboardRole && dashboardTargets[requiredDashboardRole]) {
         role: requiredDashboardRole,
         target: dashboardTargets[requiredDashboardRole]
     });
+} else if (requiredDashboardRole) {
+    openDashboardLogin({ platform: "smartsociety" });
 }
 
 setupMotion();

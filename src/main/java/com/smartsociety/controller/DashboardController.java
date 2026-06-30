@@ -34,31 +34,31 @@ public class DashboardController {
 
     @GetMapping("/dashboards/superadmin")
     public String superAdminDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartsociety", "superadmin")) return "redirect:/?loginRequired=superadmin";
+        if (!isLoggedIn(session, "smartsociety", "superadmin")) return "redirect:/?loginRequired=true";
         return "dashboards/superadmin";
     }
 
     @GetMapping("/dashboards/society-admin")
     public String societyAdminDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartsociety", "admin")) return "redirect:/?loginRequired=admin";
+        if (!isLoggedIn(session, "smartsociety", "admin")) return "redirect:/?loginRequired=true";
         return "dashboards/society-admin";
     }
 
     @GetMapping("/dashboards/resident")
     public String residentDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartsociety", "resident")) return "redirect:/?loginRequired=resident";
+        if (!isLoggedIn(session, "smartsociety", "resident")) return "redirect:/?loginRequired=true";
         return "dashboards/resident";
     }
 
     @GetMapping("/dashboards/security")
     public String securityDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartsociety", "security")) return "redirect:/?loginRequired=security";
+        if (!isLoggedIn(session, "smartsociety", "security")) return "redirect:/?loginRequired=true";
         return "dashboards/security";
     }
 
     @GetMapping("/dashboards/maintenance")
     public String maintenanceDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartsociety", "maintenance")) return "redirect:/?loginRequired=maintenance";
+        if (!isLoggedIn(session, "smartsociety", "maintenance")) return "redirect:/?loginRequired=true";
         return "dashboards/maintenance";
     }
 

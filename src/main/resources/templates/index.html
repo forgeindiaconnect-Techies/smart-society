@@ -20,6 +20,7 @@
                 <a href="#plans">Plans</a>
                 <a href="/propertydirect">PropertyDirect</a>
             </div>
+            <button class="ghost small" data-action="dashboard-login">Login</button>
             <button class="primary small nav-cta" data-action="register">Register Society</button>
         </nav>
         <button class="menu-button" id="menuButton" aria-label="Toggle navigation">Menu</button>
@@ -162,8 +163,8 @@
 <div class="modal hidden" id="dashboardLoginModal">
     <div class="modal-card">
         <button class="close" id="closeDashboardLoginModal">x</button>
-        <h2 id="dashboardLoginTitle">Dashboard Login</h2>
-        <p id="dashboardLoginHelp">Sign in to open this dashboard.</p>
+        <h2 id="dashboardLoginTitle">Login</h2>
+        <p id="dashboardLoginHelp">Enter your credentials to open your workspace.</p>
         <label>Username<input id="dashboardUsername" placeholder="username"></label>
         <label>Password<input id="dashboardPassword" type="password" placeholder="password"></label>
         <button class="primary full" id="submitDashboardLogin">Login & Open Dashboard</button>
@@ -171,7 +172,7 @@
 </div>
 
 <div id="toast" class="toast hidden"></div>
-<script src="/smartsociety/js/app.js?v=20260630-public-cleanup"></script>
+<script src="/smartsociety/js/app.js?v=20260630-unified-login"></script>
 <script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
 </body>
 </html>
