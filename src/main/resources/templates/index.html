@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SmartSociety - Apartment Community Management SaaS</title>
-    <link rel="stylesheet" href="/shared/css/theme.css?v=20260630-featured-apartments-layout">
+    <link rel="stylesheet" href="/shared/css/theme.css?v=20260630-compact-dashboard">
 </head>
 <body>
 <header class="topbar">
@@ -25,6 +25,7 @@
                 <button class="link-button" data-dashboard-login data-platform="smartsociety" data-role="superadmin" data-target="/dashboards/superadmin">Super Admin</button>
                 <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Admin</a>
                 <a href="/dashboards/resident" data-dashboard-login data-platform="smartsociety" data-role="resident" data-target="/dashboards/resident">Resident</a>
+                <a href="/dashboards/maintenance" data-dashboard-login data-platform="smartsociety" data-role="maintenance" data-target="/dashboards/maintenance">Maintenance</a>
             </div>
             <button class="primary small nav-cta" data-action="register">Register Society</button>
         </nav>
@@ -48,6 +49,7 @@
                 <button class="tab active" data-mode="Admin" role="tab" aria-selected="true">Society Admin</button>
                 <button class="tab" data-mode="Resident" role="tab" aria-selected="false">Resident</button>
                 <button class="tab" data-mode="Security" role="tab" aria-selected="false">Security</button>
+                <button class="tab" data-mode="Maintenance" role="tab" aria-selected="false">Maintenance</button>
             </div>
             <div class="search-row">
                 <select id="city">
@@ -214,7 +216,7 @@
 </div>
 
 <div id="toast" class="toast hidden"></div>
-<script src="/smartsociety/js/app.js?v=20260626-button-actions"></script>
+<script src="/smartsociety/js/app.js?v=20260630-maintenance-tab"></script>
 <script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
 </body>
 </html>

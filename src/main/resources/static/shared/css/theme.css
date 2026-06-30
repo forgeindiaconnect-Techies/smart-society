@@ -5111,3 +5111,224 @@ html[data-theme="dark"] .theme-toggle-icon::after {
         width: 100% !important;
     }
 }
+
+/* Compact Bootstrap-style dashboard polish */
+@keyframes dashboardCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-body,
+.app-dashboard {
+    gap: 14px !important;
+    padding: 12px !important;
+}
+
+.dashboard-body[data-dashboard-role="security"],
+.dashboard-body[data-dashboard-role="maintenance"] {
+    grid-template-columns: 210px minmax(0, 1fr) !important;
+}
+
+.dashboard-body .main,
+.app-dashboard .dash-main {
+    gap: 14px !important;
+}
+
+.dashboard-body .sidebar,
+.app-dashboard .dash-sidebar {
+    top: 12px !important;
+    height: calc(100vh - 24px) !important;
+    padding: 12px !important;
+    border: 1px solid rgba(220, 38, 38, .12) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 16px 34px rgba(127, 29, 29, .12) !important;
+}
+
+.dashboard-body .sidebar .brand,
+.app-dashboard .dash-sidebar .dash-brand {
+    margin-bottom: 8px !important;
+    padding: 4px 6px 10px !important;
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+    border-bottom: 1px solid rgba(220, 38, 38, .14) !important;
+}
+
+.dashboard-body .sidebar-nav,
+.app-dashboard .dash-sidebar nav {
+    gap: 7px !important;
+    margin: 10px 0 !important;
+}
+
+.dashboard-body .sidebar button,
+.app-dashboard .dash-sidebar button,
+.dashboard-body .logout {
+    min-height: 36px !important;
+    padding: 8px 10px !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    color: var(--ink) !important;
+    background: rgba(255, 245, 245, .72) !important;
+    box-shadow: none !important;
+    font-size: .88rem !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease, border-color .18s ease !important;
+}
+
+.dashboard-body .sidebar button.active,
+.dashboard-body .sidebar button:hover,
+.app-dashboard .dash-sidebar button.active,
+.app-dashboard .dash-sidebar button:hover {
+    color: #fff !important;
+    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+    border-color: rgba(153, 27, 27, .32) !important;
+    box-shadow: 0 10px 22px rgba(153, 27, 27, .18) !important;
+    transform: translateY(-1px) !important;
+}
+
+.dashboard-body .logout {
+    margin-top: 10px !important;
+    color: var(--primary-dark) !important;
+    text-align: center !important;
+    background: #fff1f2 !important;
+}
+
+.dashboard-body .header,
+.app-dashboard .dash-header {
+    padding: 16px 18px !important;
+    border: 1px solid rgba(220, 38, 38, .12) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 16px 34px rgba(127, 29, 29, .10) !important;
+}
+
+.dashboard-body .header h1,
+.app-dashboard .dash-header h1 {
+    font-size: clamp(1.75rem, 3vw, 2.65rem) !important;
+    line-height: 1.02 !important;
+}
+
+.dashboard-body .header button,
+.app-dashboard .dash-header button,
+.dashboard-body .card button,
+.dashboard-body table button {
+    min-height: 34px !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+}
+
+.dashboard-body .stats,
+.app-dashboard .dash-grid,
+.overview-grid {
+    gap: 14px !important;
+}
+
+.dashboard-body .card,
+.dashboard-body .stats article,
+.app-dashboard .dash-card,
+.app-dashboard .dash-grid article,
+.overview-grid article {
+    min-height: auto !important;
+    padding: 16px !important;
+    border: 1px solid rgba(220, 38, 38, .12) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 14px 30px rgba(127, 29, 29, .10) !important;
+    animation: dashboardCardIn .38s ease both !important;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+.dashboard-body .card:hover,
+.dashboard-body .stats article:hover,
+.app-dashboard .dash-card:hover,
+.app-dashboard .dash-grid article:hover,
+.overview-grid article:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(220, 38, 38, .24) !important;
+    box-shadow: 0 20px 42px rgba(127, 29, 29, .15) !important;
+}
+
+.dashboard-body .stats article span,
+.app-dashboard .dash-grid article span {
+    font-size: .86rem !important;
+}
+
+.dashboard-body .stats strong,
+.app-dashboard .dash-grid strong {
+    margin-top: 8px !important;
+    font-size: clamp(1.75rem, 3vw, 2.65rem) !important;
+    line-height: 1 !important;
+}
+
+.dashboard-body .card-head {
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+}
+
+.dashboard-body .card h2 {
+    font-size: 1.15rem !important;
+}
+
+.dashboard-body table th,
+.dashboard-body table td {
+    padding: 10px 12px !important;
+}
+
+.dashboard-body .form-grid {
+    gap: 10px !important;
+}
+
+.dashboard-body .form-grid input,
+.dashboard-body .form-grid select,
+.dashboard-body .form-grid textarea {
+    min-height: 40px !important;
+    padding: 9px 11px !important;
+    border-radius: 8px !important;
+}
+
+html[data-theme="dark"] .dashboard-body .sidebar button,
+html[data-theme="dark"] .app-dashboard .dash-sidebar button,
+html[data-theme="dark"] .dashboard-body .logout {
+    color: #fff4f4 !important;
+    background: rgba(255, 255, 255, .06) !important;
+}
+
+@media (max-width: 900px) {
+    .dashboard-body,
+    .app-dashboard,
+    .dashboard-body[data-dashboard-role="security"],
+    .dashboard-body[data-dashboard-role="maintenance"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        padding: 10px !important;
+    }
+
+    .dashboard-body .sidebar,
+    .app-dashboard .dash-sidebar {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 10px !important;
+    }
+
+    .dashboard-body .sidebar-nav,
+    .app-dashboard .dash-sidebar nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-body .card,
+    .dashboard-body .stats article,
+    .app-dashboard .dash-card,
+    .app-dashboard .dash-grid article,
+    .overview-grid article {
+        animation: none !important;
+        transition: none !important;
+    }
+}

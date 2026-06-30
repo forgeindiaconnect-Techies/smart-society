@@ -58,6 +58,18 @@ const roleViews = {
         searchLabel: "Search Gate Records",
         placeholder: "Search visitor, flat number, pass or vehicle...",
         filters: ["Expected", "Check In", "Gate Log", "Emergency"]
+    },
+    Maintenance: {
+        key: "maintenance",
+        icon: "M",
+        label: "Service operations",
+        title: "Keep every maintenance task moving clearly.",
+        description: "Track assigned work, complaint queues, team availability and daily service updates in one compact workspace.",
+        dashboard: "/dashboards/maintenance",
+        dashboardLabel: "Open Maintenance Console",
+        searchLabel: "Search Maintenance Tasks",
+        placeholder: "Search task, complaint, flat number or service type...",
+        filters: ["Assigned", "In Progress", "Complaints", "Profile"]
     }
 };
 
@@ -85,6 +97,11 @@ const roleSearchPanels = {
         [["entry", "check in", "check out", "vehicle", "gate"], "entries"],
         [["pass", "approval", "expected"], "pass"],
         [["visitor", "guest", "flat"], "visitors"]
+    ],
+    Maintenance: [
+        [["task", "assigned", "work", "job"], "tasks"],
+        [["complaint", "issue", "ticket", "queue"], "complaints"],
+        [["profile", "team", "availability"], "profile"]
     ]
 };
 
@@ -94,7 +111,8 @@ let pendingDashboardLogin = null;
 const roleAuth = {
     Admin: "admin",
     Resident: "resident",
-    Security: "security"
+    Security: "security",
+    Maintenance: "maintenance"
 };
 
 const dashboardLoginHints = {
