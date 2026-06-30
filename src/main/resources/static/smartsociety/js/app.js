@@ -336,15 +336,10 @@ dashboardPassword?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") submitDashboardCredentials();
 });
 
-const requiredDashboardRole = new URLSearchParams(window.location.search).get("loginRequired");
-if (requiredDashboardRole && dashboardTargets[requiredDashboardRole]) {
-    openDashboardLogin({
-        platform: "smartsociety",
-        role: requiredDashboardRole,
-        target: dashboardTargets[requiredDashboardRole]
-    });
-} else if (requiredDashboardRole) {
+const loginRequired = new URLSearchParams(window.location.search).get("loginRequired");
+if (loginRequired) {
     openDashboardLogin({ platform: "smartsociety" });
+    window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
 }
 
 setupMotion();
