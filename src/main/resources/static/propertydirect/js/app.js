@@ -99,11 +99,6 @@ const modal = document.getElementById("appModal");
 const modalTitle = document.getElementById("modalTitle");
 const modalText = document.getElementById("modalText");
 const modalFields = document.getElementById("modalFields");
-const superadminModal = document.getElementById("superadminModal");
-const closeSuperadminModal = document.getElementById("closeSuperadminModal");
-const submitSuperadminLogin = document.getElementById("submitSuperadminLogin");
-const superadminUsername = document.getElementById("superadminUsername");
-const superadminPassword = document.getElementById("superadminPassword");
 const dashboardLoginModal = document.getElementById("dashboardLoginModal");
 const closeDashboardLoginModal = document.getElementById("closeDashboardLoginModal");
 const submitDashboardLogin = document.getElementById("submitDashboardLogin");
@@ -118,18 +113,6 @@ const searchButton = document.getElementById("searchButton");
 
 let pendingDashboardLogin = null;
 let activeModalKind = "contact";
-
-const dashboardLoginHints = {
-    superadmin: ["PropertyDirect Super Admin Login", "Sign in to open the platform dashboard."],
-    admin: ["PropertyDirect Admin Login", "Sign in to open the admin dashboard."],
-    customer: ["PropertyDirect Customer Login", "Sign in to open the customer dashboard."]
-};
-
-const dashboardTargets = {
-    superadmin: "/propertydirect/dashboards/superadmin",
-    admin: "/propertydirect/dashboards/admin",
-    customer: "/propertydirect/dashboards/customer"
-};
 
 function renderListings(items = listings) {
     grid.innerHTML = items.map((item, index) => `
@@ -221,9 +204,8 @@ function readModalFieldValues() {
 
 function openDashboardLogin({ platform, role, target }) {
     pendingDashboardLogin = { platform, role, target };
-    const [title, help] = dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."];
-    if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
-    if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
+    if (dashboardLoginTitle) dashboardLoginTitle.textContent = "Login";
+    if (dashboardLoginHelp) dashboardLoginHelp.textContent = "Enter your credentials to open your workspace.";
     if (dashboardUsername) dashboardUsername.value = "";
     if (dashboardPassword) dashboardPassword.value = "";
     dashboardLoginModal?.classList.remove("hidden");
@@ -289,17 +271,6 @@ localityInput?.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("click", (event) => {
-    const dashboardLink = event.target.closest("[data-dashboard-login]");
-    if (dashboardLink) {
-        event.preventDefault();
-        openDashboardLogin({
-            platform: dashboardLink.dataset.platform,
-            role: dashboardLink.dataset.role,
-            target: dashboardLink.dataset.target || dashboardLink.getAttribute("href")
-        });
-        return;
-    }
-
     const filterButton = event.target.closest("[data-filter]");
     if (filterButton) {
         const filter = filterButton.dataset.filter.toLowerCase();
@@ -310,10 +281,10 @@ document.addEventListener("click", (event) => {
         return;
     }
 
-    const protectedLink = event.target.closest("[data-protected='superadmin']");
-    if (protectedLink) {
+    const actionButton = event.target.closest("[data-action]");
+    if (actionButton?.dataset.action === "dashboard-login") {
         event.preventDefault();
-        openDashboardLogin({ platform: "propertydirect", role: "superadmin", target: "/propertydirect/dashboards/superadmin" });
+        openDashboardLogin({ platform: "propertydirect" });
         return;
     }
 
@@ -354,14 +325,6 @@ document.getElementById("modalSubmit").addEventListener("click", () => {
     };
     showToast(messages[activeModalKind] || `Request submitted${first}`);
 });
-closeSuperadminModal.addEventListener("click", () => superadminModal.classList.add("hidden"));
-superadminModal.addEventListener("click", (event) => {
-    if (event.target === superadminModal) superadminModal.classList.add("hidden");
-});
-submitSuperadminLogin.addEventListener("click", () => {
-    superadminModal.classList.add("hidden");
-    openDashboardLogin({ platform: "propertydirect", role: "superadmin", target: "/propertydirect/dashboards/superadmin" });
-});
 closeDashboardLoginModal?.addEventListener("click", () => dashboardLoginModal?.classList.add("hidden"));
 dashboardLoginModal?.addEventListener("click", (event) => {
     if (event.target === dashboardLoginModal) dashboardLoginModal.classList.add("hidden");
@@ -374,12 +337,9 @@ document.getElementById("resetListings").addEventListener("click", () => renderL
 document.getElementById("menuButton").addEventListener("click", () => document.querySelector(".nav").classList.toggle("open"));
 
 const requiredDashboardRole = new URLSearchParams(window.location.search).get("loginRequired");
-if (requiredDashboardRole && dashboardTargets[requiredDashboardRole]) {
-    openDashboardLogin({
-        platform: "propertydirect",
-        role: requiredDashboardRole,
-        target: dashboardTargets[requiredDashboardRole]
-    });
+if (requiredDashboardRole) {
+    openDashboardLogin({ platform: "propertydirect" });
+    window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
 }
 
 renderListings();

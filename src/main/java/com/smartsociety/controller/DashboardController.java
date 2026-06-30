@@ -94,19 +94,19 @@ public class DashboardController {
 
     @GetMapping("/propertydirect/dashboards/superadmin")
     public String propertyDirectSuperAdmin(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "superadmin")) return "redirect:/propertydirect?loginRequired=superadmin";
+        if (!isLoggedIn(session, "propertydirect", "superadmin")) return "redirect:/propertydirect?loginRequired=true";
         return "propertydirect/dashboards/superadmin";
     }
 
     @GetMapping("/propertydirect/dashboards/admin")
     public String propertyDirectAdmin(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "admin")) return "redirect:/propertydirect?loginRequired=admin";
+        if (!isLoggedIn(session, "propertydirect", "admin")) return "redirect:/propertydirect?loginRequired=true";
         return "propertydirect/dashboards/admin";
     }
 
     @GetMapping("/propertydirect/dashboards/customer")
     public String propertyDirectCustomer(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "customer")) return "redirect:/propertydirect?loginRequired=customer";
+        if (!isLoggedIn(session, "propertydirect", "customer")) return "redirect:/propertydirect?loginRequired=true";
         return "propertydirect/dashboards/customer";
     }
 
