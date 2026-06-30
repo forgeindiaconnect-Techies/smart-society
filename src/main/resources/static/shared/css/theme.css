@@ -5332,3 +5332,50 @@ html[data-theme="dark"] .dashboard-body .logout {
         transition: none !important;
     }
 }
+
+/* Final sidebar tab sizing fix for role dashboards */
+.dashboard-body[data-dashboard-role="security"] .sidebar,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 10px !important;
+}
+
+.dashboard-body[data-dashboard-role="security"] .sidebar-nav,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar-nav {
+    display: grid !important;
+    grid-auto-rows: max-content !important;
+    align-content: start !important;
+    flex: 0 0 auto !important;
+    gap: 6px !important;
+    margin: 8px 0 !important;
+}
+
+.dashboard-body[data-dashboard-role="security"] .sidebar button,
+.dashboard-body[data-dashboard-role="maintenance"] .sidebar button,
+.dashboard-body[data-dashboard-role="security"] .logout,
+.dashboard-body[data-dashboard-role="maintenance"] .logout {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 34px !important;
+    height: auto !important;
+    padding: 7px 10px !important;
+    border-radius: 7px !important;
+    font-size: .86rem !important;
+    line-height: 1.15 !important;
+}
+
+.dashboard-body[data-dashboard-role="security"] .logout,
+.dashboard-body[data-dashboard-role="maintenance"] .logout {
+    flex: 0 0 auto !important;
+    margin-top: 6px !important;
+    justify-content: center !important;
+}
+
+@media (max-width: 900px) {
+    .dashboard-body[data-dashboard-role="security"] .sidebar-nav,
+    .dashboard-body[data-dashboard-role="maintenance"] .sidebar-nav {
+        grid-template-columns: 1fr !important;
+    }
+}
