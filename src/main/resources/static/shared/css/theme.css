@@ -5379,3 +5379,23 @@ html[data-theme="dark"] .dashboard-body .logout {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* Keep SmartSociety role tabs on one desktop row */
+#roleExperience .tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+#roleExperience .tab {
+    min-width: 0 !important;
+    white-space: nowrap !important;
+}
+
+@media (max-width: 720px) {
+    #roleExperience .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    #roleExperience .tab {
+        white-space: normal !important;
+    }
+}
