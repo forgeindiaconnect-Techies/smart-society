@@ -20,13 +20,6 @@
                 <a href="#plans">Plans</a>
                 <a href="/propertydirect">PropertyDirect</a>
             </div>
-            <span class="nav-divider" aria-hidden="true"></span>
-            <div class="nav-account">
-                <button class="link-button" data-dashboard-login data-platform="smartsociety" data-role="superadmin" data-target="/dashboards/superadmin">Super Admin</button>
-                <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Admin</a>
-                <a href="/dashboards/resident" data-dashboard-login data-platform="smartsociety" data-role="resident" data-target="/dashboards/resident">Resident</a>
-                <a href="/dashboards/maintenance" data-dashboard-login data-platform="smartsociety" data-role="maintenance" data-target="/dashboards/maintenance">Maintenance</a>
-            </div>
             <button class="primary small nav-cta" data-action="register">Register Society</button>
         </nav>
         <button class="menu-button" id="menuButton" aria-label="Toggle navigation">Menu</button>
@@ -44,39 +37,13 @@
             <img src="/shared/images/smartsociety-cinematic-1.webp" alt="Modern apartment society with landscaped community space">
             <figcaption>Apartment community operations in one simple workspace</figcaption>
         </figure>
-        <div class="search-card" id="roleExperience" data-current-role="admin">
-            <div class="tabs" role="tablist">
-                <button class="tab active" data-mode="Admin" role="tab" aria-selected="true">Society Admin</button>
-                <button class="tab" data-mode="Resident" role="tab" aria-selected="false">Resident</button>
-                <button class="tab" data-mode="Security" role="tab" aria-selected="false">Security</button>
-                <button class="tab" data-mode="Maintenance" role="tab" aria-selected="false">Maintenance</button>
-            </div>
-            <div class="search-row">
-                <select id="city">
-                    <option>Chennai</option>
-                    <option>Bangalore</option>
-                    <option>Hyderabad</option>
-                    <option>Pune</option>
-                    <option>Mumbai</option>
-                    <option>Delhi NCR</option>
-                </select>
-                <input id="societySearch" placeholder="Search your society or a module...">
-                <button class="primary" id="roleSearchButton" data-action="search">Search Admin Tools</button>
-            </div>
-            <div class="quick-filters" id="roleFilters">
-                <button data-action="filter">Billing</button>
-                <button data-action="filter">Residents</button>
-                <button data-action="filter">Complaints</button>
-                <button data-action="filter">Reports</button>
-            </div>
-        </div>
     </section>
 
     <section class="owner-banner">
         <div class="owner-copy">
             <span class="banner-label">For management committees</span>
             <h2>Running an apartment community or gated society?</h2>
-            <p>Create a tenant workspace, invite residents, assign security staff, and start managing daily operations.</p>
+            <p>Create a tenant workspace, invite members, assign gate teams, and start managing daily operations.</p>
         </div>
         <button class="primary" data-action="register">Register Society</button>
     </section>
@@ -90,14 +57,14 @@
             <button class="ghost" data-action="platform">View Platform</button>
         </div>
         <div class="service-grid">
-            <a class="service-card" href="/dashboards/society-admin#billing"><span>Bill</span><strong>Maintenance Billing</strong><p>Generate dues, receipts, late fees, and payment reports.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#visitors"><span>Gate</span><strong>Visitor Management</strong><p>Approve guests, QR passes, check-in, and check-out.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#complaints"><span>Help</span><strong>Complaints</strong><p>Raise issues, assign staff, track status, and close tickets.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#amenities"><span>Book</span><strong>Amenities</strong><p>Book clubhouse, gym, party hall, parking, and guest rooms.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#announcements"><span>Post</span><strong>Announcements</strong><p>Publish notices, alerts, and community updates.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#payments"><span>Pay</span><strong>Payments</strong><p>Collect maintenance, rent, utilities, and other charges.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#expenses"><span>Cost</span><strong>Expenses</strong><p>Track vendors, approvals, monthly spend, and categories.</p></a>
-            <a class="service-card" href="/dashboards/society-admin#reports"><span>Data</span><strong>Reports</strong><p>View billing, visitor, complaint, and occupancy analytics.</p></a>
+            <a class="service-card" href="/terms/finance-reports#online-payments"><span>Bill</span><strong>Community Billing</strong><p>Generate dues, receipts, late fees, and payment reports.</p></a>
+            <a class="service-card" href="/terms/daily-operations#visitor-approvals"><span>Gate</span><strong>Visitor Management</strong><p>Approve guests, QR passes, check-in, and check-out.</p></a>
+            <a class="service-card" href="/terms/daily-operations#complaint-assignment"><span>Help</span><strong>Complaints</strong><p>Raise issues, assign staff, track status, and close tickets.</p></a>
+            <a class="service-card" href="/terms/daily-operations#amenity-booking"><span>Book</span><strong>Amenities</strong><p>Book clubhouse, gym, party hall, parking, and guest rooms.</p></a>
+            <a class="service-card" href="/terms/onboarding#society-registration"><span>Post</span><strong>Announcements</strong><p>Publish notices, alerts, and community updates.</p></a>
+            <a class="service-card" href="/terms/finance-reports#online-payments"><span>Pay</span><strong>Payments</strong><p>Collect recurring dues, rent, utilities, and other charges.</p></a>
+            <a class="service-card" href="/terms/finance-reports#expense-approvals"><span>Cost</span><strong>Expenses</strong><p>Track vendors, approvals, monthly spend, and categories.</p></a>
+            <a class="service-card" href="/terms/finance-reports#reports-analytics"><span>Data</span><strong>Reports</strong><p>View billing, visitor, complaint, and occupancy analytics.</p></a>
         </div>
     </section>
 
@@ -107,20 +74,19 @@
             <h2>Choose a SaaS plan based on community size.</h2>
             <ul>
                 <li>Starter plan for small societies and evaluation workspaces</li>
-                <li>Standard plan for billing, visitors, and resident workflows</li>
+                <li>Standard plan for billing, visitors, and member workflows</li>
                 <li>Premium plan for analytics, expenses, and priority support</li>
             </ul>
             <button class="primary" data-action="plan">Explore Plans</button>
         </div>
         <div class="assist-card dark">
-            <p class="eyebrow">Dashboards</p>
-            <h2>Open role-based portals for each user type.</h2>
+            <p class="eyebrow">Private Workspaces</p>
+            <h2>Access is kept behind secure sign-in flows.</h2>
             <div class="payment-list">
-                <a href="/dashboards/superadmin" data-dashboard-login data-platform="smartsociety" data-role="superadmin" data-target="/dashboards/superadmin">Super Admin Dashboard</a>
-                <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Society Admin Dashboard</a>
-                <a href="/dashboards/resident" data-dashboard-login data-platform="smartsociety" data-role="resident" data-target="/dashboards/resident">Resident Dashboard</a>
-                <a href="/dashboards/security" data-dashboard-login data-platform="smartsociety" data-role="security" data-target="/dashboards/security">Security Dashboard</a>
-                <a href="/dashboards/maintenance" data-dashboard-login data-platform="smartsociety" data-role="maintenance" data-target="/dashboards/maintenance">Maintenance Dashboard</a>
+                <a href="/terms/onboarding#tenant-id-creation">Workspace setup</a>
+                <a href="/terms/onboarding#blocks-flats-setup">Member onboarding</a>
+                <a href="/terms/daily-operations#visitor-approvals">Entry workflows</a>
+                <a href="/terms/finance-reports#reports-analytics">Reports and analytics</a>
             </div>
         </div>
     </section>
@@ -131,7 +97,7 @@
                 <p class="eyebrow">System Workflow</p>
                 <h2>From onboarding to daily operations</h2>
             </div>
-            <a href="/dashboards/society-admin" data-dashboard-login data-platform="smartsociety" data-role="admin" data-target="/dashboards/society-admin">Open admin flow</a>
+            <a href="/terms/onboarding#society-registration">View onboarding flow</a>
         </div>
         <div class="link-columns">
             <div>
@@ -143,14 +109,14 @@
             </div>
             <div>
                 <h3>Daily Operations</h3>
-                <a href="/terms/daily-operations#resident-onboarding">Resident onboarding</a>
+                <a href="/terms/onboarding#blocks-flats-setup">Member onboarding</a>
                 <a href="/terms/daily-operations#visitor-approvals">Visitor approvals</a>
                 <a href="/terms/daily-operations#complaint-assignment">Complaint assignment</a>
                 <a href="/terms/daily-operations#amenity-booking">Amenity booking</a>
             </div>
             <div>
                 <h3>Finance & Reports</h3>
-                <a href="/terms/finance-reports#maintenance-billing">Maintenance billing</a>
+                <a href="/terms/finance-reports#online-payments">Community billing</a>
                 <a href="/terms/finance-reports#online-payments">Online payments</a>
                 <a href="/terms/finance-reports#expense-approvals">Expense approvals</a>
                 <a href="/terms/finance-reports#reports-analytics">Reports and analytics</a>
@@ -161,7 +127,7 @@
 
 <footer>
     <strong>SmartSociety</strong>
-    <span>Apartment community management for modern residential teams.</span>
+    <span>Apartment community management for modern community teams.</span>
 </footer>
 
 <div class="modal hidden" id="registerModal">
@@ -170,8 +136,8 @@
         <h2 id="registerModalTitle">Register Society</h2>
         <p>Create your apartment community workspace and start the onboarding flow.</p>
         <label>Society Name<input id="societyName" placeholder="Example: Green Nest Apartments"></label>
-        <label>Admin Name<input placeholder="Committee/admin name"></label>
-        <label>Email<input placeholder="admin@community.com"></label>
+        <label>Contact Name<input placeholder="Committee contact name"></label>
+        <label>Email<input placeholder="contact@community.com"></label>
         <label>Phone<input placeholder="Mobile number"></label>
         <label>City
             <select>
@@ -193,17 +159,6 @@
     </div>
 </div>
 
-<div class="modal hidden" id="superadminModal">
-    <div class="modal-card">
-        <button class="close" id="closeSuperadminModal">x</button>
-        <h2>Super Admin Login</h2>
-        <p>Enter the Super Admin username and password to open the platform owner dashboard.</p>
-        <label>Username<input id="superadminUsername" placeholder="Enter username"></label>
-        <label>Password<input id="superadminPassword" type="password" placeholder="Enter password"></label>
-        <button class="primary full" id="submitSuperadminLogin">Login</button>
-    </div>
-</div>
-
 <div class="modal hidden" id="dashboardLoginModal">
     <div class="modal-card">
         <button class="close" id="closeDashboardLoginModal">x</button>
@@ -216,7 +171,7 @@
 </div>
 
 <div id="toast" class="toast hidden"></div>
-<script src="/smartsociety/js/app.js?v=20260630-maintenance-tab"></script>
+<script src="/smartsociety/js/app.js?v=20260630-public-cleanup"></script>
 <script src="/shared/js/theme.js?v=20260629-premium-finish"></script>
 </body>
 </html>
