@@ -40,3 +40,5 @@ mvn test
 ```
 
 The integration suite verifies anonymous denial, role-based login, tenant identity, administrator billing, duplicate-bill prevention and resident authorization.
+
+
