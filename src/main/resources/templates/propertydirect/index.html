@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PropertyDirect | Find a home that feels right</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260819-v999">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box !important;
+        }
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            background-color: #f8fafc !important;
+        }
+        .hero {
+            position: relative !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin-left: calc(-50vw + 50%) !important;
+            margin-right: calc(-50vw + 50%) !important;
+            margin-top: 0 !important;
+            margin-bottom: 50px !important;
+            padding: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            border-radius: 0 !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-color: #0c1b33 !important;
+        }
+        .hero::before {
+            position: absolute !important;
+            inset: 0 !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, rgba(10, 23, 52, .93) 0%, rgba(18, 42, 85, .73) 43%, rgba(18, 42, 85, .18) 100%) !important;
+        }
+        header {
+            top: 12px !important;
+            padding: 0 !important;
+        }
+        header .container {
+            max-width: 1020px !important;
+            width: min(92%, 1020px) !important;
+            min-height: 48px !important;
+            padding: 6px 18px !important;
+            border-radius: 14px !important;
+        }
+        .logo {
+            font-size: 1.15rem !important;
+        }
+        .logo svg {
+            width: 20px !important;
+            height: 20px !important;
+        }
+        nav {
+            gap: 14px !important;
+        }
+        nav a {
+            font-size: 0.81rem !important;
+        }
+        .post-btn, .login-btn {
+            min-height: 32px !important;
+            padding: 4px 13px !important;
+            border-radius: 8px !important;
+            font-size: 0.78rem !important;
+        }
+        .search-box {
+            bottom: 30px !important;
+            max-width: 760px !important;
+            width: min(92%, 760px) !important;
+            min-height: 54px !important;
+            padding: 6px 8px !important;
+            gap: 8px !important;
+            border-radius: 14px !important;
+            box-shadow: 0 16px 36px rgba(20, 36, 70, .16) !important;
+        }
+        .search-type {
+            padding: 3px !important;
+            border-radius: 10px !important;
+        }
+        .search-type button {
+            min-width: 56px !important;
+            padding: 6px 12px !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+        }
+        .search-input {
+            min-height: 38px !important;
+            gap: 10px !important;
+            padding: 0 12px !important;
+            font-size: 0.83rem !important;
+        }
+        .search-input select {
+            min-width: 95px !important;
+            font-size: 0.83rem !important;
+        }
+        .search-input input {
+            font-size: 0.83rem !important;
+        }
+        .search-btn {
+            padding: 8px 16px !important;
+            border-radius: 10px !important;
+            font-size: 0.82rem !important;
+        }
+        section.how-it-works, .how-it-works {
+            padding: 40px 24px !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin-left: calc(-50vw + 50%) !important;
+            margin-right: calc(-50vw + 50%) !important;
+            box-sizing: border-box !important;
+        }
+        .how-it-works .section-header {
+            margin-bottom: 24px !important;
+        }
+        .how-it-works h2 {
+            font-size: 1.6rem !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            letter-spacing: -0.02em !important;
+            margin: 0 0 4px !important;
+        }
+        .how-it-works .section-subtitle, .how-it-works p {
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+        }
+        .how-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 540px !important;
+            gap: 48px !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .how-img {
+            border-radius: 28px !important;
+            height: 520px !important;
+            max-height: 520px !important;
+            box-shadow: 0 24px 60px rgba(12, 31, 48, 0.18) !important;
+        }
+        .step {
+            margin-bottom: 18px !important;
+            padding-left: 16px !important;
+        }
+        .step-number {
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            color: #1d376c !important;
+            margin-bottom: 3px !important;
+        }
+        .step-title {
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            color: #17223b !important;
+            margin-bottom: 4px !important;
+        }
+        .step-desc {
+            font-size: 0.84rem !important;
+            color: #64748b !important;
+            line-height: 1.5 !important;
+            margin: 0 !important;
+            max-width: 480px !important;
+        }
+        .how-img::after {
+            content: 'Every listing is reviewed for a safer search.' !important;
+            position: absolute !important;
+            bottom: 16px !important;
+            right: 16px !important;
+            left: auto !important;
+            max-width: 210px !important;
+            padding: 12px 16px !important;
+            border-radius: 14px !important;
+            background: #ffffff !important;
+            box-shadow: 0 12px 28px rgba(10, 25, 64, 0.22) !important;
+            color: #1d376c !important;
+            font-weight: 700 !important;
+            font-size: 0.82rem !important;
+            line-height: 1.35 !important;
+        }
+
+        /* FAQ & Contact Compact Full-Width Redesign */
+        .faq-contact {
+            padding: 36px 0 !important;
+            background: #f8fafc !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .faq-contact-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+            align-items: stretch !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 20px !important;
+        }
+        .faq-panel, .contact-panel {
+            border-radius: 20px !important;
+            padding: 24px 28px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+        }
+        .faq-panel {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 6px 20px rgba(23, 34, 59, 0.04) !important;
+        }
+        .contact-panel {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            box-shadow: 0 10px 30px rgba(10, 24, 52, 0.20) !important;
+        }
+        .section-kicker {
+            margin: 0 0 4px !important;
+            color: #1d376c !important;
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.1em !important;
+        }
+        .contact-panel .section-kicker {
+            color: #8cf0bd !important;
+        }
+        .faq-panel h2, .contact-panel h2 {
+            margin: 0 0 8px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.45rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em !important;
+        }
+        .faq-panel h2 {
+            color: #17223b !important;
+        }
+        .contact-panel h2 {
+            color: #ffffff !important;
+        }
+        .contact-panel p {
+            font-size: 0.85rem !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            margin: 0 0 14px !important;
+            line-height: 1.45 !important;
+        }
+        .contact-panel .form-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+            margin-top: 10px !important;
+            margin-bottom: 10px !important;
+        }
+        .contact-panel .form-group {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+        }
+        .contact-panel .form-group label {
+            font-size: 0.76rem !important;
+            font-weight: 700 !important;
+            color: #e2e8f0 !important;
+        }
+        .contact-panel .form-group input {
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-size: 0.83rem !important;
+            min-height: 36px !important;
+            outline: none !important;
+        }
+        .contact-panel .form-group textarea {
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-size: 0.83rem !important;
+            min-height: 60px !important;
+            height: 60px !important;
+            outline: none !important;
+            resize: none !important;
+        }
+        .contact-panel .submit-btn {
+            padding: 9px 20px !important;
+            border-radius: 10px !important;
+            background: #8cf0bd !important;
+            color: #0c1b33 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 800 !important;
+            border: none !important;
+            cursor: pointer !important;
+            margin-top: 6px !important;
+            align-self: flex-start !important;
+            box-shadow: 0 4px 14px rgba(140, 240, 189, 0.25) !important;
+        }
+        .faq-panel .faq-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            margin-top: 8px !important;
+        }
+        .faq-panel .faq-item {
+            padding: 10px 14px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            background: #f8fafc !important;
+            transition: all 0.2s ease !important;
+        }
+        .faq-panel .faq-item.active {
+            border-color: #315ab0 !important;
+            background: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(29, 55, 108, 0.08) !important;
+        }
+        .faq-panel .faq-item h3 {
+            font-size: 0.86rem !important;
+            font-weight: 700 !important;
+            color: #17223b !important;
+            margin: 0 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+        .faq-panel .faq-item p {
+            font-size: 0.8rem !important;
+            color: #64748b !important;
+            line-height: 1.45 !important;
+            margin-top: 6px !important;
+        }
+
+        /* Bottom Banner Full-Bleed Breakout */
+        .bottom-banner-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            background: transparent !important;
+            overflow: hidden !important;
+        }
+        .bottom-banner {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin-left: calc(-50vw + 50%) !important;
+            margin-right: calc(-50vw + 50%) !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            border-radius: 0 !important;
+            height: 360px !important;
+            background: url('/propertydirect/images/hero_bg.jpg') center/cover no-repeat !important;
+            display: flex !important;
+            align-items: flex-end !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+        .banner-content {
+            background: rgba(255, 255, 255, 0.96) !important;
+            padding: 10px 24px !important;
+            border-radius: 999px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: min(90%, 620px) !important;
+            max-width: 620px !important;
+            min-height: 46px !important;
+            margin-bottom: 30px !important;
+            box-shadow: 0 12px 32px rgba(10, 25, 64, 0.25) !important;
+            position: relative !important;
+            z-index: 2 !important;
+            backdrop-filter: blur(8px) !important;
+        }
+        .banner-links {
+            display: flex !important;
+            gap: 20px !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+        }
+        .banner-links a {
+            color: #17223b !important;
+            text-decoration: none !important;
+        }
+
+        /* Full-Bleed 100vw Breakout for Properties Section */
+        section.properties, .properties {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin-left: calc(-50vw + 50%) !important;
+            margin-right: calc(-50vw + 50%) !important;
+            padding: 40px 24px !important;
+            box-sizing: border-box !important;
+        }
+        .properties .section-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-end !important;
+            margin-bottom: 24px !important;
+            width: 100% !important;
+        }
+        .property-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .banner-links a:hover {
+            color: #1d376c !important;
+        }
+        .banner-logo {
+            font-size: 0.92rem !important;
+            font-weight: 800 !important;
+            color: #1d376c !important;
+        }
+        footer.footer, .footer {
+            background-color: #f8fafc !important;
+            background: #f8fafc !important;
+            color: #64748b !important;
+            border-top: 1px solid #e2e8f0 !important;
+            padding: 20px 0 !important;
+            margin: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="#" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Property</span>Direct
+            </a>
+            <nav>
+                <a href="/" class="smartsociety-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(140, 240, 189, 0.15); color: #8cf0bd !important; font-weight: 700; font-size: 0.82rem; border-radius: 8px; border: 1px solid rgba(140, 240, 189, 0.35); text-decoration: none; transition: all 0.2s ease;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    SmartSociety
+                </a>
+                <a href="/propertydirect/apartments?type=BUY">Buy</a>
+                <a href="/propertydirect/apartments?type=RENT">Rent</a>
+                <a href="/propertydirect/apartments">New Projects</a>
+                <a href="#contact">Services</a>
+                <a href="#how-it-works">About</a>
+                <a href="#contact">Contact</a>
+                <button type="button" class="login-btn" data-action="dashboard-login">Login</button>
+                <a href="/propertydirect/terms/post-property" class="post-btn">Post Property</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-kicker">India's trusted home discovery platform</span>
+            <h1>Find a home that<br><em>feels like you.</em></h1>
+            <p>Verified homes, transparent pricing and direct conversations with people who matter.</p>
+        </div>
+        <div class="search-box">
+            <div class="search-type">
+                <button class="active">Buy</button>
+                <button>Rent</button>
+            </div>
+            <div class="search-input">
+                <select>
+                    <option>Location</option>
+                    <option>Mumbai</option>
+                    <option>Bangalore</option>
+                </select>
+                <input type="text" placeholder="Search homes for sale, locality...">
+            </div>
+            <button class="search-btn">Explore homes <span>→</span></button>
+        </div>
+        <div class="hero-proof"><span><b>12,000+</b> verified homes</span><span><b>40+</b> cities</span><span><b>4.9/5</b> home seeker rating</span></div>
+    </section>
+
+    <div class="container">
+        <section class="properties">
+            <div class="section-header">
+                <div><span class="section-eyebrow">Curated for you</span><h2>Homes worth coming home to.</h2></div>
+                <a href="/propertydirect/apartments" class="view-all">View all homes <span>→</span></a>
+            </div>
+            <div class="property-grid">
+                <!-- Card 1 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="/propertydirect/images/orchid_enclave.jpg" th:src="@{/propertydirect/images/orchid_enclave.jpg}" alt="Orchid Enclave" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <span class="property-badge">Verified</span>
+                        <button class="favorite-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-price">₹ 1.2 Cr</div>
+                        <div class="property-title">Orchid Enclave</div>
+                        <div class="property-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            HSR Layout, Bangalore
+                        </div>
+                        <div class="property-stats">
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg> 3 Beds</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 22h6M12 18v4M2 10.5a1.5 1.5 0 0 0 3 0V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0M4 18h16a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2z"></path></svg> 2 Baths</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 12h16M12 4v16"></path></svg> 1500 sqft</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="/propertydirect/images/sunrise_heights.jpg" th:src="@{/propertydirect/images/sunrise_heights.jpg}" alt="Sunrise Heights" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <span class="property-badge">New</span>
+                        <button class="favorite-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-price">₹ 85 L</div>
+                        <div class="property-title">Sunrise Heights</div>
+                        <div class="property-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Andheri West, Mumbai
+                        </div>
+                        <div class="property-stats">
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg> 2 Beds</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 22h6M12 18v4M2 10.5a1.5 1.5 0 0 0 3 0V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0M4 18h16a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2z"></path></svg> 2 Baths</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 12h16M12 4v16"></path></svg> 1100 sqft</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="/propertydirect/images/belvedere.jpg" th:src="@{/propertydirect/images/belvedere.jpg}" alt="The Belvedere" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <button class="favorite-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-price">₹ 2.5 Cr</div>
+                        <div class="property-title">The Belvedere</div>
+                        <div class="property-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Bandra, Mumbai
+                        </div>
+                        <div class="property-stats">
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg> 4 Beds</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 22h6M12 18v4M2 10.5a1.5 1.5 0 0 0 3 0V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0M4 18h16a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2z"></path></svg> 4 Baths</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 12h16M12 4v16"></path></svg> 2200 sqft</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="property-card">
+                    <div class="property-img">
+                        <img src="/propertydirect/images/sunrise_heights.jpg" th:src="@{/propertydirect/images/sunrise_heights.jpg}" alt="Greenview Towers" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <span class="property-badge">Featured</span>
+                        <button class="favorite-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-details">
+                        <div class="property-price">₹ 65 L</div>
+                        <div class="property-title">Greenview Towers</div>
+                        <div class="property-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Kaikondrahalli, Bangalore
+                        </div>
+                        <div class="property-stats">
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg> 3 Beds</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 22h6M12 18v4M2 10.5a1.5 1.5 0 0 0 3 0V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0M4 18h16a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2z"></path></svg> 2 Baths</span>
+                            <span class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 12h16M12 4v16"></path></svg> 1350 sqft</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="container how-grid">
+            <div class="how-content">
+                <div class="section-header" style="margin-bottom: 60px;">
+                    <h2>How it Works?</h2>
+                </div>
+                <div class="step">
+                    <span class="step-number">01</span>
+                    <h3 class="step-title">Verify</h3>
+                    <p class="step-desc">All properties and owners undergo a thorough verification process to ensure zero fraud.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">02</span>
+                    <h3 class="step-title">Search Property</h3>
+                    <p class="step-desc">Utilize our advanced smart filters to find your exact match in the city's top localities.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">03</span>
+                    <h3 class="step-title">Find the Needs</h3>
+                    <p class="step-desc">Connect directly with the owner, negotiate seamlessly, and step into your dream home.</p>
+                </div>
+            </div>
+            <div class="how-img"></div>
+        </div>
+    </section>
+
+    <section class="faq-contact" id="contact">
+        <div class="container faq-contact-grid">
+        <div class="faq-panel">
+        <p class="section-kicker">HELP CENTRE</p>
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item active">
+                <h3>How do I search for a property? <span class="faq-icon">+</span></h3>
+                <p>Simply select your desired location, choose between Buy or Rent options, and enter your locality. You can use advanced filters to narrow down your search results based on price, BHK, and amenities.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Are all properties verified on the platform? <span class="faq-icon">+</span></h3>
+                <p>Yes! Every single property listed goes through our rigorous 3-step verification process to ensure complete transparency and authenticity.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Is there really zero brokerage involved? <span class="faq-icon">+</span></h3>
+                <p>Absolutely. We connect buyers and tenants directly with property owners, completely eliminating any middleman or brokerage fees from the transaction.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How do I list my property? <span class="faq-icon">+</span></h3>
+                <p>Click on the 'Post Property' button on the top navigation bar. Fill in your property details, upload quality photos, and your listing will be live instantly after a quick verification.</p>
+            </div>
+        </div></div>
+            <div class="contact-panel">
+                <p class="section-kicker">PERSONAL SUPPORT</p>
+                <h2>Get In Touch</h2>
+                <p>Have specific requirements or need assistance with your property search? Drop us a line and our expert team will get right back to you.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" placeholder="John">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" placeholder="Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone No</label>
+                        <input type="tel" placeholder="+91 9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea placeholder="How can we help you?"></textarea>
+                    </div>
+                </div>
+                <button class="submit-btn">Send Message ↗</button>
+            </div>
+        </div></div>
+    </section>
+
+    <section class="bottom-banner-wrapper">
+        <div class="bottom-banner">
+            <div class="banner-content">
+                <div class="banner-links">
+                    <a href="/propertydirect/apartments?type=BUY">Buy Homes</a>
+                    <a href="/propertydirect/apartments?type=RENT">Rent Homes</a>
+                    <a href="/propertydirect/apartments?type=PG">PG</a>
+                    <a href="/propertydirect/apartments?type=HOSTEL">Hostels</a>
+                </div>
+                <div class="banner-logo">PropertyDirect</div>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            &copy; 2026 PropertyDirect. All rights reserved.
+        </div>
+    </footer>
+
+    <div class="pd-modal hidden" id="appModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="pd-modal-card">
+            <button class="pd-modal-close" id="closeModal" type="button" aria-label="Close dialog">×</button>
+            <h2 id="modalTitle">Get owner details</h2>
+            <p id="modalText">Share your details to continue.</p>
+            <div id="modalFields"></div>
+            <button class="pd-modal-submit" id="modalSubmit" type="button">Submit</button>
+        </div>
+    </div>
+
+    <div class="pd-modal hidden" id="dashboardLoginModal" role="dialog" aria-modal="true" aria-labelledby="dashboardLoginTitle">
+        <div class="pd-modal-card pd-login-card">
+            <button class="pd-modal-close" id="closeDashboardLoginModal" type="button" aria-label="Close login">×</button>
+            <div class="pd-auth-tabs" role="tablist">
+                <button type="button" class="active" data-auth-mode="login" role="tab">Login</button>
+                <button type="button" data-auth-mode="register" role="tab">Create account</button>
+            </div>
+            <h2 id="dashboardLoginTitle">Login</h2>
+            <p id="dashboardLoginHelp">Enter your credentials to open your PropertyDirect workspace.</p>
+            <div id="dashboardRegisterFields" class="hidden">
+                <label>Full name<input id="dashboardRegisterName" autocomplete="name" placeholder="Your full name"></label>
+                <label>Phone number<input id="dashboardRegisterPhone" autocomplete="tel" placeholder="Mobile number"></label>
+                <label>Email address<input id="dashboardRegisterEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+            </div>
+            <label>Username<input id="dashboardUsername" autocomplete="username" placeholder="Username or email"></label>
+            <label>Password<span class="pd-password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="Password"><button id="dashboardPasswordToggle" type="button" aria-label="Show password" aria-pressed="false" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg></button></span></label>
+            <p class="pd-auth-helper" id="dashboardAuthHelper">New customer? Choose Create account to make your own credentials.</p>
+            <button class="pd-modal-submit" id="submitDashboardLogin" type="button">Login &amp; Open Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        // FAQ toggle logic
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const wasActive = item.classList.contains('active');
+                
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(i => {
+                    i.classList.remove('active');
+                    i.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                });
+                
+                // Open clicked if it wasn't active
+                if (!wasActive) {
+                    item.classList.add('active');
+                    item.querySelector('.faq-icon').style.transform = 'rotate(45deg)';
+                }
+            });
+        });
+
+        // Search Box Logic
+        let searchType = 'BUY';
+        document.querySelectorAll('.search-type button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.search-type button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                searchType = e.target.textContent.toUpperCase();
+            });
+        });
+        
+        document.querySelector('.search-btn').addEventListener('click', () => {
+            const location = document.querySelector('.search-input select').value;
+            const query = document.querySelector('.search-input input').value;
+            let url = '/propertydirect/apartments?type=' + searchType;
+            if (location && location !== 'Location') url += '&city=' + encodeURIComponent(location);
+            if (query) url += '&q=' + encodeURIComponent(query);
+            window.location.href = url;
+        });
+
+        // Property Cards Logic
+        document.querySelectorAll('.property-card').forEach(card => {
+            card.addEventListener('click', () => {
+                window.location.href = '/propertydirect/apartment-detail';
+            });
+        });
+
+        // Favorite Toggle
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const svg = btn.querySelector('svg');
+                if (svg.getAttribute('fill') === 'none') {
+                    svg.setAttribute('fill', 'var(--primary)');
+                    svg.setAttribute('stroke', 'var(--primary)');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke', 'currentColor');
+                }
+            });
+        });
+
+        // Contact Form
+        document.querySelector('.submit-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const btn = e.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Message Sent! ✓';
+            btn.style.background = '#10b981';
+            
+            // Clear inputs
+            document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => input.value = '');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = 'var(--primary)';
+            }, 3000);
+        });
+
+        // PropertyDirect account access
+        (() => {
+            const loginModal = document.getElementById('dashboardLoginModal');
+            const closeLogin = document.getElementById('closeDashboardLoginModal');
+            const loginButton = document.querySelector('[data-action="dashboard-login"]');
+            const submit = document.getElementById('submitDashboardLogin');
+            const username = document.getElementById('dashboardUsername');
+            const password = document.getElementById('dashboardPassword');
+            const passwordToggle = document.getElementById('dashboardPasswordToggle');
+            const helper = document.getElementById('dashboardAuthHelper');
+            const registerFields = document.getElementById('dashboardRegisterFields');
+            const title = document.getElementById('dashboardLoginTitle');
+            const help = document.getElementById('dashboardLoginHelp');
+            let mode = 'login';
+
+            const setMode = (nextMode) => {
+                mode = nextMode;
+                document.querySelectorAll('[data-auth-mode]').forEach((button) => button.classList.toggle('active', button.dataset.authMode === mode));
+                registerFields.classList.toggle('hidden', mode !== 'register');
+                title.textContent = mode === 'register' ? 'Create customer account' : 'Login';
+                help.textContent = mode === 'register' ? 'Create your PropertyDirect customer account in a minute.' : 'Enter your credentials to open your PropertyDirect workspace.';
+                helper.textContent = mode === 'register' ? 'Customer accounts can browse, save homes, book visits and publish property listings.' : 'New here? Choose Create account to register as a customer.';
+                submit.textContent = mode === 'register' ? 'Create account & open dashboard' : 'Login & open dashboard';
+            };
+
+            loginButton.addEventListener('click', () => {
+                setMode('login');
+                loginModal.classList.remove('hidden');
+                window.setTimeout(() => username.focus(), 50);
+            });
+            closeLogin.addEventListener('click', () => loginModal.classList.add('hidden'));
+            loginModal.addEventListener('click', (event) => { if (event.target === loginModal) loginModal.classList.add('hidden'); });
+            document.querySelectorAll('[data-auth-mode]').forEach((button) => button.addEventListener('click', () => setMode(button.dataset.authMode)));
+            passwordToggle.addEventListener('click', () => {
+                const isVisible = password.type === 'text';
+                password.type = isVisible ? 'password' : 'text';
+                passwordToggle.innerHTML = isVisible
+                    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>'
+                    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 6.2A10.9 10.9 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.1 3.8M6.3 6.3C3.6 8.1 2 12 2 12s3.5 6 10 6c1.5 0 2.8-.3 4-.8"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>';
+                passwordToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+                passwordToggle.setAttribute('title', isVisible ? 'Show password' : 'Hide password');
+                passwordToggle.setAttribute('aria-pressed', String(!isVisible));
+            });
+
+            const roleFor = (value) => {
+                const normalised = String(value || '').toLowerCase();
+                return normalised.includes('superadmin') ? 'superadmin' : normalised.includes('admin') ? 'admin' : 'customer';
+            };
+            const showError = (message) => { helper.textContent = message; helper.style.color = '#c9364d'; };
+            const clearError = () => { helper.style.color = ''; };
+            submit.addEventListener('click', async () => {
+                clearError();
+                const usernameValue = username.value.trim();
+                const passwordValue = password.value;
+                if (!usernameValue || !passwordValue) { showError('Enter your username and password to continue.'); return; }
+                submit.disabled = true;
+                const originalLabel = submit.textContent;
+                submit.textContent = mode === 'register' ? 'Creating account…' : 'Signing in…';
+                try {
+                    const endpoint = mode === 'register' ? '/api/auth/propertydirect/register-customer' : '/api/auth/dashboard-login';
+                    const payload = mode === 'register'
+                        ? { name: document.getElementById('dashboardRegisterName').value.trim(), phone: document.getElementById('dashboardRegisterPhone').value.trim(), email: document.getElementById('dashboardRegisterEmail').value.trim(), username: usernameValue, password: passwordValue }
+                        : { platform: 'propertydirect', role: roleFor(usernameValue), username: usernameValue, password: passwordValue };
+                    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) { showError(data.message || 'Login failed. Please check your credentials.'); return; }
+                    window.location.href = data.redirect || '/propertydirect/dashboards/customer';
+                } catch (error) {
+                    showError('Could not connect. Please try again.');
+                } finally {
+                    submit.disabled = false;
+                    submit.textContent = originalLabel;
+                }
+            });
+            password.addEventListener('keydown', (event) => { if (event.key === 'Enter') submit.click(); });
+        })();
+    </script>
+</body>
+</html>

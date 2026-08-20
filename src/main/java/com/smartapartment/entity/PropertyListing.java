@@ -1,0 +1,4 @@
+package com.smartapartment.entity;
+import jakarta.persistence.*;import java.math.BigDecimal;import java.time.LocalDate;import lombok.Getter;import lombok.Setter;
+@Getter @Setter @Entity @Table(name="property_listings")
+public class PropertyListing extends BaseEntity{private Long customerId;private String title;private String society;private String locality;private String city;private String listingType;private String propertyType="APARTMENT";private BigDecimal price;private BigDecimal deposit;private BigDecimal maintenance;private Integer areaSqft;private String bhk;private String furnishing;private String parking;private LocalDate availableFrom;private Double latitude;private Double longitude;private String verificationStatus="PENDING";private long viewCount;private String imageUrl;@Column(length=2000)private String amenities;@Column(length=2000)private String notes;}

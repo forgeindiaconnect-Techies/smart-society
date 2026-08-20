@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Maintenance Dashboard')}"></head>
+<body class="dashboard-body bg-light" data-platform="smartapartment" data-dashboard-role="maintenance">
+    <style>
+        /* Keep the maintenance workspace full-height while its task content scrolls. */
+        html { height: 100%; overflow: hidden; }
+        body.dashboard-body { height: 100dvh; min-height: 100dvh; overflow: hidden; }
+        body.dashboard-body .dashboard-layout { height: 100dvh; min-height: 0; overflow: hidden; }
+        body.dashboard-body .sidebar { height: 100dvh; min-height: 0; overflow-y: auto; }
+        body.dashboard-body .main-content { height: 100dvh; min-height: 0; overflow-x: hidden; overflow-y: auto !important; }
+        /* Compact the overview metrics so the work queue is visible sooner. */
+        .stats { --bs-gutter-y: .85rem; }
+        .stats .card { min-height: 96px !important; height: 96px !important; padding: 1rem !important; border-radius: 1rem; }
+        .stats .card strong { font-size: 1.55rem !important; line-height: 1.1; margin-top: .45rem !important; }
+        @media (max-width: 767.98px) {
+            .stats .card { min-height: 92px !important; height: 92px !important; padding: .85rem !important; }
+            .stats .card strong { font-size: 1.4rem !important; }
+        }
+        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
+        #sidebar {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+        }
+        #sidebar .nav-link {
+            position: relative !important;
+            z-index: 10000 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+    </style>
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
+            <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
+                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+            </div>
+            <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#tasks" class="nav-link btn btn-link text-start text-decoration-none" data-panel="tasks"><i class="fa-solid fa-clipboard-list me-2"></i> My Assigned Tasks</a>
+                <a href="#complaints" class="nav-link btn btn-link text-start text-decoration-none" data-panel="complaints"><i class="fa-solid fa-ticket me-2"></i> Open Ticket Pool</a>
+                <a href="#assets" class="nav-link btn btn-link text-start text-decoration-none" data-panel="assets"><i class="fa-solid fa-screwdriver-wrench me-2"></i> Assets & Preventive</a>
+                <a href="#profile" class="nav-link btn btn-link text-start text-decoration-none" data-panel="profile"><i class="fa-solid fa-user-gear me-2"></i> Technician Profile</a>
+            </nav>
+            <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main main-content">
+            <!-- Topbar -->
+            <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+                <div>
+                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Facility Maintenance Team • Shift Desk (Lead: Ramesh)</p>
+                    <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
+                </div>
+                <div class="d-flex align-items-center gap-3 header-actions">
+                    <button class="btn btn-success rounded-pill shadow-sm px-4" data-action="save"><i class="fa-solid fa-circle-check me-2"></i>Status: Available On-Duty</button>
+                </div>
+            </header>
+
+            <div class="container-fluid p-4 dashboard-container">
+                <!-- Overview Panel -->
+                <section data-view="overview" class="animate__animated animate__fadeIn">
+                    <div class="row g-3 mb-4 stats justify-content-center">
+                        <div class="col-6 col-lg-3 col-xl-2">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">My Assigned Tickets</span>
+                                <strong class="fs-2 fw-bold text-primary mt-2 d-block">4 Active</strong>
+                            </article>
+                        </div>
+                        <div class="col-6 col-lg-3 col-xl-2">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Work In Progress</span>
+                                <strong class="fs-2 fw-bold text-warning mt-2 d-block">2 Tickets</strong>
+                            </article>
+                        </div>
+                        <div class="col-6 col-lg-3 col-xl-2">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Resolved Today</span>
+                                <strong class="fs-2 fw-bold text-success mt-2 d-block">8 Tasks</strong>
+                            </article>
+                        </div>
+                        <div class="col-6 col-lg-3 col-xl-2">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">SLA Compliance Rate</span>
+                                <strong class="fs-2 fw-bold text-info mt-2 d-block">96.5%</strong>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
+                        <h4 class="fw-bold mb-3"><i class="fa-solid fa-helmet-safety text-primary me-2"></i>Maintenance & Facility Operations</h4>
+                        <p class="text-muted">Track resident complaints, claim unassigned tickets from the pool, perform scheduled preventive asset maintenance (lifts, DG sets, water pumps), and update task resolution logs.</p>
+                        <div class="d-flex gap-3 mt-3 flex-wrap">
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-wrench me-1"></i> Plumbing & Electrical</span>
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-elevator me-1"></i> Lift Maintenance</span>
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-bolt me-1"></i> DG Generator Check</span>
+                            <span class="badge badge-soft-danger px-3 py-2 rounded-pill"><i class="fa-solid fa-stopwatch me-1"></i> SLA Timer Enabled</span>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center"><div><h4 class="fw-bold mb-1">Today’s maintenance plan</h4><p class="text-muted mb-0">Prioritised work by SLA, safety impact and resident disruption.</p></div><button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-panel="tasks"><i class="fa-solid fa-list-check me-1"></i>Open work orders</button></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3"><div class="border-start border-4 border-danger ps-3"><div class="d-flex justify-content-between gap-3"><strong>T-102 · Bathroom water leakage</strong><span class="badge bg-danger">2h SLA left</span></div><div class="small text-muted mt-1">Flat A-101 · Plumbing · Materials: sealant and connector set · Resident access confirmed 11:30 AM.</div></div><div class="border-start border-4 border-warning ps-3"><div class="d-flex justify-content-between gap-3"><strong>Lift #1 preventive inspection</strong><span class="badge bg-warning text-dark">Due today</span></div><div class="small text-muted mt-1">Tower A · 02:00–03:00 PM · Vendor: Schindler · Lift service log required after inspection.</div></div><div class="border-start border-4 border-primary ps-3"><div class="d-flex justify-content-between gap-3"><strong>T-098 · Lift fan noise</strong><span class="badge bg-primary">Assigned</span></div><div class="small text-muted mt-1">Block B elevator · Electrical · Initial diagnosis pending before 04:00 PM.</div></div></div></div></div></div>
+                        <div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Shift checklist</h4><p class="text-muted mb-0">Confirm each safety and handover item before end of shift.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3 small"><label class="d-flex gap-2 align-items-start"><input class="form-check-input mt-1" type="checkbox" checked><span><strong>DG generator fuel level checked</strong><br><span class="text-muted">78% fuel available · no alerts reported.</span></span></label><label class="d-flex gap-2 align-items-start"><input class="form-check-input mt-1" type="checkbox" checked><span><strong>Water-pump room walkthrough completed</strong><br><span class="text-muted">Pressure normal · valve noise noted for follow-up.</span></span></label><label class="d-flex gap-2 align-items-start"><input class="form-check-input mt-1" type="checkbox"><span><strong>Lift #1 service log updated</strong><br><span class="text-muted">Due after the scheduled inspection.</span></span></label><label class="d-flex gap-2 align-items-start"><input class="form-check-input mt-1" type="checkbox"><span><strong>Shift handover note submitted</strong><br><span class="text-muted">Include open tickets, parts used and access restrictions.</span></span></label></div></div></div></div>
+                    </div>
+                    <div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Asset health snapshot</h4><p class="text-muted mb-0">Preventive maintenance status for critical society infrastructure.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Lifts</span><strong class="text-warning">1 service due</strong><div class="small text-muted mt-1">2 operating normally</div></div></div><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Water systems</span><strong class="text-success">Healthy</strong><div class="small text-muted mt-1">Pump inspection complete</div></div></div><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Power backup</span><strong class="text-success">Ready</strong><div class="small text-muted mt-1">DG fuel level at 78%</div></div></div></div><div class="mt-4 d-flex justify-content-between align-items-center"><span class="small text-muted">Next scheduled task: Lift #1 inspection at 02:00 PM</span><button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-panel="assets">View asset schedule</button></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Team and ticket pool</h4><p class="text-muted mb-0">Current workload across the maintenance desk.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3"><div class="d-flex justify-content-between border-bottom pb-2"><span>Ramesh · On-duty lead</span><strong class="text-success">2 active</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Electrical technician</span><strong class="text-warning">1 assigned</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Open ticket pool</span><strong class="text-primary">2 available</strong></div><div class="d-flex justify-content-between"><span>Parts awaiting purchase</span><strong class="text-danger">1 request</strong></div></div><button type="button" class="btn btn-primary rounded-pill w-100 mt-4" data-panel="complaints"><i class="fa-solid fa-hand-holding-hand me-2"></i>Claim next available ticket</button></div></div></div></div>
+                </section>
+
+                <!-- Assigned Tasks Panel -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="tasks">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Assigned today</span><strong class="d-block fs-4 text-primary mt-1">2 work orders</strong><span class="small text-muted">1 high-priority, 1 standard</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">SLA at risk</span><strong class="d-block fs-4 text-danger mt-1">1 ticket</strong><span class="small text-muted">T-102 due within 2 hours</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Parts required</span><strong class="d-block fs-4 text-warning mt-1">2 items</strong><span class="small text-muted">Sealant and lift fan capacitor</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Next visit</span><strong class="d-block fs-4 text-success mt-1">11:30 AM</strong><span class="small text-muted">Flat A-101 access confirmed</span></div></div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">My Active Work Orders</h4><p class="text-muted mb-0">Use the work order actions to record progress, completion and handover information.</p></div>
+                            <span class="badge badge-soft-danger inline-state"><i class="fa-solid fa-triangle-exclamation me-1"></i> SLA Priority Queue</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="tasks">
+                                <thead class="table-light">
+                                    <tr><th>Ticket ID</th><th>Issue Description</th><th>Location / Flat</th><th>Category</th><th>Priority</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>T-102</strong></td>
+                                        <td>Bathroom Water Leakage</td>
+                                        <td>Flat A-101</td>
+                                        <td>Plumbing</td>
+                                        <td><span class="badge bg-danger">HIGH (SLA: 2h remaining)</span></td>
+                                        <td><span class="badge bg-primary">In Progress</span></td>
+                                        <td><button class="btn btn-success btn-sm rounded-pill" data-action="complete"><i class="fa-solid fa-check me-1"></i> Mark Completed</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>T-098</strong></td>
+                                        <td>Block B Lift Fan Noise</td>
+                                        <td>Block B Elevator</td>
+                                        <td>Electrical</td>
+                                        <td><span class="badge bg-warning text-dark">MEDIUM</span></td>
+                                        <td><span class="badge bg-secondary">Assigned</span></td>
+                                        <td><button class="btn btn-primary btn-sm rounded-pill" data-action="complete"><i class="fa-solid fa-play me-1"></i> Start Work Order</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">T-102 · Work scope and resident access</h4><p class="text-muted mb-0">Bathroom water leakage · Flat A-101 · Reported by Priya Sharma.</p></div><div class="card-body px-4 pb-4"><div class="row g-3 small"><div class="col-md-6"><span class="text-muted d-block">Reported</span><strong>Today, 09:15 AM</strong></div><div class="col-md-6"><span class="text-muted d-block">Resident access</span><strong class="text-success">Confirmed 11:30 AM–12:30 PM</strong></div><div class="col-md-6"><span class="text-muted d-block">Inspection notes</span><strong>Leak near wash-basin inlet connector</strong></div><div class="col-md-6"><span class="text-muted d-block">Parts and tools</span><strong>Sealant, connector set, adjustable wrench</strong></div><div class="col-12"><div class="border rounded-3 bg-light p-3"><strong class="d-block mb-1">Completion checklist</strong><span class="text-muted">Isolate supply • replace connector • pressure test • photograph repair • capture resident confirmation.</span></div></div></div></div></div></div>
+                        <div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Shift coordination</h4><p class="text-muted mb-0">Keep the next maintenance step visible to the team.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3 small"><div class="d-flex justify-content-between border-bottom pb-2"><span>Assigned technician</span><strong>Ramesh</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Backup technician</span><strong>Arun · Electrical</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Safety requirement</span><strong class="text-danger">Wet-area caution</strong></div><div class="d-flex justify-content-between"><span>Handover required</span><strong class="text-primary">Yes</strong></div></div><button type="button" class="btn btn-outline-primary rounded-pill w-100 mt-4" data-panel="complaints"><i class="fa-solid fa-plus me-2"></i>Claim another ticket</button></div></div></div>
+                    </div>
+                </section>
+
+                <!-- Open Complaint Pool Panel -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="complaints">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Open for claim</span><strong class="d-block fs-4 text-primary mt-1">2 tickets</strong><span class="small text-muted">Available to the shift team</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">High urgency</span><strong class="d-block fs-4 text-danger mt-1">1 ticket</strong><span class="small text-muted">Safety or water-related issue</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Access confirmed</span><strong class="d-block fs-4 text-success mt-1">1 resident</strong><span class="small text-muted">Ready for technician visit</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Awaiting triage</span><strong class="d-block fs-4 text-warning mt-1">1 ticket</strong><span class="small text-muted">Needs an on-site assessment</span></div></div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Unassigned Complaint Pool</h4><p class="text-muted mb-0">Claim only work you can attend within the required SLA and resident access window.</p></div>
+                            <span class="badge badge-soft-info inline-state"><i class="fa-solid fa-hand-holding-hand me-1"></i> Claim & Assign to Self</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="maintenance-complaints">
+                                <thead class="table-light">
+                                    <tr><th>Ticket ID</th><th>Issue Summary</th><th>Flat / Area</th><th>Category</th><th>Logged Date</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>T-110</strong></td>
+                                        <td>Basement Light Switchboard Broken</td>
+                                        <td>Basement Parking B2</td>
+                                        <td>Electrical</td>
+                                        <td>2026-08-04</td>
+                                        <td><button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="assign">Claim Ticket</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>T-111</strong></td>
+                                        <td>Main Gate Intercom Line Disconnected</td>
+                                        <td>Main Security Gate</td>
+                                        <td>Telecom / Wiring</td>
+                                        <td>2026-08-04</td>
+                                        <td><button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="assign">Claim Ticket</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1">
+                        <div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Ticket triage details</h4><p class="text-muted mb-0">Use these checks before moving a complaint into your active work orders.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1"><i class="fa-solid fa-droplet text-danger me-2"></i>Water leakage cases</strong><span class="small text-muted">Confirm source isolation, the affected flat, lower-floor impact, resident access and emergency contact before accepting.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1"><i class="fa-solid fa-bolt text-warning me-2"></i>Electrical cases</strong><span class="small text-muted">Check power isolation, public-area safety, access route and whether an approved vendor is required.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1"><i class="fa-solid fa-user-clock text-primary me-2"></i>Resident availability</strong><span class="small text-muted">Record visit window, preferred contact number and security-entry instruction in the work log.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1"><i class="fa-solid fa-box-open text-success me-2"></i>Parts readiness</strong><span class="small text-muted">List consumables and vendor parts before starting, so the admin can approve urgent purchases quickly.</span></div></div></div></div></div></div>
+                        <div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Claim and handover checklist</h4><p class="text-muted mb-0">Every accepted ticket should have these minimum details.</p></div><div class="card-body px-4 pb-4"><ol class="small text-muted ps-3 mb-4"><li class="mb-2">Review priority, reported time and SLA deadline.</li><li class="mb-2">Confirm the exact flat, access window and contact person.</li><li class="mb-2">Check whether tools, spare parts or a vendor are required.</li><li class="mb-2">Add a work-start note after you claim the ticket.</li><li>Record completion photos and resident confirmation before closure.</li></ol><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="tasks"><i class="fa-solid fa-list-check me-2"></i>Review my active work orders</button></div></div></div>
+                    </div>
+                </section>
+
+                <!-- Asset & Service Panel -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="assets">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Registered assets</span><strong class="d-block fs-4 text-primary mt-1">3 critical</strong><span class="small text-muted">Lift, DG set and water pump</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Due this week</span><strong class="d-block fs-4 text-danger mt-1">1 service</strong><span class="small text-muted">Lift #1 inspection is overdue</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Healthy assets</span><strong class="d-block fs-4 text-success mt-1">2 assets</strong><span class="small text-muted">No active safety alerts</span></div></div>
+                        <div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Open spares</span><strong class="d-block fs-4 text-warning mt-1">1 request</strong><span class="small text-muted">Lift fan capacitor pending</span></div></div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Preventive Asset Maintenance Schedule</h4><p class="text-muted mb-0">Maintain each asset’s service history, safety status, readings and next due date.</p></div>
+                            <span class="badge badge-soft-success inline-state"><i class="fa-solid fa-heart-pulse me-1"></i> Society Infrastructure Health</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr><th>Asset Name</th><th>Category</th><th>Location</th><th>Last Service Date</th><th>Next Scheduled Due</th><th>Action</th></tr>
+                                </thead>
+                                <tbody id="assetsBody">
+                                    <tr>
+                                        <td>Schindler Passenger Lift #1</td>
+                                        <td>Elevator System</td>
+                                        <td>Tower A</td>
+                                        <td>2026-07-15</td>
+                                        <td><strong class="text-danger">2026-08-15 (Due in 11 days)</strong></td>
+                                        <td><button class="btn btn-outline-primary btn-sm rounded-pill" data-action="service-log"><i class="fa-solid fa-clipboard-check me-1"></i> Log Service</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cummins 250 KVA DG Generator</td>
+                                        <td>Power Backup</td>
+                                        <td>Substation Yard</td>
+                                        <td>2026-07-01</td>
+                                        <td>2026-09-01</td>
+                                        <td><button class="btn btn-outline-primary btn-sm rounded-pill" data-action="service-log"><i class="fa-solid fa-clipboard-check me-1"></i> Log Service</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kirloskar 15 HP Water Pump</td>
+                                        <td>Pumping Station</td>
+                                        <td>Basement Tank</td>
+                                        <td>2026-07-20</td>
+                                        <td>2026-08-20</td>
+                                        <td><button class="btn btn-outline-primary btn-sm rounded-pill" data-action="service-log"><i class="fa-solid fa-clipboard-check me-1"></i> Log Service</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Preventive-service standards</h4><p class="text-muted mb-0">The minimum information to capture for every service visit.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Lift inspection</strong><span class="small text-muted">Door operation, alarm, levelling, emergency light, ropes, lubrication and vendor service report.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">DG generator check</strong><span class="small text-muted">Fuel level, battery voltage, oil and coolant levels, test run duration and panel warnings.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Water-pump check</strong><span class="small text-muted">Pressure, vibration, seals, valves, starter panel, tank level and standby-pump readiness.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Documentation</strong><span class="small text-muted">Upload vendor report, readings, parts used, repair cost and next planned service date.</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Service readiness</h4><p class="text-muted mb-0">Today’s operational checks before a visit.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3 small"><div class="d-flex justify-content-between border-bottom pb-2"><span>Vendor access approved</span><strong class="text-success">Confirmed</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Permit / safety lockout</span><strong class="text-warning">Verify on site</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Replacement parts</span><strong class="text-danger">1 pending</strong></div><div class="d-flex justify-content-between"><span>Next scheduled visit</span><strong class="text-primary">Lift #1 · 02:00 PM</strong></div></div><p class="small text-muted mt-4 mb-0">Selecting <strong>Log Service</strong> opens a complete service record form and updates the asset’s service dates after submission.</p></div></div></div></div>
+                </section>
+
+                <!-- Profile Panel -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="profile">
+                    <div class="row g-3 mb-4"><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Current shift</span><strong class="d-block fs-5 text-success mt-1">On duty</strong><span class="small text-muted">07:00 AM–04:00 PM</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Open workload</span><strong class="d-block fs-5 text-primary mt-1">2 tasks</strong><span class="small text-muted">1 high-priority repair</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Primary skill</span><strong class="d-block fs-5 text-warning mt-1">Plumbing</strong><span class="small text-muted">Senior field technician</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Safety status</span><strong class="d-block fs-5 text-success mt-1">Compliant</strong><span class="small text-muted">PPE and site protocol current</span></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head d-flex justify-content-between align-items-center"><div><h4 class="fw-bold mb-1">Technician Profile & Duty Roster</h4><p class="text-muted mb-0">Keep contact, skills, shift coverage and escalation information current for accurate dispatch.</p></div><span class="badge badge-soft-success inline-state"><i class="fa-solid fa-circle-check me-1"></i> Profile verified</span></div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-4 form-grid">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="techName" value="Ramesh Kumar">
+                                        <label for="techName">Team Lead Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="techSkill" value="Senior Plumber & Pipe Fitter">
+                                        <label for="techSkill">Skill Specialization</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="techShift" value="Morning Shift (07:00 AM - 04:00 PM)">
+                                        <label for="techShift">Shift Timing</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="techEmergency" value="+91 98441 22334">
+                                        <label for="techEmergency">Emergency Contact</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"><div class="form-floating"><input type="text" class="form-control shadow-none border-light-subtle" id="techEmployeeId" value="MT-2048"><label for="techEmployeeId">Technician ID</label></div></div>
+                                <div class="col-md-4"><div class="form-floating"><input type="tel" class="form-control shadow-none border-light-subtle" id="techPhone" value="+91 98441 22334"><label for="techPhone">Primary Mobile Number</label></div></div>
+                                <div class="col-md-4"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" id="techAvailability"><option selected>Available on duty</option><option>Busy on assigned work</option><option>Off duty</option><option>Emergency only</option></select><label for="techAvailability">Availability Status</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control shadow-none border-light-subtle" id="techBackup" value="Arun Kumar · Electrical Technician"><label for="techBackup">Backup Technician / Escalation Contact</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control shadow-none border-light-subtle" id="techServiceArea" value="Tower A, Tower B, Basement and Common Areas"><label for="techServiceArea">Assigned Service Areas</label></div></div>
+                                <div class="col-12"><div class="form-floating"><textarea class="form-control shadow-none border-light-subtle" id="techNotes" style="height: 92px">Certified for plumbing repairs, water-pump checks and emergency leak isolation. Escalate lift and high-voltage electrical work to approved vendors.</textarea><label for="techNotes">Skills, Certifications and Dispatch Notes</label></div></div>
+                            </div>
+                            <div class="mt-4 text-end">
+                                <button class="btn btn-primary rounded-pill px-5 shadow-sm" data-action="save"><i class="fa-solid fa-floppy-disk me-2"></i>Save Profile Info</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Skills and compliance register</h4><p class="text-muted mb-0">Visible qualifications used when assigning specialised maintenance work.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block">Plumbing & leak isolation</strong><span class="small text-success">Qualified · Refresher due Mar 2027</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block">Water-pump operation</strong><span class="small text-success">Qualified · Annual check complete</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block">Work-at-height awareness</strong><span class="small text-warning">Valid · Review due Dec 2026</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block">Electrical escalation protocol</strong><span class="small text-primary">Authorised to isolate and escalate</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Today’s duty handover</h4><p class="text-muted mb-0">Information the next shift needs before you sign out.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3 small"><div class="d-flex justify-content-between border-bottom pb-2"><span>Pending ticket update</span><strong class="text-danger">T-102 water leakage</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Scheduled vendor visit</span><strong class="text-primary">Lift #1 · 02:00 PM</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Parts handover</span><strong class="text-warning">Fan capacitor pending</strong></div><div class="d-flex justify-content-between"><span>Next shift lead</span><strong>Arun Kumar · 04:00 PM</strong></div></div><button type="button" class="btn btn-outline-primary rounded-pill w-100 mt-4" data-panel="tasks"><i class="fa-solid fa-list-check me-2"></i>Review handover tasks</button></div></div></div></div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    
+    <div id="toast" class="toast hidden bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4" style="z-index: 1050;"></div>
+    
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        const dashboardTitles = {
+            overview: "Overview", tasks: "My Assigned Tasks", complaints: "Open Ticket Pool",
+            assets: "Assets & Preventive Servicing", profile: "Technician Profile"
+        };
+        
+        window.forceOpenPanel = function(panel) {
+            console.log("Switching to panel: " + panel);
+            document.querySelectorAll("[data-view]").forEach(view => {
+                view.classList.add("hidden", "d-none");
+                view.style.display = "none";
+            });
+            const selectedView = document.querySelector(`[data-view="${panel}"]`);
+            if (selectedView) {
+                selectedView.classList.remove("hidden", "d-none");
+                selectedView.style.display = "";
+            }
+            document.querySelectorAll("[data-panel]").forEach(button => {
+                const active = (button.dataset.panel === panel);
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-selected", active ? "true" : "false");
+            });
+            const titleEl = document.getElementById("title");
+            if (titleEl) {
+                titleEl.textContent = dashboardTitles[panel] || "Dashboard";
+            }
+            if (location.hash !== `#${panel}`) {
+                history.pushState(null, "", `#${panel}`);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-panel]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (el.tagName === 'A') { e.preventDefault(); e.stopImmediatePropagation(); }
+                    forceOpenPanel(el.dataset.panel);
+                });
+            });
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash) forceOpenPanel(window.location.hash.substring(1));
+            });
+            if (window.location.hash) {
+                forceOpenPanel(window.location.hash.substring(1));
+            } else {
+                forceOpenPanel("overview");
+            }
+        });
+    </script>
+</body>
+</html>

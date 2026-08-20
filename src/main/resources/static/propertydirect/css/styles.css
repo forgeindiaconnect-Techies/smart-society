@@ -1,0 +1,326 @@
+@import url("/shared/css/typography.css?v=20260721-urbanist-v1");
+@import url("/smartapartment/css/styles.css?v=20260721-full-phone-v6");
+
+/* PropertyDirect Custom Landing Page Overrides & Enhancements */
+
+:root {
+    --pd-brand: #2563eb;
+    --pd-brand-dark: #1d4ed8;
+    --pd-emerald: #059669;
+    --pd-amber: #d97706;
+}
+
+/* Custom Hero Search Card Styling embedded in Hero Visual */
+.hero-visual .search-card-mockup {
+    background: #ffffff;
+    border: 1px solid var(--landing-line);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(30, 58, 138, .16);
+    padding: 24px;
+    width: 100%;
+    max-width: 580px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-card-mockup .tabs {
+    display: flex;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.search-card-mockup .tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.22s var(--landing-ease);
+}
+
+.search-card-mockup .tab.active {
+    background: #ffffff;
+    color: var(--landing-blue-dark);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.search-card-mockup .search-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.search-card-mockup select,
+.search-card-mockup input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    color: var(--landing-ink);
+    background: #f8fafc;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.search-card-mockup select:focus,
+.search-card-mockup input:focus {
+    outline: none;
+    border-color: var(--landing-blue);
+    background: #ffffff;
+}
+
+.search-card-mockup .primary {
+    width: 100%;
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--landing-blue-dark), var(--landing-blue));
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.search-card-mockup .primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4);
+}
+
+.search-card-mockup .quick-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.search-card-mockup .quick-filters button {
+    padding: 6px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search-card-mockup .quick-filters button:hover,
+.search-card-mockup .quick-filters button.active {
+    border-color: var(--landing-blue);
+    background: rgba(58, 134, 255, 0.1);
+    color: var(--landing-blue-dark);
+}
+
+/* Property Grid Styles */
+.property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.property-card {
+    background: #ffffff;
+    border: 1px solid var(--landing-line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.06);
+    transition: transform 0.25s var(--landing-ease), box-shadow 0.25s;
+    display: flex;
+    flex-direction: column;
+}
+
+.property-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(30, 58, 138, 0.14);
+}
+
+.property-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.property-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--landing-ease);
+}
+
+.property-card:hover .property-image img {
+    transform: scale(1.05);
+}
+
+.listing-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+}
+
+.save-property {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #e11d48;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.save-property:hover {
+    transform: scale(1.1);
+}
+
+.property-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.property-body h3 {
+    margin: 0 0 10px;
+    font-size: 1.08rem;
+    font-weight: 750;
+    color: var(--landing-ink);
+    line-height: 1.35;
+}
+
+.property-body .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.property-body .meta span {
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.price-row {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.price-row .price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--landing-blue-dark);
+}
+
+.price-row .ghost {
+    padding: 8px 14px;
+    border: 1px solid var(--landing-blue);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--landing-blue);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.price-row .ghost:hover {
+    background: var(--landing-blue);
+    color: #ffffff;
+}
+
+/* Service Grid Styles */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.service-card {
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid var(--landing-line);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(30, 58, 138, 0.1);
+}
+
+.service-card span {
+    width: fit-content;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(58, 134, 255, 0.1);
+    color: var(--landing-blue);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.service-card strong {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--landing-ink);
+}
+
+/* Modal Form Styles */
+.form-grid.post-property-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.post-notes-field {
+    grid-column: 1 / -1;
+}
+
+.post-notes-field textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+}

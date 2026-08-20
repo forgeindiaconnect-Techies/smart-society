@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apartments for Rent and Sale - PropertyDirect</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260819-v999">
+    <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260819-v999">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* Leaflet Interactive Map Customization */
+        .leaflet-price-badge-icon {
+            background: transparent !important;
+            border: none !important;
+        }
+        .leaflet-price-badge {
+            background: #ffffff !important;
+            color: #1d376c !important;
+            padding: 5px 10px !important;
+            border-radius: 999px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            border: 2px solid #1d376c !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+        }
+        .leaflet-price-badge:hover, .leaflet-price-badge.active {
+            background: #1d376c !important;
+            color: #ffffff !important;
+            border-color: #8cf0bd !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 6px 20px rgba(29, 55, 108, 0.4) !important;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px !important;
+            padding: 4px !important;
+            box-shadow: 0 10px 30px rgba(10, 24, 52, 0.25) !important;
+        }
+        .leaflet-popup-tip {
+            background: #ffffff !important;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box !important;
+        }
+        body.apartment-page {
+            font-family: 'Manrope', 'Outfit', sans-serif !important;
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .topbar.compact {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 10px 24px !important;
+            background: linear-gradient(135deg, #0b1836 0%, #122852 100%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 8px 32px rgba(6, 20, 40, 0.25) !important;
+        }
+        .topbar .brand {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.22rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            letter-spacing: -0.035em !important;
+        }
+        .topbar .brand .brand-mark {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            background: rgba(140, 240, 189, 0.15) !important;
+            border: 1px solid rgba(140, 240, 189, 0.3) !important;
+            border-radius: 8px !important;
+            color: #8cf0bd !important;
+            font-size: 0.85rem !important;
+            font-weight: 800 !important;
+        }
+        .topbar .brand span:not(.brand-mark) {
+            color: #8cf0bd !important;
+        }
+        .apartment-searchbar {
+            display: flex !important;
+            align-items: center !important;
+            background: #ffffff !important;
+            padding: 4px 6px 4px 14px !important;
+            border-radius: 999px !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            max-width: 580px !important;
+            width: 100% !important;
+        }
+        .apartment-searchbar select {
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            color: #0f3460 !important;
+            padding-right: 10px !important;
+            border-right: 1px solid #e2e8f0 !important;
+            cursor: pointer !important;
+        }
+        .apartment-searchbar input {
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+            flex: 1 !important;
+            padding: 6px 12px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            color: #1e293b !important;
+        }
+        .apartment-searchbar button.primary {
+            background: linear-gradient(135deg, #1d376c, #315ab0) !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 8px 18px !important;
+            border-radius: 999px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 12px rgba(29, 55, 108, 0.25) !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+        }
+        .apartment-searchbar button.primary:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 16px rgba(29, 55, 108, 0.35) !important;
+        }
+        .topbar .nav {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+        .topbar .nav a {
+            color: rgba(255, 255, 255, 0.88) !important;
+            text-decoration: none !important;
+            font-size: 0.84rem !important;
+            font-weight: 600 !important;
+            transition: color 0.2s !important;
+        }
+        .topbar .nav a:hover {
+            color: #8cf0bd !important;
+        }
+        .post-apartment-trigger {
+            background: #a7f3cb !important;
+            color: #13254d !important;
+            border: none !important;
+            padding: 8px 16px !important;
+            border-radius: 999px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            box-shadow: 0 6px 20px rgba(167, 243, 203, 0.25) !important;
+            transition: transform 0.2s, background 0.2s !important;
+        }
+        .post-apartment-trigger:hover {
+            background: #d8ffe8 !important;
+            transform: translateY(-1px) !important;
+        }
+        .listing-shell {
+            display: grid !important;
+            grid-template-columns: 250px 1fr !important;
+            gap: 20px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 20px 0 !important;
+            padding: 0 16px !important;
+        }
+        aside.filters {
+            background: #ffffff !important;
+            border: 1px solid #e6e9f0 !important;
+            border-radius: 18px !important;
+            padding: 22px !important;
+            box-shadow: 0 10px 28px rgba(23, 34, 59, 0.04) !important;
+            height: fit-content !important;
+            position: sticky !important;
+            top: 76px !important;
+        }
+        .filter-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 20px !important;
+            padding-bottom: 12px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        .filter-head strong {
+            font-size: 1.1rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+        }
+        .filter-head button {
+            background: transparent !important;
+            border: none !important;
+            color: #244a9d !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+        }
+        aside.filters label {
+            display: block !important;
+            font-size: 0.82rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            margin: 18px 0 10px !important;
+            letter-spacing: 0.02em !important;
+            text-transform: uppercase !important;
+        }
+        .check-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+        }
+        .check-grid button, .filter-list button {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+            padding: 8px 12px !important;
+            border-radius: 999px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center !important;
+        }
+        .check-grid button:hover, .filter-list button:hover {
+            border-color: #315ab0 !important;
+            color: #1d376c !important;
+            background: #f0f4ff !important;
+        }
+        .check-grid button.active, .filter-list button.active {
+            background: #1d376c !important;
+            color: #ffffff !important;
+            border-color: #1d376c !important;
+            box-shadow: 0 4px 12px rgba(29, 55, 108, 0.25) !important;
+        }
+        .filter-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        .filter-list button {
+            text-align: left !important;
+            padding: 9px 14px !important;
+        }
+        #budgetRange {
+            width: 100% !important;
+            accent-color: #1d376c !important;
+        }
+        .range-copy {
+            font-size: 0.85rem !important;
+            color: #64748b !important;
+            margin-top: 6px !important;
+            font-weight: 600 !important;
+        }
+        .range-copy span {
+            color: #1d376c !important;
+            font-weight: 800 !important;
+        }
+        .listing-toolbar {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin-bottom: 20px !important;
+            background: #ffffff !important;
+            border: 1px solid #e6e9f0 !important;
+            border-radius: 18px !important;
+            padding: 22px 24px !important;
+            box-shadow: 0 10px 28px rgba(23, 34, 59, 0.04) !important;
+        }
+        .breadcrumb {
+            font-size: 0.8rem !important;
+            color: #64748b !important;
+            margin-bottom: 6px !important;
+            font-weight: 600 !important;
+        }
+        .listing-toolbar h1 {
+            font-size: 1.65rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            margin: 0 0 6px !important;
+            letter-spacing: -0.035em !important;
+        }
+        .listing-toolbar p:not(.breadcrumb) {
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+        }
+        .view-toggle {
+            display: flex !important;
+            background: #eef1f8 !important;
+            padding: 3px !important;
+            border-radius: 10px !important;
+            gap: 3px !important;
+        }
+        .view-toggle button {
+            border: none !important;
+            background: transparent !important;
+            padding: 6px 14px !important;
+            border-radius: 8px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #5e6d86 !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+        .view-toggle button.active {
+            background: #ffffff !important;
+            color: #1d376c !important;
+            box-shadow: 0 2px 8px rgba(26, 49, 95, 0.12) !important;
+        }
+        .society-strip {
+            background: #ffffff !important;
+            border: 1px solid #e6e9f0 !important;
+            border-radius: 18px !important;
+            padding: 20px 24px !important;
+            margin-bottom: 24px !important;
+            box-shadow: 0 10px 28px rgba(23, 34, 59, 0.04) !important;
+        }
+        .society-strip strong {
+            display: block !important;
+            font-size: 0.85rem !important;
+            font-weight: 800 !important;
+            color: #4c68a7 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+            margin-bottom: 14px !important;
+        }
+        #societyStrip {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+            gap: 12px !important;
+        }
+        .society-chip, #societyStrip button, #societyStrip article, #societyStrip div {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 14px !important;
+            padding: 12px 10px !important;
+            text-align: center !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            font-family: 'Manrope', sans-serif !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 4px 12px rgba(23, 34, 59, 0.03) !important;
+            outline: none !important;
+        }
+        .society-chip:hover, #societyStrip button:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 10px 22px rgba(29, 55, 108, 0.12) !important;
+            border-color: #315ab0 !important;
+            background: #f0f4ff !important;
+        }
+        .society-chip.active, #societyStrip button.active {
+            background: #1d376c !important;
+            border-color: #1d376c !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 20px rgba(29, 55, 108, 0.25) !important;
+        }
+        .society-chip-name {
+            display: block !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #17223b !important;
+            line-height: 1.25 !important;
+        }
+        .society-chip:hover .society-chip-name {
+            color: #1d376c !important;
+        }
+        .society-chip.active .society-chip-name {
+            color: #ffffff !important;
+        }
+        .society-chip-count {
+            display: block !important;
+            font-size: 1.1rem !important;
+            font-weight: 800 !important;
+            color: #1d376c !important;
+            margin: 4px 0 2px !important;
+        }
+        .society-chip.active .society-chip-count {
+            color: #a7f3cb !important;
+        }
+        .society-chip-label {
+            display: block !important;
+            font-size: 0.7rem !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+        }
+        .society-chip.active .society-chip-label {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        .apartment-results {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+            gap: 20px !important;
+        }
+        .apartment-card {
+            background: #ffffff !important;
+            border: 1px solid #e6e9f0 !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            box-shadow: 0 6px 20px rgba(23, 34, 59, 0.04) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .apartment-card.empty-results {
+            grid-column: 1 / -1 !important;
+            padding: 48px 24px !important;
+            text-align: center !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #ffffff !important;
+            border-radius: 20px !important;
+            border: 2px dashed #cbd5e1 !important;
+        }
+        .apartment-card.empty-results h2 {
+            font-size: 1.45rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            margin: 0 0 8px !important;
+        }
+        .apartment-card.empty-results p {
+            font-size: 0.95rem !important;
+            color: #64748b !important;
+            max-width: 520px !important;
+            margin: 0 auto 24px !important;
+            line-height: 1.55 !important;
+        }
+        .apartment-card.empty-results button {
+            width: auto !important;
+            min-width: 180px !important;
+            padding: 11px 24px !important;
+            border-radius: 999px !important;
+            background: linear-gradient(135deg, #1d376c, #315ab0) !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 0.88rem !important;
+            border: none !important;
+            box-shadow: 0 6px 18px rgba(29, 55, 108, 0.22) !important;
+            cursor: pointer !important;
+        }
+        .apartment-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 16px 32px rgba(23, 34, 59, 0.10) !important;
+        }
+        .apt-photo, .apartment-img-wrap, .property-img {
+            height: 200px !important;
+            max-height: 200px !important;
+            min-height: 200px !important;
+            overflow: hidden !important;
+            position: relative !important;
+            border-radius: 16px 16px 0 0 !important;
+            background: #0c1b33 !important;
+        }
+        .apt-photo img, .apartment-img-wrap img, .property-img img {
+            width: 100% !important;
+            height: 200px !important;
+            max-height: 200px !important;
+            min-height: 200px !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+            transition: transform 0.3s ease !important;
+        }
+        .apartment-card:hover img {
+            transform: scale(1.04) !important;
+        }
+        .apt-photo span {
+            position: absolute !important;
+            bottom: 8px !important;
+            left: 8px !important;
+            background: rgba(12, 31, 48, 0.75) !important;
+            color: #ffffff !important;
+            padding: 3px 8px !important;
+            border-radius: 6px !important;
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            backdrop-filter: blur(4px) !important;
+        }
+        .apt-body {
+            padding: 16px 18px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+        }
+        .apt-title-row {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+        }
+        .apt-title-row h2 {
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            margin: 0 0 3px !important;
+            line-height: 1.3 !important;
+        }
+        .apt-title-row h2 a {
+            color: #17223b !important;
+            text-decoration: none !important;
+        }
+        .apt-title-row h2 a:hover {
+            color: #244a9d !important;
+        }
+        .icon-action, button[data-action="shortlist"] {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+            padding: 5px 11px !important;
+            border-radius: 999px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.76rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            outline: none !important;
+            white-space: nowrap !important;
+        }
+        .icon-action:hover, button[data-action="shortlist"]:hover {
+            background: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #e11d48 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15) !important;
+        }
+        .icon-action.active, button[data-action="shortlist"].active {
+            background: #ffe4e6 !important;
+            border-color: #fda4af !important;
+            color: #e11d48 !important;
+        }
+        .icon-action svg, button[data-action="shortlist"] svg {
+            width: 13px !important;
+            height: 13px !important;
+            stroke: currentColor !important;
+            fill: none !important;
+            transition: fill 0.2s ease, transform 0.2s ease !important;
+        }
+        .icon-action:hover svg, button[data-action="shortlist"]:hover svg {
+            fill: #e11d48 !important;
+            transform: scale(1.1) !important;
+        }
+        .apt-address {
+            font-size: 0.78rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+        }
+        .apt-price-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 6px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            padding: 8px !important;
+            text-align: center !important;
+        }
+        .apt-price-grid article span {
+            display: block !important;
+            font-size: 0.7rem !important;
+            color: #64748b !important;
+            font-weight: 600 !important;
+        }
+        .apt-price-grid article strong {
+            font-size: 0.88rem !important;
+            color: #1d376c !important;
+            font-weight: 800 !important;
+        }
+        .apt-facts {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px 12px !important;
+            font-size: 0.76rem !important;
+        }
+        .apt-facts article span {
+            color: #64748b !important;
+        }
+        .apt-facts article strong {
+            color: #17223b !important;
+            font-weight: 700 !important;
+            margin-left: 4px !important;
+        }
+        .apt-nearby {
+            font-size: 0.74rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        .apt-actions {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px !important;
+            margin-top: 4px !important;
+        }
+        .apt-actions button {
+            padding: 7px 10px !important;
+            border-radius: 8px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.76rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+        }
+        .apt-actions button.primary {
+            grid-column: 1 / -1 !important;
+            background: linear-gradient(135deg, #1d376c, #315ab0) !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(29, 55, 108, 0.20) !important;
+        }
+        .apt-actions button.ghost {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+        }
+        .apt-actions button.ghost:hover {
+            border-color: #315ab0 !important;
+            color: #1d376c !important;
+            background: #f0f4ff !important;
+        }
+
+        /* Interactive Map View Styling */
+        .map-view {
+            width: 100% !important;
+            margin-top: 10px !important;
+        }
+        .map-shell {
+            display: grid !important;
+            grid-template-columns: 320px 1fr !important;
+            gap: 16px !important;
+            height: 600px !important;
+            background: #ffffff !important;
+            border: 1px solid #e6e9f0 !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 30px rgba(23, 34, 59, 0.06) !important;
+        }
+        .map-sidebar {
+            display: flex !important;
+            flex-direction: column !important;
+            border-right: 1px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            overflow: hidden !important;
+        }
+        .map-sidebar-head {
+            padding: 16px 18px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            background: #f8fafc !important;
+        }
+        .map-sidebar-head h3 {
+            font-size: 1.05rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            margin: 0 0 4px !important;
+        }
+        .map-count {
+            font-size: 0.78rem !important;
+            color: #64748b !important;
+            font-weight: 600 !important;
+        }
+        .map-card-list {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+        .map-mini-card {
+            display: flex !important;
+            gap: 12px !important;
+            padding: 10px !important;
+            border-radius: 12px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+        .map-mini-card:hover, .map-mini-card.active {
+            border-color: #315ab0 !important;
+            background: #f0f4ff !important;
+            transform: translateX(2px) !important;
+        }
+        .map-mini-card.active {
+            box-shadow: 0 4px 14px rgba(29, 55, 108, 0.15) !important;
+        }
+        .map-mini-card img {
+            width: 64px !important;
+            height: 64px !important;
+            border-radius: 8px !important;
+            object-fit: cover !important;
+        }
+        .map-mini-info {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+        .map-mini-info strong {
+            font-size: 0.95rem !important;
+            color: #1d376c !important;
+            font-weight: 800 !important;
+        }
+        .map-mini-info h4 {
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #17223b !important;
+            margin: 2px 0 !important;
+        }
+        .map-mini-info p {
+            font-size: 0.75rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+        }
+        .map-canvas-container {
+            position: relative !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: #0f1d30 url('/propertydirect/images/city_map.jpg') center/cover no-repeat !important;
+            overflow: hidden !important;
+        }
+        .map-grid-bg {
+            position: absolute !important;
+            inset: 0 !important;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) !important;
+            background-size: 40px 40px !important;
+            pointer-events: none !important;
+        }
+        .map-controls {
+            position: absolute !important;
+            top: 16px !important;
+            right: 16px !important;
+            z-index: 10 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        .map-ctrl-btn {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(12, 31, 48, 0.8) !important;
+            color: #ffffff !important;
+            font-size: 1.1rem !important;
+            cursor: pointer !important;
+            backdrop-filter: blur(8px) !important;
+            display: grid !important;
+            place-items: center !important;
+        }
+        .map-tag {
+            background: rgba(12, 31, 48, 0.8) !important;
+            color: #8cf0bd !important;
+            padding: 8px 14px !important;
+            border-radius: 999px !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            border: 1px solid rgba(140, 240, 189, 0.3) !important;
+            backdrop-filter: blur(8px) !important;
+        }
+        .map-pins-layer {
+            position: absolute !important;
+            inset: 0 !important;
+            z-index: 5 !important;
+        }
+        .map-pin {
+            position: absolute !important;
+            transform: translate(-50%, -100%) !important;
+            cursor: pointer !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            transition: transform 0.2s ease !important;
+        }
+        .map-pin:hover, .map-pin.active {
+            transform: translate(-50%, -110%) scale(1.15) !important;
+            z-index: 20 !important;
+        }
+        .pin-badge {
+            background: #ffffff !important;
+            color: #1d376c !important;
+            padding: 4px 10px !important;
+            border-radius: 999px !important;
+            font-size: 0.76rem !important;
+            font-weight: 800 !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+            border: 2px solid #1d376c !important;
+            white-space: nowrap !important;
+        }
+        .map-pin.active .pin-badge {
+            background: #1d376c !important;
+            color: #ffffff !important;
+            border-color: #8cf0bd !important;
+        }
+        .pin-marker {
+            font-size: 1.2rem !important;
+            margin-top: -4px !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) !important;
+        }
+
+        /* Modal Overlay System */
+        .modal {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 9999 !important;
+            display: grid !important;
+            place-items: center !important;
+            padding: 20px !important;
+            background: rgba(10, 24, 52, 0.65) !important;
+            backdrop-filter: blur(8px) !important;
+            transition: opacity 0.25s ease !important;
+        }
+        .modal.hidden, .hidden {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .modal-card {
+            position: relative !important;
+            width: min(520px, 92vw) !important;
+            max-height: calc(100vh - 40px) !important;
+            overflow-y: auto !important;
+            padding: 28px !important;
+            border-radius: 20px !important;
+            background: #ffffff !important;
+            box-shadow: 0 24px 80px rgba(4, 17, 45, 0.35) !important;
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+            color: #17223b !important;
+        }
+        .modal-card .close {
+            position: absolute !important;
+            top: 16px !important;
+            right: 16px !important;
+            width: 32px !important;
+            height: 32px !important;
+            border: none !important;
+            border-radius: 50% !important;
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+            cursor: pointer !important;
+            font-size: 1.1rem !important;
+            line-height: 1 !important;
+            display: grid !important;
+            place-items: center !important;
+            transition: background 0.2s, color 0.2s !important;
+        }
+        .modal-card .close:hover {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        .modal-card h2 {
+            margin: 0 30px 8px 0 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.45rem !important;
+            font-weight: 800 !important;
+            color: #17223b !important;
+            letter-spacing: -0.03em !important;
+        }
+        .modal-card p {
+            margin: 0 0 20px !important;
+            color: #64748b !important;
+            font-size: 0.88rem !important;
+            line-height: 1.5 !important;
+        }
+        .modal-card label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            margin-bottom: 14px !important;
+            color: #17223b !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+        }
+        .modal-card input, .modal-card select, .modal-card textarea {
+            width: 100% !important;
+            padding: 10px 14px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            outline: none !important;
+            box-sizing: border-box !important;
+            transition: border-color 0.2s, box-shadow 0.2s !important;
+        }
+        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+            border-color: #315ab0 !important;
+            box-shadow: 0 0 0 3px rgba(49, 90, 176, 0.15) !important;
+        }
+        .modal-card button.primary.full, .modal-card button.primary {
+            width: 100% !important;
+            margin-top: 10px !important;
+            padding: 12px 20px !important;
+            border: none !important;
+            border-radius: 12px !important;
+            background: linear-gradient(135deg, #1d376c, #315ab0) !important;
+            color: #ffffff !important;
+            cursor: pointer !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.9rem !important;
+            font-weight: 700 !important;
+            box-shadow: 0 8px 20px rgba(29, 55, 108, 0.25) !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+        }
+        .modal-card button.primary:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 24px rgba(29, 55, 108, 0.35) !important;
+        }
+        .toast {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            z-index: 10000 !important;
+            padding: 12px 20px !important;
+            border-radius: 12px !important;
+            background: #17223b !important;
+            color: #ffffff !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+    </style>
+</head>
+<body class="apartment-page">
+<header class="topbar compact">
+    <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> <span>Property</span>Direct</a>
+    <div class="apartment-searchbar">
+        <select id="listingCity"><option>Bangalore</option><option>Chennai</option><option>Mumbai</option><option>Pune</option></select>
+        <input id="listingSearch" placeholder="Add localities, societies or landmarks">
+        <button class="primary small" id="listingSearchButton">Search</button>
+    </div>
+    <nav class="nav">
+        <a href="/" class="smartsociety-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(29, 55, 108, 0.08); color: #1d376c !important; font-weight: 700; font-size: 0.82rem; border-radius: 8px; border: 1px solid rgba(29, 55, 108, 0.2); text-decoration: none; transition: all 0.2s ease;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            SmartSociety
+        </a>
+        <a href="/propertydirect/dashboards/customer">Customer Dashboard</a>
+        <button class="primary small post-apartment-trigger" data-open-modal="post"><span aria-hidden="true">＋</span> Post Apartment</button>
+    </nav>
+
+</header>
+
+<main class="listing-shell">
+    <aside class="filters">
+        <div class="filter-head">
+            <strong>Filters</strong>
+            <button id="clearFilters">Reset</button>
+        </div>
+        <label>BHK Type</label>
+        <div class="check-grid">
+            <button data-filter-group="bhk" data-filter="1 BHK">1 BHK</button>
+            <button data-filter-group="bhk" data-filter="2 BHK">2 BHK</button>
+            <button data-filter-group="bhk" data-filter="3 BHK">3 BHK</button>
+            <button data-filter-group="bhk" data-filter="4 BHK">4 BHK</button>
+        </div>
+        <label>Budget Range</label>
+        <input id="budgetRange" type="range" min="10000" max="150000" value="80000">
+        <p class="range-copy">Up to <span id="budgetValue">₹80,000</span></p>
+        <label>Availability</label>
+        <div class="filter-list">
+            <button data-filter-group="availability" data-filter="Ready to Move">Immediate</button>
+            <button data-filter-group="availability" data-filter="15 Days">Within 15 Days</button>
+            <button data-filter-group="availability" data-filter="30 Days">Within 30 Days</button>
+        </div>
+        <label>Furnishing</label>
+        <div class="filter-list">
+            <button data-filter-group="furnishing" data-filter="Fully Furnished">Full</button>
+            <button data-filter-group="furnishing" data-filter="Semi Furnished">Semi</button>
+            <button data-filter-group="furnishing" data-filter="Unfurnished">None</button>
+        </div>
+        <label>Parking</label>
+        <div class="filter-list">
+            <button data-filter-group="parking" data-filter="Bike Parking">2 Wheeler</button>
+            <button data-filter-group="parking" data-filter="Car Parking">4 Wheeler</button>
+        </div>
+        <label>Apartment Type</label>
+        <div class="filter-list">
+            <button data-filter-group="apartmentType" data-filter="Gated Society">Gated Society</button>
+            <button data-filter-group="apartmentType" data-filter="Standalone Apartment">Standalone Apartment</button>
+        </div>
+    </aside>
+
+    <section class="listing-content">
+        <div class="listing-toolbar">
+            <div>
+                <p class="breadcrumb">Home / Apartments / Bangalore</p>
+                <h1><span id="resultCount">0</span> verified apartments without brokerage</h1>
+                <p>Owner-listed apartment homes with rent, deposit, furnishing, availability, nearby places and visit options.</p>
+            </div>
+            <div class="view-toggle">
+                <button class="active" data-view-mode="list">List</button>
+                <button data-view-mode="map">Map</button>
+            </div>
+        </div>
+
+        <div class="society-strip">
+            <strong>Top societies in your search</strong>
+            <div id="societyStrip"></div>
+        </div>
+
+        <div id="apartmentResults" class="apartment-results"></div>
+        <div id="mapView" class="map-view hidden">
+            <div class="map-card">Map preview of apartment locations</div>
+        </div>
+    </section>
+</main>
+
+<div class="modal hidden" id="appModal">
+    <div class="modal-card">
+        <button class="close" id="closeModal">x</button>
+        <h2 id="modalTitle">Get Owner Details</h2>
+        <p id="modalText">Share your details to continue.</p>
+        <div id="modalFields">
+            <label>Name<input placeholder="Your name"></label>
+            <label>Phone<input placeholder="Mobile number"></label>
+            <label>Email<input placeholder="Email address"></label>
+        </div>
+        <button class="primary full" id="modalSubmit">Submit</button>
+    </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+<script src="/propertydirect/js/apartments.js?v=20260703-owner-leads"></script>
+<script src="/shared/js/theme.js?v=20260703-modal-fix"></script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Security Dashboard')}"></head>
+<body class="dashboard-body bg-light" data-platform="smartapartment" data-dashboard-role="security">
+    <style>
+        html { height: 100%; overflow: hidden; }
+        body.dashboard-body { height: 100dvh; min-height: 100dvh; overflow: hidden; }
+        body.dashboard-body .dashboard-layout { height: 100dvh; min-height: 0; overflow: hidden; }
+        body.dashboard-body .sidebar { height: 100dvh; min-height: 0; overflow-y: auto; }
+        body.dashboard-body .main-content { height: 100dvh; min-height: 0; overflow-x: hidden; overflow-y: auto !important; }
+        /* Keep the security workspace compact while retaining the detailed gate information. */
+        body[data-dashboard-role="security"] .dashboard-container { padding-top: 1.25rem !important; }
+        body[data-dashboard-role="security"] .stats { --bs-gutter-y: .9rem; margin-bottom: 1.25rem !important; }
+        body[data-dashboard-role="security"] .stats .card { min-height: 112px; padding: .85rem !important; border-radius: .9rem !important; }
+        body[data-dashboard-role="security"] .stats .card .fs-2 { font-size: 1.5rem !important; line-height: 1.15; margin-top: .45rem !important; }
+        body[data-dashboard-role="security"] .stats .card .small { font-size: .72rem; }
+        body[data-dashboard-role="security"] .dashboard-container .row.g-3.mb-4 > [class*="col-"] .card .card-body { padding: .75rem 1rem !important; }
+        body[data-dashboard-role="security"] .dashboard-container .row.g-3.mb-4 > [class*="col-"] .card .fs-3 { font-size: 1.35rem !important; line-height: 1.1; }
+        body[data-dashboard-role="security"] .dashboard-container .card-header.pt-4 { padding-top: 1rem !important; }
+        body[data-dashboard-role="security"] .dashboard-container .card-body.pb-4 { padding-bottom: 1rem !important; }
+        body[data-dashboard-role="security"] .dashboard-container .btn:not(.nav-link) { min-height: 34px; padding: .4rem .8rem !important; font-size: .84rem; line-height: 1.2; }
+        body[data-dashboard-role="security"] .dashboard-container .btn.btn-sm { min-height: 30px; padding: .3rem .65rem !important; font-size: .78rem; }
+        body[data-dashboard-role="security"] .header-actions .btn { min-height: 38px; padding: .5rem 1rem !important; font-size: .88rem; }
+        @media (max-width: 767.98px) { body[data-dashboard-role="security"] .stats .card { min-height: 94px; } }
+        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
+        #sidebar {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+        }
+        #sidebar .nav-link {
+            position: relative !important;
+            z-index: 10000 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+    </style>
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
+            <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
+                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+            </div>
+            <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#verify" class="nav-link btn btn-link text-start text-decoration-none" data-panel="verify"><i class="fa-solid fa-qrcode me-2"></i> Pass / OTP Verification</a>
+                <a href="#entries" class="nav-link btn btn-link text-start text-decoration-none" data-panel="entries"><i class="fa-solid fa-clipboard-user me-2"></i> Gate Entry Register</a>
+                <a href="#visitors" class="nav-link btn btn-link text-start text-decoration-none" data-panel="visitors"><i class="fa-solid fa-users me-2"></i> Active Visitors</a>
+                <a href="#deliveries" class="nav-link btn btn-link text-start text-decoration-none" data-panel="deliveries"><i class="fa-solid fa-truck me-2"></i> Delivery Log</a>
+                <a href="#staff" class="nav-link btn btn-link text-start text-decoration-none" data-panel="staff"><i class="fa-solid fa-id-card me-2"></i> Daily Staff & Attendance</a>
+                <a href="#incidents" class="nav-link btn btn-link text-start text-decoration-none" data-panel="incidents"><i class="fa-solid fa-triangle-exclamation me-2"></i> Gate Incidents</a>
+            </nav>
+            <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main main-content">
+            <!-- Topbar -->
+            <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+                <div>
+                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Main Security Gate • Shift Duty (Guard: Vikram)</p>
+                    <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
+                </div>
+                <div class="d-flex align-items-center gap-3 header-actions">
+                    <button class="btn btn-danger rounded-pill shadow-sm px-4 fw-bold animate__animated animate__pulse animate__infinite" onclick="alert('🚨 EMERGENCY PANIC ALERT SENT TO ALL RESIDENTS & SOCIETY ADMIN!')"><i class="fa-solid fa-triangle-exclamation me-2"></i>🚨 Emergency Panic</button>
+                </div>
+            </header>
+
+            <div class="container-fluid p-4 dashboard-container">
+                <!-- Overview Panel -->
+                <section data-view="overview" class="animate__animated animate__fadeIn">
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Active Visitors Inside</span>
+                                <strong class="fs-2 fw-bold text-warning mt-2 d-block">14 Persons</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Pending Approval</span>
+                                <strong class="fs-2 fw-bold text-danger mt-2 d-block">3 Gate Logs</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Today Total Entries</span>
+                                <strong class="fs-2 fw-bold text-primary mt-2 d-block">68 Entries</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Daily Staff On Duty</span>
+                                <strong class="fs-2 fw-bold text-success mt-2 d-block">12 Staff</strong>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
+                        <h4 class="fw-bold mb-3"><i class="fa-solid fa-shield-halved text-primary me-2"></i>Security Control Console</h4>
+                        <p class="text-muted">Verify resident guest pre-approval codes, record walk-in visitors, request resident approval, and log delivery agents and daily domestic staff.</p>
+                        <div class="d-flex gap-3 mt-3 flex-wrap">
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-key me-1"></i> Verify 4-Digit Pass</span>
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-box me-1"></i> Log Parcel Arrival</span>
+                            <span class="badge badge-soft-danger px-3 py-2 rounded-pill"><i class="fa-solid fa-bell me-1"></i> Gate Panic Button</span>
+                            <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-clipboard-user me-1"></i> Staff Attendance</span>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center"><div><h4 class="fw-bold mb-1">Live gate priority queue</h4><p class="text-muted mb-0">Handle high-impact entries first, then complete resident verification and gate logging.</p></div><button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-panel="entries"><i class="fa-solid fa-clipboard-list me-1"></i>Open entry register</button></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3"><div class="border-start border-4 border-danger ps-3"><div class="d-flex justify-content-between gap-3"><strong>Walk-in delivery · Flat A-101</strong><span class="badge bg-danger">Resident approval pending</span></div><div class="small text-muted mt-1">Arun Kumar · Food delivery · Arrived 10:42 AM · Call resident if approval is not received within 5 minutes.</div></div><div class="border-start border-4 border-warning ps-3"><div class="d-flex justify-content-between gap-3"><strong>Vendor visit · Tower C electrical repair</strong><span class="badge bg-warning text-dark">Verify ID</span></div><div class="small text-muted mt-1">Meena Electricals · Flat C-303 · Phone approval noted · Confirm tools and work order before access.</div></div><div class="border-start border-4 border-primary ps-3"><div class="d-flex justify-content-between gap-3"><strong>Domestic staff attendance</strong><span class="badge bg-primary">3 check-ins due</span></div><div class="small text-muted mt-1">Morning shift roster is missing three staff check-ins. Verify at gate before 11:00 AM.</div></div></div></div></div></div>
+                        <div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Gate status and emergency readiness</h4><p class="text-muted mb-0">Real-time checks for this security shift.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3 small"><div class="d-flex justify-content-between border-bottom pb-2"><span>Main gate barrier</span><strong class="text-success">Operational</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>CCTV camera feed</span><strong class="text-success">8 / 8 online</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Fire-panel status</span><strong class="text-success">No active alarm</strong></div><div class="d-flex justify-content-between border-bottom pb-2"><span>Emergency contact</span><strong>Society Admin · +91 98440 22010</strong></div><div class="d-flex justify-content-between"><span>Shift handover</span><strong class="text-primary">Due 03:45 PM</strong></div></div><button type="button" class="btn btn-outline-danger rounded-pill w-100 mt-4" onclick="alert('Emergency protocol reminder: verify the situation, contact the society admin and emergency services, then use the red panic button only for a confirmed emergency.')"><i class="fa-solid fa-triangle-exclamation me-2"></i>Review emergency protocol</button></div></div></div>
+                    </div>
+                    <div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Gate verification checklist</h4><p class="text-muted mb-0">Complete this sequence for all visitors, delivery agents and vendors.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">1. Verify identity</strong><span class="small text-muted">Check photo ID, vehicle or delivery details, and whether the name matches the pass or resident approval.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">2. Confirm destination</strong><span class="small text-muted">Verify flat number, resident name, purpose of visit and approved time window before opening the gate.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">3. Record entry</strong><span class="small text-muted">Log arrival time, contact number, vehicle details and approved-by source for a complete audit trail.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">4. Track exit</strong><span class="small text-muted">Record exit time, return pass or delivery acknowledgement, and report overstay or incident exceptions.</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Quick gate actions</h4><p class="text-muted mb-0">Open the exact workflow needed for the next gate event.</p></div><div class="card-body px-4 pb-4"><div class="row g-2"><div class="col-sm-6"><button type="button" class="btn btn-primary rounded-pill w-100" data-panel="verify"><i class="fa-solid fa-qrcode me-1"></i>Verify pass / OTP</button></div><div class="col-sm-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="entries"><i class="fa-solid fa-user-plus me-1"></i>Walk-in entry</button></div><div class="col-sm-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="deliveries"><i class="fa-solid fa-truck me-1"></i>Delivery arrival</button></div><div class="col-sm-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="staff"><i class="fa-solid fa-id-card me-1"></i>Staff attendance</button></div></div></div></div></div></div>
+                </section>
+
+                <!-- Pass Verification Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="verify">
+                    <div class="row g-3 mb-4"><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Pre-approved today</span><strong class="d-block fs-5 text-primary mt-1">26 passes</strong><span class="small text-muted">Resident-issued guest codes</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Verified at gate</span><strong class="d-block fs-5 text-success mt-1">18 entries</strong><span class="small text-muted">Cleared using pass / OTP</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Expired or invalid</span><strong class="d-block fs-5 text-danger mt-1">2 attempts</strong><span class="small text-muted">Do not allow access</span></div></div><div class="col-md-3"><div class="border rounded-4 bg-white shadow-sm p-3 h-100"><span class="small text-muted text-uppercase fw-bold">Approval window</span><strong class="d-block fs-5 text-warning mt-1">10 minutes</strong><span class="small text-muted">For unverified walk-ins</span></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Verify Resident Guest Pass / OTP</h4><p class="text-muted mb-0">Scan or enter a resident-issued guest code before granting entry.</p></div>
+                            <span class="badge badge-soft-success inline-state"><i class="fa-solid fa-check-double me-1"></i> Instant Gate Clearance</span>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <form class="row g-4 form-grid" id="qrPassForm">
+                                <div class="col-md-8">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle form-control-lg fw-bold" id="passCode" placeholder="e.g. SG-4921" required style="font-size: 1.5rem; letter-spacing: 2px;">
+                                        <label for="passCode">Enter Pass Code / OTP</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <button class="btn btn-primary rounded-pill px-4 shadow-sm w-100 py-3" data-action="checkin" type="submit"><i class="fa-solid fa-shield-check me-2"></i>Verify Pass Code</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Verification decision guide</h4><p class="text-muted mb-0">Use the right path for every visitor type.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Valid pass / OTP</strong><span class="small text-muted">Match the guest’s name, flat and time window. Record entry and allow access only after the result confirms clearance.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Walk-in guest</strong><span class="small text-muted">Create a gate entry, call the resident through the approved contact channel and wait for a clear yes before entry.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Vendor / technician</strong><span class="small text-muted">Verify photo ID, work order, tools and destination. Confirm the approving resident or society admin.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Failed verification</strong><span class="small text-muted">Do not reuse an expired code. Keep the visitor at the gate and request a fresh approval or log an incident if required.</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Before you allow entry</h4></div><div class="card-body px-4 pb-4"><ul class="small text-muted ps-3 mb-0"><li class="mb-2">Confirm guest identity matches the pass result.</li><li class="mb-2">Check destination flat and visit purpose.</li><li class="mb-2">Check the pass time window has not expired.</li><li class="mb-2">Record vehicle details when applicable.</li><li>Give a clear exit or return-pass instruction.</li></ul></div></div></div></div>
+                </section>
+
+                <!-- Gate Entries Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="entries">
+                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body py-3"><span class="small text-muted d-block">Awaiting approval</span><strong class="fs-3 text-warning">03</strong><span class="small d-block text-muted">Resident response needed</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body py-3"><span class="small text-muted d-block">Walk-ins today</span><strong class="fs-3 text-primary">42</strong><span class="small d-block text-muted">Guest and vendor entries</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body py-3"><span class="small text-muted d-block">Approved through app</span><strong class="fs-3 text-success">31</strong><span class="small d-block text-muted">Digitally verified</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body py-3"><span class="small text-muted d-block">Check-outs due</span><strong class="fs-3 text-danger">02</strong><span class="small d-block text-muted">Confirm exit at the gate</span></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Gate Entry Register</h4><p class="text-muted mb-0">Maintain a complete, time-stamped record from entry approval to exit.</p></div>
+                            <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-action="add" data-table="entries"><i class="fa-solid fa-plus me-2"></i>New Walk-In Entry</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="entries">
+                                <thead class="table-light">
+                                    <tr><th>Visitor Name</th><th>Phone Number</th><th>Target Flat</th><th>Visit Purpose</th><th>Approved By</th><th>Entry Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Arun Kumar</strong></td>
+                                        <td>98765 43210</td>
+                                        <td>Flat A-101</td>
+                                        <td>Food Delivery</td>
+                                        <td>Kavya N (App)</td>
+                                        <td><span class="badge bg-warning text-dark">Waiting Approval</span></td>
+                                        <td><button class="btn btn-success btn-sm rounded-pill px-3" data-action="checkin"><i class="fa-solid fa-check me-1"></i> Allow Entry</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Meena Electricals</strong></td>
+                                        <td>98400 11223</td>
+                                        <td>Flat C-303</td>
+                                        <td>Electrical Repair</td>
+                                        <td>Vijay P (Phone Call)</td>
+                                        <td><span class="badge bg-primary">Inside Campus</span></td>
+                                        <td><button class="btn btn-danger btn-sm rounded-pill px-3" data-action="checkout"><i class="fa-solid fa-right-from-bracket me-1"></i> Mark Check Out</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Required gate record</h5><div class="row g-3 small text-muted mt-1"><div class="col-md-6"><strong class="d-block text-dark">Identity & contact</strong>Name, phone number and photo/ID check for vendors or contractors.</div><div class="col-md-6"><strong class="d-block text-dark">Destination & purpose</strong>Flat, visit reason, vehicle and expected duration must be clear.</div><div class="col-md-6"><strong class="d-block text-dark">Approval source</strong>App approval, resident phone confirmation or society-admin clearance.</div><div class="col-md-6"><strong class="d-block text-dark">Exit confirmation</strong>Mark check-out immediately when the person leaves the campus.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Gate discipline</h5><ul class="small text-muted ps-3 mb-0"><li class="mb-2">Never allow a waiting entry without approval.</li><li class="mb-2">Use a fresh entry for every new visit.</li><li class="mb-2">Escalate mismatched details through the incident register.</li><li>Review unclosed entries before shift handover.</li></ul></div></div></div></div>
+                </section>
+
+                <!-- Active Visitors Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="visitors">
+                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Visitors inside</span><strong class="fs-3 text-primary">14</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Delivery agents</span><strong class="fs-3 text-info">05</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Staff inside</span><strong class="fs-3 text-success">12</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Overstay watch</span><strong class="fs-3 text-danger">01</strong></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Currently Inside Campus</h4>
+                            <span class="badge badge-soft-danger inline-state"><i class="fa-solid fa-clock me-1"></i> Overstay Alert > 3 Hours</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="visitors">
+                                <thead class="table-light">
+                                    <tr><th>Visitor Name</th><th>Phone</th><th>Target Flat</th><th>Entry Time</th><th>Duration</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Meena Electricals</strong></td>
+                                        <td>98400 11223</td>
+                                        <td>Flat C-303</td>
+                                        <td>10:25 AM</td>
+                                        <td><span class="badge bg-info text-dark">1 Hr 15 Min</span></td>
+                                        <td><button class="btn btn-danger btn-sm rounded-pill px-3" data-action="checkout"><i class="fa-solid fa-right-from-bracket me-1"></i> Check Out</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Housekeeping Team</strong></td>
+                                        <td>90031 77882</td>
+                                        <td>Clubhouse</td>
+                                        <td>09:40 AM</td>
+                                        <td><span class="badge bg-warning text-dark">2 Hrs 00 Min</span></td>
+                                        <td><button class="btn btn-danger btn-sm rounded-pill px-3" data-action="checkout"><i class="fa-solid fa-right-from-bracket me-1"></i> Check Out</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card border-0 shadow-sm rounded-4 mt-4"><div class="card-body p-4"><div class="d-flex justify-content-between flex-wrap gap-3 mb-3"><div><h5 class="fw-bold mb-1">Exit-control checklist</h5><p class="text-muted small mb-0">A live visitor list protects residents and keeps the next shift informed.</p></div><span class="badge badge-soft-danger inline-state">Review visits over 3 hours</span></div><div class="row g-3 small text-muted"><div class="col-md-4"><strong class="text-dark d-block">Before follow-up</strong>Check the recorded entry time, target flat and visit purpose.</div><div class="col-md-4"><strong class="text-dark d-block">During follow-up</strong>Call the destination resident or visitor and confirm whether the work is still active.</div><div class="col-md-4"><strong class="text-dark d-block">When leaving</strong>Mark check-out, return any temporary pass and keep the audit trail accurate.</div></div></div></div>
+                </section>
+
+                <!-- Deliveries Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="deliveries">
+                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Arrivals today</span><strong class="fs-3 text-primary">18</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Awaiting collection</span><strong class="fs-3 text-warning">04</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Residents notified</span><strong class="fs-3 text-success">15</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">COD collections</span><strong class="fs-3 text-danger">02</strong></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Record Parcel / Delivery Arrival</h4><p class="text-muted mb-0">Create a traceable handover record and notify the destination resident.</p></div>
+                            <span class="badge badge-soft-primary inline-state"><i class="fa-solid fa-mobile-screen me-1"></i> Notify Resident App</span>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <form class="row g-4 form-grid mb-4" id="deliveryForm">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="targetFlat" name="unitNo" placeholder="e.g. A-101" required>
+                                        <label for="targetFlat">Target Flat Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="delService" name="provider" placeholder="Amazon / Swiggy / Zomato" required>
+                                        <label for="delService">Delivery Service</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="agentName" name="agentName" placeholder="Agent Name">
+                                        <label for="agentName">Delivery Agent Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control shadow-none border-light-subtle" id="agentMobile" name="phone" placeholder="9876543210">
+                                        <label for="agentMobile">Agent Mobile</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="pkgCategory" name="packageType">
+                                            <option>PARCEL</option>
+                                            <option>FOOD</option>
+                                            <option>GROCERY</option>
+                                            <option>DOCUMENT</option>
+                                        </select>
+                                        <label for="pkgCategory">Package Category</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <button class="btn btn-primary rounded-pill px-4 shadow-sm w-100 py-3" data-advanced-action="create-delivery" type="submit"><i class="fa-solid fa-bell me-2"></i>Record & Notify</button>
+                                </div>
+                            </form>
+                            <div class="table-responsive mt-2">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr><th>Flat</th><th>Provider</th><th>Agent</th><th>Package</th><th>Arrived</th><th>Status</th></tr>
+                                    </thead>
+                                    <tbody id="deliveriesBody">
+                                        <tr>
+                                            <td>A-101</td>
+                                            <td>Amazon Logistics</td>
+                                            <td>Raju Singh</td>
+                                            <td><span class="badge bg-secondary">PARCEL</span></td>
+                                            <td>10:15 AM</td>
+                                            <td><span class="badge bg-warning text-dark">Stored at Security Desk</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Secure handover process</h5><ol class="small text-muted ps-3 mb-0"><li class="mb-2">Confirm the flat, provider and package category before accepting the item.</li><li class="mb-2">Record the agent name and mobile number for any stored parcel.</li><li class="mb-2">Notify the resident; use a clear status such as handed over, stored or returned.</li><li>For high-value packages, capture the resident confirmation before release.</li></ol></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Cash-on-delivery safeguard</h5><p class="small text-muted mb-0">Security should not collect resident cash unless the society policy explicitly permits it. Ask the resident to pay the delivery agent directly and record exceptions through an incident note.</p></div></div></div></div>
+                </section>
+
+                <!-- Staff Attendance Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="staff">
+                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Expected today</span><strong class="fs-3 text-primary">16</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Checked in</span><strong class="fs-3 text-success">12</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">ID pending</span><strong class="fs-3 text-warning">02</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Absent / delayed</span><strong class="fs-3 text-danger">02</strong></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1">Domestic Staff & Contractor Verification</h4><p class="text-muted mb-0">Verify identity, work category and gate attendance before staff enter the premises.</p></div>
+                            <span class="badge badge-soft-dark inline-state"><i class="fa-solid fa-user-shield me-1"></i> Check Blacklist Status</span>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <form class="row g-4 form-grid mb-4" id="staffForm">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="stfName" name="name" required>
+                                        <label for="stfName">Staff Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control shadow-none border-light-subtle" id="stfPhone" name="phone" required>
+                                        <label for="stfPhone">Phone Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="stfType" name="serviceType" placeholder="Maid / Driver / Guard / Cook" required>
+                                        <label for="stfType">Service Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="stfIdStatus" name="identityStatus">
+                                            <option>VERIFIED</option>
+                                            <option>PENDING</option>
+                                        </select>
+                                        <label for="stfIdStatus">ID Status</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-4 text-end">
+                                    <button class="btn btn-primary rounded-pill px-5 shadow-sm" data-advanced-action="create-staff" type="submit"><i class="fa-solid fa-user-plus me-2"></i>Register Daily Staff</button>
+                                </div>
+                            </form>
+                            <div class="table-responsive mt-2">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr><th>Name</th><th>Service</th><th>Phone</th><th>ID Verification</th><th>Current Status</th></tr>
+                                    </thead>
+                                    <tbody id="staffBody">
+                                        <tr>
+                                            <td><strong>Sunita Devi</strong></td>
+                                            <td>Maid (A-101, A-102)</td>
+                                            <td>98112 33445</td>
+                                            <td><span class="badge bg-success">Verified</span></td>
+                                            <td><span class="badge bg-primary">Inside Campus</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ram Prakash</strong></td>
+                                            <td>Car Cleaner</td>
+                                            <td>98776 55443</td>
+                                            <td><span class="badge bg-success">Verified</span></td>
+                                            <td><span class="badge bg-primary">Inside Campus</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1"><div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Identity verification standard</h5><ul class="small text-muted ps-3 mb-0"><li class="mb-2">Match the person with the registered name, phone and service type.</li><li class="mb-2">Check official ID status before first entry or after any profile change.</li><li>Do not allow a pending or unregistered worker without resident or admin approval.</li></ul></div></div></div><div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Shift handover notes</h5><p class="small text-muted mb-0">Review staff still inside, late arrivals, denied entries and verification gaps at every shift change. This keeps domestic worker attendance consistent across the whole day.</p></div></div></div></div>
+                </section>
+
+                <section class="d-none animate__animated animate__fadeIn" data-view="incidents">
+                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Open incidents</span><strong class="fs-3 text-danger">02</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Resolved today</span><strong class="fs-3 text-success">06</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Police / emergency</span><strong class="fs-3 text-warning">00</strong></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Evidence attached</span><strong class="fs-3 text-primary">04</strong></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">Gate Incident Register</h4><p class="text-muted mb-0">Capture accurate facts, protect people first and create an auditable escalation trail.</p></div><span class="badge badge-soft-danger inline-state"><i class="fa-solid fa-triangle-exclamation me-1"></i> Escalate urgent events immediately</span></div><div class="card-body px-4 pb-4">
+                        <form id="incidentForm" class="row g-3 form-grid mb-4"><div class="col-md-4"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" name="incidentType" required><option value="">Select incident type</option><option>Unauthorized entry attempt</option><option>Vehicle / parking issue</option><option>Visitor dispute</option><option>Safety hazard</option><option>Medical emergency</option><option>Other gate incident</option></select><label>Incident type</label></div></div><div class="col-md-4"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" name="location" placeholder="Gate / Block / Parking" required><label>Exact location</label></div></div><div class="col-md-4"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" name="vehicleNumber" placeholder="Vehicle number"><label>Vehicle number (optional)</label></div></div><div class="col-md-8"><div class="form-floating"><textarea class="form-control shadow-none border-light-subtle" name="description" placeholder="Describe what happened" style="height: 110px" required></textarea><label>Facts, people involved and immediate action taken</label></div></div><div class="col-md-4 d-flex align-items-end"><button class="btn btn-danger rounded-pill w-100" type="submit"><i class="fa-solid fa-file-circle-exclamation me-2"></i>Record & Escalate Incident</button></div></form>
+                        <div class="table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>Time</th><th>Type</th><th>Location</th><th>Vehicle</th><th>Details</th></tr></thead><tbody id="incidentsBody"></tbody></table></div>
+                    </div></div>
+                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Incident response sequence</h5><div class="row g-3 small text-muted"><div class="col-md-4"><strong class="d-block text-dark">1. Secure</strong>Move people away from immediate danger and avoid confrontation.</div><div class="col-md-4"><strong class="d-block text-dark">2. Inform</strong>Notify the society admin, resident or emergency service based on severity.</div><div class="col-md-4"><strong class="d-block text-dark">3. Document</strong>Record facts, time, location and actions without assumptions.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">When to use panic alert</h5><p class="small text-muted mb-0">Use the Emergency Panic button only for immediate threats, medical emergencies, fire, security breaches or situations that require instant society-wide notification.</p></div></div></div></div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <div id="toast" class="toast hidden bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4" style="z-index: 1050;"></div>
+    
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        const dashboardTitles = {
+            overview: "Overview", verify: "Pass / OTP Verification", entries: "Gate Entry Register",
+            visitors: "Active Visitors", deliveries: "Delivery Log", staff: "Daily Staff & Attendance", incidents: "Gate Incidents"
+        };
+        
+        window.forceOpenPanel = function(panel) {
+            console.log("Switching to panel: " + panel);
+            document.querySelectorAll("[data-view]").forEach(view => {
+                view.classList.add("hidden", "d-none");
+                view.style.display = "none";
+            });
+            const selectedView = document.querySelector(`[data-view="${panel}"]`);
+            if (selectedView) {
+                selectedView.classList.remove("hidden", "d-none");
+                selectedView.style.display = "";
+            }
+            document.querySelectorAll("[data-panel]").forEach(button => {
+                const active = (button.dataset.panel === panel);
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-selected", active ? "true" : "false");
+            });
+            const titleEl = document.getElementById("title");
+            if (titleEl) {
+                titleEl.textContent = dashboardTitles[panel] || "Dashboard";
+            }
+            if (location.hash !== `#${panel}`) {
+                history.pushState(null, "", `#${panel}`);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-panel]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (el.tagName === 'A') { e.preventDefault(); e.stopImmediatePropagation(); }
+                    forceOpenPanel(el.dataset.panel);
+                });
+            });
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash) forceOpenPanel(window.location.hash.substring(1));
+            });
+            if (window.location.hash) {
+                forceOpenPanel(window.location.hash.substring(1));
+            } else {
+                forceOpenPanel("overview");
+            }
+            const loadIncidents = async () => {
+                const body = document.getElementById("incidentsBody");
+                if (!body) return;
+                const response = await fetch("/api/society/gate-incidents", {headers: {Accept: "application/json"}});
+                if (!response.ok) return;
+                const incidents = await response.json();
+                body.replaceChildren(...incidents.map(item => { const row = document.createElement("tr"); [item.occurredAt, item.incidentType, item.location, item.vehicleNumber || "—", item.description].forEach(value => { const cell = document.createElement("td"); cell.textContent = value || "—"; row.appendChild(cell); }); return row; }));
+            };
+            document.getElementById("incidentForm")?.addEventListener("submit", async event => {
+                event.preventDefault(); const values = Object.fromEntries(new FormData(event.currentTarget));
+                const response = await fetch("/api/society/gate-incidents", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({...values, occurredAt: new Date().toISOString().slice(0, 19)})});
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) return showToast(result.message || "Unable to save incident");
+                event.currentTarget.reset(); await loadIncidents(); showToast("Incident recorded for the society admin.");
+            });
+            document.getElementById("qrPassForm")?.addEventListener("submit", async event => {
+                event.preventDefault(); const qrCode = document.getElementById("passCode").value.trim();
+                const response = await fetch("/api/society/visitors/scan", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({qrCode})});
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) return showToast(result.message || "Pass could not be verified");
+                event.currentTarget.reset(); showToast(`Entry allowed: ${result.name} for ${result.unitNo}.`); window.loadSocietyBackendData?.();
+            });
+            loadIncidents();
+        });
+    </script>
+</body>
+</html>

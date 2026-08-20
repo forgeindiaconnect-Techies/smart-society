@@ -1,0 +1,2 @@
+package com.smartapartment.repository;import com.smartapartment.entity.PropertyListing;import java.util.*;import org.springframework.data.jpa.repository.JpaRepository;
+public interface PropertyListingRepository extends JpaRepository<PropertyListing,Long>{List<PropertyListing> findByStatusOrderByCreatedAtDesc(String s);List<PropertyListing> findByCustomerIdOrderByCreatedAtDesc(Long c);Optional<PropertyListing> findByIdAndCustomerId(Long i,Long c);}

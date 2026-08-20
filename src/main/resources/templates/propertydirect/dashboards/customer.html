@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Dashboard — PropertyDirect</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* -------------------------------------------------------------
+           PROPERTYDIRECT BRANDING & DESIGN SYSTEM FOR DASHBOARDS
+           Matches PropertyDirect Landing Page Aesthetics
+           ------------------------------------------------------------- */
+        :root {
+            --pd-bg: #f8fafc;
+            --pd-sidebar-bg: linear-gradient(180deg, #0a1834 0%, #172a4d 100%);
+            --pd-card-bg: #ffffff;
+            --pd-card-border: #e2e8f0;
+            --pd-navy: #0f172a;
+            --pd-navy-dark: #0a1834;
+            --pd-mint: #8cf0bd;
+            --pd-mint-dark: #065f46;
+            --pd-mint-soft: rgba(140, 240, 189, 0.14);
+            --pd-text-muted: #64748b;
+        }
+
+        /* TAB SHOW / HIDE RESET - CRITICAL */
+        .hidden, [hidden], .dash-panel.hidden {
+            display: none !important;
+        }
+
+        /* ULTRA-PREMIUM FLOATING TOAST NOTIFICATION - TOP RIGHT TOPBAR */
+        #toast, .toast {
+            position: fixed !important;
+            top: 28px !important;
+            right: 28px !important;
+            bottom: auto !important;
+            left: auto !important;
+            padding: 12px 20px !important;
+            border-radius: 12px !important;
+            background: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.14) !important;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            z-index: 999999 !important;
+            backdrop-filter: blur(12px) !important;
+            transition: opacity 0.25s ease, transform 0.25s ease !important;
+        }
+
+        #toast.hidden, .toast.hidden, #toast:empty {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: translateY(-10px) !important;
+        }
+
+        /* FIXED CENTERED SCREEN BACKDROP OVERLAY FOR MODALS */
+        .modal, #dashboardModal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(15, 23, 42, 0.65) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            margin: 0 !important;
+            padding: 24px !important;
+            box-sizing: border-box !important;
+        }
+
+        .modal.hidden, #dashboardModal.hidden {
+            display: none !important;
+        }
+
+        .modal-card {
+            position: relative !important;
+            width: min(480px, 92vw) !important;
+            max-height: calc(100vh - 60px) !important;
+            margin: auto !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 20px !important;
+            padding: 24px 28px !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25) !important;
+            overflow-y: auto !important;
+            font-family: 'Manrope', sans-serif !important;
+        }
+
+        .modal-card h2 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin-top: 0 !important;
+            margin-bottom: 4px !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .modal-card p {
+            font-size: 0.86rem !important;
+            color: #64748b !important;
+            margin-bottom: 20px !important;
+            line-height: 1.45 !important;
+        }
+
+        .modal-card .close {
+            position: absolute !important;
+            top: 18px !important;
+            right: 18px !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #f8fafc !important;
+            color: #64748b !important;
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            float: none !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .modal-card .close:hover {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            border-color: #ef4444 !important;
+            transform: scale(1.08) !important;
+        }
+
+        /* MODAL FORM FLEX COLUMN STYLING - ZERO WHITE SPACE GAPS */
+        .modal-card .form-grid, .modal-card #modalFields, .modal-card .pd-detailed-form {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+        }
+
+        .modal-card label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            font-family: 'Manrope', sans-serif !important;
+            text-align: left !important;
+        }
+
+        .modal-card input, .modal-card select, .modal-card textarea {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 11px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+
+        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        .modal-card textarea {
+            min-height: 85px !important;
+            resize: vertical !important;
+        }
+
+        /* MODAL ACTION BUTTONS */
+        .pd-modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 24px !important;
+            padding-top: 18px !important;
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        .modal-cancel, button[data-action="close-modal"].modal-cancel {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .modal-cancel:hover {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+
+        /* REMOVE UNWANTED BLACK OUTLINES OR BORDER FRAMES */
+        section.dash-panel, .dash-panel, [data-view] {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        *:focus {
+            outline: none !important;
+        }
+
+        /* GLOBAL SCROLLING & VIEWPORT FIX */
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        .app-dashboard {
+            display: flex !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background: var(--pd-bg) !important;
+            position: relative !important;
+            overflow-y: visible !important;
+        }
+
+        /* FIXED LEFT NAVY GRADIENT SIDEBAR */
+        aside.dash-sidebar, .dash-sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            width: 275px !important;
+            min-width: 275px !important;
+            max-width: 275px !important;
+            margin: 0 !important;
+            padding: 16px 14px 115px 14px !important;
+            border-radius: 0 !important;
+            background: var(--pd-sidebar-bg) !important;
+            border: none !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 6px 0 30px rgba(10, 24, 52, 0.12) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            z-index: 9999 !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        .dash-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            text-decoration: none !important;
+            padding: 2px 8px 12px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            margin-bottom: 10px !important;
+            flex-shrink: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-brand svg {
+            filter: drop-shadow(0 2px 8px rgba(140, 240, 189, 0.4));
+        }
+
+        .dash-brand span {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.2rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .dash-brand span span {
+            color: var(--pd-mint) !important;
+        }
+
+        .sidebar-nav {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            height: calc(100vh - 170px) !important;
+            max-height: calc(100vh - 170px) !important;
+            overflow-y: auto !important;
+            padding-right: 4px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .sidebar-nav button, .sidebar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: 100% !important;
+            padding: 8px 12px !important;
+            border-radius: 10px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            color: #94a3b8 !important;
+            background: transparent !important;
+            border: none !important;
+            border-left: 3px solid transparent !important;
+            text-align: left !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            flex-shrink: 0 !important;
+        }
+
+        .sidebar-nav button svg {
+            opacity: 0.7;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav button:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.07) !important;
+        }
+
+        .sidebar-nav button:hover svg {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .sidebar-nav button.active {
+            color: var(--pd-mint) !important;
+            background: var(--pd-mint-soft) !important;
+            font-weight: 700 !important;
+            border-left-color: var(--pd-mint) !important;
+            box-shadow: 0 4px 16px rgba(140, 240, 189, 0.1) !important;
+        }
+
+        .sidebar-nav button.active svg {
+            opacity: 1;
+            stroke: var(--pd-mint) !important;
+        }
+
+        .sidebar-user-card {
+            position: absolute !important;
+            bottom: 55px !important;
+            left: 14px !important;
+            right: 14px !important;
+            width: calc(275px - 28px) !important;
+            padding: 8px 10px !important;
+            background: #0f2246 !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            box-sizing: border-box !important;
+            z-index: 10000 !important;
+        }
+
+
+
+
+
+
+
+
+        .user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.75rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25) !important;
+        }
+
+        .user-details h4 {
+            color: #ffffff !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .user-details p {
+            color: var(--pd-mint) !important;
+            font-size: 0.68rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .logout {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            color: #f87171 !important;
+            background: rgba(248, 113, 113, 0.1) !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .logout svg {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+        .logout:hover {
+            background: rgba(248, 113, 113, 0.22) !important;
+            color: #ef4444 !important;
+        }
+
+        /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
+        main.dash-main, .dash-main {
+            margin: 0 0 0 275px !important;
+            padding: 32px 40px !important;
+            width: calc(100% - 275px) !important;
+            max-width: calc(100% - 275px) !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            box-sizing: border-box !important;
+            flex: 1 !important;
+            background: var(--pd-bg) !important;
+            overflow-y: visible !important;
+        }
+
+        /* Top Header Bar */
+        .dash-header {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 22px 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .dash-header .eyebrow {
+            color: #1d376c !important;
+            font-size: 0.74rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+            margin-bottom: 4px !important;
+        }
+
+        .dash-header h1 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        .header-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+        }
+
+        .dash-header button.primary, button.primary, a.primary {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 6px 18px rgba(15, 34, 70, 0.2) !important;
+            transition: all 0.22s ease !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .dash-header button.primary:hover, button.primary:hover, a.primary:hover {
+            background: #1d376c !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* Overview Stat Grid */
+        .dash-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 22px !important;
+            margin-bottom: 28px !important;
+        }
+
+        .dash-grid.three {
+            grid-template-columns: repeat(3, 1fr) !important;
+        }
+
+        .dash-grid article {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+        }
+
+        .dash-grid article span {
+            font-size: 0.84rem !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+        }
+
+        .dash-grid article strong {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.9rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            margin-top: 8px !important;
+        }
+
+        .dash-card {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            outline: none !important;
+            border-radius: 20px !important;
+            padding: 28px 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+            box-sizing: border-box !important;
+        }
+
+        .card-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin-bottom: 20px !important;
+            gap: 16px !important;
+            width: 100% !important;
+        }
+
+        .card-head h3 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.3rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            margin: 0 0 6px 0 !important;
+            line-height: 1.3 !important;
+        }
+
+        .card-head p {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+            line-height: 1.4 !important;
+            margin: 0 !important;
+        }
+
+        .pill-row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 20px !important;
+            width: 100% !important;
+        }
+
+        .pill-row span {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 10px 20px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #1e293b !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+        }
+
+        .pill-row span:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            border-color: #0f2246 !important;
+            box-shadow: 0 4px 12px rgba(15, 34, 70, 0.15) !important;
+        }
+
+
+        .form-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+            gap: 18px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-grid label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+        }
+
+        .form-grid input, .form-grid select, .form-grid textarea {
+            padding: 10px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        .dashboard-table-scroll {
+            overflow-x: auto !important;
+            border-radius: 14px !important;
+            border: 1px solid #e2e8f0 !important;
+            margin-top: 18px !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            background: #ffffff !important;
+        }
+
+        th {
+            background: #f8fafc !important;
+            color: #475569 !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            padding: 14px 18px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            text-align: left !important;
+        }
+
+        td {
+            padding: 16px 18px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #334155 !important;
+            font-size: 0.85rem !important;
+        }
+
+        td button {
+            padding: 7px 14px !important;
+            border-radius: 999px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            cursor: pointer !important;
+        }
+
+        td button:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8cf0bd" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span><span>Property</span>Direct</span>
+    </a>
+    <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="search">Search Properties</button>
+        <button data-panel="saved-searches">Saved Searches</button>
+        <button data-panel="shortlist">Shortlisted</button>
+        <button data-panel="contacts">Owner Contact</button>
+        <button data-panel="visits">Site Visits</button>
+        <button data-panel="listings">My Listings</button>
+        <button data-panel="offers">Offers & Enquiries</button>
+        <button data-panel="reviews">Reviews & Reports</button>
+        <button data-panel="services">Home Services</button>
+        <button data-panel="rentpay">Rent Pay</button>
+        <button data-panel="plans">Plans</button>
+        <button data-panel="support">Support</button>
+    </nav>
+    <div class="sidebar-user-card">
+        <div class="user-info">
+            <div class="user-avatar">CU</div>
+            <div class="user-details">
+                <h4>Customer Account</h4>
+                <p>Verified Member</p>
+            </div>
+        </div>
+        <a class="logout" href="/propertydirect" title="Logout">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </a>
+    </div>
+</aside>
+<main class="dash-main">
+    <header class="dash-header">
+        <div>
+            <p class="eyebrow">CUSTOMER WORKSPACE</p>
+            <h1 id="panelTitle">Customer Overview</h1>
+        </div>
+        <div class="header-actions">
+            <button class="primary" data-panel="search">Search Property</button>
+        </div>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article><span>Shortlisted</span><strong data-property-stat="saved">0</strong></article>
+            <article><span>Saved Searches</span><strong data-property-stat="searches">0</strong></article>
+            <article><span>Visits</span><strong data-property-stat="visits">0</strong></article>
+            <article><span>Service Requests</span><strong data-property-stat="services">0</strong></article>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Your property journey</h3>
+                    <p>Search verified inventory, save filters, shortlist homes, contact owners, request visits or virtual tours, submit offers, and manage your own sale or rental listings.</p>
+                </div>
+            </div>
+            <div class="pill-row">
+                <span data-panel="search">Filter discovery</span>
+                <span data-panel="shortlist">Persistent shortlist</span>
+                <span data-panel="visits">Visit requests</span>
+                <span data-panel="listings">Manage listings</span>
+                <span data-panel="offers">Offers & enquiries</span>
+                <span data-panel="reviews">Reviews & reports</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="search"><div class="dash-card"><div class="card-head"><h3>Search Properties</h3><span class="inline-state" id="searchResultState">Set any combination of filters</span></div>
+        <form class="form-grid" id="propertySearchForm"><label>City<input name="city" value="Bangalore"></label><label>Society or locality<input name="locality"></label><label>Purpose<select name="type"><option value="RENT">Rent</option><option value="SALE">Buy</option><option value="">Any</option></select></label><label>BHK<select name="bhk"><option value="">Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select></label><label>Minimum price<input name="minPrice" type="number" min="0"></label><label>Maximum price<input name="maxPrice" type="number" min="0"></label><label>Furnishing<select name="furnishing"><option value="">Any</option><option>Unfurnished</option><option>Semi Furnished</option><option>Fully Furnished</option></select></label><label>Sort<select name="sort"><option value="newest">Newest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label><button class="primary" data-property-api-action="search" type="submit">Search</button><a class="primary" href="/propertydirect/apartments">Open Full Listings</a></form>
+        <div class="grid" id="propertySearchResults"></div>
+    </div></section>
+
+    <section class="dash-panel hidden" data-view="saved-searches"><div class="dash-card"><div class="card-head"><h3>Saved Searches & Alerts</h3><span class="inline-state">Store discovery criteria for later</span></div><form class="form-grid" id="savedSearchForm"><label>Search name<input name="name" placeholder="Whitefield 2 BHK" required></label><label>City<input name="city" value="Bangalore"></label><label>Locality<input name="locality"></label><label>Purpose<select name="type"><option value="RENT">Rent</option><option value="SALE">Buy</option></select></label><label>BHK<select name="bhk"><option value="">Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select></label><label>Minimum<input name="minPrice" type="number" min="0"></label><label>Maximum<input name="maxPrice" type="number" min="0"></label><label><input name="alertsEnabled" type="checkbox" checked> Enable alerts</label><button class="primary" data-property-api-action="save-search" type="submit">Save Search</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Name</th><th>Area</th><th>Purpose</th><th>BHK</th><th>Budget</th><th>Alerts</th></tr></thead><tbody id="savedSearchesBody"></tbody></table></div></div></section>
+
+    <section class="dash-panel hidden" data-view="shortlist"><div class="dash-card"><div class="card-head"><h3>Shortlisted Properties</h3><span class="inline-state">Available on every signed-in session</span></div><ul class="task-list actionable-list" id="savedPropertiesList"><li>Loading your shortlist…</li></ul></div></section>
+
+    <section class="dash-panel hidden" data-view="contacts"><div class="dash-card"><div class="card-head"><h3>Contact Property Owner</h3><span class="inline-state" id="ownerContactState">Choose a listing from search or shortlist</span></div><form class="form-grid" id="ownerContactForm"><label>Listing ID<input name="listingId" type="number" min="1" required></label><label>Your name<input name="name" required></label><label>Phone<input name="phone" required></label><label>Email<input name="email" type="email" required></label><label>Request type<select name="type"><option>OWNER_CONTACT</option><option>PRICE_DISCUSSION</option><option>DOCUMENT_QUERY</option></select></label><label>Message<textarea name="message" placeholder="I am interested in this property"></textarea></label><button class="primary" data-property-api-action="contact-owner" type="submit">Send Enquiry</button></form></div></section>
+
+    <section class="dash-panel hidden" data-view="visits"><div class="dash-card"><div class="card-head"><h3>Site Visits</h3><span class="inline-state">Requests remain traceable</span></div><form class="form-grid" id="propertyVisitForm"><label>Listing ID<input name="listingId" type="number" min="1" required></label><label>Preferred date and time<input name="scheduledAt" type="datetime-local" required></label><label>Notes<input name="notes" placeholder="Please confirm availability"></label><button class="primary" data-property-api-action="schedule-visit" type="submit">Request Visit</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Property</th><th>Scheduled</th><th>Status</th><th>Notes</th></tr></thead><tbody id="propertyVisitsBody"></tbody></table></div></div></section>
+
+    <section class="dash-panel hidden" data-view="listings"><div class="dash-card"><div class="card-head"><div><h3>My property listings</h3><p>Create and manage your sale or rental inventory.</p></div><button class="primary small" data-panel="post-listing">Create listing</button></div><div class="dashboard-table-scroll"><table data-table="listings"><thead><tr><th>Property</th><th>Type</th><th>Price</th><th>Verification</th><th>Views</th><th>Actions</th></tr></thead><tbody id="ownerListingsBody"></tbody></table></div></div></section>
+
+    <section class="dash-panel hidden" data-view="post-listing"><div class="dash-card"><div class="card-head"><div><h3>Create property listing</h3><p>Publish a rent or sale listing with media links, pricing and visit availability.</p></div><span class="status pending">Verification required</span></div><form class="form-grid" id="postApartmentForm"><label>Listing title<input name="title" required placeholder="e.g. 2 BHK near Metro"></label><label>City<input name="city" value="Bangalore" required></label><label>Locality / society<input name="locality" required></label><label>Rent or sale price<input name="price" required type="number" min="1"></label><label>Listing type<select name="type"><option>Rent Apartment</option><option>Sale Apartment</option></select></label><label>BHK<select name="bhk"><option>1 BHK</option><option selected>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select></label><label>Available from<input name="availableFrom" type="date"></label><label>Built-up area (sq ft)<input name="areaSqft" type="number" min="1"></label><label>Furnishing<select name="furnishing"><option>Unfurnished</option><option>Semi Furnished</option><option>Fully Furnished</option></select></label><label>Parking<select name="parking"><option>No Parking</option><option>Bike Parking</option><option>Car Parking</option><option>Bike and Car Parking</option></select></label><label>Photo / virtual tour URL<input name="imageUrl" type="url" placeholder="https://..."></label><label>Floor plan / document URL<input name="notes" placeholder="Optional link or details"></label><button class="primary" data-action="post-property" type="button">Publish for review</button></form></div></section>
+
+    <section class="dash-panel hidden" data-view="offers"><div class="dash-card"><div class="card-head"><div><h3>Offers, enquiries & visit bookings</h3><p>Track incoming buyer or tenant interest for your listings.</p></div><button class="primary small" data-action="add-row">Create offer</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Property</th><th>Interested party</th><th>Request</th><th>Offer / visit</th><th>Status</th><th>Action</th></tr><tr><td>2 BHK · Whitefield</td><td>Priya S</td><td>Rental enquiry</td><td>Visit: 24 Aug, 11:00 AM</td><td><span class="status pending">Awaiting response</span></td><td><button data-action="approve">Accept</button> <button data-action="edit-row">Counter</button></td></tr><tr><td>3 BHK · HSR Layout</td><td>Rahul K</td><td>Purchase offer</td><td>₹82,00,000</td><td><span class="status open">Offer received</span></td><td><button data-action="approve">Accept</button> <button data-action="resolve-task">Decline</button></td></tr></tbody></table></div></div></section>
+
+    <section class="dash-panel hidden" data-view="reviews"><div class="dash-card"><div class="card-head"><div><h3>Reviews, ratings & fraud reports</h3><p>Leave a verified review after a completed deal or flag a listing.</p></div><button class="primary small" data-action="add-row">Write review</button></div><div class="form-grid"><label>Listing or agent reference<input placeholder="Property ID or agent name"></label><label>Rating<select><option>5 - Excellent</option><option>4 - Good</option><option>3 - Average</option><option>2 - Poor</option><option>1 - Poor</option></select></label><label>Report type<select><option>Review only</option><option>Suspected fraud</option><option>Misleading details</option><option>Spam communication</option></select></label><label>Details<textarea placeholder="Share your review or explain the report"></textarea></label></div><button class="primary" data-action="save">Submit review or report</button></div></section>
+
+    <section class="dash-panel hidden" data-view="services"><div class="dash-card"><h3>Home Services</h3><div class="pill-row"><span>Packers</span><span>Legal</span><span>Cleaning</span><span>Painting</span><span>Electrical</span><span>Plumbing</span></div><form class="form-grid" id="propertyServiceForm"><label>Listing ID (optional)<input name="listingId" type="number" min="1"></label><label>Service<select name="serviceType"><option>PACKERS_AND_MOVERS</option><option>LEGAL_DOCUMENTATION</option><option>PAINTING</option><option>CLEANING</option><option>ELECTRICIAN</option><option>PLUMBING</option></select></label><label>Preferred date and time<input name="preferredAt" type="datetime-local" required></label><label>Details<input name="details" placeholder="Describe what you need"></label><button class="primary" data-property-api-action="request-service" type="submit">Request Service</button></form><h3>Service Requests</h3><div class="dashboard-table-scroll"><table><thead><tr><th>Service</th><th>Preferred</th><th>Status</th><th>Details</th></tr></thead><tbody id="propertyServicesBody"></tbody></table></div></div></section>
+
+    <section class="dash-panel hidden" data-view="rentpay"><div class="dash-card"><div class="card-head"><h3>Rent Pay</h3><span class="inline-state" id="rentPayState">Demo payment workflow</span></div><p>A production payment requires a configured payment gateway and webhooks.</p><button class="primary" data-action="pay">Start Demo Payment</button><h3>Payment History</h3><ul class="task-list" id="rentPaymentHistory"><li>No verified gateway payment yet</li></ul></div></section>
+
+    <section class="dash-panel hidden" data-view="plans"><div class="dash-card"><h3>Buyer / Tenant Plans</h3><div class="dash-grid three"><article><span>Basic</span><strong>Rs. 999</strong><button data-action="select-plan">Select Plan</button></article><article><span>Relax</span><strong>Rs. 1,999</strong><button data-action="current-plan">Current Plan</button></article><article><span>Assisted</span><strong>Rs. 4,999</strong><button data-action="select-plan">Select Plan</button></article></div></div></section>
+
+    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><h3>Support</h3><span class="inline-state" id="supportState">Ready</span></div><form class="form-grid"><label style="grid-column: 1 / -1;">Issue<input placeholder="Describe your issue"></label><button class="primary" data-action="support" type="button">Raise Ticket</button></form><h3 style="margin-top: 24px;">Tickets</h3><ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul></div></section>
+</main>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function switchTab(panelId) {
+        if (!panelId) return;
+        
+        document.querySelectorAll("[data-panel]").forEach(function(btn) {
+            if (btn.dataset.panel === panelId) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+
+        document.querySelectorAll("[data-view]").forEach(function(view) {
+            if (view.dataset.view === panelId) {
+                view.classList.remove("hidden");
+                view.style.display = "block";
+            } else {
+                view.classList.add("hidden");
+                view.style.display = "none";
+            }
+        });
+
+        var activeBtn = document.querySelector('.sidebar-nav [data-panel="' + panelId + '"]');
+        var titleElem = document.getElementById("panelTitle");
+        if (activeBtn && titleElem) {
+            var text = activeBtn.textContent.trim();
+            titleElem.textContent = text;
+        }
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + panelId);
+        } else {
+            location.hash = '#' + panelId;
+        }
+    }
+
+    document.addEventListener("click", function(e) {
+        var target = e.target.closest("[data-panel]");
+        if (target) {
+            e.preventDefault();
+            switchTab(target.dataset.panel);
+        }
+    });
+
+    var initialHash = window.location.hash.replace("#", "");
+    if (initialHash && document.querySelector('[data-view="' + initialHash + '"]')) {
+        switchTab(initialHash);
+    } else {
+        switchTab("overview");
+    }
+});
+</script>
+<script src="/propertydirect/js/dashboard.js?v=20260819-profile-form-grid-v23"></script>
+<script src="/propertydirect/js/market-workflows.js?v=20260721-market-workflows"></script>
+<script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

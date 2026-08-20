@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Accountant Dashboard')}"></head>
+<body class="dashboard-body bg-light" data-platform="smartsociety" data-dashboard-role="accountant">
+    <style>
+        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
+        #sidebar {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+        }
+        #sidebar .nav-link {
+            position: relative !important;
+            z-index: 10000 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+    </style>
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
+            <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
+                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+            </div>
+            <nav class="nav flex-column py-3 sidebar-nav" aria-label="Accountant sections">
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#incomes" class="nav-link btn btn-link text-start text-decoration-none" data-panel="incomes"><i class="fa-solid fa-arrow-trend-up me-2"></i> Income Ledger</a>
+                <a href="#expenses" class="nav-link btn btn-link text-start text-decoration-none" data-panel="expenses"><i class="fa-solid fa-arrow-trend-down me-2"></i> Expense Ledger</a>
+                <a href="#vendors" class="nav-link btn btn-link text-start text-decoration-none" data-panel="vendors"><i class="fa-solid fa-truck-fast me-2"></i> Vendor Payments</a>
+                <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Maintenance Invoices</a>
+                <a href="#reports" class="nav-link btn btn-link text-start text-decoration-none" data-panel="reports"><i class="fa-solid fa-chart-pie me-2"></i> Financial Reports</a>
+            </nav>
+            <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main main-content">
+            <!-- Topbar -->
+            <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+                <div>
+                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Finance & Accounting Portal</p>
+                    <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
+                </div>
+                <div class="d-flex align-items-center gap-3 header-actions">
+                    <span class="badge badge-soft-success px-3 py-2 rounded-pill inline-state" id="financeSyncState"><i class="fa-solid fa-check-circle me-1"></i> Financial Ledger Synced</span>
+                    <button class="btn btn-primary rounded-pill shadow-sm px-4" data-action="save"><i class="fa-solid fa-download me-2"></i>Download Ledger</button>
+                </div>
+            </header>
+
+            <div class="container-fluid p-4 dashboard-container">
+                <!-- Overview Section -->
+                <section data-view="overview" class="animate__animated animate__fadeIn">
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Total Income</span>
+                                <strong class="fs-2 fw-bold text-success mt-2 d-block">Rs. 4,85,000</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Total Expenses</span>
+                                <strong class="fs-2 fw-bold text-danger mt-2 d-block">Rs. 1,62,000</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Net Balance</span>
+                                <strong class="fs-2 fw-bold text-primary mt-2 d-block">Rs. 3,23,000</strong>
+                            </article>
+                        </div>
+                        <div class="col-md-3">
+                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase">Maintenance Collections</span>
+                                <strong class="fs-2 fw-bold text-warning mt-2 d-block">88.5%</strong>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
+                        <h4 class="fw-bold mb-3"><i class="fa-solid fa-user-tie text-primary me-2"></i>Accountant Summary</h4>
+                        <p class="text-muted">Welcome to the Society Accountant Portal. Record daily income, process vendor invoices, manage recurring maintenance billings, and generate balance sheets and financial audit summaries.</p>
+                        <div class="d-flex gap-3 mt-3 flex-wrap">
+                            <span class="badge badge-soft-warning px-3 py-2 rounded-pill"><i class="fa-solid fa-file-invoice me-1"></i> 14 Invoices Pending</span>
+                            <span class="badge badge-soft-danger px-3 py-2 rounded-pill"><i class="fa-solid fa-money-bill-wave me-1"></i> Rs. 45,000 Vendor Due</span>
+                            <span class="badge badge-soft-success px-3 py-2 rounded-pill"><i class="fa-solid fa-file-contract me-1"></i> Monthly Audit Ready</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Income Ledger Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="incomes">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Income Ledger</h4>
+                            <button class="btn btn-primary btn-sm rounded-pill px-3" data-action="add" data-table="incomes"><i class="fa-solid fa-plus me-1"></i> Record Income</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="incomes">
+                                <thead class="table-light">
+                                    <tr><th>Date</th><th>Category</th><th>Source / Flat</th><th>Description</th><th>Amount</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>2026-08-01</td><td>Maintenance Collection</td><td>Flat A-204</td><td>August Maintenance Bill</td><td>Rs. 3,500</td><td><span class="badge bg-success">Received</span></td></tr>
+                                    <tr><td>2026-08-02</td><td>Amenity Booking Fee</td><td>Clubhouse Hall</td><td>Banquet Hall Slot Reservation</td><td>Rs. 2,500</td><td><span class="badge bg-success">Received</span></td></tr>
+                                    <tr><td>2026-08-03</td><td>Event Sponsorship</td><td>Festive Committee</td><td>Independence Day Event Support</td><td>Rs. 15,000</td><td><span class="badge bg-success">Received</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Expense Ledger Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="expenses">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Expense Ledger</h4>
+                            <button class="btn btn-primary btn-sm rounded-pill px-3" data-action="add" data-table="expenses"><i class="fa-solid fa-plus me-1"></i> Record Expense</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="expenses">
+                                <thead class="table-light">
+                                    <tr><th>Date</th><th>Category</th><th>Vendor</th><th>Invoice Ref</th><th>Amount</th><th>Approval Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>2026-08-01</td><td>Elevator Maintenance</td><td>Apex Elevator Corp</td><td>INV-2026-801</td><td>Rs. 18,500</td><td><span class="badge bg-success">Approved</span></td></tr>
+                                    <tr><td>2026-08-02</td><td>Electricity Bill</td><td>State Power Board</td><td>EB-SUB-4412</td><td>Rs. 42,000</td><td><span class="badge bg-success">Approved</span></td></tr>
+                                    <tr><td>2026-08-03</td><td>Security Guard Salary</td><td>SecureGuard Agency</td><td>PAY-AUG-001</td><td>Rs. 65,000</td><td><span class="badge bg-warning text-dark">Pending Committee</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vendors Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="vendors">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Contracted Vendors</h4>
+                            <button class="btn btn-primary btn-sm rounded-pill px-3" data-action="add" data-table="vendors"><i class="fa-solid fa-plus me-1"></i> Add Vendor</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="vendors">
+                                <thead class="table-light">
+                                    <tr><th>Vendor Name</th><th>Service Provided</th><th>Contact Person</th><th>Phone</th><th>Contract Expiry</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Apex Elevator Corp</td><td>Lift Repair & Service</td><td>Robert Smith</td><td>9812345678</td><td>2027-03-31</td><td><span class="badge bg-success">Active Contract</span></td></tr>
+                                    <tr><td>SecureGuard Agency</td><td>Security Personnel</td><td>David Ray</td><td>9823456789</td><td>2026-12-31</td><td><span class="badge bg-success">Active Contract</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Maintenance Billing Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="billing">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="fw-bold mb-1">Clear Tax & Maintenance Invoice Generator</h4>
+                                <p class="text-muted small mb-0">Generate itemized society maintenance bills with GST breakups, meter readings, due dates, and official payment QR codes.</p>
+                            </div>
+                            <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" onclick="openInvoiceModal()"><i class="fa-solid fa-plus me-1"></i> Create Detailed Invoice</button>
+                        </div>
+                        
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-3 bg-light p-3 rounded-3 border">
+                                <div class="col-md-3">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">GSTIN Reg</span>
+                                    <strong class="text-dark">33AAACS1234F1Z8</strong>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Billing Frequency</span>
+                                    <strong class="text-dark">Monthly (1st of Month)</strong>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Late Fee Penalty Rate</span>
+                                    <strong class="text-dark">12% p.a. after 15th</strong>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Bank Account</span>
+                                    <strong class="text-dark">HDFC Bank - A/C 501002348921</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                            <h4 class="fw-bold mb-0">Maintenance Billing & Invoices Log</h4>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="generate"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate Monthly Batch</button>
+                                <button type="button" class="btn btn-dark btn-sm rounded-pill px-3" onclick="printSelectedInvoice()"><i class="fa-solid fa-print me-1"></i> Print Detailed Invoice</button>
+                            </div>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="billing">
+                                <thead class="table-light">
+                                    <tr><th>Invoice No.</th><th>Flat</th><th>Resident Name</th><th>Month</th><th>Maintenance Base</th><th>Water & Power</th><th>GST (18%)</th><th>Total Payable</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody id="invoiceTableBody">
+                                    <tr>
+                                        <td><strong>INV-2026-0801</strong></td>
+                                        <td>A-204</td>
+                                        <td>Rahul Sharma</td>
+                                        <td>August 2026</td>
+                                        <td>Rs. 2,500</td>
+                                        <td>Rs. 750</td>
+                                        <td>Rs. 250</td>
+                                        <td><strong>Rs. 3,500</strong></td>
+                                        <td><span class="badge bg-warning text-dark">Unpaid</span></td>
+                                        <td><button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="previewInvoice('INV-2026-0801', 'A-204', 'Rahul Sharma', '2,500', '750', '250', '3,500', 'Unpaid')">View Invoice</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>INV-2026-0802</strong></td>
+                                        <td>B-101</td>
+                                        <td>Priya Sundaram</td>
+                                        <td>August 2026</td>
+                                        <td>Rs. 2,500</td>
+                                        <td>Rs. 750</td>
+                                        <td>Rs. 250</td>
+                                        <td><strong>Rs. 3,500</strong></td>
+                                        <td><span class="badge bg-success">Paid</span></td>
+                                        <td><button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="previewInvoice('INV-2026-0802', 'B-101', 'Priya Sundaram', '2,500', '750', '250', '3,500', 'Paid')">View Invoice</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>INV-2026-0803</strong></td>
+                                        <td>C-302</td>
+                                        <td>Vikram Singh</td>
+                                        <td>August 2026</td>
+                                        <td>Rs. 3,200</td>
+                                        <td>Rs. 950</td>
+                                        <td>Rs. 350</td>
+                                        <td><strong>Rs. 4,500</strong></td>
+                                        <td><span class="badge bg-warning text-dark">Unpaid</span></td>
+                                        <td><button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="previewInvoice('INV-2026-0803', 'C-302', 'Vikram Singh', '3,200', '950', '350', '4,500', 'Unpaid')">View Invoice</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Financial Reports Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="reports">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Financial Audit & Statements</h4>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="notify"><i class="fa-solid fa-file-export me-1"></i> Export P&L Report</button>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="p-4 bg-light rounded-4">
+                                        <h5 class="fw-bold text-primary"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Income & Expenditure Statement</h5>
+                                        <p class="text-muted small mb-0">Comprehensive monthly and annual profit & loss report.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-4 bg-light rounded-4">
+                                        <h5 class="fw-bold text-danger"><i class="fa-solid fa-user-slash me-2"></i>Defaulter List Report</h5>
+                                        <p class="text-muted small mb-0">Flats with pending maintenance dues exceeding 30 days.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-4 bg-light rounded-4">
+                                        <h5 class="fw-bold text-info"><i class="fa-solid fa-money-check-dollar me-2"></i>Vendor Payment Audit</h5>
+                                        <p class="text-muted small mb-0">Historical record of vendor payouts and contract liabilities.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-4 bg-light rounded-4">
+                                        <h5 class="fw-bold text-success"><i class="fa-solid fa-landmark me-2"></i>Tax & GST Compliance</h5>
+                                        <p class="text-muted small mb-0">Quarterly tax filing statements and society audit records.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Keep modals unchanged to preserve complex inline layout but update buttons to bootstrap -->
+    <!-- Printable Comprehensive Itemized Tax Invoice Preview & Creation Modal -->
+    <div id="invoiceModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
+        <div style="background: #ffffff; width: 100%; max-width: 820px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2.25rem; max-height: 92vh; overflow-y: auto; color: #0f172a;">
+            
+            <!-- Invoice Header & Society Registration Info -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px dashed #e2e8f0; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.35rem; color: #0f172a;">
+                        <span style="width: 32px; height: 32px; background: linear-gradient(135deg, #0d6efd, #0b5ed7); color: white; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">SS</span>
+                        SmartSociety Housing Co-operative Society Ltd.
+                    </div>
+                    <p style="margin: 6px 0 0 0; font-size: 0.825rem; color: #475569;">Reg No: <strong>CHS/MUM/2021/88412</strong> | GSTIN: <strong>33AAACS1234F1Z8</strong> | PAN: <strong>AAACS1234F</strong></p>
+                    <p style="margin: 2px 0 0 0; font-size: 0.825rem; color: #64748b;">Plot 42, Green Palms Enclave, Outer Ring Road, Tech Park Zone, Bangalore - 560103</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="background: #e0f2fe; color: #0369a1; font-size: 0.75rem; font-weight: 900; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">TAX & MAINTENANCE INVOICE</span>
+                    <h3 id="invModalNo" style="margin: 8px 0 0 0; font-size: 1.2rem; color: #0f172a; font-weight: 800;">INV-2026-0801</h3>
+                    <p id="invModalDate" style="margin: 2px 0 0 0; font-size: 0.8rem; color: #64748b;">Invoice Date: <strong>01-Aug-2026</strong></p>
+                    <p id="invModalDueDate" style="margin: 2px 0 0 0; font-size: 0.8rem; color: #dc3545; font-weight: 700;">Due Date: <strong>15-Aug-2026</strong></p>
+                </div>
+            </div>
+
+            <!-- Billed To & Flat Details Grid -->
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; background: #f8fafc; padding: 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div>
+                    <span style="font-size: 0.725rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Billed To Resident</span>
+                    <strong id="invModalName" style="display: block; font-size: 1.05rem; color: #0f172a; margin-top: 3px;">Rahul Sharma</strong>
+                    <span id="invModalFlat" style="font-size: 0.85rem; color: #475569; font-weight: 600;">Unit: A-204 (3 BHK - 1,850 sq.ft)</span>
+                </div>
+                <div>
+                    <span style="font-size: 0.725rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Billing Cycle</span>
+                    <strong id="invModalPeriod" style="display: block; font-size: 1rem; color: #0f172a; margin-top: 3px;">August 2026</strong>
+                    <span style="font-size: 0.8rem; color: #64748b;">Bill Type: Regular Maintenance</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 0.725rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Payment Status</span>
+                    <div style="margin-top: 4px;">
+                        <span id="invModalStatus" style="display: inline-block; padding: 4px 10px; background: #fff3cd; color: #664d03; border: 1px solid #ffecb5; font-size: 0.75rem; font-weight: 800; border-radius: 6px;">UNPAID</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete 8-Itemized Cost Components Table -->
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: #334155; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.05em;">Itemized Charges Breakdown</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                <thead>
+                    <tr style="background: #f1f5f9; text-align: left; color: #334155;">
+                        <th style="padding: 10px 12px; border-bottom: 2px solid #cbd5e1;">#</th>
+                        <th style="padding: 10px 12px; border-bottom: 2px solid #cbd5e1;">Description / Line Item Particulars</th>
+                        <th style="padding: 10px 12px; border-bottom: 2px solid #cbd5e1;">Calculation Basis</th>
+                        <th style="padding: 10px 12px; border-bottom: 2px solid #cbd5e1; text-align: right;">Amount (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">1</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Society Base Maintenance Charge</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Security personnel, housekeeping, lifts & garden upkeep</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Rs. 1.35 / sq.ft</td>
+                        <td id="invBaseAmt" style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 2,500.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">2</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Metered Water Supply Charges</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">BWSSB Municipal supply + tanker supplement (Meter Reading: 1,420 units)</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">142 Units @ Rs. 3.5/unit</td>
+                        <td id="invWaterAmt" style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 497.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">3</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Common Area Electricity & DG Backup</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Staircase, cellar lighting, pump house & generator fuel recovery</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Equal Flat Division</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 253.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">4</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Mandatory Sinking Fund Deposit</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Long-term building structural capital reserve (Society Bye-law 13a)</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">0.25% of Construction Cost</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 150.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">5</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Building Repair & Painting Reserve Fund</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Exterior painting, waterproofing & structural audit fund</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Fixed Monthly Contribution</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 100.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">6</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Covered Parking Slot Maintenance</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Slot P-42 basement maintenance & EV charging point upkeep</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Rs. 100 / Allocated Slot</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 100.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">7</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Non-Occupancy Charges (If Applicable)</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">Applicable only for rented/tenanted flats (Max 10% of base fee)</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">Self Occupied (Rs. 0)</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 0.00</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 700;">8</td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>Statutory Goods & Services Tax (CGST 9% + SGST 9%)</strong><br>
+                            <span style="font-size: 0.75rem; color: #64748b;">18% GST (Exemption threshold Rs. 7,500/month per member)</span>
+                        </td>
+                        <td style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">18% on Taxable Items</td>
+                        <td id="invGstAmt" style="padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Rs. 0.00</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f8fafc; font-weight: 900; font-size: 1.05rem;">
+                        <td colspan="3" style="padding: 12px; border-top: 2px solid #0f172a; text-align: right; color: #0f172a;">Grand Total Amount Payable:</td>
+                        <td id="invTotalAmt" style="padding: 12px; border-top: 2px solid #0f172a; text-align: right; color: #0d6efd; font-size: 1.15rem;">Rs. 3,600.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- Bank Accounts & Terms Section -->
+            <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.25rem; border-top: 1px dashed #cbd5e1; padding-top: 1.25rem; margin-bottom: 1.5rem;">
+                <div>
+                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Bank Account & Payment Remittance</span>
+                    <p style="margin: 4px 0 0 0; font-size: 0.825rem; color: #334155; line-height: 1.4;">
+                        Bank Name: <strong>HDFC Bank Ltd</strong><br>
+                        Account Name: <strong>SmartSociety Maintenance Pool A/C</strong><br>
+                        Account Number: <strong>501002348921</strong> | IFSC Code: <strong>HDFC0000124</strong><br>
+                        UPI VPA: <strong>smartsociety@hdfcbank</strong>
+                    </p>
+                </div>
+                <div>
+                    <span style="font-size: 0.75rem; color: #dc3545; font-weight: 800; text-transform: uppercase;">Late Payment Policy</span>
+                    <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #64748b; line-height: 1.35;">
+                        Payments made after <strong>15th of the month</strong> will attract simple interest penalty of <strong>12% per annum</strong> computed on daily basis as per bye-law 72.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #f1f5f9; padding-top: 1rem;">
+                <span style="font-size: 0.75rem; color: #94a3b8;">This is a system-generated e-Invoice. No physical signature is required.</span>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-light rounded-pill px-4" onclick="closeInvoiceModal()">Close</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" onclick="window.print()"><i class="fa-solid fa-print me-2"></i> Print / Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Itemized Batch Generation Modal -->
+    <div id="itemizedBatchModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
+        <div style="background: #ffffff; width: 100%; max-width: 680px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-height: 90vh; overflow-y: auto; color: #0f172a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a;">Generate Itemized Monthly Bills</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 0.825rem; color: #64748b;">Configure base charges, meter rates, reserve funds, parking fees, and GST tax for all flats.</p>
+                </div>
+                <button type="button" class="btn-close" onclick="closeItemizedBatchModal()"></button>
+            </div>
+
+            <form onsubmit="handleItemizedBatchSubmit(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="grid-column: span 2;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">1. Billing Month & Year</label>
+                    <input class="form-control" id="batchMonth" value="August 2026" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">2. Base Upkeep Rate (per sq.ft)</label>
+                    <input class="form-control" id="batchBaseRate" type="number" step="0.01" value="1.35" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">3. Water Sub-Meter Rate (per unit)</label>
+                    <input class="form-control" id="batchWaterRate" type="number" step="0.01" value="3.50" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">4. Common Area Power & DG Fee (Rs)</label>
+                    <input class="form-control" id="batchPowerFee" type="number" value="253" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">5. Sinking Fund Contribution (Rs)</label>
+                    <input class="form-control" id="batchSinkingFee" type="number" value="150" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">6. Repair & Painting Fund (Rs)</label>
+                    <input class="form-control" id="batchRepairFee" type="number" value="100" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">7. Covered Parking Slot Fee (Rs)</label>
+                    <input class="form-control" id="batchParkingFee" type="number" value="100" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">8. GST Tax Rate (%)</label>
+                    <input class="form-control" id="batchGstRate" type="number" value="18" required>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">9. Payment Due Date</label>
+                    <input class="form-control" id="batchDueDate" value="15-Aug-2026" required>
+                </div>
+
+                <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                    <button type="button" class="btn btn-light rounded-pill px-4" onclick="closeItemizedBatchModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="fa-solid fa-check me-2"></i> Confirm & Generate Batch Invoices</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4" style="z-index: 1050;"></div>
+    
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        const dashboardTitles = {
+            overview: "Overview", incomes: "Income Ledger", expenses: "Expense Ledger",
+            vendors: "Vendor Payments", billing: "Maintenance Invoices", reports: "Financial Reports"
+        };
+        
+        window.forceOpenPanel = function(panel) {
+            console.log("Switching to panel: " + panel);
+            document.querySelectorAll("[data-view]").forEach(view => {
+                view.classList.add("hidden", "d-none");
+                view.style.display = "none";
+            });
+            const selectedView = document.querySelector(`[data-view="${panel}"]`);
+            if (selectedView) {
+                selectedView.classList.remove("hidden", "d-none");
+                selectedView.style.display = "";
+            }
+            document.querySelectorAll("[data-panel]").forEach(button => {
+                const active = (button.dataset.panel === panel);
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-selected", active ? "true" : "false");
+            });
+            const titleEl = document.getElementById("title");
+            if (titleEl) {
+                titleEl.textContent = dashboardTitles[panel] || "Dashboard";
+            }
+            if (location.hash !== `#${panel}`) {
+                history.pushState(null, "", `#${panel}`);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-panel]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (el.tagName === 'A') { e.preventDefault(); e.stopImmediatePropagation(); }
+                    forceOpenPanel(el.dataset.panel);
+                });
+            });
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash) forceOpenPanel(window.location.hash.substring(1));
+            });
+            if (window.location.hash) {
+                forceOpenPanel(window.location.hash.substring(1));
+            } else {
+                forceOpenPanel("overview");
+            }
+        });
+
+        // Modals Logic
+        function openItemizedBatchModal() {
+            document.getElementById('itemizedBatchModal').style.display = 'flex';
+        }
+        function closeItemizedBatchModal() {
+            document.getElementById('itemizedBatchModal').style.display = 'none';
+        }
+        function handleItemizedBatchSubmit(e) {
+            e.preventDefault();
+            const month = document.getElementById('batchMonth').value;
+            const tbody = document.getElementById('invoiceTableBody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>INV-2026-0804</strong></td>
+                <td>A-102</td>
+                <td>Ananya Gupta</td>
+                <td>${month}</td>
+                <td>Rs. 2,800</td>
+                <td>Rs. 497</td>
+                <td>Rs. 0</td>
+                <td><strong>Rs. 3,600</strong></td>
+                <td><span class="badge bg-warning text-dark">Unpaid</span></td>
+                <td><button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="previewInvoice('INV-2026-0804', 'A-102', 'Ananya Gupta', '2,800', '497', '0', '3,600', 'Unpaid')">View Invoice</button></td>
+            `;
+            tbody.prepend(tr);
+            closeItemizedBatchModal();
+            alert('Successfully generated itemized batch maintenance invoices for all active flats!');
+        }
+        function openInvoiceModal() {
+            previewInvoice('INV-2026-0804', 'A-102', 'Ananya Gupta', '2,800', '497', '0', '3,600', 'Unpaid');
+        }
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').style.display = 'none';
+        }
+        function previewInvoice(invNo, flat, name, base, water, gst, total, status) {
+            document.getElementById('invModalNo').innerText = invNo;
+            document.getElementById('invModalName').innerText = name;
+            document.getElementById('invModalFlat').innerText = 'Unit: ' + flat + ' (3 BHK - 1,850 sq.ft)';
+            document.getElementById('invBaseAmt').innerText = 'Rs. ' + base + '.00';
+            document.getElementById('invWaterAmt').innerText = 'Rs. ' + (water || '497') + '.00';
+            document.getElementById('invGstAmt').innerText = 'Rs. ' + (gst || '0') + '.00';
+            document.getElementById('invTotalAmt').innerText = 'Rs. ' + total + '.00';
+            
+            const statusEl = document.getElementById('invModalStatus');
+            statusEl.innerText = status.toUpperCase();
+            if (status.toUpperCase() === 'PAID') {
+                statusEl.style.background = '#d1e7dd';
+                statusEl.style.color = '#0f5132';
+                statusEl.style.borderColor = '#badbcc';
+            } else {
+                statusEl.style.background = '#fff3cd';
+                statusEl.style.color = '#664d03';
+                statusEl.style.borderColor = '#ffecb5';
+            }
+            document.getElementById('invoiceModal').style.display = 'flex';
+        }
+        function printSelectedInvoice() {
+            previewInvoice('INV-2026-0801', 'A-204', 'Rahul Sharma', '2,500', '497', '0', '3,600', 'Unpaid');
+        }
+    </script>
+</body>
+</html>

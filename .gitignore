@@ -1,0 +1,8 @@
+/data/*.mv.db
+/data/*.trace.db
+/target/
+/maven/
+mvn-output.txt
+.idea/
+.vscode/
+*.log

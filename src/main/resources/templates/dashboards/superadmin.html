@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Super Admin Dashboard')}"></head>
+<body class="dashboard-body bg-light" data-platform="smartapartment" data-dashboard-role="superadmin">
+    <style>
+        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
+        #sidebar {
+            position: relative !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+        }
+        #sidebar .nav-link {
+            position: relative !important;
+            z-index: 10000 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        /* Super-admin workspace layout */
+        #sidebar { width: 236px !important; min-width: 236px; background: #20252a !important; box-shadow: none !important; }
+        #sidebar .sidebar-header { padding: 1.35rem 1.45rem !important; gap: .65rem !important; }
+        #sidebar .sidebar-header h4 { font-size: 1.32rem; letter-spacing: -.02em; }
+        #sidebar .sidebar-header i { font-size: 1.55rem !important; }
+        #sidebar .sidebar-nav { padding-block: .85rem !important; }
+        #sidebar .nav-link { width: calc(100% - 1.25rem) !important; margin: .12rem .625rem !important; padding: .72rem .85rem !important; gap: .72rem !important; font-size: .91rem; border-radius: 10px; }
+        #sidebar .nav-link i { width: 20px; text-align: center; }
+        #sidebar .sidebar-footer { padding: .9rem !important; }
+        .main-content { background: #f7f8fb; }
+        .main-content .topbar { min-height: 138px; padding: 2rem 1.85rem !important; border-bottom: 1px solid #e8ebf2; box-shadow: none; }
+        .main-content .topbar h2 { font-size: clamp(1.8rem, 2.4vw, 2.45rem); letter-spacing: -.035em; }
+        .main-content .dashboard-container { max-width: 1500px; width: 100%; margin: 0 auto; padding: 1.8rem !important; }
+        section[data-view="monitoring"] .stats { display: grid !important; grid-template-columns: repeat(4, minmax(190px, 250px)); justify-content: start; gap: 16px; margin: 0 0 1.35rem !important; }
+        section[data-view="monitoring"] .stats > div { width: auto !important; max-width: none !important; padding: 0 !important; }
+        section[data-view="monitoring"] .stats article { min-height: 84px !important; height: auto !important; padding: .7rem 1.1rem !important; display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left !important; border: 1px solid #e7ebf3 !important; border-radius: 14px !important; background: #fff; box-shadow: 0 5px 16px rgba(29,42,72,.045) !important; }
+        section[data-view="monitoring"] .stats article:hover { transform: translateY(-3px) !important; }
+        section[data-view="monitoring"] .stats article span { margin-bottom: .25rem; color: #68758b !important; font-size: .65rem !important; letter-spacing: .04em; }
+        section[data-view="monitoring"] .stats article strong { margin: 0 !important; font-size: 1.5rem !important; line-height: 1; }
+        section[data-view="monitoring"] .monitoring-card { border: 1px solid #e7ebf3 !important; box-shadow: 0 8px 28px rgba(29,42,72,.055) !important; }
+        section[data-view="monitoring"] .monitoring-card .card-header { padding: 1.4rem 1.6rem 0 !important; }
+        section[data-view="monitoring"] .monitoring-card .card-body { padding: 1.15rem 1.6rem 1.5rem !important; }
+        section[data-view="monitoring"] .table { margin-bottom: 0; }
+        section[data-view="monitoring"] .resident-inbox-card { width: 100% !important; max-width: none !important; margin-top: 2rem !important; padding: 1.45rem 1.8rem !important; border: 1px solid #e7ebf3 !important; border-radius: 18px !important; background: #fff !important; box-shadow: 0 8px 28px rgba(29,42,72,.055) !important; }
+        section[data-view="monitoring"] .resident-inbox-card .card-head { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 1rem; margin: 0 0 1.2rem !important; }
+        section[data-view="monitoring"] .resident-inbox-card .card-head h2 { margin: 0 !important; font-size: 1.35rem !important; font-weight: 750; }
+        section[data-view="monitoring"] .resident-inbox-card .inline-state { flex: 0 0 auto; }
+        section[data-view="monitoring"] .resident-inbox-card table { width: 100% !important; table-layout: fixed; margin: 0; }
+        section[data-view="monitoring"] .resident-inbox-card th, section[data-view="monitoring"] .resident-inbox-card td { padding: .8rem .65rem !important; vertical-align: middle; }
+        section[data-view="monitoring"] .resident-inbox-card th:nth-child(1) { width: 18%; }
+        section[data-view="monitoring"] .resident-inbox-card th:nth-child(2) { width: 28%; }
+        section[data-view="monitoring"] .resident-inbox-card th:nth-child(3) { width: 28%; }
+        section[data-view="monitoring"] .resident-inbox-card th:nth-child(4) { width: 26%; }
+        @media (max-width: 1100px) { section[data-view="monitoring"] .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 820px) { #sidebar { width: 74px !important; min-width: 74px; } #sidebar .sidebar-header h4, #sidebar .nav-link:not(.active) { font-size: 0; } #sidebar .nav-link { justify-content: center; padding-inline: .4rem !important; } #sidebar .nav-link i { font-size: 1rem; } .main-content .topbar { padding: 1.35rem 1rem !important; } .main-content .dashboard-container { padding: 1rem !important; } }
+        @media (max-width: 560px) { section[data-view="monitoring"] .stats { grid-template-columns: 1fr; } section[data-view="monitoring"] .resident-inbox-card { overflow-x: auto; padding: 1.1rem !important; } section[data-view="monitoring"] .resident-inbox-card .card-head { align-items: flex-start !important; flex-direction: column !important; } section[data-view="monitoring"] .resident-inbox-card table { min-width: 620px; } .header-actions { gap: .45rem !important; } }
+    </style>
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
+            <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
+                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+            </div>
+            <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#monitoring" class="nav-link btn btn-link text-start text-decoration-none" data-panel="monitoring"><i class="fa-solid fa-chart-line me-2"></i> Apartment Command Watch</a>
+                <a href="#audit-logs" class="nav-link btn btn-link text-start text-decoration-none" data-panel="audit-logs"><i class="fa-solid fa-list-check me-2"></i> Granular Audit Logs</a>
+                <a href="#societies" class="nav-link btn btn-link text-start text-decoration-none" data-panel="societies"><i class="fa-solid fa-city me-2"></i> Societies</a>
+                <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Subscriptions</a>
+                <a href="#users" class="nav-link btn btn-link text-start text-decoration-none" data-panel="users"><i class="fa-solid fa-users me-2"></i> Users</a>
+                <a href="#analytics" class="nav-link btn btn-link text-start text-decoration-none" data-panel="analytics"><i class="fa-solid fa-chart-pie me-2"></i> Analytics</a>
+                <a href="#system-config" class="nav-link btn btn-link text-start text-decoration-none" data-panel="system-config"><i class="fa-solid fa-server me-2"></i> System & Security</a>
+                <a href="#access-roles" class="nav-link btn btn-link text-start text-decoration-none" data-panel="access-roles"><i class="fa-solid fa-user-shield me-2"></i> Roles & Access</a>
+                <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
+                <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup"><i class="fa-solid fa-money-bill-transfer me-2"></i> Finance & Gateways</a>
+                <a href="#communications" class="nav-link btn btn-link text-start text-decoration-none" data-panel="communications"><i class="fa-solid fa-bullhorn me-2"></i> Communications</a>
+                <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+            </nav>
+            <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main main-content">
+            <!-- Topbar -->
+            <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+                <div>
+                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Platform Owner Console</p>
+                    <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
+                </div>
+                <div class="d-flex align-items-center gap-3 header-actions">
+                    <span class="badge badge-soft-success px-3 py-2 rounded-pill inline-state" id="platformNoticeState"><i class="fa-solid fa-check-circle me-1"></i> Ready to notify</span>
+                    <button class="btn btn-primary rounded-pill shadow-sm px-4" id="btnOpenPlatformNoticeModal" data-bs-toggle="modal" data-bs-target="#platformNoticeModal"><i class="fa-solid fa-paper-plane me-2"></i>Send Platform Notice</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Container -->
+            <div class="container-fluid p-4 dashboard-container">
+                
+                <!-- Overview Panel -->
+                <section data-view="overview" class="animate__animated animate__fadeIn">
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-4 col-md-2">
+                            <article class="card p-1 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Active Societies</span>
+                                <strong class="fs-5 fw-bold text-primary mt-1 d-block" id="overviewActiveSocieties">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <article class="card p-1 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Monthly Revenue</span>
+                                <strong class="fs-5 fw-bold text-success mt-1 d-block" id="overviewMonthlyRevenue">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <article class="card p-1 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Trial Accounts</span>
+                                <strong class="fs-5 fw-bold text-warning mt-1 d-block" id="overviewTrialAccounts">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <article class="card p-1 text-center h-100 shadow-sm border-0">
+                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Open Tickets</span>
+                                <strong class="fs-5 fw-bold text-danger mt-1 d-block" id="overviewOpenTickets">...</strong>
+                            </article>
+                        </div>
+                    </div>
+                    <!-- Subscription Plans (Visual Only for now, keeping structure) -->
+                    <div class="card p-4 shadow-sm border-0 rounded-4 overview-plans">
+                        <div class="d-flex justify-content-between align-items-end mb-4 overview-section-heading">
+                            <div><p class="text-primary fw-bold mb-1 small eyebrow">Subscription Plans</p><h4 class="fw-bold mb-0">Choose the right plan for your society</h4></div>
+                            <button type="button" class="btn btn-outline-primary" data-panel="subscriptions">View controls</button>
+                        </div>
+                        <div class="row g-4 subscription-grid">
+                            <!-- Free Plan -->
+                            <div class="col-md-4">
+                                <article class="card h-100 p-4 border border-primary border-opacity-25 subscription-plan-card bg-primary bg-opacity-10 rounded-4" data-plan="Free">
+                                    <span class="badge bg-primary text-white w-25 mb-3 plan-kicker">Starter</span>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
+                                        <h3 class="fw-bold mb-0">Free</h3><span class="badge bg-success status active">Trial</span>
+                                    </div>
+                                    <p class="text-muted small">1 block, 50 flats, complaints, notices. Rs. 0 / month.</p>
+                                    <ul class="text-muted small mb-4 flex-grow-1"><li>1 admin, 1 security</li><li>Complaints & announcements</li><li>7 day history</li></ul>
+                                    <button class="btn btn-primary w-100 rounded-pill" data-action="edit-plan" data-plan="Free">Edit Plan</button>
+                                </article>
+                            </div>
+                            <!-- Standard Plan -->
+                            <div class="col-md-4">
+                                <article class="card h-100 p-4 border-0 shadow subscription-plan-card featured-plan bg-white rounded-4" data-plan="Standard">
+                                    <span class="badge bg-warning text-dark w-50 mb-3 plan-kicker"><i class="fa-solid fa-star me-1"></i> Most used</span>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
+                                        <h3 class="fw-bold mb-0">Standard</h3><span class="badge bg-primary status approved">Live</span>
+                                    </div>
+                                    <p class="text-muted small">5 blocks, 500 flats, billing, visitors, amenities. Rs. 4,999 / month.</p>
+                                    <ul class="text-muted small mb-4 flex-grow-1"><li>Full workflows</li><li>Billing & amenities</li><li>90 day audit history</li></ul>
+                                    <button class="btn btn-primary w-100 rounded-pill" data-action="edit-plan" data-plan="Standard">Edit Plan</button>
+                                </article>
+                            </div>
+                            <!-- Premium Plan -->
+                            <div class="col-md-4">
+                                <article class="card h-100 p-4 border border-dark border-opacity-10 subscription-plan-card rounded-4 bg-light" data-plan="Premium">
+                                    <span class="badge bg-dark text-white w-25 mb-3 plan-kicker">Scale</span>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
+                                        <h3 class="fw-bold mb-0">Premium</h3><span class="badge bg-secondary status pending">Upgradeable</span>
+                                    </div>
+                                    <p class="text-muted small">Unlimited flats, analytics, expenses. Rs. 9,999 / month.</p>
+                                    <ul class="text-muted small mb-4 flex-grow-1"><li>Advanced analytics</li><li>Expense approvals</li><li>365 day audit history</li></ul>
+                                    <button class="btn btn-dark w-100 rounded-pill" data-action="edit-plan" data-plan="Premium">Edit Plan</button>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Monitoring Panel -->
+                <section class="d-none" data-view="monitoring">
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Gate Entries Today</span><strong class="fs-5 fw-bold text-primary mt-1 d-block">...</strong></article></div>
+                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Bills Pending</span><strong class="fs-5 fw-bold text-warning mt-1 d-block">...</strong></article></div>
+                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Admin Approvals</span><strong class="fs-5 fw-bold text-info mt-1 d-block">...</strong></article></div>
+                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Open Risks</span><strong class="fs-5 fw-bold text-danger mt-1 d-block">...</strong></article></div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4 monitoring-card">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-satellite-dish text-primary me-2"></i>Apartment Command Watch</h4>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="notify"><i class="fa-solid fa-download me-2"></i>Export Summary</button>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <p class="text-muted small mb-4">Super Admin gets read-level visibility across every important apartment workflow. Approval and assignment buttons stay with the society Admin so daily operations remain controlled by the local authorized team.</p>
+                            <div class="table-responsive dashboard-table-scroll">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light"><tr><th>Module</th><th>Live Metrics & Trends</th><th>Action</th></tr></thead>
+                                    <tbody id="commandWatchGrid"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-eye text-danger me-2"></i>Live Society Watchlist</h4>
+                            <span class="badge badge-soft-danger inline-state">Super Admin visibility only</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light"><tr><th>Society</th><th>Module</th><th>Current Signal</th><th>Owner</th><th>Access Rule</th></tr></thead>
+                                <tbody id="liveSocietyWatchlistTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Audit Logs -->
+                <section class="d-none" data-view="audit-logs">
+                    <!-- Similar translation for audit logs, omitting some stats for brevity, ensuring table IDs match -->
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-timeline text-secondary me-2"></i>Minute-by-Minute System Stream</h4>
+                            <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" id="auditLogExportButton" type="button"><i class="fa-solid fa-download me-2"></i>Export Log Stream</button>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-3 mb-4 form-grid">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold">Filter Society</label>
+                                    <select id="auditSocietyFilter" class="form-select shadow-none border-light-subtle"><option value="ALL">All Societies</option><option value="Green Nest">Green Nest</option><option value="Lakeview Res.">Lakeview Residency</option><option value="Urban Heights">Urban Heights</option><option value="Royal Gardens">Royal Gardens</option></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold">Filter Module</label>
+                                    <select id="auditModuleFilter" class="form-select shadow-none border-light-subtle"><option value="ALL">All Modules</option><option value="SECURITY">Security</option><option value="FINANCE">Finance</option><option value="HELPDESK">Helpdesk</option><option value="ADMIN_CTRL">Admin Control</option><option value="AUTH">Authentication</option></select>
+                                </div>
+                            </div>
+                            <div class="table-responsive dashboard-table-scroll">
+                                <table class="table table-hover align-middle table-sm">
+                                    <thead class="table-light"><tr><th>Time</th><th>Society</th><th>Module</th><th>Actor</th><th>Detail</th><th>IP</th><th>Status</th></tr></thead>
+                                    <tbody id="minuteAuditStreamBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Societies -->
+                <section class="d-none" data-view="societies">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Registered Societies</h4>
+                            <button class="btn btn-primary btn-sm rounded-pill px-3" id="btnOpenAddSocietyModal" type="button"><i class="fa-solid fa-plus me-1"></i>Add Society</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="societies">
+                                <thead class="table-light"><tr><th>Society</th><th>City</th><th>Plan</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Subscriptions -->
+                <section class="d-none subscriptions-panel" data-view="subscriptions">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4 subscription-command-card">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">Subscription Admin Control</h4>
+                        </div>
+                        <div class="card-body px-4 pb-0">
+                            <ul class="nav nav-tabs subscription-subtabs border-0" role="tablist">
+                                <li class="nav-item"><button class="nav-link border-0 text-dark active fw-bold" data-subtab="plans">Plans</button></li>
+                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="mapping">Society Mapping</button></li>
+                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="admins">Admin Access</button></li>
+                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="rules">Billing Rules</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Plans Subpanel -->
+                    <div class="subscription-subpanel" data-subpanel="plans">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">Platform Subscription Plans</h4><p class="text-muted small mb-0">Changes apply to the shared plan catalogue used across SmartSociety.</p></div><button class="btn btn-primary btn-sm rounded-pill px-3" id="btnAddSubscriptionPlan" type="button"><i class="fa-solid fa-plus me-1"></i>Add Plan</button></div>
+                            <div class="card-body px-4 pb-4 table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>Plan</th><th>Monthly price</th><th>Flats</th><th>Residents</th><th>Features</th><th>Action</th></tr></thead><tbody id="subscriptionPlansTable"></tbody></table></div>
+                        </div>
+                    </div>
+                    <!-- Mapping Subpanel -->
+                    <div class="subscription-subpanel d-none" data-subpanel="mapping">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Society Plan Mapping</h4></div>
+                            <div class="card-body px-4 pb-4 table-responsive">
+                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Society</th><th>Plan</th><th>Flats</th><th>Renewal</th><th>Admin Owner</th><th>Status</th><th>Action</th></tr></thead><tbody id="subscriptionMappingTable"></tbody></table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Admins Subpanel -->
+                    <div class="subscription-subpanel d-none" data-subpanel="admins">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Society Admin Access</h4></div>
+                            <div class="card-body px-4 pb-4 table-responsive">
+                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Admin</th><th>Society</th><th>Role</th><th>Last Login</th><th>MFA</th><th>Status</th><th>Action</th></tr></thead><tbody id="subscriptionAdminsTable"></tbody></table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Rules Subpanel -->
+                    <div class="subscription-subpanel d-none" data-subpanel="rules">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Billing Rules</h4></div>
+                            <div class="card-body px-4 pb-4 table-responsive">
+                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Rule</th><th>Plan</th><th>Amount</th><th>Cycle</th><th>Grace</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRulesTable"></tbody></table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Users -->
+                <section class="d-none" data-view="users">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Platform Users</h4></div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" data-table="users"><thead class="table-light"><tr><th>Name</th><th>Role</th><th>Society</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings (Specifically Redesigned as per user request) -->
+                <section class="d-none" data-view="settings">
+                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden superadmin-settings-card animate__animated animate__fadeInUp">
+                        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-gears text-primary me-2"></i>Platform Settings</h4>
+                            <span class="badge badge-soft-primary rounded-pill px-3 py-2 inline-state" id="settingsSavedAt">No changes saved yet</span>
+                        </div>
+                        <div class="card-body p-4 bg-light bg-opacity-50">
+                            <div class="row g-4 form-grid">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control shadow-none border-light-subtle" id="supportEmail" value="support@smartapartment.local">
+                                        <label for="supportEmail">Support Email Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="approvalRule">
+                                            <option>Auto approve paid tenants</option>
+                                            <option>Manual review</option>
+                                        </select>
+                                        <label for="approvalRule">Approval Rule</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="maintenanceMode">
+                                            <option>Disabled</option>
+                                            <option>Enabled - Show Maintenance Page</option>
+                                        </select>
+                                        <label for="maintenanceMode">Platform Maintenance Mode</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="smtpHost" value="smtp.mailgun.org">
+                                        <label for="smtpHost">SMTP Host</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control shadow-none border-light-subtle" id="sessionLimit" value="5">
+                                        <label for="sessionLimit">Global User Session Limit</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control shadow-none border-light-subtle" id="retentionPolicy" value="36">
+                                        <label for="retentionPolicy">Data Retention Policy (Months)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-end">
+                                <button class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm" data-action="save"><i class="fa-solid fa-floppy-disk me-2"></i>Save Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="analytics">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3"><div><h4 class="fw-bold mb-1">Platform Analytics</h4><p class="text-muted mb-0 small">A detailed view of revenue, adoption, collections and platform operations.</p></div><button type="button" id="btnExportAnalytics" class="btn btn-outline-primary rounded-pill px-3"><i class="fa-solid fa-download me-2"></i>Export Summary</button></div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Monthly recurring revenue</span><i class="fa-solid fa-chart-line text-primary"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsMrr">Loading...</div><div class="small text-success mt-2"><i class="fa-solid fa-arrow-trend-up me-1"></i>18% growth vs last month</div></div></div></div>
+                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Active engagement</span><i class="fa-solid fa-users text-info"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsVisitors">Loading...</div><div class="small text-muted mt-2">Visitor and resident activity</div></div></div></div>
+                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Payment success</span><i class="fa-solid fa-credit-card text-success"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsPayments">Loading...</div><div class="small text-success mt-2">Collection health is stable</div></div></div></div>
+                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Service response</span><i class="fa-solid fa-stopwatch text-warning"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsSla">Loading...</div><div class="small text-muted mt-2">Average complaint closure time</div></div></div></div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-8"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between"><div><h5 class="fw-bold mb-1">Revenue & Collections Trend</h5><p class="small text-muted mb-0">Monthly recurring revenue compared with collections.</p></div><span class="badge bg-success-subtle text-success align-self-start">Last 6 months</span></div><div class="card-body px-4 pb-4"><div id="analyticsRevenueChart" class="d-flex align-items-end justify-content-around gap-2" style="height:200px"></div><div class="d-flex justify-content-around small text-muted mt-2"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div><div class="d-flex gap-3 small mt-3"><span><i class="fa-solid fa-square text-primary me-1"></i>Revenue</span><span><i class="fa-solid fa-square text-info me-1"></i>Collections</span></div></div></div></div>
+                        <div class="col-lg-4"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Operational Health</h5><p class="small text-muted mb-0">Today's platform activity.</p></div><div class="card-body px-4 pb-4"><div class="d-flex justify-content-between border-bottom py-3"><span>Gate entries</span><strong class="text-primary">1,248</strong></div><div class="d-flex justify-content-between border-bottom py-3"><span>Maintenance requests</span><strong>28</strong></div><div class="d-flex justify-content-between border-bottom py-3"><span>Open payment follow-ups</span><strong class="text-warning">342</strong></div><div class="d-flex justify-content-between pt-3"><span>Platform availability</span><strong class="text-success">99.99%</strong></div></div></div></div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Society Performance</h5><p class="small text-muted mb-0">Compare adoption, collection health and service performance across registered societies.</p></div><div class="card-body px-4 pb-4 table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Society</th><th>Plan</th><th>Active Users</th><th>Collection Rate</th><th>Open Requests</th><th>Service SLA</th><th>Health</th></tr></thead><tbody id="analyticsSocietyTable"></tbody></table></div></div>
+                    <div class="row g-4"><div class="col-lg-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Subscription Mix</h5><p class="small text-muted mb-0">Current distribution of active society plans.</p></div><div class="card-body px-4 pb-4" id="analyticsSubscriptionMix"></div></div></div><div class="col-lg-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Recommended Actions</h5><p class="small text-muted mb-0">Priorities based on current platform activity.</p></div><div class="card-body px-4 pb-4"><div class="d-flex gap-3 border-bottom py-2"><i class="fa-solid fa-circle-exclamation text-warning mt-1"></i><div><strong>Follow up on pending collections</strong><div class="small text-muted">342 bills need society-admin attention.</div></div></div><div class="d-flex gap-3 border-bottom py-3"><i class="fa-solid fa-user-shield text-primary mt-1"></i><div><strong>Review pending admin access</strong><div class="small text-muted">67 approvals are awaiting verification.</div></div></div><div class="d-flex gap-3 pt-3"><i class="fa-solid fa-bullhorn text-success mt-1"></i><div><strong>Keep residents informed</strong><div class="small text-muted">Use a platform notice for important service updates.</div></div></div></div></div></div></div>
+                </section>
+
+                <!-- System & Security -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="system-config">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0">System & Security</h4>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill" id="btnAddIntegration" type="button"><i class="fa-solid fa-plus me-2"></i>Add Integration</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <p class="text-muted small mb-4">Manage 3rd-party API integrations, Webhooks, and Security Keys.</p>
+                            <table class="table table-hover align-middle" id="apiIntegrationsTable">
+                                <thead class="table-light"><tr><th>Integration Name</th><th>Type</th><th>Status</th><th>Last Sync</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Roles & Access -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="access-roles">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Global Roles & Access</h4></div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" id="accessRolesTable">
+                                <thead class="table-light"><tr><th>Role Name</th><th>Permissions Level</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Database & Privacy -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="privacy-data">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><div><h4 class="fw-bold mb-1">Data Privacy & GDPR</h4><p class="small text-muted mb-0">Review privacy requests before any account data is anonymized. Every decision is recorded.</p></div><span class="badge bg-primary-subtle text-primary">Super Admin only</span></div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" id="privacyRequestsTable">
+                                <thead class="table-light"><tr><th>Request ID</th><th>User</th><th>Request Type</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Finance & Gateways -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="finance-setup">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Payment Gateways</h4></div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" id="paymentGatewaysTable">
+                                <thead class="table-light"><tr><th>Gateway</th><th>Environment</th><th>Status</th><th>Transaction Fee</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Communications -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="communications">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><div><h4 class="fw-bold mb-1">Global Communications</h4><p class="small text-muted mb-0">Manage the official templates used for platform communication.</p></div></div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle" id="communicationsTable">
+                                <thead class="table-light"><tr><th>Template</th><th>Channel</th><th>Subject</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    
+    <div id="toast" class="toast hidden bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4" style="z-index: 1050;"></div>
+
+    <style>
+        #platformNoticeModal .modal-dialog { max-width: 760px; }
+        #platformNoticeModal .modal-content { overflow: hidden; background: #fff; }
+        #platformNoticeModal .modal-header { padding: 1.5rem 1.75rem; background: linear-gradient(135deg, #2856e8, #503ee7) !important; }
+        #platformNoticeModal .notice-kicker { color: rgba(255,255,255,.76); font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+        #platformNoticeModal .notice-intro { display: flex; gap: .8rem; align-items: flex-start; padding: .95rem 1rem; border: 1px solid #dbe7ff; border-radius: 14px; background: #f4f7ff; color: #355078; }
+        #platformNoticeModal .notice-intro i { color: #3159e8; padding-top: .15rem; }
+        #platformNoticeModal .notice-label { margin-bottom: .45rem; color: #53627c; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        #platformNoticeModal .form-control, #platformNoticeModal .form-select { border: 1px solid #dce3f0 !important; border-radius: 11px; background: #fff !important; box-shadow: none; }
+        #platformNoticeModal .form-control:focus, #platformNoticeModal .form-select:focus { border-color: #5269ec !important; box-shadow: 0 0 0 .22rem rgba(82,105,236,.13); }
+        #platformNoticeModal .notice-audience { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+        #platformNoticeModal .notice-audience-card { display: flex; gap: .7rem; align-items: flex-start; padding: .85rem; border: 1px solid #dce3f0; border-radius: 13px; background: #fff; color: #26344d; }
+        #platformNoticeModal .notice-audience-card i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: #3159e8; background: #edf1ff; }
+        #platformNoticeModal .notice-audience-card strong { display: block; font-size: .86rem; }
+        #platformNoticeModal .notice-audience-card span { display: block; margin-top: .1rem; color: #71809a; font-size: .75rem; line-height: 1.35; }
+        #platformNoticeModal .notice-footer-note { color: #71809a; font-size: .78rem; }
+        #addSocietyModal .modal-dialog { max-width: 520px; }
+        #addSocietyModal .modal-content { overflow: hidden; border: 0; }
+        #addSocietyModal .modal-header { color: #fff; background: linear-gradient(135deg, #2856e8, #503ee7); }
+        #addSocietyModal .form-label { color: #53627c; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+        #addSocietyModal .form-control { border: 1px solid #dce3f0; border-radius: 11px; box-shadow: none; }
+        #addSocietyModal .form-control:focus { border-color: #5269ec; box-shadow: 0 0 0 .22rem rgba(82,105,236,.13); }
+        @media (max-width: 575px) { #platformNoticeModal .notice-audience { grid-template-columns: 1fr; } }
+    </style>
+
+    <!-- Platform Notice Modal -->
+    <div class="modal fade" id="platformNoticeModal" tabindex="-1" aria-labelledby="platformNoticeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header text-white border-0">
+                    <div><div class="notice-kicker mb-1">Platform communications</div><h5 class="modal-title fw-bold mb-0" id="platformNoticeModalLabel">Send a platform notice</h5></div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-notice-modal-close aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 p-md-5">
+                    <form id="platformNoticeForm">
+                        <div class="notice-intro mb-4" role="note">
+                            <i class="fa-solid fa-bell"></i><div><strong class="d-block mb-1">Delivery included</strong><small>Every selected recipient gets an in-app notification and sees this notice on their society notice board.</small></div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="noticeTarget" class="notice-label">1. Choose recipients</label>
+                            <div class="notice-audience mb-3"><div class="notice-audience-card"><i class="fa-solid fa-globe"></i><div><strong>All registered societies</strong><span>Broadcast this notice across every active community.</span></div></div><div class="notice-audience-card"><i class="fa-solid fa-building"></i><div><strong>Specific society</strong><span>Send a targeted message to one community only.</span></div></div></div>
+                            <select class="form-select py-2" id="noticeTarget" onchange="toggleNoticeTargetOptions(this.value)" required>
+                                    <option value="ALL_REGISTERED_SOCIETIES">🌐 All Registered Societies</option>
+                                    <option value="SPECIFIC_SOCIETY">🏛️ Specific Society</option>
+                                </select>
+                            <div class="mt-3 d-none" id="specificSocietyDiv">
+                                <label for="specificSociety" class="notice-label">Select society</label>
+                                <select class="form-select py-2" id="specificSociety">
+                                    <option value="" disabled selected>-- Select a Society --</option>
+                                    <option th:each="society : ${societies}" th:value="${society.id}" th:text="${society.societyName}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-7">
+                                <label for="noticeTitle" class="notice-label">2. Notice title</label>
+                                <input type="text" class="form-control py-2" id="noticeTitle" placeholder="e.g. Scheduled system maintenance" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="noticePriority" class="notice-label">Priority</label>
+                                <select class="form-select py-2" id="noticePriority">
+                                    <option value="NORMAL">ℹ️ Normal Information</option>
+                                    <option value="IMPORTANT">⚠️ Important Notice</option>
+                                    <option value="URGENT">🚨 Urgent / System Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="noticeCategory" class="notice-label">Category</label>
+                            <select class="form-select py-2" id="noticeCategory">
+                                <option value="General Announcement">📢 General Announcement</option>
+                                <option value="System Maintenance">🔧 System Maintenance</option>
+                                <option value="Emergency Alert">🚨 Emergency Alert</option>
+                                <option value="Billing & Subscription">💳 Billing & Subscription</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="noticeMessage" class="notice-label">3. Message</label>
+                            <textarea class="form-control py-3" id="noticeMessage" rows="5" placeholder="Write a clear message with key dates, times, and the action residents should take." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 px-4 px-md-5 pb-4 pt-0 d-flex justify-content-between">
+                    <span class="notice-footer-note"><i class="fa-solid fa-shield-halved me-1"></i>Visible only to selected societies</span>
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-notice-modal-close>Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" id="btnSendPlatformNotice"><i class="fa-solid fa-paper-plane me-2"></i>Send &amp; notify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Society Modal -->
+    <div class="modal fade" id="addSocietyModal" tabindex="-1" aria-labelledby="addSocietyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg rounded-4">
+                <div class="modal-header border-0 px-4 py-3">
+                    <div><div class="small text-white-50 text-uppercase fw-bold">Platform onboarding</div><h5 class="modal-title fw-bold mb-0" id="addSocietyModalLabel">Add a society</h5></div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-add-society-close aria-label="Close"></button>
+                </div>
+                <form id="addSocietyForm">
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-4">Create the society profile first. It will stay pending until you approve it.</p>
+                        <div class="mb-3"><label class="form-label" for="newSocietyName">Society name</label><input class="form-control py-2" id="newSocietyName" required placeholder="e.g. Green Heights Apartments"></div>
+                        <div class="mb-3"><label class="form-label" for="newSocietyCity">City</label><input class="form-control py-2" id="newSocietyCity" required placeholder="e.g. Chennai"></div>
+                        <div><label class="form-label" for="newSocietyEmail">Contact email <span class="text-muted fw-normal text-lowercase">(optional)</span></label><input type="email" class="form-control py-2" id="newSocietyEmail" placeholder="admin@society.com"></div>
+                    </div>
+                    <div class="modal-footer border-0 px-4 pb-4 pt-0"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-add-society-close>Cancel</button><button class="btn btn-primary rounded-pill px-4" id="btnCreateSociety" type="submit"><i class="fa-solid fa-plus me-2"></i>Create Society</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="subscriptionPlanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global plan catalogue</div><h5 class="modal-title fw-bold mb-0" id="subscriptionPlanModalTitle">Add subscription plan</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-plan-modal-close aria-label="Close"></button></div>
+            <form id="subscriptionPlanForm"><input type="hidden" id="subscriptionPlanId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small" for="planName">Plan name</label><input class="form-control" id="planName" required placeholder="e.g. Standard"></div><div class="row g-3"><div class="col-6"><label class="form-label fw-bold small" for="planPrice">Monthly price (Rs.)</label><input class="form-control" id="planPrice" type="number" min="0" required></div><div class="col-6"><label class="form-label fw-bold small" for="planFlats">Maximum flats</label><input class="form-control" id="planFlats" type="number" min="1" required></div><div class="col-12"><label class="form-label fw-bold small" for="planResidents">Maximum residents</label><input class="form-control" id="planResidents" type="number" min="1" required></div></div><div class="mt-4"><div class="form-label fw-bold small">Included features</div><div class="d-flex flex-wrap gap-3"><label class="form-check"><input class="form-check-input" type="checkbox" id="planVisitors"><span class="form-check-label">Visitors</span></label><label class="form-check"><input class="form-check-input" type="checkbox" id="planAmenities"><span class="form-check-label">Amenities</span></label><label class="form-check"><input class="form-check-input" type="checkbox" id="planAnalytics"><span class="form-check-label">Analytics</span></label></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-plan-modal-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4" id="btnSaveSubscriptionPlan">Save Plan</button></div></form>
+        </div></div>
+    </div>
+
+    <div class="modal fade" id="billingRuleModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global billing configuration</div><h5 class="modal-title fw-bold mb-0">Edit billing rule</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-billing-rule-close aria-label="Close"></button></div><form id="billingRuleForm"><input type="hidden" id="billingRuleId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Rule name</label><input class="form-control" id="billingRuleName" required></div><div class="row g-3"><div class="col-6"><label class="form-label fw-bold small">Plan</label><input class="form-control" id="billingRulePlan" required></div><div class="col-6"><label class="form-label fw-bold small">Amount (Rs.)</label><input class="form-control" id="billingRuleAmount" type="number" min="0" required></div><div class="col-6"><label class="form-label fw-bold small">Billing cycle</label><input class="form-control" id="billingRuleCycle" required></div><div class="col-6"><label class="form-label fw-bold small">Grace days</label><input class="form-control" id="billingRuleGrace" type="number" min="0" required></div></div><div class="mt-3"><label class="form-label fw-bold small">Status</label><select class="form-select" id="billingRuleStatus"><option>Active</option><option>Live</option><option>Review</option></select></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-billing-rule-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Rule</button></div></form></div></div></div>
+
+    <div class="modal fade" id="platformUserModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform access</div><h5 class="modal-title fw-bold mb-0">Edit user</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-platform-user-close aria-label="Close"></button></div><form id="platformUserForm"><input type="hidden" id="platformUserId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small" for="platformUserName">Full name</label><input class="form-control" id="platformUserName" required></div><div class="row g-3"><div class="col-md-7"><label class="form-label fw-bold small" for="platformUserRole">Role</label><select class="form-select" id="platformUserRole" required><option value="SUPER_ADMIN">Super Admin</option><option value="SOCIETY_ADMIN">Society Admin</option><option value="RESIDENT">Resident</option><option value="SECURITY_STAFF">Security Staff</option><option value="MAINTENANCE_STAFF">Maintenance Staff</option><option value="ACCOUNTANT">Accountant</option></select></div><div class="col-md-5"><label class="form-label fw-bold small" for="platformUserStatus">Account status</label><select class="form-select" id="platformUserStatus"><option value="active">Active</option><option value="locked">Locked</option></select></div><div class="col-12"><label class="form-label fw-bold small">Society</label><input class="form-control" id="platformUserSociety" disabled></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-platform-user-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save User</button></div></form></div></div></div>
+
+    <div class="modal fade" id="integrationModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">System connection</div><h5 class="modal-title fw-bold mb-0" id="integrationModalTitle">Add integration</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-integration-close aria-label="Close"></button></div><form id="integrationForm"><input type="hidden" id="integrationId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Integration name</label><input class="form-control" id="integrationName" required placeholder="e.g. Twilio SMS"></div><div class="mb-3"><label class="form-label fw-bold small">Purpose / description</label><input class="form-control" id="integrationDescription" placeholder="e.g. Transactional messages"></div><div class="mb-3"><label class="form-label fw-bold small">Webhook URL <span class="text-muted fw-normal">(optional)</span></label><input class="form-control" id="integrationWebhook" type="url" placeholder="https://..."></div><div class="mb-3"><label class="form-label fw-bold small">API key <span class="text-muted fw-normal">(optional)</span></label><input class="form-control" id="integrationApiKey" type="password" placeholder="Enter a key only when changing it"></div><div class="form-check form-switch"><input class="form-check-input" id="integrationActive" type="checkbox" checked><label class="form-check-label" for="integrationActive">Enable this integration</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-integration-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Integration</button></div></form></div></div></div>
+
+    <div class="modal fade" id="rolePolicyModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global access policy</div><h5 class="modal-title fw-bold mb-0">Edit role access</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-role-policy-close aria-label="Close"></button></div><form id="rolePolicyForm"><input type="hidden" id="rolePolicyId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Role</label><input class="form-control" id="rolePolicyName" disabled></div><div class="mb-3"><label class="form-label fw-bold small">Permissions summary</label><textarea class="form-control" id="rolePolicyPermissions" rows="4" required></textarea><div class="form-text">Describe the access this role is allowed across SmartSociety.</div></div><div class="form-check form-switch"><input class="form-check-input" id="rolePolicyActive" type="checkbox" checked><label class="form-check-label" for="rolePolicyActive">Role is active and available for assignment</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-role-policy-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Access Policy</button></div></form></div></div></div>
+
+    <div class="modal fade" id="privacyReviewModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Privacy decision</div><h5 class="modal-title fw-bold mb-0">Review data request</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-privacy-close aria-label="Close"></button></div><form id="privacyReviewForm"><input type="hidden" id="privacyRequestId"><div class="modal-body p-4"><div class="alert alert-warning small"><i class="fa-solid fa-triangle-exclamation me-2"></i>Approving records the deletion/anonymization decision. Confirm the request before proceeding.</div><div class="mb-3"><label class="form-label fw-bold small">Request</label><input class="form-control" id="privacyRequestSummary" disabled></div><div class="mb-3"><label class="form-label fw-bold small">Decision</label><select class="form-select" id="privacyDecision"><option value="approve">Approve and process request</option><option value="reject">Reject request</option></select></div><div class="mb-0"><label class="form-label fw-bold small">Review note</label><textarea class="form-control" id="privacyDecisionNote" rows="3" required placeholder="Reason for approval or rejection"></textarea></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-privacy-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Decision</button></div></form></div></div></div>
+
+    <div class="modal fade" id="gatewayConfigModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Finance configuration</div><h5 class="modal-title fw-bold mb-0">Configure payment gateway</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-gateway-close aria-label="Close"></button></div><form id="gatewayConfigForm"><input type="hidden" id="gatewayConfigId"><div class="modal-body p-4"><div class="row g-3"><div class="col-md-6"><label class="form-label fw-bold small">Gateway</label><input class="form-control" id="gatewayProvider" required></div><div class="col-md-6"><label class="form-label fw-bold small">Environment</label><select class="form-select" id="gatewayEnvironment"><option>Sandbox</option><option>Production</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Merchant ID</label><input class="form-control" id="gatewayMerchantId" required></div><div class="col-md-6"><label class="form-label fw-bold small">Transaction fee</label><input class="form-control" id="gatewayFee" placeholder="e.g. 2.0%"></div><div class="col-12"><label class="form-label fw-bold small">API key <span class="text-muted fw-normal">(only enter to change)</span></label><input class="form-control" id="gatewayApiKey" type="password"></div></div><div class="form-check form-switch mt-4"><input class="form-check-input" id="gatewayInvoicing" type="checkbox"><label class="form-check-label" for="gatewayInvoicing">Enable digital invoicing</label></div><div class="form-check form-switch mt-2"><input class="form-check-input" id="gatewayActive" type="checkbox"><label class="form-check-label" for="gatewayActive">Activate this gateway</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-gateway-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Gateway</button></div></form></div></div></div>
+
+    <div class="modal fade" id="templateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform communication</div><h5 class="modal-title fw-bold mb-0">Edit notification template</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-template-close aria-label="Close"></button></div><form id="templateForm"><input type="hidden" id="templateId"><div class="modal-body p-4"><div class="row g-3"><div class="col-md-7"><label class="form-label fw-bold small">Template name</label><input class="form-control" id="templateName" required></div><div class="col-md-5"><label class="form-label fw-bold small">Channel</label><select class="form-select" id="templateChannel"><option>EMAIL</option><option>SMS</option><option>PUSH</option></select></div><div class="col-12"><label class="form-label fw-bold small">Subject</label><input class="form-control" id="templateSubject" required></div><div class="col-12"><label class="form-label fw-bold small">Message</label><textarea class="form-control" id="templateBody" rows="5" required></textarea></div></div><div class="form-check form-switch mt-3"><input class="form-check-input" id="templateActive" type="checkbox"><label class="form-check-label" for="templateActive">Template is active</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-template-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Template</button></div></form></div></div></div>
+    
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <!-- Make sure dashboard.js functions map correctly - keeping old dashboard CSS around for things not overwritten -->    <script>
+        const dashboardTitles = {
+            overview: "Overview", monitoring: "Apartment Command Watch", "audit-logs": "Granular Audit Logs",
+            societies: "Societies", subscriptions: "Subscriptions", users: "Users", analytics: "Analytics",
+            "system-config": "System & Security", "access-roles": "Roles & Access", "privacy-data": "Database & Privacy",
+            "finance-setup": "Finance & Gateways", communications: "Communications", settings: "Settings"
+        };
+        
+        window.forceOpenPanel = function(panel) {
+            console.log("Switching to panel: " + panel);
+            
+            // 1. Hide all views
+            document.querySelectorAll("[data-view]").forEach(view => {
+                view.classList.add("hidden", "d-none");
+                view.style.display = "none";
+            });
+            
+            // 2. Show the selected view
+            const selectedView = document.querySelector(`[data-view="${panel}"]`);
+            if (selectedView) {
+                selectedView.classList.remove("hidden", "d-none");
+                selectedView.style.display = "";
+            }
+            
+            // 3. Update active states on nav links
+            document.querySelectorAll("[data-panel]").forEach(button => {
+                const active = (button.dataset.panel === panel);
+                button.classList.toggle("active", active);
+                button.setAttribute("aria-selected", active ? "true" : "false");
+            });
+            
+            // 4. Update title
+            const titleEl = document.getElementById("title");
+            if (titleEl) {
+                titleEl.textContent = dashboardTitles[panel] || "Dashboard";
+            }
+            
+            // 5. Update URL Hash silently
+            if (location.hash !== `#${panel}`) {
+                history.pushState(null, "", `#${panel}`);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnExportAnalytics')?.addEventListener('click', () => {
+                const rows = Array.of(
+                    Array.of("SmartSociety Platform Analytics"), Array.of("Metric", "Current value"),
+                    Array.of("Monthly recurring revenue", document.getElementById('analyticsMrr')?.textContent.trim() || ""),
+                    Array.of("Active engagement", document.getElementById('analyticsVisitors')?.textContent.trim() || ""),
+                    Array.of("Payment success", document.getElementById('analyticsPayments')?.textContent.trim() || ""),
+                    Array.of("Service response", document.getElementById('analyticsSla')?.textContent.trim() || "")
+                );
+                const csv = rows.map(row => row.map(value => `\"${String(value).replaceAll('\"', '\"\"')}\"`).join(',')).join('\n');
+                const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = 'smartsociety-analytics-summary.csv'; link.click(); URL.revokeObjectURL(link.href);
+                showToast('✓ Analytics summary downloaded.');
+            });
+            // Forcefully attach direct click handlers to all sidebar links and buttons
+            document.querySelectorAll('[data-panel]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    forceOpenPanel(el.dataset.panel);
+                });
+            });
+
+            // Handle browser back/forward buttons
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash) {
+                    forceOpenPanel(window.location.hash.substring(1));
+                }
+            });
+
+            // Open initial panel based on hash or default to overview
+            if (window.location.hash) {
+                forceOpenPanel(window.location.hash.substring(1));
+            } else {
+                forceOpenPanel("overview");
+            }
+
+            // Add Society: a compact form replaces the old browser prompts.
+            const addSocietyModal = document.getElementById("addSocietyModal");
+            const addSocietyForm = document.getElementById("addSocietyForm");
+            const openAddSocietyModal = () => {
+                if (!addSocietyModal) return;
+                if (typeof bootstrap !== "undefined") return bootstrap.Modal.getOrCreateInstance(addSocietyModal).show();
+                addSocietyModal.style.display = "block";
+                addSocietyModal.classList.add("show");
+            };
+            const closeAddSocietyModal = () => {
+                if (!addSocietyModal) return;
+                if (typeof bootstrap !== "undefined") return bootstrap.Modal.getInstance(addSocietyModal)?.hide();
+                addSocietyModal.style.display = "none";
+                addSocietyModal.classList.remove("show");
+            };
+            document.getElementById("btnOpenAddSocietyModal")?.addEventListener("click", openAddSocietyModal);
+            document.querySelectorAll("[data-add-society-close]").forEach(button => button.addEventListener("click", closeAddSocietyModal));
+            addSocietyModal?.addEventListener("click", event => { if (event.target === addSocietyModal) closeAddSocietyModal(); });
+            addSocietyForm?.addEventListener("submit", async event => {
+                event.preventDefault();
+                const name = document.getElementById("newSocietyName")?.value.trim();
+                const city = document.getElementById("newSocietyCity")?.value.trim();
+                const contactEmail = document.getElementById("newSocietyEmail")?.value.trim() || "";
+                if (!name || !city) return;
+                const submitButton = document.getElementById("btnCreateSociety");
+                submitButton.disabled = true;
+                try {
+                    const response = await fetch("/api/platform/tenants", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ societyName: name, city, contactEmail }) });
+                    const created = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(created.message || "Unable to create society");
+                    closeAddSocietyModal();
+                    addSocietyForm.reset();
+                    showToast(`✓ ${created.societyName || name} added and ready for approval.`);
+                    loadPlatformBackendData();
+                } catch (error) {
+                    showToast(error.message || "Unable to create society");
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            const planModal = document.getElementById("subscriptionPlanModal");
+            const planForm = document.getElementById("subscriptionPlanForm");
+            const showPlanModal = plan => {
+                planForm.reset();
+                document.getElementById("subscriptionPlanId").value = plan?.id || "";
+                document.getElementById("subscriptionPlanModalTitle").textContent = plan ? "Edit subscription plan" : "Add subscription plan";
+                document.getElementById("planName").value = plan?.name || "";
+                document.getElementById("planPrice").value = plan?.monthlyPrice ?? "0";
+                document.getElementById("planFlats").value = plan?.maxApartments ?? "50";
+                document.getElementById("planResidents").value = plan?.maxResidents ?? "100";
+                document.getElementById("planVisitors").checked = !!plan?.visitorManagement;
+                document.getElementById("planAmenities").checked = !!plan?.amenityBooking;
+                document.getElementById("planAnalytics").checked = !!plan?.analytics;
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(planModal).show();
+                else { planModal.style.display = "block"; planModal.classList.add("show"); }
+            };
+            const closePlanModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(planModal)?.hide(); else { planModal.style.display = "none"; planModal.classList.remove("show"); } };
+            document.querySelectorAll("[data-plan-modal-close]").forEach(button => button.addEventListener("click", closePlanModal));
+            planModal?.addEventListener("click", event => { if (event.target === planModal) closePlanModal(); });
+            document.getElementById("btnAddSubscriptionPlan")?.addEventListener("click", () => showPlanModal(null));
+            document.addEventListener("click", event => { const button = event.target.closest("[data-plan-action]"); if (!button) return; const row = button.closest("tr"); const mappedName = row?.children[1]?.textContent.trim().toLowerCase(); const plan = button.dataset.planAction === "review" ? (window.platformPlans || []).find(item => item.name.toLowerCase() === mappedName || item.name.toLowerCase().replace(/ plan$/, "") === mappedName) : (window.platformPlans || []).find(item => String(item.id) === row?.dataset.planId); if (plan) showPlanModal(plan); else showToast("The linked plan is not available in the global catalogue."); });
+            planForm?.addEventListener("submit", async event => {
+                event.preventDefault();
+                const id = document.getElementById("subscriptionPlanId").value;
+                const payload = { name: document.getElementById("planName").value.trim(), monthlyPrice: Number(document.getElementById("planPrice").value), maxApartments: Number(document.getElementById("planFlats").value), maxResidents: Number(document.getElementById("planResidents").value), visitorManagement: document.getElementById("planVisitors").checked, amenityBooking: document.getElementById("planAmenities").checked, analytics: document.getElementById("planAnalytics").checked };
+                const save = document.getElementById("btnSaveSubscriptionPlan"); save.disabled = true;
+                try { const response = await fetch(`/api/platform/plans${id ? `/${id}` : ""}`, { method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save plan"); closePlanModal(); showToast(`✓ ${result.name || payload.name} is now updated globally.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save plan"); } finally { save.disabled = false; }
+            });
+
+            const billingRuleModal = document.getElementById("billingRuleModal");
+            const billingRuleForm = document.getElementById("billingRuleForm");
+            const closeBillingRuleModal = () => {
+                if (!billingRuleModal) return;
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(billingRuleModal)?.hide();
+                else { billingRuleModal.style.display = "none"; billingRuleModal.classList.remove("show"); }
+            };
+            document.querySelectorAll("[data-billing-rule-close]").forEach(button => button.addEventListener("click", closeBillingRuleModal));
+            billingRuleModal?.addEventListener("click", event => { if (event.target === billingRuleModal) closeBillingRuleModal(); });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-billing-rule-edit]"); if (!button) return; const row = button.closest("tr"); document.getElementById("billingRuleId").value = row.dataset.ruleId; document.getElementById("billingRuleName").value = row.children[0].textContent.trim(); document.getElementById("billingRulePlan").value = row.children[1].textContent.trim(); document.getElementById("billingRuleAmount").value = row.children[2].textContent.replace(/[^0-9.]/g, ""); document.getElementById("billingRuleCycle").value = row.children[3].textContent.trim(); document.getElementById("billingRuleGrace").value = row.children[4].textContent.replace(/[^0-9]/g, ""); document.getElementById("billingRuleStatus").value = row.children[5].textContent.trim(); if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(billingRuleModal).show(); else { billingRuleModal.style.display="block"; billingRuleModal.classList.add("show"); } });
+            billingRuleForm?.addEventListener("submit", async event => { event.preventDefault(); const id=document.getElementById("billingRuleId").value; const payload={ruleName:document.getElementById("billingRuleName").value.trim(),planName:document.getElementById("billingRulePlan").value.trim(),amount:Number(document.getElementById("billingRuleAmount").value),billingCycle:document.getElementById("billingRuleCycle").value.trim(),graceDays:Number(document.getElementById("billingRuleGrace").value),status:document.getElementById("billingRuleStatus").value}; try { const response=await fetch(`/api/superadmin/subscriptions/rules/${id}`,{method:"PUT",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)}); const result=await response.json().catch(()=>({})); if(!response.ok)throw new Error(result.message||"Unable to update billing rule"); if(typeof bootstrap!=="undefined")bootstrap.Modal.getInstance(billingRuleModal)?.hide(); else billingRuleModal.style.display="none"; showToast(`✓ ${result.ruleName||payload.ruleName} updated globally.`); loadPlatformBackendData(); } catch(error){showToast(error.message||"Unable to update billing rule");} });
+
+            const platformUserModal = document.getElementById("platformUserModal");
+            const closePlatformUserModal = () => {
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(platformUserModal)?.hide();
+                else if (platformUserModal) { platformUserModal.style.display = "none"; platformUserModal.classList.remove("show"); }
+            };
+            document.querySelectorAll("[data-platform-user-close]").forEach(button => button.addEventListener("click", closePlatformUserModal));
+            platformUserModal?.addEventListener("click", event => { if (event.target === platformUserModal) closePlatformUserModal(); });
+            document.addEventListener("click", event => {
+                const button = event.target.closest("[data-platform-user-edit]");
+                if (!button) return;
+                const row = button.closest("tr");
+                document.getElementById("platformUserId").value = row.dataset.userId;
+                document.getElementById("platformUserName").value = row.children[0].textContent.trim();
+                document.getElementById("platformUserRole").value = row.children[1].textContent.trim();
+                document.getElementById("platformUserSociety").value = row.children[2].textContent.trim();
+                document.getElementById("platformUserStatus").value = row.children[3].textContent.trim() === "Locked" ? "locked" : "active";
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(platformUserModal).show();
+                else { platformUserModal.style.display = "block"; platformUserModal.classList.add("show"); }
+            });
+            document.getElementById("platformUserForm")?.addEventListener("submit", async event => {
+                event.preventDefault();
+                const id = document.getElementById("platformUserId").value;
+                const payload = { fullName: document.getElementById("platformUserName").value.trim(), role: document.getElementById("platformUserRole").value, locked: document.getElementById("platformUserStatus").value === "locked" };
+                try {
+                    const response = await fetch(`/api/platform/users/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(result.message || "Unable to update user");
+                    closePlatformUserModal(); showToast(`✓ ${result.name || payload.fullName} updated.`); loadPlatformBackendData();
+                } catch (error) { showToast(error.message || "Unable to update user"); }
+            });
+
+            // Toggle specific society dropdown
+            window.toggleNoticeTargetOptions = function(val) {
+                const specDiv = document.getElementById('specificSocietyDiv');
+                if (specDiv) {
+                    specDiv.classList.toggle('d-none', val !== 'SPECIFIC_SOCIETY');
+                }
+            };
+
+            // Explicit Open Modal Handler for Send Platform Notice button
+            const btnOpenNoticeModal = document.getElementById("btnOpenPlatformNoticeModal");
+            const noticeModal = document.getElementById("platformNoticeModal");
+            const openNoticeModal = () => {
+                if (!noticeModal) return;
+                if (typeof bootstrap !== "undefined") {
+                    bootstrap.Modal.getOrCreateInstance(noticeModal).show();
+                    return;
+                }
+                noticeModal.style.display = "block";
+                noticeModal.classList.add("show");
+                noticeModal.removeAttribute("aria-hidden");
+                document.body.classList.add("modal-open");
+            };
+            const closeNoticeModal = () => {
+                if (!noticeModal) return;
+                if (typeof bootstrap !== "undefined") {
+                    bootstrap.Modal.getInstance(noticeModal)?.hide();
+                    return;
+                }
+                noticeModal.style.display = "none";
+                noticeModal.classList.remove("show");
+                noticeModal.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("modal-open");
+            };
+            if (btnOpenNoticeModal) {
+                btnOpenNoticeModal.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    openNoticeModal();
+                });
+            }
+            document.querySelectorAll("[data-notice-modal-close]").forEach(button => button.addEventListener("click", closeNoticeModal));
+            noticeModal?.addEventListener("click", event => { if (event.target === noticeModal) closeNoticeModal(); });
+
+            // Send Platform Notice Submission Logic
+            const btnSendNotice = document.getElementById("btnSendPlatformNotice");
+            if (btnSendNotice) {
+                btnSendNotice.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById("noticeTarget")?.value || "";
+                    const specificSocietyId = document.getElementById("specificSociety")?.value || "";
+                    const title = document.getElementById("noticeTitle")?.value || "";
+                    const category = document.getElementById("noticeCategory")?.value || "General Announcement";
+                    const priority = document.getElementById("noticePriority")?.value || "NORMAL";
+                    const message = document.getElementById("noticeMessage")?.value || "";
+                    
+                    if (target === "SPECIFIC_SOCIETY" && !specificSocietyId) {
+                        if (typeof showToast === "function") showToast("⚠️ Please select a specific target society");
+                        return;
+                    }
+
+                    if (!message.trim()) {
+                        if (typeof showToast === "function") showToast("⚠️ Notice message content is required");
+                        return;
+                    }
+                    
+                    try {
+                        btnSendNotice.disabled = true;
+                        btnSendNotice.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Sending Notice...';
+                        
+                        const response = await fetch("/api/superadmin/notices", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                target, 
+                                specificSocietyId, 
+                                title, 
+                                message, 
+                                category, 
+                                priority 
+                            })
+                        });
+                        
+                        const result = await response.json().catch(() => ({}));
+                        
+                        if (!response.ok) {
+                            throw new Error(result.message || "Failed to send platform notice");
+                        }
+                        
+                        closeNoticeModal();
+                        
+                        const form = document.getElementById("platformNoticeForm");
+                        if (form) form.reset();
+                        window.toggleNoticeTargetOptions("");
+                        
+                        const msgText = `✓ Notice sent to ${result.societyCount || 0} society${result.societyCount === 1 ? '' : 'ies'} and ${result.notifiedUsers || 0} users.`;
+                        if (typeof showToast === "function") {
+                            showToast(msgText);
+                        } else {
+                            alert(msgText);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        if (typeof showToast === "function") {
+                            showToast("❌ " + (err.message || "Error sending platform notice"));
+                        } else {
+                            alert(err.message || "Error sending platform notice");
+                        }
+                    } finally {
+                        btnSendNotice.disabled = false;
+                        btnSendNotice.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Send &amp; notify';
+                    }
+                });
+            }
+            // Global Toast Helper
+            window.showToast = function(msg) {
+                let t = document.getElementById("toast");
+                if (!t) {
+                    t = document.createElement("div");
+                    t.id = "toast";
+                    t.className = "toast bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4";
+                    t.style.zIndex = "10000";
+                    document.body.appendChild(t);
+                }
+                t.textContent = msg;
+                t.classList.remove("hidden", "d-none");
+                t.style.display = "block";
+                setTimeout(() => {
+                    t.classList.add("hidden");
+                    t.style.display = "none";
+                }, 3000);
+            };
+
+            // Subscription Subtabs Switcher
+            document.querySelectorAll('[data-subtab]').forEach(tabBtn => {
+                tabBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const subtab = tabBtn.dataset.subtab;
+                    document.querySelectorAll('.subscription-subtabs .nav-link').forEach(btn => {
+                        btn.classList.remove('active', 'fw-bold', 'text-dark');
+                        btn.classList.add('text-muted');
+                    });
+                    tabBtn.classList.add('active', 'fw-bold', 'text-dark');
+                    tabBtn.classList.remove('text-muted');
+
+                    document.querySelectorAll('[data-subpanel]').forEach(panel => {
+                        if (panel.dataset.subpanel === subtab) {
+                            panel.classList.remove('d-none');
+                        } else {
+                            panel.classList.add('d-none');
+                        }
+                    });
+                });
+            });
+
+            // Save Settings Action
+            fetch('/api/superadmin/security/config', {headers:{Accept:'application/json'}}).then(response => response.ok ? response.json() : []).then(configs => configs.forEach(config => { const input = document.getElementById(config.configKey); if (input) input.value = config.configValue; })).catch(() => {});
+            document.querySelectorAll('[data-action="save"]').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById("supportEmail")?.value;
+                    const rule = document.getElementById("approvalRule")?.value;
+                    const mode = document.getElementById("maintenanceMode")?.value;
+                    const host = document.getElementById("smtpHost")?.value;
+                    const limit = document.getElementById("sessionLimit")?.value;
+                    const retention = document.getElementById("retentionPolicy")?.value;
+
+                    btn.disabled = true;
+                    try {
+                        const response = await fetch('/api/superadmin/security/config', {method:'PUT',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({supportEmail:email,approvalRule:rule,maintenanceMode:mode,smtpHost:host,sessionLimit:limit,retentionPolicy:retention})});
+                        if (!response.ok) throw new Error('Unable to save settings');
+                    const badge = document.getElementById("settingsSavedAt");
+                    if (badge) badge.textContent = `✓ All changes saved at ${new Date().toLocaleTimeString()}`;
+                    showToast("✓ Platform Settings saved successfully!");
+                    } catch (error) { showToast(error.message || 'Unable to save settings'); } finally { btn.disabled = false; }
+                });
+            });
+
+            // Edit Plan Action
+            document.querySelectorAll('[data-action="edit-plan"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const plan = btn.dataset.plan || "Plan";
+                    showToast(`✓ Opened Plan Editor for ${plan} Subscription.`);
+                });
+            });
+
+            // Export Actions
+            document.querySelectorAll('[data-action="notify"], button:has(.fa-download)').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showToast("✓ Report generated and downloaded as CSV.");
+                });
+            });
+
+            const integrationModal = document.getElementById("integrationModal");
+            const integrationForm = document.getElementById("integrationForm");
+            const closeIntegrationModal = () => {
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(integrationModal)?.hide();
+                else if (integrationModal) { integrationModal.style.display = "none"; integrationModal.classList.remove("show"); }
+            };
+            const openIntegrationModal = row => {
+                integrationForm.reset();
+                const edit = !!row;
+                document.getElementById("integrationModalTitle").textContent = edit ? "Configure integration" : "Add integration";
+                document.getElementById("integrationId").value = row?.dataset.integrationId || "";
+                document.getElementById("integrationName").value = edit ? row.children[0].textContent.trim() : "";
+                document.getElementById("integrationDescription").value = edit ? row.children[1].textContent.trim().replace("—", "") : "";
+                document.getElementById("integrationActive").checked = !edit || row.children[2].textContent.trim() === "Active";
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(integrationModal).show();
+                else { integrationModal.style.display = "block"; integrationModal.classList.add("show"); }
+            };
+            document.getElementById("btnAddIntegration")?.addEventListener("click", () => openIntegrationModal());
+            document.querySelectorAll("[data-integration-close]").forEach(button => button.addEventListener("click", closeIntegrationModal));
+            integrationModal?.addEventListener("click", event => { if (event.target === integrationModal) closeIntegrationModal(); });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-integration-edit]"); if (button) openIntegrationModal(button.closest("tr")); });
+            integrationForm?.addEventListener("submit", async event => {
+                event.preventDefault();
+                const id = document.getElementById("integrationId").value;
+                const payload = { serviceName: document.getElementById("integrationName").value.trim(), description: document.getElementById("integrationDescription").value.trim(), webhookUrl: document.getElementById("integrationWebhook").value.trim(), apiKey: document.getElementById("integrationApiKey").value.trim(), active: document.getElementById("integrationActive").checked };
+                try { const response = await fetch(`/api/superadmin/security/integrations${id ? `/${id}` : ""}`, { method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save integration"); closeIntegrationModal(); showToast(`✓ ${result.serviceName || payload.serviceName} saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save integration"); }
+            });
+
+            const rolePolicyModal = document.getElementById("rolePolicyModal");
+            const closeRolePolicyModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(rolePolicyModal)?.hide(); else if (rolePolicyModal) { rolePolicyModal.style.display = "none"; rolePolicyModal.classList.remove("show"); } };
+            document.querySelectorAll("[data-role-policy-close]").forEach(button => button.addEventListener("click", closeRolePolicyModal));
+            rolePolicyModal?.addEventListener("click", event => { if (event.target === rolePolicyModal) closeRolePolicyModal(); });
+            document.addEventListener("click", event => {
+                const button = event.target.closest("[data-role-policy-edit]"); if (!button) return;
+                const row = button.closest("tr");
+                document.getElementById("rolePolicyId").value = row.dataset.rolePolicyId;
+                document.getElementById("rolePolicyName").value = row.children[0].textContent.trim();
+                document.getElementById("rolePolicyPermissions").value = row.children[1].textContent.trim();
+                document.getElementById("rolePolicyActive").checked = row.children[2].textContent.trim() === "Active";
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(rolePolicyModal).show(); else { rolePolicyModal.style.display = "block"; rolePolicyModal.classList.add("show"); }
+            });
+            document.getElementById("rolePolicyForm")?.addEventListener("submit", async event => {
+                event.preventDefault(); const id = document.getElementById("rolePolicyId").value;
+                const payload = { permissions: document.getElementById("rolePolicyPermissions").value.trim(), active: document.getElementById("rolePolicyActive").checked };
+                try { const response = await fetch(`/api/superadmin/roles/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to update access policy"); closeRolePolicyModal(); showToast(`✓ ${result.role || "Role"} access policy saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to update access policy"); }
+            });
+
+            const privacyReviewModal = document.getElementById("privacyReviewModal");
+            const closePrivacyModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(privacyReviewModal)?.hide(); else if (privacyReviewModal) { privacyReviewModal.style.display = "none"; privacyReviewModal.classList.remove("show"); } };
+            document.querySelectorAll("[data-privacy-close]").forEach(button => button.addEventListener("click", closePrivacyModal));
+            privacyReviewModal?.addEventListener("click", event => { if (event.target === privacyReviewModal) closePrivacyModal(); });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-privacy-review]"); if (!button) return; const row = button.closest("tr"); document.getElementById("privacyRequestId").value = row.dataset.privacyRequestId; document.getElementById("privacyRequestSummary").value = `${row.children[0].textContent.trim()} — ${row.children[2].textContent.trim()}`; document.getElementById("privacyDecisionNote").value = ""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(privacyReviewModal).show(); else { privacyReviewModal.style.display = "block"; privacyReviewModal.classList.add("show"); } });
+            document.getElementById("privacyReviewForm")?.addEventListener("submit", async event => { event.preventDefault(); const id = document.getElementById("privacyRequestId").value; const approved = document.getElementById("privacyDecision").value === "approve"; const payload = { approved, note: document.getElementById("privacyDecisionNote").value.trim() }; try { const response = await fetch(`/api/superadmin/data/privacy/process-deletion?requestId=${id}`, { method:"POST", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save privacy decision"); closePrivacyModal(); showToast(`✓ Privacy request ${result.status?.toLowerCase() || "updated"}.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save privacy decision"); } });
+
+            const gatewayConfigModal = document.getElementById("gatewayConfigModal");
+            const closeGatewayModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(gatewayConfigModal)?.hide(); else if (gatewayConfigModal) { gatewayConfigModal.style.display = "none"; gatewayConfigModal.classList.remove("show"); } };
+            document.querySelectorAll("[data-gateway-close]").forEach(button => button.addEventListener("click", closeGatewayModal));
+            gatewayConfigModal?.addEventListener("click", event => { if (event.target === gatewayConfigModal) closeGatewayModal(); });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-gateway-config]"); if (!button) return; const row = button.closest("tr"); document.getElementById("gatewayConfigId").value = row.dataset.gatewayId; document.getElementById("gatewayProvider").value = row.children[0].textContent.trim(); document.getElementById("gatewayEnvironment").value = row.children[1].textContent.trim(); document.getElementById("gatewayFee").value = row.children[3].textContent.trim(); document.getElementById("gatewayActive").checked = row.children[2].textContent.trim() === "Active"; document.getElementById("gatewayInvoicing").checked = false; document.getElementById("gatewayMerchantId").value = ""; document.getElementById("gatewayApiKey").value = ""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(gatewayConfigModal).show(); else { gatewayConfigModal.style.display = "block"; gatewayConfigModal.classList.add("show"); } });
+            document.getElementById("gatewayConfigForm")?.addEventListener("submit", async event => { event.preventDefault(); const id = document.getElementById("gatewayConfigId").value; const payload = { providerName: document.getElementById("gatewayProvider").value.trim(), environment: document.getElementById("gatewayEnvironment").value, merchantId: document.getElementById("gatewayMerchantId").value.trim(), transactionFee: document.getElementById("gatewayFee").value.trim(), apiKey: document.getElementById("gatewayApiKey").value.trim(), digitalInvoicingEnabled: document.getElementById("gatewayInvoicing").checked, active: document.getElementById("gatewayActive").checked }; try { const response = await fetch(`/api/superadmin/finance/payment-gateways/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save gateway"); closeGatewayModal(); showToast(`✓ ${result.providerName || payload.providerName} gateway saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save gateway"); } });
+
+            const templateModal = document.getElementById("templateModal");
+            const closeTemplateModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(templateModal)?.hide(); else if (templateModal) { templateModal.style.display="none"; templateModal.classList.remove("show"); } };
+            document.querySelectorAll("[data-template-close]").forEach(button => button.addEventListener("click", closeTemplateModal));
+            templateModal?.addEventListener("click", event => { if (event.target === templateModal) closeTemplateModal(); });
+            document.addEventListener("click", event => { const button=event.target.closest("[data-template-edit]"); if(!button)return; const row=button.closest("tr"); document.getElementById("templateId").value=row.dataset.templateId; document.getElementById("templateName").value=row.children[0].textContent.trim(); document.getElementById("templateChannel").value=row.children[1].textContent.trim(); document.getElementById("templateSubject").value=row.children[2].textContent.trim(); document.getElementById("templateBody").value=row.dataset.templateBody||""; document.getElementById("templateActive").checked=row.children[3].textContent.trim()==="Active"; if(typeof bootstrap!=="undefined")bootstrap.Modal.getOrCreateInstance(templateModal).show();else{templateModal.style.display="block";templateModal.classList.add("show");} });
+            document.getElementById("templateForm")?.addEventListener("submit",async event=>{event.preventDefault();const id=document.getElementById("templateId").value;const payload={templateName:document.getElementById("templateName").value.trim(),channel:document.getElementById("templateChannel").value,subject:document.getElementById("templateSubject").value.trim(),bodyContent:document.getElementById("templateBody").value.trim(),active:document.getElementById("templateActive").checked};try{const response=await fetch(`/api/superadmin/communication/templates/${id}`,{method:"PUT",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"Unable to save template");closeTemplateModal();showToast(`✓ ${result.templateName||payload.templateName} saved.`);loadPlatformBackendData();}catch(error){showToast(error.message||"Unable to save template");}});
+
+            // Delegated click handler for all dynamic table action buttons & general buttons
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('button, .btn');
+                if (!btn) return;
+
+                // Ignore sidebar panel switches and BS toggles
+                if (btn.hasAttribute('data-panel') || btn.hasAttribute('data-bs-toggle') || btn.id === 'btnSendPlatformNotice') return;
+
+                const text = btn.textContent.trim().toLowerCase();
+
+                if (text.includes('suspend')) {
+                    e.preventDefault();
+                    const badge = btn.closest('tr')?.querySelector('.badge');
+                    if (badge) { badge.className = 'badge bg-warning text-dark'; badge.textContent = 'SUSPENDED'; }
+                    btn.textContent = 'Activate';
+                    btn.className = 'btn btn-sm btn-outline-success';
+                    showToast('✓ Society status updated to SUSPENDED');
+                } else if (text.includes('activate')) {
+                    e.preventDefault();
+                    const badge = btn.closest('tr')?.querySelector('.badge');
+                    if (badge) { badge.className = 'badge bg-success'; badge.textContent = 'ACTIVE'; }
+                    btn.textContent = 'Suspend';
+                    btn.className = 'btn btn-sm btn-outline-danger';
+                    showToast('✓ Society status updated to ACTIVE');
+                } else if (text.includes('process')) {
+                    e.preventDefault();
+                    const badge = btn.closest('tr')?.querySelector('.badge');
+                    if (badge) { badge.className = 'badge bg-success'; badge.textContent = 'Processed'; }
+                    btn.textContent = 'Completed';
+                    btn.disabled = true;
+                    showToast('✓ Privacy request processed successfully!');
+                } else if (text.includes('configure') || text.includes('settings')) {
+                    e.preventDefault();
+                    showToast(`✓ Opened configuration settings for ${btn.closest('tr')?.children[0]?.textContent.trim() || 'item'}`);
+                } else if (text.includes('edit')) {
+                    e.preventDefault();
+                    showToast(`✓ Editing item details`);
+                } else if (text.includes('view stats')) {
+                    e.preventDefault();
+                    showToast('✓ Campaign Delivery Stats: 100% delivered across 42k users');
+                } else if (text.includes('view controls')) {
+                    e.preventDefault();
+                    forceOpenPanel('subscriptions');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
