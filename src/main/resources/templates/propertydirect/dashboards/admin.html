@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Operations Dashboard — PropertyDirect</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* -------------------------------------------------------------
+           PROPERTYDIRECT BRANDING & DESIGN SYSTEM FOR DASHBOARDS
+           Matches PropertyDirect Landing Page Aesthetics
+           ------------------------------------------------------------- */
+        :root {
+            --pd-bg: #f8fafc;
+            --pd-sidebar-bg: linear-gradient(180deg, #0a1834 0%, #172a4d 100%);
+            --pd-card-bg: #ffffff;
+            --pd-card-border: #e2e8f0;
+            --pd-navy: #0f172a;
+            --pd-navy-dark: #0a1834;
+            --pd-mint: #8cf0bd;
+            --pd-mint-dark: #065f46;
+            --pd-mint-soft: rgba(140, 240, 189, 0.14);
+            --pd-text-muted: #64748b;
+        }
+
+        /* TAB SHOW / HIDE RESET - CRITICAL */
+        .hidden, [hidden], .dash-panel.hidden {
+            display: none !important;
+        }
+
+        /* ULTRA-PREMIUM FLOATING TOAST NOTIFICATION - TOP RIGHT TOPBAR */
+        #toast, .toast {
+            position: fixed !important;
+            top: 28px !important;
+            right: 28px !important;
+            bottom: auto !important;
+            left: auto !important;
+            padding: 12px 20px !important;
+            border-radius: 12px !important;
+            background: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.14) !important;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            z-index: 999999 !important;
+            backdrop-filter: blur(12px) !important;
+            transition: opacity 0.25s ease, transform 0.25s ease !important;
+        }
+
+        #toast.hidden, .toast.hidden, #toast:empty {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: translateY(-10px) !important;
+        }
+
+        /* FIXED CENTERED SCREEN BACKDROP OVERLAY FOR MODALS */
+        .modal, #dashboardModal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(15, 23, 42, 0.65) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            margin: 0 !important;
+            padding: 24px !important;
+            box-sizing: border-box !important;
+        }
+
+        .modal.hidden, #dashboardModal.hidden {
+            display: none !important;
+        }
+
+        .modal-card {
+            position: relative !important;
+            width: min(480px, 92vw) !important;
+            max-height: calc(100vh - 60px) !important;
+            margin: auto !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 20px !important;
+            padding: 24px 28px !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25) !important;
+            overflow-y: auto !important;
+            font-family: 'Manrope', sans-serif !important;
+        }
+
+        .modal-card h2 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin-top: 0 !important;
+            margin-bottom: 4px !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .modal-card p {
+            font-size: 0.86rem !important;
+            color: #64748b !important;
+            margin-bottom: 20px !important;
+            line-height: 1.45 !important;
+        }
+
+        .modal-card .close {
+            position: absolute !important;
+            top: 18px !important;
+            right: 18px !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #f8fafc !important;
+            color: #64748b !important;
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            float: none !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .modal-card .close:hover {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            border-color: #ef4444 !important;
+            transform: scale(1.08) !important;
+        }
+
+        /* MODAL FORM FLEX COLUMN STYLING - ZERO WHITE SPACE GAPS */
+        .modal-card .form-grid, .modal-card #modalFields, .modal-card .pd-detailed-form {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+        }
+
+        .modal-card label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            font-family: 'Manrope', sans-serif !important;
+            text-align: left !important;
+        }
+
+        .modal-card input, .modal-card select, .modal-card textarea {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 11px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+
+        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        .modal-card textarea {
+            min-height: 85px !important;
+            resize: vertical !important;
+        }
+
+        /* MODAL ACTION BUTTONS */
+        .pd-modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 24px !important;
+            padding-top: 18px !important;
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        .modal-cancel, button[data-action="close-modal"].modal-cancel {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .modal-cancel:hover {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+
+        /* REMOVE UNWANTED BLACK OUTLINES OR BORDER FRAMES */
+        section.dash-panel, .dash-panel, [data-view] {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        *:focus {
+            outline: none !important;
+        }
+
+        /* GLOBAL SCROLLING & VIEWPORT FIX */
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        .app-dashboard {
+            display: flex !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background: var(--pd-bg) !important;
+            position: relative !important;
+            overflow-y: visible !important;
+        }
+
+        /* FIXED LEFT NAVY GRADIENT SIDEBAR */
+        aside.dash-sidebar, .dash-sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            width: 275px !important;
+            min-width: 275px !important;
+            max-width: 275px !important;
+            margin: 0 !important;
+            padding: 16px 14px 115px 14px !important;
+            border-radius: 0 !important;
+            background: var(--pd-sidebar-bg) !important;
+            border: none !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 6px 0 30px rgba(10, 24, 52, 0.12) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            z-index: 9999 !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        .dash-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            text-decoration: none !important;
+            padding: 2px 8px 12px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            margin-bottom: 10px !important;
+            flex-shrink: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-brand svg {
+            filter: drop-shadow(0 2px 8px rgba(140, 240, 189, 0.4));
+        }
+
+        .dash-brand span {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.2rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .dash-brand span span {
+            color: var(--pd-mint) !important;
+        }
+
+        .sidebar-nav {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            height: calc(100vh - 170px) !important;
+            max-height: calc(100vh - 170px) !important;
+            overflow-y: auto !important;
+            padding-right: 4px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .sidebar-nav button, .sidebar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: 100% !important;
+            padding: 8px 12px !important;
+            border-radius: 10px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            color: #94a3b8 !important;
+            background: transparent !important;
+            border: none !important;
+            border-left: 3px solid transparent !important;
+            text-align: left !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            flex-shrink: 0 !important;
+        }
+
+        .sidebar-nav button svg {
+            opacity: 0.7;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav button:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.07) !important;
+        }
+
+        .sidebar-nav button:hover svg {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .sidebar-nav button.active {
+            color: var(--pd-mint) !important;
+            background: var(--pd-mint-soft) !important;
+            font-weight: 700 !important;
+            border-left-color: var(--pd-mint) !important;
+            box-shadow: 0 4px 16px rgba(140, 240, 189, 0.1) !important;
+        }
+
+        .sidebar-nav button.active svg {
+            opacity: 1;
+            stroke: var(--pd-mint) !important;
+        }
+
+        .sidebar-user-card {
+            position: absolute !important;
+            bottom: 55px !important;
+            left: 14px !important;
+            right: 14px !important;
+            width: calc(275px - 28px) !important;
+            padding: 8px 10px !important;
+            background: #0f2246 !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            box-sizing: border-box !important;
+            z-index: 10000 !important;
+        }
+
+
+
+
+
+
+
+
+        .user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.75rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25) !important;
+        }
+
+        .user-details h4 {
+            color: #ffffff !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .user-details p {
+            color: var(--pd-mint) !important;
+            font-size: 0.68rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .logout {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            color: #f87171 !important;
+            background: rgba(248, 113, 113, 0.1) !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .logout svg {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+        .logout:hover {
+            background: rgba(248, 113, 113, 0.22) !important;
+            color: #ef4444 !important;
+        }
+
+        /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
+        main.dash-main, .dash-main {
+            margin: 0 0 0 275px !important;
+            padding: 32px 40px !important;
+            width: calc(100% - 275px) !important;
+            max-width: calc(100% - 275px) !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            box-sizing: border-box !important;
+            flex: 1 !important;
+            background: var(--pd-bg) !important;
+            overflow-y: visible !important;
+        }
+
+        /* Top Header Bar */
+        .dash-header {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 22px 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .dash-header .eyebrow {
+            color: #1d376c !important;
+            font-size: 0.74rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+            margin-bottom: 4px !important;
+        }
+
+        .dash-header h1 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        .header-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+        }
+
+        .dash-header button.primary, button.primary {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 6px 18px rgba(15, 34, 70, 0.2) !important;
+            transition: all 0.22s ease !important;
+        }
+
+        .dash-header button.primary:hover, button.primary:hover {
+            background: #1d376c !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* Overview Stat Grid */
+        .dash-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 22px !important;
+            margin-bottom: 28px !important;
+        }
+
+        .dash-grid article {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+        }
+
+        .dash-grid article span {
+            font-size: 0.84rem !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+        }
+
+        .dash-grid article strong {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.9rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            margin-top: 8px !important;
+        }
+
+        .dash-card {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            outline: none !important;
+            border-radius: 20px !important;
+            padding: 28px 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+            box-sizing: border-box !important;
+        }
+
+        .card-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 16px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+        }
+
+        .card-head h3 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.3rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            margin: 0 0 6px 0 !important;
+            line-height: 1.3 !important;
+        }
+
+        .card-head p {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+            line-height: 1.4 !important;
+            margin: 0 !important;
+        }
+
+        .status.active {
+            background: rgba(140, 240, 189, 0.25) !important;
+            color: #065f46 !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 999px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+        }
+
+        .status.pending, .status.open {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 999px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+        }
+
+        .pill-row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 12px !important;
+            width: 100% !important;
+            margin-top: 20px !important;
+        }
+
+        .pill-row span {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 10px 20px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #1e293b !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+        }
+
+        .pill-row span:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            border-color: #0f2246 !important;
+            box-shadow: 0 4px 12px rgba(15, 34, 70, 0.15) !important;
+        }
+
+
+        /* FORM GRID & PROFILE CARD STYLING */
+        .dash-card .form-grid, .form-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px !important;
+            margin-top: 20px !important;
+            margin-bottom: 24px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-card .form-grid label, .form-grid label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            text-align: left !important;
+        }
+
+        .dash-card .form-grid input,
+        .dash-card .form-grid select,
+        .dash-card .form-grid textarea,
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 12px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) !important;
+        }
+
+        .dash-card .form-grid input:focus,
+        .dash-card .form-grid select:focus,
+        .dash-card .form-grid textarea:focus,
+        .form-grid input:focus,
+        .form-grid select:focus,
+        .form-grid textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 4px rgba(29, 55, 108, 0.1) !important;
+            background: #ffffff !important;
+        }
+
+        .dashboard-table-scroll {
+            overflow-x: auto !important;
+            border-radius: 14px !important;
+            border: 1px solid #e2e8f0 !important;
+            margin-top: 18px !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            background: #ffffff !important;
+        }
+
+        th {
+            background: #f8fafc !important;
+            color: #475569 !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            padding: 14px 18px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            text-align: left !important;
+        }
+
+        td {
+            padding: 16px 18px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #334155 !important;
+            font-size: 0.85rem !important;
+        }
+
+        td button {
+            padding: 7px 14px !important;
+            border-radius: 99px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            cursor: pointer !important;
+        }
+
+        td button:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="admin">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8cf0bd" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span><span>Property</span>Direct</span>
+    </a>
+    <nav class="sidebar-nav" aria-label="Admin operations sections">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="moderation">Listing moderation</button>
+        <button data-panel="kyc">KYC verification</button>
+        <button data-panel="support">Support & disputes</button>
+        <button data-panel="content">Content & feedback</button>
+        <button data-panel="abuse">Lead & abuse monitoring</button>
+        <button data-panel="reports">Operations reports</button>
+        <button data-panel="profile">My profile</button>
+    </nav>
+    <div class="sidebar-user-card">
+        <div class="user-info">
+            <div class="user-avatar">AD</div>
+            <div class="user-details">
+                <h4>Operations Admin</h4>
+                <p>Moderator Console</p>
+            </div>
+        </div>
+        <a class="logout" href="/propertydirect" title="Logout">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </a>
+    </div>
+</aside>
+<main class="dash-main">
+    <header class="dash-header">
+        <div>
+            <p class="eyebrow">ADMIN OPERATIONS</p>
+            <h1 id="panelTitle">Operations Overview</h1>
+        </div>
+        <div class="header-actions">
+            <span class="status active">Moderator Active</span>
+            <button class="primary" data-action="export" onclick="exportPlatformReport(event)">Export operations report</button>
+
+        </div>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article><span>Listings awaiting review</span><strong>34</strong></article>
+            <article><span>KYC checks due</span><strong>12</strong></article>
+            <article><span>Open disputes</span><strong>08</strong></article>
+            <article><span>Abuse flags</span><strong>05</strong></article>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Day-to-day platform operations</h3>
+                    <p>Keep listings trustworthy, support customers, verify identities and act on abuse reports.</p>
+                </div>
+                <span class="status active">Moderator access active</span>
+            </div>
+            <div class="pill-row">
+                <span data-panel="moderation">Review listings</span>
+                <span data-panel="kyc">Verify seller KYC</span>
+                <span data-panel="support">Resolve disputes</span>
+                <span data-panel="content">Moderate feedback</span>
+                <span data-panel="abuse">Review abuse alerts</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="moderation">
+        <div class="dash-card"><div class="card-head"><div><h3>Property listing moderation queue</h3><p>Review sale, rent and buy-request listings for quality, pricing and scam signals.</p></div><button class="primary small" data-action="export">Export queue</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Listing</th><th>Submitted by</th><th>Type</th><th>Quality check</th><th>Status</th><th>Action</th></tr><tr><td>2 BHK · Whitefield</td><td>Rohan Mehta</td><td>Rent</td><td>Photos & price checked</td><td><span class="status pending">Awaiting approval</span></td><td><button data-action="approve">Approve</button> <button data-action="edit-row">Request edits</button></td></tr><tr><td>3 BHK · Hitech City</td><td>Ananya Properties</td><td>Sale</td><td>Address mismatch</td><td><span class="status open">Flagged</span></td><td><button data-action="resolve-task">Investigate</button></td></tr><tr><td>1 BHK · Koramangala</td><td>Neha S</td><td>Buy request</td><td>Complete</td><td><span class="status active">Live</span></td><td><button data-action="edit-row">Review</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="kyc">
+        <div class="dash-card"><div class="card-head"><div><h3>Identity & ownership verification</h3><p>Verify seller, landlord and agent identity documents before approving marketplace activity.</p></div><button class="primary small" data-action="export">Download KYC register</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Applicant</th><th>Role</th><th>Documents</th><th>Ownership proof</th><th>Status</th><th>Action</th></tr><tr><td>Rohan Mehta</td><td>Landlord</td><td>Aadhaar + PAN</td><td>Submitted</td><td><span class="status pending">Review due</span></td><td><button data-action="approve">Verify</button> <button data-action="edit-row">Request document</button></td></tr><tr><td>Ananya Properties</td><td>Agent</td><td>RERA + GSTIN</td><td>Verified</td><td><span class="status active">Verified</span></td><td><button data-action="edit-row">Open profile</button></td></tr><tr><td>Neha S</td><td>Seller</td><td>Identity mismatch</td><td>Missing</td><td><span class="status open">Hold</span></td><td><button data-action="resolve-task">Escalate</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="support">
+        <div class="dash-card"><div class="card-head"><div><h3>Customer support & dispute desk</h3><p>Resolve booking, refund, communication and cancellation cases with a clear case history.</p></div><button class="primary small" data-action="add-row">Create support case</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Case</th><th>Requester</th><th>Category</th><th>Priority</th><th>Status</th><th>Action</th></tr><tr><td>PD-4421 · Refund dispute</td><td>Priya S</td><td>Booking cancellation</td><td>High</td><td><span class="status open">Open</span></td><td><button data-action="resolve-task">Resolve</button></td></tr><tr><td>PD-4430 · Owner response</td><td>Rahul K</td><td>Communication dispute</td><td>Medium</td><td><span class="status pending">In review</span></td><td><button data-action="resolve-task">Update case</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="content">
+        <div class="dash-card"><div class="card-head"><div><h3>Content, reviews & feedback moderation</h3><p>Moderate ratings, review reports, FAQs, guides and approved landing-page banners.</p></div><button class="primary small" data-action="add-row">Create content item</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Item</th><th>Source</th><th>Reason / purpose</th><th>Status</th><th>Action</th></tr><tr><td>Review on Whitefield listing</td><td>Customer feedback</td><td>Reported as misleading</td><td><span class="status pending">Needs moderation</span></td><td><button data-action="approve">Publish</button> <button data-action="resolve-task">Remove</button></td></tr><tr><td>Tenant safety FAQ</td><td>CMS draft</td><td>Platform guide</td><td><span class="status open">Draft</span></td><td><button data-action="approve">Publish</button> <button data-action="edit-row">Edit</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="abuse">
+        <div class="dash-card"><div class="card-head"><div><h3>Lead quality & abuse monitoring</h3><p>Investigate spam messages, suspicious transactions and reported accounts.</p></div><button class="primary small" data-action="export">Export incident log</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Alert</th><th>Account</th><th>Signal</th><th>Risk</th><th>Status</th><th>Action</th></tr><tr><td>Repeated contact attempts</td><td>buyer.rahul@example.com</td><td>27 messages in 4 minutes</td><td>High</td><td><span class="status open">Investigating</span></td><td><button data-action="resolve-task">Restrict & resolve</button></td></tr><tr><td>Payment mismatch</td><td>owner.neha@example.com</td><td>Gateway amount differs</td><td>Medium</td><td><span class="status pending">Review</span></td><td><button data-action="resolve-task">Investigate</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="reports">
+        <div class="dash-card"><div class="card-head"><div><h3>Operations performance</h3><p>Track moderation throughput, KYC completion and customer-support response quality.</p></div><button class="primary small" data-action="export">Export report</button></div><div class="dash-grid"><article><span>Listing approval SLA</span><strong>3h 12m</strong></article><article><span>KYC completion</span><strong>94%</strong></article><article><span>Ticket resolution</span><strong>89%</strong></article><article><span>Fraud reports contained</span><strong>97%</strong></article></div><div class="report-bars"><div><span>Listing moderation · 86%</span><b></b></div><div><span>Customer support · 89%</span><b></b></div><div><span>KYC verification · 94%</span><b></b></div></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="profile">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Moderator profile & notification preferences</h3>
+                    <p>Update operational areas and alert preferences.</p>
+                </div>
+            </div>
+            <div class="form-grid">
+                <label>Name<input value="Riya Sharma"></label>
+                <label>Work email<input value="riya@propertydirect.test"></label>
+                <label>Assigned queues<select><option>Listings, KYC & Support</option><option>Listings only</option><option>Support only</option></select></label>
+                <label>Escalation notifications<select><option>Immediate</option><option>Hourly digest</option></select></label>
+            </div>
+            <div style="margin-top: 24px;">
+                <button class="primary" data-action="save">Save profile preferences</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function switchTab(panelId) {
+        if (!panelId) return;
+        
+        document.querySelectorAll("[data-panel]").forEach(function(btn) {
+            if (btn.dataset.panel === panelId) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+
+        document.querySelectorAll("[data-view]").forEach(function(view) {
+            if (view.dataset.view === panelId) {
+                view.classList.remove("hidden");
+                view.style.display = "block";
+            } else {
+                view.classList.add("hidden");
+                view.style.display = "none";
+            }
+        });
+
+        var activeBtn = document.querySelector('.sidebar-nav [data-panel="' + panelId + '"]');
+        var titleElem = document.getElementById("panelTitle");
+        if (activeBtn && titleElem) {
+            var text = activeBtn.textContent.trim();
+            titleElem.textContent = text;
+        }
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + panelId);
+        } else {
+            location.hash = '#' + panelId;
+        }
+    }
+
+    document.addEventListener("click", function(e) {
+        var target = e.target.closest("[data-panel]");
+        if (target) {
+            e.preventDefault();
+            switchTab(target.dataset.panel);
+        }
+    });
+
+    var initialHash = window.location.hash.replace("#", "");
+    if (initialHash && document.querySelector('[data-view="' + initialHash + '"]')) {
+        switchTab(initialHash);
+    } else {
+        switchTab("overview");
+    }
+});
+</script>
+<script src="/propertydirect/js/dashboard.js?v=20260819-profile-form-grid-v23"></script>
+<script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

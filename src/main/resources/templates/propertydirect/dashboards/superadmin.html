@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super Admin Console — PropertyDirect</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* -------------------------------------------------------------
+           PROPERTYDIRECT BRANDING & DESIGN SYSTEM FOR DASHBOARDS
+           Matches PropertyDirect Landing Page Aesthetics
+           ------------------------------------------------------------- */
+        :root {
+            --pd-bg: #f8fafc;
+            --pd-sidebar-bg: linear-gradient(180deg, #0a1834 0%, #172a4d 100%);
+            --pd-card-bg: #ffffff;
+            --pd-card-border: #e2e8f0;
+            --pd-navy: #0f172a;
+            --pd-navy-dark: #0a1834;
+            --pd-mint: #8cf0bd;
+            --pd-mint-dark: #065f46;
+            --pd-mint-soft: rgba(140, 240, 189, 0.14);
+            --pd-text-muted: #64748b;
+        }
+
+        /* TAB SHOW / HIDE RESET - CRITICAL */
+        .hidden, [hidden], .dash-panel.hidden {
+            display: none !important;
+        }
+
+        /* ULTRA-PREMIUM FLOATING TOAST NOTIFICATION - TOP RIGHT TOPBAR */
+        #toast, .toast {
+            position: fixed !important;
+            top: 28px !important;
+            right: 28px !important;
+            bottom: auto !important;
+            left: auto !important;
+            padding: 12px 20px !important;
+            border-radius: 12px !important;
+            background: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.14) !important;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            z-index: 999999 !important;
+            backdrop-filter: blur(12px) !important;
+            transition: opacity 0.25s ease, transform 0.25s ease !important;
+        }
+
+        #toast.hidden, .toast.hidden, #toast:empty {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: translateY(-10px) !important;
+        }
+
+        /* FIXED CENTERED SCREEN BACKDROP OVERLAY FOR MODALS */
+        .modal, #dashboardModal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(15, 23, 42, 0.65) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            margin: 0 !important;
+            padding: 24px !important;
+            box-sizing: border-box !important;
+        }
+
+        .modal.hidden, #dashboardModal.hidden {
+            display: none !important;
+        }
+
+        .modal-card {
+            position: relative !important;
+            width: min(480px, 92vw) !important;
+            max-height: calc(100vh - 60px) !important;
+            margin: auto !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 20px !important;
+            padding: 24px 28px !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25) !important;
+            overflow-y: auto !important;
+            font-family: 'Manrope', sans-serif !important;
+        }
+
+        .modal-card h2 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin-top: 0 !important;
+            margin-bottom: 4px !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .modal-card p {
+            font-size: 0.86rem !important;
+            color: #64748b !important;
+            margin-bottom: 20px !important;
+            line-height: 1.45 !important;
+        }
+
+        .modal-card .close {
+            position: absolute !important;
+            top: 18px !important;
+            right: 18px !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #f8fafc !important;
+            color: #64748b !important;
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            float: none !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .modal-card .close:hover {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            border-color: #ef4444 !important;
+            transform: scale(1.08) !important;
+        }
+
+        /* MODAL FORM FLEX COLUMN STYLING - ZERO WHITE SPACE GAPS */
+        .modal-card .form-grid, .modal-card #modalFields, .modal-card .pd-detailed-form {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+        }
+
+        .modal-card label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            font-family: 'Manrope', sans-serif !important;
+            text-align: left !important;
+        }
+
+        .modal-card input, .modal-card select, .modal-card textarea {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 11px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+
+        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        .modal-card textarea {
+            min-height: 85px !important;
+            resize: vertical !important;
+        }
+
+        /* MODAL ACTION BUTTONS */
+        .pd-modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 24px !important;
+            padding-top: 18px !important;
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        .modal-cancel, button[data-action="close-modal"].modal-cancel {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .modal-cancel:hover {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        /* REMOVE UNWANTED BLACK OUTLINES OR BORDER FRAMES */
+        section.dash-panel, .dash-panel, [data-view] {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        *:focus {
+            outline: none !important;
+        }
+
+        /* GLOBAL SCROLLING & VIEWPORT FIX */
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background-color: var(--pd-bg) !important;
+            background: var(--pd-bg) !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        .app-dashboard {
+            display: flex !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            background: var(--pd-bg) !important;
+            position: relative !important;
+            overflow-y: visible !important;
+        }
+
+        /* FIXED LEFT NAVY GRADIENT SIDEBAR */
+        aside.dash-sidebar, .dash-sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            width: 275px !important;
+            min-width: 275px !important;
+            max-width: 275px !important;
+            margin: 0 !important;
+            padding: 16px 14px 115px 14px !important;
+            border-radius: 0 !important;
+            background: var(--pd-sidebar-bg) !important;
+            border: none !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 6px 0 30px rgba(10, 24, 52, 0.12) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            z-index: 9999 !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        .dash-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            text-decoration: none !important;
+            padding: 2px 8px 12px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            margin-bottom: 10px !important;
+            flex-shrink: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-brand svg {
+            filter: drop-shadow(0 2px 8px rgba(140, 240, 189, 0.4));
+        }
+
+        .dash-brand span {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.2rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .dash-brand span span {
+            color: var(--pd-mint) !important;
+        }
+
+        .sidebar-nav {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            height: calc(100vh - 170px) !important;
+            max-height: calc(100vh - 170px) !important;
+            overflow-y: auto !important;
+            padding-right: 4px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .sidebar-nav button, .sidebar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: 100% !important;
+            padding: 8px 12px !important;
+            border-radius: 10px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            color: #94a3b8 !important;
+            background: transparent !important;
+            border: none !important;
+            border-left: 3px solid transparent !important;
+            text-align: left !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            flex-shrink: 0 !important;
+        }
+
+        .sidebar-nav button svg {
+            opacity: 0.7;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav button:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.07) !important;
+        }
+
+        .sidebar-nav button:hover svg {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .sidebar-nav button.active {
+            color: var(--pd-mint) !important;
+            background: var(--pd-mint-soft) !important;
+            font-weight: 700 !important;
+            border-left-color: var(--pd-mint) !important;
+            box-shadow: 0 4px 16px rgba(140, 240, 189, 0.1) !important;
+        }
+
+        .sidebar-nav button.active svg {
+            opacity: 1;
+            stroke: var(--pd-mint) !important;
+        }
+
+        .sidebar-user-card {
+            position: absolute !important;
+            bottom: 55px !important;
+            left: 14px !important;
+            right: 14px !important;
+            width: calc(275px - 28px) !important;
+            padding: 8px 10px !important;
+            background: #0f2246 !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            box-sizing: border-box !important;
+            z-index: 10000 !important;
+        }
+
+
+
+
+
+
+        .user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .user-avatar {
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.75rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25) !important;
+        }
+
+        .user-details h4 {
+            color: #ffffff !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .user-details p {
+            color: var(--pd-mint) !important;
+            font-size: 0.68rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        .logout {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            color: #f87171 !important;
+            background: rgba(248, 113, 113, 0.1) !important;
+            text-decoration: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .logout svg {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+
+        .logout:hover {
+            background: rgba(248, 113, 113, 0.22) !important;
+            color: #ef4444 !important;
+            transform: scale(1.05) !important;
+        }
+
+        /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
+        main.dash-main, .dash-main {
+            margin: 0 0 0 275px !important;
+            padding: 32px 40px !important;
+            width: calc(100% - 275px) !important;
+            max-width: calc(100% - 275px) !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            box-sizing: border-box !important;
+            flex: 1 !important;
+            background: var(--pd-bg) !important;
+            overflow-y: visible !important;
+        }
+
+        /* Top Header Bar */
+        .dash-header {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 22px 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .dash-header .eyebrow {
+            color: #1d376c !important;
+            font-size: 0.74rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+            margin-bottom: 4px !important;
+        }
+
+        .dash-header h1 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        .header-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+        }
+
+        .dash-header button.primary, button.primary {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 6px 18px rgba(15, 34, 70, 0.2) !important;
+            transition: all 0.22s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .dash-header button.primary:hover, button.primary:hover {
+            background: #1d376c !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 24px rgba(15, 34, 70, 0.28) !important;
+        }
+
+        .user-avatar-badge {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 10px !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.85rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+
+        /* Overview Stat Grid */
+        .dash-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 22px !important;
+            margin-bottom: 28px !important;
+        }
+
+        .dash-grid.three {
+            grid-template-columns: repeat(3, 1fr) !important;
+        }
+
+        .dash-grid article {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            border-radius: 20px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        .dash-grid article:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .stat-card-top {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 12px !important;
+        }
+
+        .dash-grid article span {
+            font-size: 0.84rem !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+        }
+
+        .stat-icon-badge {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 10px !important;
+            background: rgba(29, 55, 108, 0.06) !important;
+            color: #1d376c !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .dash-grid article strong {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.9rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.03em !important;
+            margin-bottom: 8px !important;
+            display: block !important;
+        }
+
+        .stat-trend {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            padding: 3px 10px !important;
+            border-radius: 999px !important;
+            width: fit-content !important;
+        }
+
+        .stat-trend.up {
+            background: #ecfdf5 !important;
+            color: #047857 !important;
+        }
+
+        .stat-trend.neutral {
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+        }
+
+        /* Elevated Cards & Panels - Clean 1px light border, no black outlines */
+        .dash-card {
+            background: #ffffff !important;
+            border: 1px solid var(--pd-card-border) !important;
+            outline: none !important;
+            border-radius: 20px !important;
+            padding: 32px !important;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+            margin-bottom: 28px !important;
+        }
+
+        .card-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin-bottom: 20px !important;
+            gap: 16px !important;
+            width: 100% !important;
+        }
+
+        .card-head h3 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.3rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.02em !important;
+            margin: 0 0 6px 0 !important;
+            line-height: 1.3 !important;
+        }
+
+        .card-head p {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+            line-height: 1.4 !important;
+            margin: 0 !important;
+        }
+
+        .status.active {
+            background: rgba(140, 240, 189, 0.25) !important;
+            color: #065f46 !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 999px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+
+        .status.active::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status.pending, .status.open {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 999px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+
+        /* Pill Buttons Row */
+        .pill-row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 20px !important;
+            width: 100% !important;
+        }
+
+        .pill-row span {
+            padding: 10px 20px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #1e293b !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            white-space: nowrap !important;
+        }
+
+
+        .pill-row span:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            border-color: #0f2246 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(15, 34, 70, 0.2) !important;
+        }
+
+        /* FORM GRID & PROFILE CARD STYLING */
+        .dash-card .form-grid, .form-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px !important;
+            margin-top: 20px !important;
+            margin-bottom: 24px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-card .form-grid label, .form-grid label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            color: #334155 !important;
+            text-align: left !important;
+        }
+
+        .dash-card .form-grid input,
+        .dash-card .form-grid select,
+        .dash-card .form-grid textarea,
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 12px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            outline: none !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) !important;
+        }
+
+        .dash-card .form-grid input:focus,
+        .dash-card .form-grid select:focus,
+        .dash-card .form-grid textarea:focus,
+        .form-grid input:focus,
+        .form-grid select:focus,
+        .form-grid textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 4px rgba(29, 55, 108, 0.1) !important;
+            background: #ffffff !important;
+        }
+
+        /* Form Controls */
+
+        .form-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+            gap: 18px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-grid label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+        }
+
+        .form-grid input, .form-grid select {
+            padding: 10px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        .form-grid input:focus, .form-grid select:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        /* Tables */
+        .dashboard-table-scroll {
+            overflow-x: auto !important;
+            border-radius: 14px !important;
+            border: 1px solid #e2e8f0 !important;
+            margin-top: 18px !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            background: #ffffff !important;
+        }
+
+        th {
+            background: #f8fafc !important;
+            color: #475569 !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
+            padding: 14px 18px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            text-align: left !important;
+        }
+
+        td {
+            padding: 16px 18px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #334155 !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            vertical-align: middle !important;
+        }
+
+        tr:hover td {
+            background: #f8fafc !important;
+        }
+
+        tr:last-child td {
+            border-bottom: none !important;
+        }
+
+        td button {
+            padding: 7px 14px !important;
+            border-radius: 9px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        td button:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            border-color: #0f2246 !important;
+        }
+    </style>
+</head>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
+<aside class="dash-sidebar">
+    <a class="dash-brand" href="/propertydirect">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8cf0bd" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span><span>Property</span>Direct</span>
+    </a>
+    <nav class="sidebar-nav" aria-label="Dashboard sections">
+        <button class="active" data-panel="overview">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Overview
+        </button>
+        <button data-panel="roles">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            RBAC & Security Policy
+        </button>
+        <button data-panel="admins">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Administrator Governance
+        </button>
+        <button data-panel="subscriptions">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Pricing & Packages
+        </button>
+        <button data-panel="payments">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            Finance & Payouts
+        </button>
+        <button data-panel="masterdata">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path></svg>
+            Master Data & Rules
+        </button>
+        <button data-panel="integrations">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            Integrations & Infra
+        </button>
+        <button data-panel="audit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Immutable Audit & Backups
+        </button>
+        <button data-panel="compliance">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            Privacy & Overrides
+        </button>
+        <button data-panel="analytics">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            Revenue Analytics
+        </button>
+        <button data-panel="support">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Platform Support
+        </button>
+    </nav>
+    <div class="sidebar-user-card">
+        <div class="user-info">
+            <div class="user-avatar">SA</div>
+            <div class="user-details">
+                <h4>Super Admin</h4>
+                <p>Root Operator</p>
+            </div>
+        </div>
+        <a class="logout" href="/propertydirect" title="Logout">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </a>
+    </div>
+</aside>
+
+<main class="dash-main">
+    <header class="dash-header">
+        <div>
+            <p class="eyebrow">SUPER ADMIN CONSOLE</p>
+            <h1 id="panelTitle">Platform Overview</h1>
+        </div>
+        <div class="header-actions">
+            <span class="status active">Live Workspace</span>
+            <button class="primary" data-action="export" onclick="exportPlatformReport(event)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export Platform Report
+            </button>
+            <div class="user-avatar-badge" title="Super Admin">SA</div>
+        </div>
+    </header>
+
+    <section class="dash-panel" data-view="overview">
+        <div class="dash-grid">
+            <article>
+                <div class="stat-card-top">
+                    <span>Platform Accounts</span>
+                    <div class="stat-icon-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                    </div>
+                </div>
+                <strong>48,920</strong>
+                <span class="stat-trend up">↑ +12.4% this month</span>
+            </article>
+            <article>
+                <div class="stat-card-top">
+                    <span>Live Listings</span>
+                    <div class="stat-icon-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    </div>
+                </div>
+                <strong>12,480</strong>
+                <span class="stat-trend up">↑ +8.2% new properties</span>
+            </article>
+            <article>
+                <div class="stat-card-top">
+                    <span>Monthly Revenue</span>
+                    <div class="stat-icon-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                </div>
+                <strong>₹82.4L</strong>
+                <span class="stat-trend up">↑ +18.6% MoM</span>
+            </article>
+            <article>
+                <div class="stat-card-top">
+                    <span>Security Events</span>
+                    <div class="stat-icon-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                </div>
+                <strong>06</strong>
+                <span class="stat-trend neutral">All events resolved</span>
+            </article>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Platform Command Centre</h3>
+                    <p>Root-level governance across access, marketplace rules, monetisation, infrastructure and legal controls.</p>
+                </div>
+                <span class="status active">All systems operational</span>
+            </div>
+            <div class="pill-row">
+                <span data-panel="roles"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Security & RBAC</span>
+                <span data-panel="subscriptions"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Pricing Packages</span>
+                <span data-panel="payments"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect></svg> Refunds & Payouts</span>
+                <span data-panel="masterdata"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse></svg> Property Taxonomy</span>
+                <span data-panel="integrations"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon></svg> API Integrations</span>
+                <span data-panel="audit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Audit & Backup</span>
+                <span data-panel="compliance"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle></svg> Privacy Controls</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="roles">
+        <div class="dash-card"><div class="card-head"><div><h3>RBAC & security policy</h3><p>Define permission groups and prevent privilege escalation across the PropertyDirect workforce.</p></div><button class="primary small" data-action="save">Save permission policy</button></div><div class="form-grid"><label>Default admin session limit<select><option>8 hours</option><option>4 hours</option><option>12 hours</option></select></label><label>Two-factor authentication<select><option>Required for all admins</option><option>Required for finance roles</option></select></label><label>IP allowlist mode<select><option>Admin console only</option><option>Disabled</option></select></label><label>Failed login lockout<select><option>5 attempts / 30 minutes</option><option>3 attempts / 60 minutes</option></select></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Role</th><th>Scope</th><th>Key permissions & responsibilities</th><th>Controls</th></tr><tr><td><strong>Super Admin</strong></td><td>Root system ownership</td><td>Infrastructure, monetisation, staff access, policy override and audit recovery.</td><td><button data-action="edit-row">Edit root policy</button></td></tr><tr><td><strong>Admin / Moderator</strong></td><td>Operations only</td><td>Listing review, KYC, support, dispute and content moderation; no gateway secrets or backups.</td><td><button data-action="edit-row">Edit permission group</button></td></tr><tr><td><strong>Finance Admin</strong></td><td>Finance workflow</td><td>Refund and payout review without permission to alter tax, commission or gateway API keys.</td><td><button data-action="edit-row">Edit permission group</button></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="admins">
+        <div class="dash-card"><div class="card-head"><div><h3>Administrator & staff governance</h3><p>Create, edit, suspend or permanently deactivate staff accounts with a clear access trail.</p></div><button class="primary small" data-action="add-row">Create administrator</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Administrator</th><th>Permission group</th><th>2FA / IP policy</th><th>Last activity</th><th>Status</th><th>Action</th></tr><tr><td>Riya Sharma<br><small>riya@propertydirect</small></td><td>Listings & verification</td><td>Enforced · India allowlist</td><td>Today, 10:42 AM</td><td><span class="status active">Active</span></td><td><button data-action="edit-row">Edit access</button> <button data-action="resolve-task">Suspend</button></td></tr><tr><td>Vikram Singh<br><small>vikram@propertydirect</small></td><td>Finance & settlements</td><td>Enforced · Finance allowlist</td><td>Today, 09:18 AM</td><td><span class="status active">Active</span></td><td><button data-action="edit-row">Edit access</button> <button data-action="resolve-task">Suspend</button></td></tr><tr><td>Neha Patel<br><small>neha@propertydirect</small></td><td>Support operations</td><td>Pending enrolment</td><td>Yesterday, 05:30 PM</td><td><span class="status pending">MFA review</span></td><td><button data-action="approve">Enforce 2FA</button> <button data-action="edit-row">Edit access</button></td></tr></tbody></table></div></div>
+    </section>
+    <section class="dash-panel hidden" data-view="masterdata"><div class="dash-card"><div class="card-head"><div><h3>Platform master data & listing rules</h3><p>Control marketplace geography, property taxonomy, amenities and the validation rules applied to every listing.</p></div><button class="primary small" data-action="add-row">Add master data</button></div><div class="form-grid"><label>Country<input value="India"></label><label>State / region<input value="Tamil Nadu"></label><label>City / micro-market<input value="Chennai · OMR"></label><label>PIN / ZIP rule<input value="6-digit mandatory"></label><label>Maximum image upload limit<input value="25 images per listing"></label><label>Required listing profile<select><option>Property type + ownership + location</option><option>Standard listing fields</option></select></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Master group</th><th>Configured values</th><th>Rule / availability</th><th>Action</th></tr><tr><td>Property types</td><td>Apartment, Villa, Independent House, Commercial Office, Retail Plot, Agricultural Land</td><td><span class="status active">Enabled</span></td><td><button data-action="edit-row">Edit taxonomy</button></td></tr><tr><td>Transaction types</td><td>Buy, Rent, Lease, Resale, New Development</td><td><span class="status active">Enabled</span></td><td><button data-action="edit-row">Edit taxonomy</button></td></tr><tr><td>Amenities & features</td><td>Parking, Gated Security, Pool, Furnishing, Power Backup</td><td><span class="status active">Enabled</span></td><td><button data-action="edit-row">Edit features</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="subscriptions"><div class="dash-card"><div class="card-head"><div><h3>Pricing, listing packages & promotion rules</h3><p>Set global listing fees, visibility upgrades, included limits and commission rules for every marketplace customer.</p></div><button class="primary small" data-action="add-row">Create package</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Package</th><th>Base price</th><th>Included limit</th><th>Featured / top-search</th><th>Commission</th><th>Status</th><th>Action</th></tr><tr><td>Free discovery</td><td>₹0</td><td>1 active listing</td><td>Not included</td><td>2.0% closed-deal fee</td><td><span class="status active">Live</span></td><td><button data-action="edit-row">Edit package</button></td></tr><tr><td>Featured listing</td><td>₹999 / listing</td><td>3 active listings</td><td>Featured for 30 days</td><td>1.5% closed-deal fee</td><td><span class="status active">Live</span></td><td><button data-action="edit-row">Edit package</button></td></tr><tr><td>Top-of-search Pro</td><td>₹2,499 / month</td><td>15 active listings</td><td>Top search + priority leads</td><td>1.0% closed-deal fee</td><td><span class="status active">Live</span></td><td><button data-action="edit-row">Edit package</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="payments"><div class="dash-card"><div class="card-head"><div><h3>Finance, refunds & payout distribution</h3><p>Manage global commission, gateway settlement, refund approvals, customer credits and outgoing payouts.</p></div><button class="primary small" data-action="export">Export master ledger</button></div><div class="form-grid"><label>Closed-deal commission<input value="1.50%"></label><label>Booking transaction fee<input value="2.00%"></label><label>Refund approval threshold<input value="₹10,000"></label><label>Payout schedule<select><option>Weekly · Friday</option><option>Monthly · 1st day</option></select></label></div><div class="dash-grid three"><article><span>Gateway collection</span><strong>₹54.8L</strong></article><article><span>Pending settlement</span><strong>₹6.2L</strong></article><article><span>Refund / credit queue</span><strong>₹1.1L</strong></article></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Reference</th><th>Transaction</th><th>Counterparty / gateway</th><th>Amount</th><th>Status</th><th>Action</th></tr><tr><td>PD-GW-20481</td><td>Featured listing purchase</td><td>Stripe</td><td>₹2,499</td><td><span class="status active">Settled</span></td><td><button data-action="receipt">Invoice</button></td></tr><tr><td>PD-ST-10432</td><td>Partner payout</td><td>Razorpay</td><td>₹6,20,000</td><td><span class="status pending">Due today</span></td><td><button data-action="mark-paid">Release payout</button></td></tr><tr><td>PD-RF-10920</td><td>Refund & credit request</td><td>Chennai customer</td><td>₹1,299</td><td><span class="status open">Review</span></td><td><button data-action="approve">Approve refund</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="analytics"><div class="dash-card"><h3>Revenue & platform analytics</h3><p>Decision-ready marketplace metrics across the property discovery, owner and payment flows.</p><div class="dash-grid"><article><span>Property searches</span><strong>2.8L</strong></article><article><span>Owner contacts</span><strong>38K</strong></article><article><span>Paid conversion</span><strong>8.7%</strong></article><article><span>Support resolution</span><strong>91%</strong></article></div><div class="report-bars"><div><span>Plan revenue · ₹32.6L</span><b></b></div><div><span>Service commissions · ₹18.4L</span><b></b></div><div><span>Payment gateway fees · ₹6.8L</span><b></b></div></div></div></section>
+    <section class="dash-panel hidden" data-view="integrations"><div class="dash-card"><div class="card-head"><div><h3>System integrations & infrastructure</h3><p>Configure connected services, notification channels, credential rotation, storage retention and infrastructure health checks.</p></div><button class="primary small" data-action="add-row">Add integration</button></div><div class="form-grid"><label>Cloud storage retention<select><option>7 years · cold storage</option><option>5 years · cold storage</option></select></label><label>Credential rotation<select><option>Every 90 days</option><option>Every 60 days</option></select></label><label>Email template sender<input value="updates@propertydirect.test"></label><label>Server health threshold<input value="80% resource alert"></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Integration</th><th>Purpose</th><th>Credential / health</th><th>Status</th><th>Action</th></tr><tr><td>Google Maps API</td><td>Location search & map pins</td><td>Key rotation due in 42 days</td><td><span class="status active">Connected</span></td><td><button data-action="edit-row">Configure</button></td></tr><tr><td>WhatsApp Business API</td><td>Lead and notification messaging</td><td>Template sync healthy</td><td><span class="status active">Connected</span></td><td><button data-action="edit-row">Configure</button></td></tr><tr><td>Razorpay / Stripe / PayPal</td><td>Payments, refunds and payouts</td><td>Webhook delivery 99.8%</td><td><span class="status active">Healthy</span></td><td><button data-action="edit-row">Manage keys</button></td></tr><tr><td>AWS S3 & SMS gateway</td><td>Media storage and OTP delivery</td><td>Cold archive policy active</td><td><span class="status active">Healthy</span></td><td><button data-action="edit-row">Configure</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="audit"><div class="dash-card"><div class="card-head"><div><h3>Immutable audit trails, backup & recovery</h3><p>Review timestamped system activity, IP evidence, backup integrity and recovery operations protected from routine editing.</p></div><div><button class="primary small" data-action="export">Download audit log</button> <button class="primary small" data-action="save">Run backup</button></div></div><div class="form-grid"><label>Audit retention<select><option>7 years immutable</option><option>10 years immutable</option></select></label><label>Cold backup policy<select><option>Daily incremental + monthly full</option><option>Daily full backup</option></select></label><label>Database health<input value="Healthy · 34% capacity"></label><label>Last integrity check<input value="Today, 02:05 AM"></label></div><div class="dash-grid three"><article><span>Last successful backup</span><strong>02:00 AM</strong></article><article><span>Audit events today</span><strong>486</strong></article><article><span>Security review items</span><strong>06</strong></article></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Time / IP</th><th>Actor</th><th>Immutable event</th><th>Area</th><th>Result</th><th>Action</th></tr><tr><td>10:42 AM · 103.14.22.18</td><td>Riya Sharma</td><td>Listing approved</td><td>Marketplace</td><td><span class="status active">Success</span></td><td><button data-action="export">Inspect</button></td></tr><tr><td>09:18 AM · 103.14.22.21</td><td>Vikram Singh</td><td>Gateway settlement reviewed</td><td>Finance</td><td><span class="status active">Success</span></td><td><button data-action="export">Inspect</button></td></tr><tr><td>08:05 AM · System</td><td>Recovery service</td><td>Backup integrity verified</td><td>Recovery</td><td><span class="status active">Verified</span></td><td><button data-action="export">Download</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><div><h3>Platform support & escalations</h3><p>High-value tickets and platform-impacting customer requests.</p></div><button class="primary small" data-action="add-row">Create case</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Case</th><th>Customer / owner</th><th>Area</th><th>Priority</th><th>Status</th><th>Action</th></tr><tr><td>PD-4421 · Payment callback failed</td><td>Chennai customer</td><td>Payments</td><td>High</td><td><span class="status open">Open</span></td><td><button data-action="resolve-task">Resolve</button></td></tr><tr><td>PD-4430 · Owner verification</td><td>Meena Rao</td><td>Listings</td><td>Medium</td><td><span class="status pending">In review</span></td><td><button data-action="approve">Verify</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="compliance"><div class="dash-card"><div class="card-head"><div><h3>Privacy, legal compliance & global overrides</h3><p>Maintain public policies, execute GDPR and deletion workflows, and record platform-wide override decisions with accountable approval.</p></div><button class="primary small" data-action="save">Save compliance policy</button></div><div class="form-grid"><label>Terms of Service version<input value="v3.4 · Published 18 Aug 2026"></label><label>Privacy Policy version<input value="v2.9 · GDPR aligned"></label><label>Data deletion request SLA<select><option>30 days with legal hold check</option><option>15 days expedited</option></select></label><label>Global override approval<select><option>Two Super Admin approvals</option><option>One Super Admin approval</option></select></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Request / override</th><th>Subject</th><th>Reason</th><th>State</th><th>Action</th></tr><tr><td>GDPR deletion request</td><td>Priya S.</td><td>Account and marketing data deletion</td><td><span class="status pending">Legal hold check</span></td><td><button data-action="approve">Review request</button></td></tr><tr><td>Account restoration</td><td>Rohan Mehta</td><td>Wrongful abuse suspension appeal</td><td><span class="status open">Awaiting override</span></td><td><button data-action="resolve-task">Restore account</button></td></tr><tr><td>Listing lock bypass</td><td>Whitefield listing #PD-9128</td><td>Document correction after lock date</td><td><span class="status pending">Approval required</span></td><td><button data-action="approve">Authorize override</button></td></tr></tbody></table></div></div></section>
+</main>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function switchTab(panelId) {
+        if (!panelId) return;
+        
+        document.querySelectorAll("[data-panel]").forEach(function(btn) {
+            if (btn.dataset.panel === panelId) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+
+        document.querySelectorAll("[data-view]").forEach(function(view) {
+            if (view.dataset.view === panelId) {
+                view.classList.remove("hidden");
+                view.style.display = "block";
+            } else {
+                view.classList.add("hidden");
+                view.style.display = "none";
+            }
+        });
+
+        var activeBtn = document.querySelector('.sidebar-nav [data-panel="' + panelId + '"]');
+        var titleElem = document.getElementById("panelTitle");
+        if (activeBtn && titleElem) {
+            var text = activeBtn.textContent.trim();
+            titleElem.textContent = text;
+        }
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + panelId);
+        } else {
+            location.hash = '#' + panelId;
+        }
+    }
+
+    document.addEventListener("click", function(e) {
+        var target = e.target.closest("[data-panel]");
+        if (target) {
+            e.preventDefault();
+            switchTab(target.dataset.panel);
+        }
+    });
+
+    var initialHash = window.location.hash.replace("#", "");
+    if (initialHash && document.querySelector('[data-view="' + initialHash + '"]')) {
+        switchTab(initialHash);
+    } else {
+        switchTab("overview");
+    }
+});
+</script>
+<script src="/propertydirect/js/dashboard.js?v=20260819-profile-form-grid-v23"></script>
+<script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+package com.smartapartment.repository;
+
+import com.smartapartment.entity.SubscriptionPlan;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPlan, Long> {
+    Optional<SubscriptionPlan> findFirstByTenantIdAndNameOrderByIdAsc(String tenantId, String name);
+}

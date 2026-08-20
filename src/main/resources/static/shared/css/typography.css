@@ -1,0 +1,64 @@
+@font-face {
+    font-family: "Urbanist";
+    src: url("/shared/fonts/Urbanist-Variable.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Urbanist";
+    src: url("/shared/fonts/Urbanist-Variable-Italic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    --app-font-family: "Aptos", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    font-family: var(--app-font-family);
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea,
+optgroup,
+table {
+    font-family: var(--app-font-family) !important;
+}
+
+/* Shared readable type scale: avoids the compressed appearance of the previous mixed fonts. */
+html { text-rendering: optimizeLegibility; }
+
+body,
+button,
+input,
+select,
+textarea,
+optgroup,
+table {
+    letter-spacing: .008em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--app-font-family) !important;
+    letter-spacing: -.012em !important;
+    line-height: 1.2;
+}
+
+p,
+li,
+td,
+th,
+label,
+small {
+    letter-spacing: .006em;
+}

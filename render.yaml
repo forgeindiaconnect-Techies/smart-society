@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: smartsociety
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_DRIVER
+        value: org.postgresql.Driver
+      - key: JWT_SECRET
+        sync: false
+      - key: DDL_AUTO
+        value: update
+      - key: H2_CONSOLE_ENABLED
+        value: "false"
+      - key: OPEN_IN_VIEW
+        value: "false"

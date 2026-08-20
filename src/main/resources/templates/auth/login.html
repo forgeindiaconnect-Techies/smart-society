@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in | SmartSociety</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260818-readable-type-v1">
+    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260818-readable-type-v1">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f8fbf8;
+            font-family: inherit;
+        }
+
+        /* Floating Pill Header matching Terms & Landing Pages */
+        .terms-topbar-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem 1rem 0;
+        }
+        .terms-topbar-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(237, 245, 241, 0.9));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(19, 41, 34, 0.08);
+            border-radius: 9999px;
+            padding: 0.5rem 1.75rem;
+            width: 100%;
+            max-width: 920px;
+            box-shadow: 0 14px 30px rgba(93, 122, 111, 0.12);
+        }
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #132922;
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+        .topbar-brand-mark {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #198f78, #0f6656);
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 900;
+        }
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 4px 8px;
+            border-radius: 9999px;
+            border: 1px solid rgba(19, 41, 34, 0.06);
+            gap: 4px;
+        }
+        .topbar-nav a {
+            text-decoration: none;
+            color: #61766f;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+        .topbar-nav a:hover, .topbar-nav a.active {
+            color: #132922;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Main Form Container */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: #ffffff;
+            border: 1px solid rgba(19, 41, 34, 0.08);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 14px 30px rgba(93, 122, 111, 0.12);
+        }
+        .auth-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #198f78;
+            margin-bottom: 0.5rem;
+        }
+        .auth-heading {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #132922;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.02em;
+        }
+        .auth-subtext {
+            color: #61766f;
+            font-size: 0.9rem;
+            margin: 0 0 1.75rem 0;
+            line-height: 1.5;
+        }
+
+        /* Role Buttons */
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .role-btn {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid rgba(19, 41, 34, 0.1);
+            border-radius: 12px;
+            background: #f8fbf8;
+            color: #132922;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+        }
+        .role-btn:hover, .role-btn.active {
+            background: #edf5f1;
+            color: #198f78;
+            border-color: #198f78;
+        }
+
+        .form-group {
+            margin-bottom: 1.15rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #132922;
+            margin-bottom: 0.4rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 0.85rem;
+            border: 1px solid rgba(19, 41, 34, 0.12);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: #ffffff;
+            color: #132922;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #198f78;
+            box-shadow: 0 0 0 3px rgba(25, 143, 120, 0.12);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, #198f78, #0f6656);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            margin-top: 0.5rem;
+            box-shadow: 0 8px 18px rgba(25, 143, 120, 0.22);
+        }
+        .submit-btn:hover {
+            opacity: 0.92;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating Header Pill matching Landing UI format -->
+<div class="terms-topbar-wrapper">
+    <header class="terms-topbar-pill">
+        <a class="topbar-brand" href="/">
+            <span class="topbar-brand-mark">SA</span>
+            <span>SmartApartment</span>
+        </a>
+        <nav class="topbar-nav">
+            <a href="/terms/onboarding">Workflow</a>
+            <a href="/terms/daily-operations">Daily Operations</a>
+            <a href="/terms/finance-reports">Finance & Reports</a>
+            <a class="active" href="/login">Sign In</a>
+        </nav>
+    </header>
+</div>
+
+<!-- Clean Center Container -->
+<main class="auth-container">
+    <div class="auth-card">
+        <div class="auth-eyebrow">SECURE WORKSPACE ACCESS</div>
+        <h1 class="auth-heading">Sign in to your workspace</h1>
+        <p class="auth-subtext">Access dashboards, society operations, resident tools, and management portals.</p>
+
+        <!-- Role Selectors -->
+        <div class="role-grid">
+            <button type="button" class="role-btn active" onclick="setRole('admin', 'admin@smartapartment', 'admin123', this)">🏢 Society Admin</button>
+            <button type="button" class="role-btn" onclick="setRole('resident', 'resident@smartapartment', 'resident123', this)">🏡 Resident</button>
+            <button type="button" class="role-btn" onclick="setRole('security', 'security@smartapartment', 'security123', this)">👮 Security Gate</button>
+            <button type="button" class="role-btn" onclick="setRole('maintenance', 'maintenance@smartapartment', 'maintenance123', this)">🔧 Maintenance</button>
+            <button type="button" class="role-btn" onclick="setRole('accountant', 'accountant@smartapartment', 'accountant123', this)">📊 Accountant</button>
+            <button type="button" class="role-btn" onclick="setRole('superadmin', 'superadmin@smartapartment', 'superadmin123', this)">🛡️ Super Admin</button>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <input type="hidden" id="selectedRoleInput" value="admin">
+            <div id="loginAlert" style="display:none; color: #dc2626; font-size: 0.85rem; margin-bottom: 1rem; padding: 0.5rem; background: #fee2e2; border-radius: 6px;"></div>
+
+            <div class="form-group">
+                <label for="usernameInput">Email / Username</label>
+                <input type="text" id="usernameInput" name="username" value="admin@smartapartment" required>
+            </div>
+            <div class="form-group">
+                <label for="passwordInput">Password</label>
+                <input type="password" id="passwordInput" name="password" value="admin123" required>
+            </div>
+
+            <button class="submit-btn" type="submit" id="submitBtn">Sign In to Workspace</button>
+        </form>
+    </div>
+</main>
+
+<script>
+    function setRole(role, email, pass, btn) {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('selectedRoleInput').value = role;
+        document.getElementById('usernameInput').value = email;
+        document.getElementById('passwordInput').value = pass;
+        document.getElementById('loginAlert').style.display = 'none';
+    }
+
+    async function handleLoginSubmit(event) {
+        event.preventDefault();
+        const role = document.getElementById('selectedRoleInput').value;
+        const username = document.getElementById('usernameInput').value.trim();
+        const password = document.getElementById('passwordInput').value;
+        const alertBox = document.getElementById('loginAlert');
+        const submitBtn = document.getElementById('submitBtn');
+
+        alertBox.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in...';
+
+        try {
+            const response = await fetch('/api/auth/dashboard-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    platform: 'smartapartment',
+                    role: role,
+                    username: username,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                alertBox.textContent = data.message || 'Invalid username or password';
+                alertBox.style.display = 'block';
+            }
+        } catch (err) {
+            alertBox.textContent = 'Unable to connect to server. Please try again.';
+            alertBox.style.display = 'block';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign In to Workspace';
+        }
+    }
+</script>
+</body>
+</html>
