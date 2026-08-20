@@ -3,30 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SmartApartment Terms of Use & Payment</title>
+    <title>SmartApartment Platform Terms & Onboarding</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/shared/css/theme.css?v=20260818-readable-type-v1">
+    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260820-terms-ui-v2">
+    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260820-terms-ui-v2">
+
 </head>
-<body>
-<header class="topbar terms-topbar">
-    <a class="brand" href="/"><span class="brand-mark">SA</span> SmartApartment</a>
-    <nav class="nav">
-        <a href="/#workflow">Workflow</a>
-        <a href="/terms/daily-operations">Daily Operations</a>
-        <a href="/terms/finance-reports">Finance & Reports</a>
-        <a href="/dashboards/society-admin">Admin Dashboard</a>
-    </nav>
+<body class="recording-landing">
+<div class="announcement-bar">
+    <div class="landing-container announcement-inner">
+        <span><strong>Platform Terms:</strong> SmartApartment multi-tenant governance, onboarding & security policies</span>
+        <a href="/#products" style="color: white; font-weight: 700; text-decoration: underline;">Explore Features <span aria-hidden="true">→</span></a>
+    </div>
+</div>
+
+<header class="landing-header" id="landingHeader">
+    <div class="landing-container header-inner">
+        <a class="landing-logo" href="/" aria-label="SmartApartment home">
+            <span class="logo-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg>
+            </span>
+            <span>SmartApartment</span>
+        </a>
+        <nav class="landing-nav" id="nav" aria-label="Primary navigation">
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a class="active" href="/terms/onboarding">Onboarding</a>
+                <a href="/terms/daily-operations">Operations</a>
+                <a href="/terms/finance-reports">Finance</a>
+                <a href="/#tutorials">Tutorials</a>
+            </div>
+            <a class="propertydirect-pill" href="/propertydirect"><span aria-hidden="true">⌂</span> PropertyDirect</a>
+            <a class="header-login" href="/dashboards/society-admin">Login</a>
+        </nav>
+    </div>
 </header>
 
 <main>
     <section class="terms-hero">
-        <p class="eyebrow">Terms of Use & Payment</p>
-        <h1>SmartApartment Platform Terms</h1>
-        <p>Last updated on 02 July, 2026. These terms apply to society onboarding, resident access, billing, payment proof, visitor management, complaints, amenities, dashboards, and reports.</p>
+        <div class="hero-pattern" aria-hidden="true"></div>
+        <div class="landing-container terms-hero-content">
+            <span class="platform-badge"><i></i> Terms of Use & Platform Governance</span>
+            <h1>SmartApartment <em>Platform Terms</em></h1>
+            <p>Last updated 02 July 2026. Official terms for society onboarding, resident access, billing, payment verification, visitor security, complaints, amenities, and role dashboards.</p>
+            <div class="terms-tab-pills">
+                <a class="active" href="/terms/onboarding">Onboarding & Setup</a>
+                <a href="/terms/daily-operations">Daily Operations</a>
+                <a href="/terms/finance-reports">Finance & Reports</a>
+            </div>
+        </div>
     </section>
 
-    <section class="terms-layout terms-content-only">
-        <div class="terms-pages">
+    <div class="landing-container">
+        <section class="terms-layout">
+            <aside class="terms-nav">
+                <span class="terms-nav-title">Quick Navigation</span>
+                <a class="active" href="#electronic-record">Scope & Agreement</a>
+                <a href="#definitions">Definitions</a>
+                <a href="#acceptance">Acceptance of Terms</a>
+                <a href="#access">Access & Passwords</a>
+                <a href="#society-onboarding">Society Onboarding</a>
+                <a href="#payments">Terms of Payment</a>
+                <a href="#billing-proof">Receipts & Proof</a>
+                <a href="#operations">Operations & Security</a>
+                <a href="#data-privacy">Data & Privacy</a>
+                <a href="#liability">Disclaimer & Liability</a>
+            </aside>
+            <div class="terms-pages">
+
             <article class="terms-page" id="electronic-record">
                 <h2>Electronic Record and Scope</h2>
                 <h3>Digital agreement</h3>
@@ -222,10 +266,23 @@
             </article>
         </div>
     </section>
+    </div>
 </main>
 
-<footer><strong>SmartApartment</strong><span>Terms of use and payment for apartment community management.</span></footer>
-<script src="/shared/js/theme.js?v=20260703-modal-fix"></script>
+
+<footer class="landing-footer">
+    <div class="landing-container footer-inner">
+        <a class="landing-logo" href="/"><span class="logo-mark">SA</span><span>SmartApartment</span></a>
+        <span>Apartment community management for modern teams.</span>
+        <nav aria-label="Footer navigation">
+            <a href="/terms/onboarding">Onboarding</a>
+            <a href="/terms/daily-operations">Operations</a>
+            <a href="/terms/finance-reports">Reports</a>
+            <a href="/propertydirect">PropertyDirect</a>
+        </nav>
+    </div>
+</footer>
 </body>
 </html>
+
 

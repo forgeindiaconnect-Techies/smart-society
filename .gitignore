@@ -1,5 +1,4 @@
-/data/*.mv.db
-/data/*.trace.db
+/data/
 /target/
 /maven/
 mvn-output.txt

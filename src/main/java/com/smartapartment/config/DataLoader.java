@@ -42,13 +42,11 @@ public class DataLoader {
                                 PasswordEncoder encoder,
                                 Environment environment) {
         return args -> {
-            String driver = environment.getProperty("spring.datasource.driver-class-name", "");
-            String datasourceUrl = environment.getProperty("spring.datasource.url", "");
-            boolean localDemo = driver.toLowerCase().contains("h2") || datasourceUrl.toLowerCase().contains(":h2:");
-            String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", localDemo ? "superadmin@smartapartment" : "platform-owner@localhost.invalid");
-            String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", localDemo ? "superadmin123" : UUID.randomUUID().toString());
-            String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", localDemo ? "resident@smartapartment" : "resident@localhost.invalid");
-            String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", localDemo ? "resident123" : UUID.randomUUID().toString());
+            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
+            String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "superadmin@smartsociety");
+            String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", "superadmin123");
+            String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@smartsociety");
+            String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", "resident123");
 
             plans.findFirstByTenantIdAndNameOrderByIdAsc("platform", "Premium Plan").orElseGet(() -> {
                 SubscriptionPlan plan = new SubscriptionPlan();
@@ -96,15 +94,34 @@ public class DataLoader {
                 return users.save(user);
             });
 
-            if (localDemo) {
+            if (seedDemo) {
+                // Seed @smartapartment domain accounts (matching login page buttons)
+                createDemoUser(users, encoder, "platform", "Platform Super Admin",
+                        "superadmin@smartapartment", "superadmin123", UserRole.SUPER_ADMIN);
                 createDemoUser(users, encoder, "green-heights", "Society Administrator",
                         "admin@smartapartment", "admin123", UserRole.SOCIETY_ADMIN);
+                createDemoUser(users, encoder, "green-heights", "Demo Resident",
+                        "resident@smartapartment", "resident123", UserRole.RESIDENT);
                 createDemoUser(users, encoder, "green-heights", "Gate Security",
                         "security@smartapartment", "security123", UserRole.SECURITY_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Maintenance Staff",
                         "maintenance@smartapartment", "maintenance123", UserRole.MAINTENANCE_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Society Accountant",
                         "accountant@smartapartment", "accountant123", UserRole.ACCOUNTANT);
+
+                // Seed @smartsociety domain accounts (matching alternative domain format)
+                createDemoUser(users, encoder, "platform", "Platform Super Admin",
+                        "superadmin@smartsociety", "superadmin123", UserRole.SUPER_ADMIN);
+                createDemoUser(users, encoder, "green-heights", "Society Administrator",
+                        "admin@smartsociety", "admin123", UserRole.SOCIETY_ADMIN);
+                createDemoUser(users, encoder, "green-heights", "Demo Resident",
+                        "resident@smartsociety", "resident123", UserRole.RESIDENT);
+                createDemoUser(users, encoder, "green-heights", "Gate Security",
+                        "security@smartsociety", "security123", UserRole.SECURITY_STAFF);
+                createDemoUser(users, encoder, "green-heights", "Maintenance Staff",
+                        "maintenance@smartsociety", "maintenance123", UserRole.MAINTENANCE_STAFF);
+                createDemoUser(users, encoder, "green-heights", "Society Accountant",
+                        "accountant@smartsociety", "accountant123", UserRole.ACCOUNTANT);
             }
 
             Block block = blocks.findFirstByTenantIdAndNameOrderByIdAsc("green-heights", "Block A").orElseGet(() -> {

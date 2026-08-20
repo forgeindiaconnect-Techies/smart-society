@@ -241,10 +241,10 @@ public class AuthController {
 
         private static Map<String, DashboardCredential> load(Environment environment) {
             Map<String, DashboardCredential> credentials = new HashMap<>();
-            boolean localDemo = environment.getProperty("spring.datasource.driver-class-name", "").contains("h2");
+            boolean allowDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
             for (DashboardRoute route : ROUTES) {
                 String prefix = "DASHBOARD_LOGIN_" + route.platform().toUpperCase() + "_" + route.role().toUpperCase();
-                DefaultCredential defaultCredential = DefaultCredential.forRoute(route.platform(), route.role(), localDemo);
+                DefaultCredential defaultCredential = DefaultCredential.forRoute(route.platform(), route.role(), allowDemo);
                 String username = environment.getProperty(prefix + "_USERNAME", defaultCredential.username());
                 String password = environment.getProperty(prefix + "_PASSWORD", defaultCredential.password());
                 if (!safe(username).isBlank() && !safe(password).isBlank()) {
@@ -270,11 +270,11 @@ public class AuthController {
     }
 
     private record DefaultCredential(String username, String password) {
-        private static DefaultCredential forRoute(String platform, String role, boolean localDemo) {
-            if (localDemo && "propertydirect".equalsIgnoreCase(platform) && "superadmin".equalsIgnoreCase(role)) {
+        private static DefaultCredential forRoute(String platform, String role, boolean allowDemo) {
+            if (allowDemo && "propertydirect".equalsIgnoreCase(platform) && "superadmin".equalsIgnoreCase(role)) {
                 return new DefaultCredential("superadmin@propertydirect", "superadmin123");
             }
-            if (localDemo && "propertydirect".equalsIgnoreCase(platform) && "admin".equalsIgnoreCase(role)) {
+            if (allowDemo && "propertydirect".equalsIgnoreCase(platform) && "admin".equalsIgnoreCase(role)) {
                 return new DefaultCredential("admin@propertydirect", "admin123");
             }
             return new DefaultCredential("", "");
