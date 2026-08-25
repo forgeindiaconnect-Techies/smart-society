@@ -1,7 +1,11 @@
 package com.smartapartment.controller.superadmin;
 
 import com.smartapartment.entity.SubscriptionBillingRule;
+import com.smartapartment.entity.SubscriptionPlan;
+import com.smartapartment.entity.Tenant;
 import com.smartapartment.repository.SubscriptionBillingRuleRepository;
+import com.smartapartment.repository.SubscriptionPlanRepository;
+import com.smartapartment.repository.TenantRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -20,29 +24,87 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @RequestMapping("/api/superadmin/subscriptions")
 public class SuperAdminSubscriptionController {
     private final SubscriptionBillingRuleRepository rules;
-    public SuperAdminSubscriptionController(SubscriptionBillingRuleRepository rules) { this.rules = rules; }
+    private final TenantRepository tenants;
+    private final SubscriptionPlanRepository plans;
+
+    public SuperAdminSubscriptionController(SubscriptionBillingRuleRepository rules, TenantRepository tenants,
+                                            SubscriptionPlanRepository plans) {
+        this.rules = rules;
+        this.tenants = tenants;
+        this.plans = plans;
+    }
 
     @GetMapping("/data")
     public ResponseEntity<Map<String, Object>> getSubscriptionData() {
+        Map<Long, SubscriptionPlan> planById = plans.findAll().stream()
+                .collect(Collectors.toMap(SubscriptionPlan::getId, Function.identity(), (first, ignored) -> first));
+        List<Map<String, Object>> payments = tenants.findAllByOrderByCreatedAtDesc().stream()
+                .filter(this::isRealTenant)
+                .filter(tenant -> tenant.getSubscriptionPlanId() != null && planById.containsKey(tenant.getSubscriptionPlanId()))
+                .map(tenant -> subscriptionPayment(tenant, planById.get(tenant.getSubscriptionPlanId())))
+                .toList();
+        long paidSocieties = payments.stream().filter(item -> Boolean.TRUE.equals(item.get("paid")) && ((BigDecimal) item.get("billingAmount")).signum() > 0).count();
+        long pendingSocieties = payments.stream().filter(item -> !Boolean.TRUE.equals(item.get("paid")) && ((BigDecimal) item.get("billingAmount")).signum() > 0).count();
+        BigDecimal collectedCharges = payments.stream()
+                .filter(item -> Boolean.TRUE.equals(item.get("paid")))
+                .map(item -> (BigDecimal) item.get("chargedAmount"))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal pendingCharges = payments.stream()
+                .filter(item -> !Boolean.TRUE.equals(item.get("paid")))
+                .map(item -> (BigDecimal) item.get("billingAmount"))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Map<String, Object> summary = new LinkedHashMap<>();
+        summary.put("subscribedSocieties", payments.size());
+        summary.put("paidSocieties", paidSocieties);
+        summary.put("pendingSocieties", pendingSocieties);
+        summary.put("collectedCharges", collectedCharges);
+        summary.put("pendingCharges", pendingCharges);
+
         return ResponseEntity.ok(Map.of(
-            "mapping", List.of(
-                Map.of("society", "Green Nest Apartments", "plan", "Premium", "flats", "486 / Unlimited", "renewal", "02 Aug 2026", "adminOwner", "Arun Kumar", "status", "Current"),
-                Map.of("society", "Lakeview Residency", "plan", "Standard", "flats", "214 / 500", "renewal", "18 Jul 2026", "adminOwner", "Rekha N", "status", "Renewal Due"),
-                Map.of("society", "Urban Heights", "plan", "Free", "flats", "48 / 50", "renewal", "Trial ends 10 Jul 2026", "adminOwner", "Dev M", "status", "Upgrade Needed")
-            ),
-            "admins", List.of(
-                Map.of("admin", "Arun Kumar", "society", "Green Nest Apartments", "role", "Society Admin", "lastLogin", "Today 10:42 AM", "mfa", "Enabled", "status", "Active"),
-                Map.of("admin", "Rekha N", "society", "Lakeview Residency", "role", "Society Admin", "lastLogin", "Yesterday 6:14 PM", "mfa", "Pending", "status", "MFA Pending"),
-                Map.of("admin", "Dev M", "society", "Urban Heights", "role", "Trial Admin", "lastLogin", "Jul 1, 2026", "mfa", "Disabled", "status", "Needs Review")
-            ),
-            "rules", ensureRules().stream().map(rule -> Map.of("id", rule.getId(), "rule", rule.getRuleName(), "plan", rule.getPlanName(), "amount", "Rs. " + rule.getAmount(), "cycle", rule.getBillingCycle(), "grace", rule.getGraceDays() + " days", "status", rule.getStatus())).toList()
+            "mapping", payments,
+            "payments", payments,
+            "paymentSummary", summary,
+            "admins", List.of(),
+            "rules", rules.findAllByOrderByCreatedAtAsc().stream().map(rule -> Map.of("id", rule.getId(), "rule", rule.getRuleName(), "plan", rule.getPlanName(), "amount", "Rs. " + rule.getAmount(), "cycle", rule.getBillingCycle(), "grace", rule.getGraceDays() + " days", "status", rule.getStatus())).toList()
         ));
+    }
+
+    private Map<String, Object> subscriptionPayment(Tenant tenant, SubscriptionPlan plan) {
+        BigDecimal amount = plan.getMonthlyPrice() == null ? BigDecimal.ZERO : plan.getMonthlyPrice();
+        String storedStatus = tenant.getSubscriptionStatus() == null ? "PENDING" : tenant.getSubscriptionStatus().trim().toUpperCase();
+        boolean paid = amount.signum() == 0 || List.of("ACTIVE", "PAID", "CURRENT").contains(storedStatus);
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("tenantId", tenant.getId());
+        item.put("society", tenant.getSocietyName());
+        item.put("location", List.of(clean(tenant.getCity()), clean(tenant.getState())).stream().filter(value -> !value.isBlank()).collect(Collectors.joining(", ")));
+        item.put("plan", plan.getName());
+        item.put("billingCycle", clean(plan.getBillingCycle()).isBlank() ? "MONTHLY" : plan.getBillingCycle());
+        item.put("billingAmount", amount);
+        item.put("chargedAmount", paid ? amount : BigDecimal.ZERO);
+        item.put("paid", paid);
+        item.put("paymentStatus", amount.signum() == 0 ? "FREE" : paid ? "PAID" : "PENDING");
+        item.put("subscriptionStartedOn", tenant.getSubscriptionStartedOn() == null ? "" : tenant.getSubscriptionStartedOn().toString());
+        item.put("nextRenewalOn", tenant.getSubscriptionRenewsOn() == null ? "" : tenant.getSubscriptionRenewsOn().toString());
+        return item;
+    }
+
+    private boolean isRealTenant(Tenant tenant) {
+        return tenant != null && !"green-heights".equalsIgnoreCase(tenant.getCode())
+                && !"green-heights".equalsIgnoreCase(tenant.getTenantId());
+    }
+
+    private String clean(String value) {
+        return value == null ? "" : value.trim();
     }
 
     @PutMapping("/rules/{id}") @Transactional
@@ -52,7 +114,5 @@ public class SuperAdminSubscriptionController {
         return rules.save(rule);
     }
 
-    @Transactional List<SubscriptionBillingRule> ensureRules() { if (rules.count() == 0) { create("Starter Trial","Free",BigDecimal.ZERO,"30 days",0,"Active"); create("Standard Monthly","Standard",new BigDecimal("4999"),"Monthly",7,"Live"); create("Premium Monthly","Premium",new BigDecimal("9999"),"Monthly",10,"Review"); } return rules.findAllByOrderByCreatedAtAsc(); }
-    private void create(String name,String plan,BigDecimal amount,String cycle,int grace,String status){ SubscriptionBillingRule rule=new SubscriptionBillingRule(); rule.setTenantId("platform"); rule.setRuleName(name); rule.setPlanName(plan); rule.setAmount(amount); rule.setBillingCycle(cycle); rule.setGraceDays(grace); rule.setStatus(status); rules.save(rule); }
     public record RuleRequest(@NotBlank String ruleName,@NotBlank String planName,@NotNull @PositiveOrZero BigDecimal amount,@NotBlank String billingCycle,@NotNull @PositiveOrZero Integer graceDays,@NotBlank String status) {}
 }

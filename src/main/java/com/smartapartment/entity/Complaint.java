@@ -1,6 +1,7 @@
 package com.smartapartment.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -19,11 +20,28 @@ public class Complaint extends BaseEntity {
 
     private String category;
 
+    private String subcategory;
+
     private String priority;
 
     private String title;
 
+    @Column(length = 2000)
     private String description;
+
+    @Column(length = 500)
+    private String locationDetails;
+
+    private LocalDateTime incidentAt;
+
+    private String preferredContactMethod;
+
+    private String reporterPhone;
+
+    private Boolean accessPermission;
+
+    @Column(length = 500)
+    private String attachmentReference;
 
     private String assignedTo;
 

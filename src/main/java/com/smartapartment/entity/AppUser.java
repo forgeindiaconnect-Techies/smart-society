@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -21,6 +23,22 @@ public class AppUser extends BaseEntity {
     private String email;
 
     private String phone;
+
+    private String designation;
+
+    private String employeeId;
+
+    private LocalDate joiningDate;
+
+    private String workShift;
+
+    private String address;
+
+    private String emergencyContactName;
+
+    private String emergencyContactPhone;
+
+    private String profileNotes;
 
     @Column(nullable = false)
     private String passwordHash;

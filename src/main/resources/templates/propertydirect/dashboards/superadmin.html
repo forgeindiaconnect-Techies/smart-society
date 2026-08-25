@@ -923,6 +923,8 @@
             border-color: #0f2246 !important;
         }
     </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260824-v3">
+    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260825-14">
 </head>
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
 <aside class="dash-sidebar">
@@ -993,7 +995,6 @@
 <main class="dash-main">
     <header class="dash-header">
         <div>
-            <p class="eyebrow">SUPER ADMIN CONSOLE</p>
             <h1 id="panelTitle">Platform Overview</h1>
         </div>
         <div class="header-actions">
@@ -1082,13 +1083,31 @@
     <section class="dash-panel hidden" data-view="analytics"><div class="dash-card"><h3>Revenue & platform analytics</h3><p>Decision-ready marketplace metrics across the property discovery, owner and payment flows.</p><div class="dash-grid"><article><span>Property searches</span><strong>2.8L</strong></article><article><span>Owner contacts</span><strong>38K</strong></article><article><span>Paid conversion</span><strong>8.7%</strong></article><article><span>Support resolution</span><strong>91%</strong></article></div><div class="report-bars"><div><span>Plan revenue · ₹32.6L</span><b></b></div><div><span>Service commissions · ₹18.4L</span><b></b></div><div><span>Payment gateway fees · ₹6.8L</span><b></b></div></div></div></section>
     <section class="dash-panel hidden" data-view="integrations"><div class="dash-card"><div class="card-head"><div><h3>System integrations & infrastructure</h3><p>Configure connected services, notification channels, credential rotation, storage retention and infrastructure health checks.</p></div><button class="primary small" data-action="add-row">Add integration</button></div><div class="form-grid"><label>Cloud storage retention<select><option>7 years · cold storage</option><option>5 years · cold storage</option></select></label><label>Credential rotation<select><option>Every 90 days</option><option>Every 60 days</option></select></label><label>Email template sender<input value="updates@propertydirect.test"></label><label>Server health threshold<input value="80% resource alert"></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Integration</th><th>Purpose</th><th>Credential / health</th><th>Status</th><th>Action</th></tr><tr><td>Google Maps API</td><td>Location search & map pins</td><td>Key rotation due in 42 days</td><td><span class="status active">Connected</span></td><td><button data-action="edit-row">Configure</button></td></tr><tr><td>WhatsApp Business API</td><td>Lead and notification messaging</td><td>Template sync healthy</td><td><span class="status active">Connected</span></td><td><button data-action="edit-row">Configure</button></td></tr><tr><td>Razorpay / Stripe / PayPal</td><td>Payments, refunds and payouts</td><td>Webhook delivery 99.8%</td><td><span class="status active">Healthy</span></td><td><button data-action="edit-row">Manage keys</button></td></tr><tr><td>AWS S3 & SMS gateway</td><td>Media storage and OTP delivery</td><td>Cold archive policy active</td><td><span class="status active">Healthy</span></td><td><button data-action="edit-row">Configure</button></td></tr></tbody></table></div></div></section>
     <section class="dash-panel hidden" data-view="audit"><div class="dash-card"><div class="card-head"><div><h3>Immutable audit trails, backup & recovery</h3><p>Review timestamped system activity, IP evidence, backup integrity and recovery operations protected from routine editing.</p></div><div><button class="primary small" data-action="export">Download audit log</button> <button class="primary small" data-action="save">Run backup</button></div></div><div class="form-grid"><label>Audit retention<select><option>7 years immutable</option><option>10 years immutable</option></select></label><label>Cold backup policy<select><option>Daily incremental + monthly full</option><option>Daily full backup</option></select></label><label>Database health<input value="Healthy · 34% capacity"></label><label>Last integrity check<input value="Today, 02:05 AM"></label></div><div class="dash-grid three"><article><span>Last successful backup</span><strong>02:00 AM</strong></article><article><span>Audit events today</span><strong>486</strong></article><article><span>Security review items</span><strong>06</strong></article></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Time / IP</th><th>Actor</th><th>Immutable event</th><th>Area</th><th>Result</th><th>Action</th></tr><tr><td>10:42 AM · 103.14.22.18</td><td>Riya Sharma</td><td>Listing approved</td><td>Marketplace</td><td><span class="status active">Success</span></td><td><button data-action="export">Inspect</button></td></tr><tr><td>09:18 AM · 103.14.22.21</td><td>Vikram Singh</td><td>Gateway settlement reviewed</td><td>Finance</td><td><span class="status active">Success</span></td><td><button data-action="export">Inspect</button></td></tr><tr><td>08:05 AM · System</td><td>Recovery service</td><td>Backup integrity verified</td><td>Recovery</td><td><span class="status active">Verified</span></td><td><button data-action="export">Download</button></td></tr></tbody></table></div></div></section>
-    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><div><h3>Platform support & escalations</h3><p>High-value tickets and platform-impacting customer requests.</p></div><button class="primary small" data-action="add-row">Create case</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Case</th><th>Customer / owner</th><th>Area</th><th>Priority</th><th>Status</th><th>Action</th></tr><tr><td>PD-4421 · Payment callback failed</td><td>Chennai customer</td><td>Payments</td><td>High</td><td><span class="status open">Open</span></td><td><button data-action="resolve-task">Resolve</button></td></tr><tr><td>PD-4430 · Owner verification</td><td>Meena Rao</td><td>Listings</td><td>Medium</td><td><span class="status pending">In review</span></td><td><button data-action="approve">Verify</button></td></tr></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><div><h3>Customer messages & platform support</h3><p>Messages submitted from the PropertyDirect landing page appear here immediately.</p></div><button class="primary small" id="refreshContactMessages" type="button">Refresh messages</button></div><div class="dashboard-table-scroll"><table><thead><tr><th>Reference / received</th><th>Customer</th><th>Contact</th><th>Message</th><th>Status</th><th>Action</th></tr></thead><tbody id="contactMessagesBody"><tr><td colspan="6">Loading customer messages...</td></tr></tbody></table></div></div></section>
     <section class="dash-panel hidden" data-view="compliance"><div class="dash-card"><div class="card-head"><div><h3>Privacy, legal compliance & global overrides</h3><p>Maintain public policies, execute GDPR and deletion workflows, and record platform-wide override decisions with accountable approval.</p></div><button class="primary small" data-action="save">Save compliance policy</button></div><div class="form-grid"><label>Terms of Service version<input value="v3.4 · Published 18 Aug 2026"></label><label>Privacy Policy version<input value="v2.9 · GDPR aligned"></label><label>Data deletion request SLA<select><option>30 days with legal hold check</option><option>15 days expedited</option></select></label><label>Global override approval<select><option>Two Super Admin approvals</option><option>One Super Admin approval</option></select></label></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Request / override</th><th>Subject</th><th>Reason</th><th>State</th><th>Action</th></tr><tr><td>GDPR deletion request</td><td>Priya S.</td><td>Account and marketing data deletion</td><td><span class="status pending">Legal hold check</span></td><td><button data-action="approve">Review request</button></td></tr><tr><td>Account restoration</td><td>Rohan Mehta</td><td>Wrongful abuse suspension appeal</td><td><span class="status open">Awaiting override</span></td><td><button data-action="resolve-task">Restore account</button></td></tr><tr><td>Listing lock bypass</td><td>Whitefield listing #PD-9128</td><td>Document correction after lock date</td><td><span class="status pending">Approval required</span></td><td><button data-action="approve">Authorize override</button></td></tr></tbody></table></div></div></section>
 </main>
 <div class="toast hidden" id="toast"></div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    const escapeMessageHtml = value => String(value == null ? '' : value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    async function loadContactMessages() {
+        const body = document.getElementById('contactMessagesBody');
+        if (!body) return;
+        body.innerHTML = '<tr><td colspan="6">Loading customer messages...</td></tr>';
+        try {
+            const response = await fetch('/api/property/admin/contact-messages');
+            const messages = await response.json().catch(() => []);
+            if (!response.ok) throw new Error(messages.message || 'Unable to load customer messages');
+            if (!messages.length) { body.innerHTML = '<tr><td colspan="6">No website messages received yet.</td></tr>'; return; }
+            body.innerHTML = messages.map(item => {
+                const received = item.createdAt ? new Date(item.createdAt).toLocaleString('en-IN') : 'Recently';
+                return `<tr><td><strong>PD-MSG-${item.id}</strong><br><small>${escapeMessageHtml(received)}</small></td><td><strong>${escapeMessageHtml(item.name)}</strong></td><td>${escapeMessageHtml(item.email)}<br><small>${escapeMessageHtml(item.phone)}</small></td><td class="pd-message-cell">${escapeMessageHtml(item.message)}</td><td><span class="status pending">New</span></td><td><button data-action="resolve-task">Mark reviewed</button></td></tr>`;
+            }).join('');
+        } catch (error) { body.innerHTML = `<tr><td colspan="6">${escapeMessageHtml(error.message)}</td></tr>`; }
+    }
+    document.getElementById('refreshContactMessages')?.addEventListener('click', loadContactMessages);
+    loadContactMessages();
     function switchTab(panelId) {
         if (!panelId) return;
         
@@ -1140,7 +1159,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-<script src="/propertydirect/js/dashboard.js?v=20260819-profile-form-grid-v23"></script>
+<script src="/propertydirect/js/dashboard.js?v=20260825-sidebar-v26"></script>
+<script src="/propertydirect/js/market-workflows.js?v=20260825-approval-v2"></script>
 <script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
 
 

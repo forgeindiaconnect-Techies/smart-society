@@ -8,6 +8,7 @@ import com.smartapartment.service.DashboardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,9 +65,61 @@ public class SocietyApiController {
     @GetMapping("/me")
     public Map<String, Object> me() {
         AppUser user = currentUser.requireUser();
-        return Map.of("id", user.getId(), "name", user.getFullName(), "email", user.getEmail(),
-                "role", user.getRole().name(), "tenantId", user.getTenantId());
+        return profileView(user);
     }
+
+    @PutMapping("/me")
+    public Map<String, Object> updateMe(@RequestBody ProfileRequest request) {
+        AppUser user = currentUser.requireUser();
+        String name = clean(request.name()).trim();
+        String phone = clean(request.phone()).trim();
+        String designation = clean(request.designation()).trim();
+        if (name.isBlank()) throw new IllegalArgumentException("Full name is required");
+        if (name.length() > 120 || phone.length() > 30 || designation.length() > 100) {
+            throw new IllegalArgumentException("One or more profile values are too long");
+        }
+        user.setFullName(name);
+        user.setPhone(phone.isBlank() ? null : phone);
+        user.setDesignation(designation.isBlank() ? null : designation);
+        return profileView(users.save(user));
+    }
+
+    @PutMapping("/me/password")
+    public Map<String, String> updateMyPassword(@RequestBody PasswordChangeRequest request) {
+        AppUser user = currentUser.requireUser();
+        if (request.currentPassword() == null || !passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+        String next = request.newPassword() == null ? "" : request.newPassword();
+        if (next.length() < 8 || !next.matches(".*\\d.*") || !next.matches(".*[^A-Za-z0-9].*")) {
+            throw new IllegalArgumentException("New password must be at least 8 characters and include a number and symbol");
+        }
+        if (passwordEncoder.matches(next, user.getPasswordHash())) {
+            throw new IllegalArgumentException("New password must be different from the current password");
+        }
+        user.setPasswordHash(passwordEncoder.encode(next));
+        users.save(user);
+        return Map.of("message", "Password updated successfully");
+    }
+
+    private Map<String, Object> profileView(AppUser user) {
+        Map<String, Object> profile = new LinkedHashMap<>();
+        profile.put("id", user.getId());
+        profile.put("name", user.getFullName());
+        profile.put("email", user.getEmail());
+        profile.put("phone", user.getPhone() == null ? "" : user.getPhone());
+        profile.put("designation", user.getDesignation() == null ? "" : user.getDesignation());
+        profile.put("role", user.getRole().name());
+        profile.put("tenantId", user.getTenantId() == null ? "Platform" : user.getTenantId());
+        profile.put("accountLocked", user.isAccountLocked());
+        profile.put("mfaEnabled", user.isMfaEnabled());
+        profile.put("createdAt", user.getCreatedAt());
+        profile.put("updatedAt", user.getUpdatedAt());
+        return profile;
+    }
+
+    public record ProfileRequest(String name, String phone, String designation) {}
+    public record PasswordChangeRequest(String currentPassword, String newPassword) {}
 
     @GetMapping("/overview")
     public DashboardStats overview() {
@@ -79,13 +132,27 @@ public class SocietyApiController {
     }
 
     @PostMapping("/apartments") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
-    public Map<String,Object> apartment(@Valid @RequestBody ApartmentRequest request){String tenant=currentUser.requireTenantId();if(apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenant,request.unitNo()).isPresent())throw new IllegalArgumentException("Apartment already exists");Block block=blocks.findFirstByTenantIdAndNameOrderByIdAsc(tenant,request.block()).orElseGet(()->{Block b=new Block();b.setTenantId(tenant);b.setName(request.block());b.setTotalFloors(Math.max(1,request.floor()));return blocks.save(b);});Apartment a=new Apartment();a.setTenantId(tenant);a.setBlock(block);a.setUnitNo(request.unitNo());a.setFloorNo(request.floor());a.setUnitType(request.unitType());a.setOccupancyStatus(request.occupancy());a.setOwnerName(request.ownerName());return apartmentView(apartments.save(a));}
+    public Map<String,Object> apartment(@Valid @RequestBody ApartmentRequest request){String tenant=currentUser.requireTenantId();if(apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenant,request.unitNo()).isPresent())throw new IllegalArgumentException("Apartment already exists");Block block=blocks.findFirstByTenantIdAndNameOrderByIdAsc(tenant,request.block()).orElseGet(()->{Block b=new Block();b.setTenantId(tenant);b.setName(request.block());b.setTotalFloors(Math.max(1,request.floor()));return blocks.save(b);});Apartment a=new Apartment();a.setTenantId(tenant);applyApartmentRequest(a,block,request);return apartmentView(apartments.save(a));}
 
     @PatchMapping("/apartments/{id}") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
-    public Map<String,Object> updateApartment(@PathVariable Long id, @Valid @RequestBody ApartmentRequest request){String tenant=currentUser.requireTenantId();Apartment a=apartments.findById(id).filter(item->tenant.equals(item.getTenantId())).orElseThrow(()->new IllegalArgumentException("Apartment was not found"));Block block=blocks.findFirstByTenantIdAndNameOrderByIdAsc(tenant,request.block()).orElseGet(()->{Block b=new Block();b.setTenantId(tenant);b.setName(request.block());b.setTotalFloors(Math.max(1,request.floor()));return blocks.save(b);});a.setBlock(block);a.setUnitNo(request.unitNo());a.setFloorNo(request.floor());a.setUnitType(request.unitType());a.setOccupancyStatus(request.occupancy());a.setOwnerName(request.ownerName());return apartmentView(apartments.save(a));}
+    public Map<String,Object> updateApartment(@PathVariable Long id, @Valid @RequestBody ApartmentRequest request){String tenant=currentUser.requireTenantId();Apartment a=apartments.findById(id).filter(item->tenant.equals(item.getTenantId())).orElseThrow(()->new IllegalArgumentException("Apartment was not found"));Block block=blocks.findFirstByTenantIdAndNameOrderByIdAsc(tenant,request.block()).orElseGet(()->{Block b=new Block();b.setTenantId(tenant);b.setName(request.block());b.setTotalFloors(Math.max(1,request.floor()));return blocks.save(b);});applyApartmentRequest(a,block,request);return apartmentView(apartments.save(a));}
+
+    private void applyApartmentRequest(Apartment a, Block block, ApartmentRequest request) {
+        a.setBlock(block); a.setUnitNo(request.unitNo().trim()); a.setFloorNo(request.floor());
+        a.setUnitType(request.unitType()); a.setOccupancyStatus(request.occupancy()); a.setOwnerName(request.ownerName().trim());
+        a.setOwnerPhone(request.ownerPhone()); a.setOwnerEmail(request.ownerEmail());
+        a.setBuiltUpAreaSqFt(request.builtUpAreaSqFt()); a.setParkingSlot(request.parkingSlot());
+        a.setMonthlyMaintenance(request.monthlyMaintenance()); a.setPossessionDate(request.possessionDate()); a.setNotes(request.notes());
+    }
 
     @PostMapping("/residents") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
-    public Map<String,Object> resident(@Valid @RequestBody ResidentRequest request){String tenant=currentUser.requireTenantId();String email=request.email().trim().toLowerCase(Locale.ROOT);if(users.findByEmail(email).isPresent())throw new IllegalArgumentException("Email already exists");Apartment apartment=apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenant,request.unitNo()).orElseThrow(()->new IllegalArgumentException("Apartment was not found"));AppUser user=new AppUser();user.setTenantId(tenant);user.setFullName(request.name());user.setEmail(email);user.setRole(UserRole.RESIDENT);user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));user=users.save(user);Resident resident=new Resident();resident.setTenantId(tenant);resident.setUser(user);resident.setApartment(apartment);resident.setResidentType(request.residentType().toUpperCase(Locale.ROOT));return residentView(residents.save(resident));}
+    public Map<String,Object> resident(@Valid @RequestBody ResidentRequest request){String tenant=currentUser.requireTenantId();String email=request.email().trim().toLowerCase(Locale.ROOT);if(users.findByEmail(email).isPresent())throw new IllegalArgumentException("Email already exists");Apartment apartment=apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenant,request.unitNo()).orElseThrow(()->new IllegalArgumentException("Apartment was not found"));AppUser user=new AppUser();user.setTenantId(tenant);user.setFullName(request.name().trim());user.setEmail(email);user.setPhone(request.phone());user.setAddress(request.address());user.setEmergencyContactName(request.emergencyContactName());user.setEmergencyContactPhone(request.emergencyContactPhone());user.setProfileNotes(request.notes());user.setRole(UserRole.RESIDENT);user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));user=users.save(user);Resident resident=new Resident();resident.setTenantId(tenant);resident.setUser(user);resident.setApartment(apartment);resident.setResidentType(request.residentType().toUpperCase(Locale.ROOT));resident.setMoveInDate(request.moveInDate());resident.setVehicleNumber(request.vehicleNumber());return residentView(residents.save(resident));}
+
+    @GetMapping("/team-users") @PreAuthorize("hasRole('SOCIETY_ADMIN')")
+    public List<Map<String,Object>> teamUsers(){return users.findByTenantId(currentUser.requireTenantId()).stream().filter(u->List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(u.getRole())).map(this::teamUserView).toList();}
+
+    @PostMapping("/team-users") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
+    public Map<String,Object> teamUser(@Valid @RequestBody TeamUserRequest request){String tenant=currentUser.requireTenantId();UserRole role;try{role=UserRole.valueOf(request.role().toUpperCase(Locale.ROOT));}catch(Exception e){throw new IllegalArgumentException("Invalid society team role");}if(!List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(role))throw new IllegalArgumentException("Only security, maintenance and accountant accounts can be created here");String email=request.email().trim().toLowerCase(Locale.ROOT);if(users.findByEmail(email).isPresent())throw new IllegalArgumentException("Email already exists");AppUser user=new AppUser();user.setTenantId(tenant);user.setFullName(request.name().trim());user.setEmail(email);user.setPhone(request.phone());user.setDesignation(request.designation());user.setEmployeeId(request.employeeId());user.setJoiningDate(request.joiningDate());user.setWorkShift(request.workShift());user.setAddress(request.address());user.setEmergencyContactName(request.emergencyContactName());user.setEmergencyContactPhone(request.emergencyContactPhone());user.setProfileNotes(request.notes());user.setRole(role);user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));return teamUserView(users.save(user));}
 
     @GetMapping("/residents")
     @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','ACCOUNTANT','SECURITY_STAFF','MAINTENANCE_STAFF')")
@@ -111,9 +178,17 @@ public class SocietyApiController {
         complaint.setTenantId(user.getTenantId());
         complaint.setResident(resident);
         complaint.setCategory(request.category().trim());
+        complaint.setSubcategory(clean(request.subcategory()));
         complaint.setPriority(request.priority().trim().toUpperCase(Locale.ROOT));
         complaint.setTitle(request.title().trim());
         complaint.setDescription(request.description().trim());
+        complaint.setLocationDetails(clean(request.locationDetails()));
+        complaint.setIncidentAt(request.incidentAt());
+        complaint.setPreferredContactMethod(clean(request.preferredContactMethod()));
+        complaint.setReporterPhone(clean(request.reporterPhone()));
+        complaint.setAccessPermission(request.accessPermission());
+        complaint.setAttachmentReference(clean(request.attachmentReference()));
+        complaint.setAssignedTo(clean(request.assignedTo()));
         complaint.setStatus("OPEN");
         complaint.setDueAt(LocalDateTime.now().plusHours(slaHours(complaint.getPriority())));
         return complaintView(complaints.save(complaint));
@@ -152,9 +227,15 @@ public class SocietyApiController {
         visitor.setResident(residentFor(user, request.residentId(), request.unitNo()));
         visitor.setVisitorName(request.name().trim());
         visitor.setVisitorPhone(request.phone().trim());
+        visitor.setVisitorEmail(clean(request.email()));
         visitor.setPurpose(request.purpose().trim());
         visitor.setVehicleNumber(clean(request.vehicleNumber()));
         visitor.setPhotoReference(clean(request.photoReference()));
+        visitor.setEntryType(clean(request.entryType()).isBlank() ? "GUEST" : request.entryType().toUpperCase(Locale.ROOT));
+        visitor.setIdProofType(clean(request.idProofType()));
+        visitor.setIdProofNumber(clean(request.idProofNumber()));
+        visitor.setPersonsCount(request.personsCount() == null ? 1 : request.personsCount());
+        visitor.setSpecialInstructions(clean(request.specialInstructions()));
         visitor.setExpectedAt(request.expectedAt());
         visitor.setApprovalStatus("APPROVED");
         visitor.setQrCode(UUID.randomUUID().toString());
@@ -211,9 +292,18 @@ public class SocietyApiController {
 
     @GetMapping("/announcements")
     public List<Map<String, Object>> announcements() {
-        return announcements.findByTenantIdOrderByCreatedAtDesc(currentUser.requireTenantId()).stream()
-                .map(a -> Map.<String, Object>of("id", a.getId(), "title", a.getTitle(), "message", a.getMessage(),
-                        "audience", a.getAudience(), "emergency", a.isEmergency(), "createdAt", a.getCreatedAt()))
+        AppUser user = currentUser.requireUser();
+        LocalDateTime now = LocalDateTime.now();
+        return announcements.findByTenantIdOrderByCreatedAtDesc(user.getTenantId()).stream()
+                .filter(a -> user.getRole() != UserRole.RESIDENT || Set.of("ALL", "RESIDENTS").contains(clean(a.getAudience()).toUpperCase(Locale.ROOT)))
+                .filter(a -> user.getRole() != UserRole.RESIDENT || (a.getEffectiveFrom() == null || !a.getEffectiveFrom().isAfter(now)))
+                .filter(a -> user.getRole() != UserRole.RESIDENT || a.getValidUntil() == null || !a.getValidUntil().isBefore(now))
+                .map(a -> map("id", a.getId(), "title", a.getTitle(), "message", a.getMessage(),
+                        "audience", a.getAudience(), "emergency", a.isEmergency(), "createdAt", a.getCreatedAt(),
+                        "category", clean(a.getCategory()), "effectiveFrom", a.getEffectiveFrom(), "validUntil", a.getValidUntil(),
+                        "actionRequired", a.isActionRequired(), "contactPerson", clean(a.getContactPerson()),
+                        "contactPhone", clean(a.getContactPhone()), "attachmentReference", clean(a.getAttachmentReference()),
+                        "inAppNotification", a.isInAppNotification(), "emailNotification", a.isEmailNotification()))
                 .toList();
     }
 
@@ -226,9 +316,19 @@ public class SocietyApiController {
         item.setTitle(request.title().trim());
         item.setMessage(request.message().trim());
         item.setAudience(request.audience().trim().toUpperCase(Locale.ROOT));
+        if (!Set.of("ALL", "RESIDENTS", "STAFF").contains(item.getAudience())) throw new IllegalArgumentException("Invalid announcement audience");
         item.setEmergency(request.emergency());
+        item.setCategory(clean(request.category()).isBlank() ? "GENERAL" : request.category().trim().toUpperCase(Locale.ROOT));
+        item.setEffectiveFrom(request.effectiveFrom() == null ? LocalDateTime.now() : request.effectiveFrom());
+        item.setValidUntil(request.validUntil() == null ? LocalDateTime.now().plusDays(30) : request.validUntil());
+        if (!item.getValidUntil().isAfter(item.getEffectiveFrom())) throw new IllegalArgumentException("Expiry must be after the effective time");
+        item.setActionRequired(request.actionRequired()); item.setContactPerson(clean(request.contactPerson()));
+        item.setContactPhone(clean(request.contactPhone())); item.setAttachmentReference(clean(request.attachmentReference()));
+        item.setInAppNotification(request.inAppNotification()); item.setEmailNotification(request.emailNotification());
         item = announcements.save(item);
-        return Map.of("id", item.getId(), "message", "Announcement published");
+        long residentCount = residents.findByTenantIdOrderByIdAsc(item.getTenantId()).size();
+        return Map.of("id", item.getId(), "message", "Announcement published", "residentCount", residentCount,
+                "notification", item.isInAppNotification() ? "Residents will see this notice on their dashboard" : "Notice board record created");
     }
 
     @GetMapping("/bills")
@@ -308,7 +408,7 @@ public class SocietyApiController {
             throw new IllegalArgumentException("Amenity is already booked for this time");
         }
         String paymentMethod = request.paymentMethod().trim().toUpperCase(Locale.ROOT);
-        if (!Set.of("ONLINE", "CASH").contains(paymentMethod)) throw new IllegalArgumentException("Payment method must be ONLINE or CASH");
+        if (!Set.of("ONLINE", "CASH", "BANK TRANSFER", "UPI").contains(paymentMethod)) throw new IllegalArgumentException("Unsupported payment method");
         Booking booking = new Booking();
         booking.setTenantId(user.getTenantId());
         booking.setAmenity(amenity);
@@ -318,8 +418,18 @@ public class SocietyApiController {
         booking.setApprovalStatus(amenity.isApprovalRequired() ? "PENDING" : "APPROVED");
         booking.setAmount(value(amenity.getBookingFee()));
         booking.setPaymentMethod(paymentMethod);
-        booking.setPaymentStatus(paymentMethod.equals("ONLINE") ? "PAID" : "PENDING_COLLECTION");
+        booking.setPaymentStatus(paymentMethod.equals("CASH") ? "PENDING_COLLECTION" : "PAID");
         booking.setPaymentReference(clean(request.paymentReference()));
+        booking.setBookingReference("AMB-" + System.currentTimeMillis());
+        booking.setEventType(clean(request.eventType())); booking.setEventPurpose(clean(request.eventPurpose()));
+        booking.setExpectedGuests(request.expectedGuests()); booking.setChildrenCount(request.childrenCount()); booking.setVehicleCount(request.vehicleCount());
+        booking.setOrganizerName(clean(request.organizerName())); booking.setOrganizerPhone(clean(request.organizerPhone())); booking.setOrganizerEmail(clean(request.organizerEmail()));
+        booking.setSetupStyle(clean(request.setupStyle())); booking.setEquipmentRequired(clean(request.equipmentRequired()));
+        booking.setCateringDetails(clean(request.cateringDetails())); booking.setDecorationDetails(clean(request.decorationDetails()));
+        booking.setAccessibilityNeeds(clean(request.accessibilityNeeds())); booking.setVehicleDetails(clean(request.vehicleDetails()));
+        booking.setSecurityDeposit(value(request.securityDeposit())); booking.setDepositStatus(clean(request.depositStatus()));
+        booking.setTermsAccepted(request.termsAccepted() ? "YES" : "NO"); booking.setEmergencyContact(clean(request.emergencyContact()));
+        booking.setSpecialInstructions(clean(request.specialInstructions()));
         return bookingView(bookings.save(booking));
     }
 
@@ -357,35 +467,56 @@ public class SocietyApiController {
     private Map<String, Object> apartmentView(Apartment a) {
         return map("id", a.getId(), "unitNo", a.getUnitNo(), "block", a.getBlock() == null ? "" : a.getBlock().getName(),
                 "floor", a.getFloorNo(), "type", a.getUnitType(), "occupancy", a.getOccupancyStatus(),
-                "ownerName", clean(a.getOwnerName()), "ownerPhone", clean(a.getOwnerPhone()));
+                "ownerName", clean(a.getOwnerName()), "ownerPhone", clean(a.getOwnerPhone()), "ownerEmail", clean(a.getOwnerEmail()),
+                "builtUpAreaSqFt", a.getBuiltUpAreaSqFt(), "parkingSlot", clean(a.getParkingSlot()),
+                "monthlyMaintenance", value(a.getMonthlyMaintenance()), "possessionDate", a.getPossessionDate(), "notes", clean(a.getNotes()));
     }
 
     private Map<String, Object> residentView(Resident r) {
         return map("id", r.getId(), "name", r.getUser().getFullName(), "email", r.getUser().getEmail(),
                 "phone", clean(r.getUser().getPhone()), "unitNo", r.getApartment().getUnitNo(),
-                "residentType", r.getResidentType(), "vehicleNumber", clean(r.getVehicleNumber()));
+                "residentType", r.getResidentType(), "vehicleNumber", clean(r.getVehicleNumber()), "moveInDate", r.getMoveInDate());
     }
+
+    private Map<String,Object> teamUserView(AppUser u){return map("id",u.getId(),"name",u.getFullName(),"email",u.getEmail(),"phone",clean(u.getPhone()),"role",u.getRole().name(),"designation",clean(u.getDesignation()),"employeeId",clean(u.getEmployeeId()),"joiningDate",u.getJoiningDate(),"workShift",clean(u.getWorkShift()),"accountLocked",u.isAccountLocked());}
 
     private Map<String, Object> complaintView(Complaint c) {
         return map("id", c.getId(), "title", c.getTitle(), "category", c.getCategory(), "priority", c.getPriority(),
-                "description", c.getDescription(), "status", c.getStatus(), "assignedTo", clean(c.getAssignedTo()),
+                "subcategory", clean(c.getSubcategory()), "description", c.getDescription(), "locationDetails", clean(c.getLocationDetails()),
+                "incidentAt", c.getIncidentAt(), "preferredContactMethod", clean(c.getPreferredContactMethod()),
+                "reporterPhone", clean(c.getReporterPhone()), "accessPermission", Boolean.TRUE.equals(c.getAccessPermission()),
+                "attachmentReference", clean(c.getAttachmentReference()), "status", c.getStatus(), "assignedTo", clean(c.getAssignedTo()),
                 "resolutionNotes", clean(c.getResolutionNotes()), "dueAt", c.getDueAt(), "escalatedAt", c.getEscalatedAt(), "closedAt", c.getClosedAt(), "resident", c.getResident().getUser().getFullName(),
                 "unitNo", c.getResident().getApartment().getUnitNo(), "createdAt", c.getCreatedAt(),
                 "sparePartsUsed", clean(c.getSparePartsUsed()), "repairCost", value(c.getRepairCost()));
     }
 
     private Map<String, Object> visitorView(Visitor v) {
-        return map("id", v.getId(), "name", v.getVisitorName(), "phone", v.getVisitorPhone(), "purpose", v.getPurpose(),
+        return map("id", v.getId(), "name", v.getVisitorName(), "phone", v.getVisitorPhone(), "email", clean(v.getVisitorEmail()), "purpose", v.getPurpose(),
                 "resident", v.getResident().getUser().getFullName(), "unitNo", v.getResident().getApartment().getUnitNo(),
                 "expectedAt", v.getExpectedAt(), "checkInAt", v.getCheckInAt(), "checkOutAt", v.getCheckOutAt(),
                 "approvalStatus", v.getApprovalStatus(), "status", v.getStatus(), "qrCode", v.getQrCode(),
-                "vehicleNumber", clean(v.getVehicleNumber()), "photoReference", clean(v.getPhotoReference()));
+                "vehicleNumber", clean(v.getVehicleNumber()), "photoReference", clean(v.getPhotoReference()),
+                "entryType", clean(v.getEntryType()), "idProofType", clean(v.getIdProofType()), "idProofNumber", clean(v.getIdProofNumber()),
+                "personsCount", v.getPersonsCount(), "specialInstructions", clean(v.getSpecialInstructions()));
     }
 
     private Map<String, Object> billView(MaintenanceBill b) {
-        return map("id", b.getId(), "unitNo", b.getApartment().getUnitNo(), "month", b.getBillMonth(),
+        return map("id", b.getId(), "unitNo", b.getApartment().getUnitNo(), "month", b.getBillMonth(), "invoiceNumber", clean(b.getInvoiceNumber()),
+                "invoiceDate", b.getInvoiceDate(), "periodStart", b.getBillingPeriodStart(), "periodEnd", b.getBillingPeriodEnd(),
                 "baseAmount", value(b.getBaseAmount()), "lateFee", value(b.getLateFee()), "totalAmount", value(b.getTotalAmount()),
-                "dueDate", b.getDueDate(), "paymentStatus", b.getPaymentStatus());
+                "baseRatePerSqFt", value(b.getBaseRatePerSqFt()), "billedAreaSqFt", b.getBilledAreaSqFt(),
+                "waterPreviousReading", value(b.getWaterPreviousReading()), "waterCurrentReading", value(b.getWaterCurrentReading()),
+                "waterUnits", value(b.getWaterUnits()), "waterRatePerUnit", value(b.getWaterRatePerUnit()), "waterAmount", value(b.getWaterAmount()),
+                "commonPowerFee", value(b.getCommonPowerFee()), "sinkingFund", value(b.getSinkingFund()), "repairReserve", value(b.getRepairReserve()),
+                "parkingFee", value(b.getParkingFee()), "amenityFee", value(b.getAmenityFee()), "otherCharges", value(b.getOtherCharges()),
+                "otherChargeDescription", clean(b.getOtherChargeDescription()), "previousBalance", value(b.getPreviousBalance()),
+                "creditAdjustment", value(b.getCreditAdjustment()), "taxableAmount", value(b.getTaxableAmount()),
+                "cgstRate", value(b.getCgstRate()), "cgstAmount", value(b.getCgstAmount()), "sgstRate", value(b.getSgstRate()), "sgstAmount", value(b.getSgstAmount()),
+                "roundOff", value(b.getRoundOff()), "dueDate", b.getDueDate(), "paymentStatus", b.getPaymentStatus(),
+                "paymentTerms", clean(b.getPaymentTerms()), "bankName", clean(b.getBankName()), "bankAccountNumber", clean(b.getBankAccountNumber()),
+                "bankIfsc", clean(b.getBankIfsc()), "upiId", clean(b.getUpiId()), "societyGstin", clean(b.getSocietyGstin()),
+                "societyPan", clean(b.getSocietyPan()), "notes", clean(b.getNotes()));
     }
 
     private Map<String, Object> bookingView(Booking b) {
@@ -393,7 +524,15 @@ public class SocietyApiController {
                 "unitNo", b.getResident().getApartment().getUnitNo(), "startTime", b.getStartTime(), "endTime", b.getEndTime(),
                 "approvalStatus", b.getApprovalStatus(), "amount", value(b.getAmount()),
                 "paymentMethod", clean(b.getPaymentMethod()), "paymentStatus", clean(b.getPaymentStatus()),
-                "paymentReference", clean(b.getPaymentReference()));
+                "paymentReference", clean(b.getPaymentReference()), "bookingReference", clean(b.getBookingReference()),
+                "eventType", clean(b.getEventType()), "eventPurpose", clean(b.getEventPurpose()), "expectedGuests", b.getExpectedGuests(),
+                "childrenCount", b.getChildrenCount(), "vehicleCount", b.getVehicleCount(), "organizerName", clean(b.getOrganizerName()),
+                "organizerPhone", clean(b.getOrganizerPhone()), "organizerEmail", clean(b.getOrganizerEmail()), "setupStyle", clean(b.getSetupStyle()),
+                "equipmentRequired", clean(b.getEquipmentRequired()), "cateringDetails", clean(b.getCateringDetails()),
+                "decorationDetails", clean(b.getDecorationDetails()), "accessibilityNeeds", clean(b.getAccessibilityNeeds()),
+                "vehicleDetails", clean(b.getVehicleDetails()), "securityDeposit", value(b.getSecurityDeposit()),
+                "depositStatus", clean(b.getDepositStatus()), "termsAccepted", clean(b.getTermsAccepted()),
+                "emergencyContact", clean(b.getEmergencyContact()), "specialInstructions", clean(b.getSpecialInstructions()));
     }
 
     private static Map<String, Object> map(Object... values) {
@@ -406,21 +545,45 @@ public class SocietyApiController {
     private static BigDecimal value(BigDecimal value) { return value == null ? BigDecimal.ZERO : value; }
     private static long slaHours(String priority){return switch(priority==null?"NORMAL":priority.toUpperCase(Locale.ROOT)){case "EMERGENCY"->2;case "HIGH"->8;case "LOW"->72;default->24;};}
 
-    public record ComplaintRequest(@NotBlank @Size(max=120) String title, @NotBlank String category,
-                                   @NotBlank String priority, @NotBlank @Size(max=2000) String description, Long residentId) {}
+    public record ComplaintRequest(@NotBlank @Size(max=120) String title,@NotBlank String category,String subcategory,
+                                   @NotBlank String priority,@NotBlank @Size(max=2000) String description,Long residentId,
+                                   String locationDetails,LocalDateTime incidentAt,String preferredContactMethod,
+                                   String reporterPhone,boolean accessPermission,String attachmentReference,String assignedTo) {}
     public record ComplaintUpdate(@NotBlank String status, String assignedTo, String resolutionNotes, String sparePartsUsed, BigDecimal repairCost) {}
-    public record VisitorRequest(@NotBlank String name, @NotBlank String phone, @NotBlank String purpose,
-                                 @NotNull @FutureOrPresent LocalDateTime expectedAt, Long residentId, String unitNo, String vehicleNumber, String photoReference) {}
+    public record VisitorRequest(@NotBlank String name,@NotBlank String phone,@Email String email,@NotBlank String purpose,
+                                 @NotNull @FutureOrPresent LocalDateTime expectedAt,Long residentId,String unitNo,
+                                 String vehicleNumber,String photoReference,String entryType,String idProofType,String idProofNumber,
+                                 @Positive Integer personsCount,String specialInstructions) {}
     public record VisitorScanRequest(@NotBlank String qrCode) {}
-    public record AnnouncementRequest(@NotBlank String title, @NotBlank @Size(max=3000) String message,
-                                      @NotBlank String audience, boolean emergency) {}
+    public record AnnouncementRequest(@NotBlank @Size(max=120) String title, @NotBlank @Size(max=3000) String message,
+                                      @NotBlank String audience, boolean emergency,String category,
+                                      LocalDateTime effectiveFrom,LocalDateTime validUntil,boolean actionRequired,
+                                      String contactPerson,String contactPhone,String attachmentReference,
+                                      boolean inAppNotification,boolean emailNotification) {}
     public record BookingRequest(@NotNull Long amenityId, @NotNull @Future LocalDateTime startTime,
                                  @NotNull @Future LocalDateTime endTime) {}
     public record AdminBookingRequest(@NotNull Long amenityId, @NotNull Long residentId,
                                       @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime,
-                                      @NotBlank String paymentMethod, String paymentReference) {}
+                                      @NotBlank String paymentMethod, String paymentReference,
+                                      String eventType,@NotBlank String eventPurpose,@Positive Integer expectedGuests,
+                                      @PositiveOrZero Integer childrenCount,@PositiveOrZero Integer vehicleCount,
+                                      @NotBlank String organizerName,@NotBlank String organizerPhone,@Email String organizerEmail,
+                                      String setupStyle,String equipmentRequired,String cateringDetails,String decorationDetails,
+                                      String accessibilityNeeds,String vehicleDetails,@PositiveOrZero BigDecimal securityDeposit,
+                                      String depositStatus,boolean termsAccepted,String emergencyContact,String specialInstructions) {}
     public record BookingApprovalRequest(@NotBlank String approvalStatus) {}
-    public record ApartmentRequest(@NotBlank String unitNo,@NotBlank String block,@PositiveOrZero int floor,@NotBlank String unitType,@NotBlank String occupancy,@NotBlank String ownerName){}
-    public record ResidentRequest(@NotBlank String name,@Email @NotBlank String email,@NotBlank String unitNo,@NotBlank String residentType,@NotBlank @Size(min=8,max=72) String temporaryPassword){}
+    public record ApartmentRequest(@NotBlank String unitNo,@NotBlank String block,@PositiveOrZero int floor,
+                                   @NotBlank String unitType,@NotBlank String occupancy,@NotBlank String ownerName,
+                                   String ownerPhone,@Email String ownerEmail,@PositiveOrZero Integer builtUpAreaSqFt,
+                                   String parkingSlot,@PositiveOrZero BigDecimal monthlyMaintenance,
+                                   LocalDate possessionDate,@Size(max=1000) String notes){}
+    public record ResidentRequest(@NotBlank String name,@Email @NotBlank String email,String phone,@NotBlank String unitNo,
+                                  @NotBlank String residentType,LocalDate moveInDate,String vehicleNumber,String address,
+                                  String emergencyContactName,String emergencyContactPhone,String notes,
+                                  @NotBlank @Size(min=8,max=72) String temporaryPassword){}
+    public record TeamUserRequest(@NotBlank String name,@Email @NotBlank String email,String phone,@NotBlank String role,
+                                  @NotBlank String designation,String employeeId,LocalDate joiningDate,String workShift,
+                                  String address,String emergencyContactName,String emergencyContactPhone,String notes,
+                                  @NotBlank @Size(min=8,max=72) String temporaryPassword){}
     public record AmenityRequest(@NotBlank String name,@Positive int capacity,@NotNull @PositiveOrZero BigDecimal bookingFee,boolean approvalRequired){}
 }

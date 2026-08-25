@@ -209,7 +209,8 @@ public class AuthController {
     private static String dashboardRole(UserRole role) {
         return switch (role) {
             case SUPER_ADMIN -> "superadmin";
-            case SOCIETY_ADMIN, ACCOUNTANT, FACILITY_MANAGER -> "admin";
+            case SOCIETY_ADMIN, FACILITY_MANAGER -> "admin";
+            case ACCOUNTANT -> "accountant";
             case RESIDENT -> "resident";
             case SECURITY_STAFF -> "security";
             case MAINTENANCE_STAFF -> "maintenance";
@@ -219,7 +220,8 @@ public class AuthController {
     private static String dashboardRedirect(UserRole role) {
         return switch (role) {
             case SUPER_ADMIN -> "/dashboards/superadmin";
-            case SOCIETY_ADMIN, ACCOUNTANT, FACILITY_MANAGER -> "/dashboards/society-admin";
+            case SOCIETY_ADMIN, FACILITY_MANAGER -> "/dashboards/society-admin";
+            case ACCOUNTANT -> "/dashboards/accountant";
             case RESIDENT -> "/dashboards/resident";
             case SECURITY_STAFF -> "/dashboards/security";
             case MAINTENANCE_STAFF -> "/dashboards/maintenance";

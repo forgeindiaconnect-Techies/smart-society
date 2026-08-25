@@ -24,6 +24,58 @@ public class MaintenanceBill extends BaseEntity {
 
     private BigDecimal baseAmount;
 
+    private String invoiceNumber;
+
+    private LocalDate invoiceDate;
+
+    private LocalDate billingPeriodStart;
+
+    private LocalDate billingPeriodEnd;
+
+    private BigDecimal baseRatePerSqFt;
+
+    private Integer billedAreaSqFt;
+
+    private BigDecimal waterPreviousReading;
+
+    private BigDecimal waterCurrentReading;
+
+    private BigDecimal waterUnits;
+
+    private BigDecimal waterRatePerUnit;
+
+    private BigDecimal waterAmount;
+
+    private BigDecimal commonPowerFee;
+
+    private BigDecimal sinkingFund;
+
+    private BigDecimal repairReserve;
+
+    private BigDecimal parkingFee;
+
+    private BigDecimal amenityFee;
+
+    private BigDecimal otherCharges;
+
+    private String otherChargeDescription;
+
+    private BigDecimal previousBalance;
+
+    private BigDecimal creditAdjustment;
+
+    private BigDecimal taxableAmount;
+
+    private BigDecimal cgstRate;
+
+    private BigDecimal cgstAmount;
+
+    private BigDecimal sgstRate;
+
+    private BigDecimal sgstAmount;
+
+    private BigDecimal roundOff;
+
     private BigDecimal lateFee;
 
     private BigDecimal totalAmount;
@@ -31,4 +83,20 @@ public class MaintenanceBill extends BaseEntity {
     private LocalDate dueDate;
 
     private String paymentStatus;
+
+    private String paymentTerms;
+
+    private String bankName;
+
+    private String bankAccountNumber;
+
+    private String bankIfsc;
+
+    private String upiId;
+
+    private String societyGstin;
+
+    private String societyPan;
+
+    private String notes;
 }

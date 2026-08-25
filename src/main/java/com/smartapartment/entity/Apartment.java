@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -26,4 +29,16 @@ public class Apartment extends BaseEntity {
     private String ownerName;
 
     private String ownerPhone;
+
+    private String ownerEmail;
+
+    private Integer builtUpAreaSqFt;
+
+    private String parkingSlot;
+
+    private BigDecimal monthlyMaintenance;
+
+    private LocalDate possessionDate;
+
+    private String notes;
 }

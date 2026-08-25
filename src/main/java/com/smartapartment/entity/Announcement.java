@@ -27,4 +27,20 @@ public class Announcement extends BaseEntity {
     private String recipientEmail;
 
     private boolean emergency;
+
+    private String category;
+
+    private java.time.LocalDateTime effectiveFrom;
+
+    private boolean actionRequired;
+
+    private String contactPerson;
+
+    private String contactPhone;
+
+    private String attachmentReference;
+
+    private boolean inAppNotification;
+
+    private boolean emailNotification;
 }

@@ -492,9 +492,14 @@ function gradient(index) {
 
 function contactFields() {
     return `
-        <label>Name<input data-modal-field="name" placeholder="Your name"></label>
-        <label>Phone<input data-modal-field="phone" placeholder="Mobile number"></label>
-        <label>Email<input data-modal-field="email" placeholder="Email address"></label>
+        <label>Full Name<input data-modal-field="name" placeholder="Your name"></label>
+        <label>Mobile Number<input data-modal-field="phone" type="tel" placeholder="Mobile number"></label>
+        <label>Email Address<input data-modal-field="email" type="email" placeholder="Email address"></label>
+        <label>Contact Purpose<select data-modal-field="purpose"><option>Check availability</option><option>Schedule discussion</option><option>Negotiate price</option><option>Request documents</option><option>Other</option></select></label>
+        <label>Preferred Contact Time<input data-modal-field="preferredTime" type="datetime-local"></label>
+        <label>Move-in / Purchase Timeline<input data-modal-field="timeline" placeholder="Immediate, 30 days, 3 months..."></label>
+        <label>Financing Status<select data-modal-field="financing"><option>Not applicable</option><option>Funds ready</option><option>Loan pre-approved</option><option>Loan assistance required</option></select></label>
+        <label>Message to Owner<textarea data-modal-field="message" placeholder="Share your requirement and questions"></textarea></label>
     `;
 }
 
@@ -533,17 +538,26 @@ function actionFields(kind) {
     if (kind === "post") return postFields(activePostType);
     if (kind === "visit") {
         return `
-            <label>Name<input data-modal-field="name" placeholder="Your name"></label>
-            <label>Phone<input data-modal-field="phone" placeholder="Mobile number"></label>
-            <label>Preferred Date<input data-modal-field="date" placeholder="Example: Saturday"></label>
-            <label>Preferred Time<input data-modal-field="time" placeholder="Example: 5 PM"></label>
+            <label>Visitor Name<input data-modal-field="name" placeholder="Your name"></label>
+            <label>Mobile Number<input data-modal-field="phone" type="tel" placeholder="Mobile number"></label>
+            <label>Email Address<input data-modal-field="email" type="email" placeholder="Email address"></label>
+            <label>Preferred Date<input data-modal-field="date" type="date"></label>
+            <label>Start Time<input data-modal-field="time" type="time"></label>
+            <label>Alternate Date<input data-modal-field="alternateDate" type="date"></label>
+            <label>Visitor Count<input data-modal-field="visitorCount" type="number" min="1" value="1"></label>
+            <label>Visit Mode<select data-modal-field="visitMode"><option>In-person</option><option>Video tour</option><option>Agent-assisted</option></select></label>
+            <label>Vehicle Number<input data-modal-field="vehicle" placeholder="Optional"></label>
+            <label>Questions / Access Instructions<textarea data-modal-field="instructions" placeholder="Parking, landmark, accessibility or property questions"></textarea></label>
         `;
     }
     if (kind === "photos") {
         return `
             <label>Name<input data-modal-field="name" placeholder="Your name"></label>
             <label>Phone<input data-modal-field="phone" placeholder="Mobile number"></label>
-            <label>Photo Request<input data-modal-field="request" placeholder="Bedroom, balcony, parking..."></label>
+            <label>Email<input data-modal-field="email" type="email" placeholder="Email address"></label>
+            <label>Rooms / Areas Required<input data-modal-field="request" placeholder="Bedroom, balcony, parking..."></label>
+            <label>Preferred Format<select data-modal-field="format"><option>Photos</option><option>Walkthrough video</option><option>Both photos and video</option></select></label>
+            <label>Additional Instructions<textarea data-modal-field="instructions" placeholder="Angles, fixtures or amenities to capture"></textarea></label>
         `;
     }
     if (kind === "report") {
@@ -552,7 +566,10 @@ function actionFields(kind) {
             <label>Phone<input data-modal-field="phone" placeholder="Mobile number"></label>
             <label>Email<input data-modal-field="email" type="email" placeholder="Email address"></label>
             <label>Issue Type<select data-modal-field="issue"><option>Wrong price</option><option>Unavailable apartment</option><option>Incorrect photos</option><option>Duplicate listing</option></select></label>
-            <label>Details<input data-modal-field="details" placeholder="Explain the issue"></label>
+            <label>Listing Reference<input data-modal-field="reference" placeholder="Property or listing reference"></label>
+            <label>Evidence Reference<input data-modal-field="evidence" placeholder="Screenshot or document URL"></label>
+            <label>Preferred Follow-up<select data-modal-field="followup"><option>Email</option><option>Phone</option><option>In-app</option></select></label>
+            <label>Detailed Issue<textarea data-modal-field="details" placeholder="Explain what is incorrect and the expected correction"></textarea></label>
         `;
     }
     return contactFields();
@@ -953,6 +970,7 @@ document.getElementById("budgetRange")?.addEventListener("input", (event) => {
 });
 
 document.getElementById("closeModal")?.addEventListener("click", () => modal.classList.add("hidden"));
+document.getElementById("cancelModal")?.addEventListener("click", () => modal.classList.add("hidden"));
 document.getElementById("modalSubmit")?.addEventListener("click", async () => {
     if (activeModalKind === "post") {
         await submitPostedApartment();
@@ -985,6 +1003,7 @@ document.getElementById("modalSubmit")?.addEventListener("click", async () => {
             status: "New",
             submittedAt: new Date().toISOString()
         };
+        request.purpose=read("purpose");request.preferredTime=read("preferredTime");request.timeline=read("timeline");request.financing=read("financing");request.message=read("message");
         saveOwnerContactRequest(request);
         modal.classList.add("hidden");
         showToast(`Owner details request saved for ${request.apartment}`);

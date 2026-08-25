@@ -7,7 +7,7 @@
     <title>SmartApartment - Society Management, Simplified</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260818-readable-type-v1">
-    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260818-readable-type-v1">
+    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260824-static-showcase-v1">
 </head>
 <body class="recording-landing">
 <div class="announcement-bar">
@@ -30,12 +30,12 @@
                 <a class="active" href="#home">Home</a>
                 <a href="#about">About</a>
                 <a href="#products">Products</a>
-                <a href="#features">Features</a>
                 <a href="#tutorials">Tutorials</a>
                 <a href="#testimonials">Testimonials</a>
                 <a href="#contact">Contact</a>
             </div>
             <a class="propertydirect-pill" href="/propertydirect"><span aria-hidden="true">⌂</span> PropertyDirect</a>
+            <button class="electrical-switch-wrapper header-theme-toggle" id="electricalSwitchFixed" type="button" aria-label="Switch to dark mode" aria-pressed="false"></button>
             <button class="header-login" type="button" data-action="dashboard-login">Login</button>
         </nav>
         <button class="menu-button" id="menuButton" type="button" aria-label="Menu" aria-controls="nav" aria-expanded="false">
@@ -54,7 +54,6 @@
                 <p>Streamline billing, visitor management, residents, complaints, amenities, expenses and online workflows from one controlled platform.</p>
                 <div class="hero-actions">
                     <button class="button-primary" type="button" data-action="register"><span aria-hidden="true">↗</span> Start Free Onboarding</button>
-                    <a class="button-ghost" href="#features">Explore Features <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="hero-trust" aria-label="SmartApartment platform highlights">
                     <div><strong>4</strong><span>Role workspaces</span></div>
@@ -200,6 +199,18 @@
         </div>
     </section>
 
+    <section class="content-section" id="tutorials">
+        <div class="landing-container">
+            <div class="section-heading landing-reveal"><span class="section-kicker">Tutorials</span><h2>Learn SmartApartment in Minutes</h2><p>Open focused, step-by-step workflows for the platform's most important operations.</p></div>
+            <div class="tutorial-tabs landing-reveal" role="tablist" aria-label="Tutorial categories"><button class="active" type="button" role="tab" aria-selected="true" data-tutorial-filter="all">All</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="operations">Operations</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="finance">Finance</button></div>
+            <div class="tutorial-grid landing-reveal" id="tutorialGrid">
+                <a class="tutorial-card" data-category="operations" href="/terms/onboarding#society-onboarding"><div><span>ONBOARDING · 5 MIN</span></div><h3>Set up a society and its residents</h3><p>Tenant, plan, blocks, flats and access</p></a>
+                <a class="tutorial-card" data-category="operations" href="/terms/daily-operations#visitor-approvals"><div><span>OPERATIONS · 7 MIN</span></div><h3>Run visitor and gate approvals</h3><p>Expected entries, check-in and checkout</p></a>
+                <a class="tutorial-card" data-category="finance" href="/terms/finance-reports#online-payments"><div><span>FINANCE · 6 MIN</span></div><h3>Generate bills and collect dues</h3><p>Billing cycles, payments and receipts</p></a>
+            </div>
+        </div>
+    </section>
+
     <section class="content-section tinted-section" id="testimonials">
         <div class="landing-container">
             <div class="section-heading landing-reveal"><span class="section-kicker">Role Stories</span><h2>Trusted Across Every Society Role</h2><p>One connected system, adapted to the responsibility of each community team.</p></div>
@@ -214,18 +225,6 @@
         </div>
     </section>
 
-    <section class="content-section" id="tutorials">
-        <div class="landing-container">
-            <div class="section-heading landing-reveal"><span class="section-kicker">Tutorials</span><h2>Learn SmartApartment in Minutes</h2><p>Open focused, step-by-step workflows for the platform's most important operations.</p></div>
-            <div class="tutorial-tabs landing-reveal" role="tablist" aria-label="Tutorial categories"><button class="active" type="button" role="tab" aria-selected="true" data-tutorial-filter="all">All</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="operations">Operations</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="finance">Finance</button></div>
-            <div class="tutorial-grid landing-reveal" id="tutorialGrid">
-                <a class="tutorial-card" data-category="operations" href="/terms/onboarding#society-onboarding"><div><i>▶</i><span>ONBOARDING · 5 MIN</span></div><h3>Set up a society and its residents</h3><p>Tenant, plan, blocks, flats and access</p></a>
-                <a class="tutorial-card" data-category="operations" href="/terms/daily-operations#visitor-approvals"><div><i>▶</i><span>OPERATIONS · 7 MIN</span></div><h3>Run visitor and gate approvals</h3><p>Expected entries, check-in and checkout</p></a>
-                <a class="tutorial-card" data-category="finance" href="/terms/finance-reports#online-payments"><div><i>▶</i><span>FINANCE · 6 MIN</span></div><h3>Generate bills and collect dues</h3><p>Billing cycles, payments and receipts</p></a>
-            </div>
-        </div>
-    </section>
-
     <section class="contact-section" id="contact">
         <div class="landing-container contact-grid">
             <div class="contact-copy landing-reveal">
@@ -236,16 +235,25 @@
                 <div class="contact-links"><a href="/terms/onboarding">Onboarding guide</a><a href="/terms/daily-operations">Daily operations</a><a href="/terms/finance-reports">Finance & reports</a></div>
             </div>
             <form class="demo-card landing-reveal-right" id="landingDemoForm">
-                <h3>Create Your Workspace</h3>
-                <p>Enter the basics, then complete the secure registration flow.</p>
+                <div class="registration-heading">
+                    <span class="registration-step">Step 1 of 2</span>
+                    <h3>Create Your Workspace</h3>
+                    <p>Tell us who is setting up the workspace. You will review the society and administrator details next.</p>
+                </div>
                 <div class="demo-tabs" role="tablist" aria-label="Registration persona"><button class="active" type="button" role="tab" aria-selected="true" data-demo-persona="society">▦ Society</button><button type="button" role="tab" aria-selected="false" data-demo-persona="professional">▤ Management Professional</button></div>
-                <label id="inlineSocietyField">Society Name<input name="societyName" placeholder="Enter society name" required></label>
-                <label>Your Name<input name="name" placeholder="Enter your full name" required></label>
-                <label>Phone Number<input name="phone" type="tel" placeholder="+91 XXXXX XXXXX" required></label>
-                <label>Email Address<input name="email" type="email" placeholder="you@example.com" required></label>
-                <label>City<select name="city"><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option></select></label>
-                <button class="button-primary demo-submit" type="submit">↗ Continue Free Registration</button>
-                <small>No payment is collected during workspace registration.</small>
+                <div class="registration-grid">
+                    <label class="registration-wide" id="inlineSocietyField">Society Name<span>Official apartment or community name</span><input name="societyName" placeholder="Example: Green Nest Apartments" minlength="3" maxlength="120" autocomplete="organization" required></label>
+                    <div class="professional-intro registration-wide" data-professional-field hidden><i>▤</i><span><strong>Management portfolio setup</strong><small>Tell us about your organization. You will enter the first society’s details in the secure next step.</small></span></div>
+                    <label class="registration-wide" data-professional-field hidden>Management Company<span>Company, agency, or independent practice name</span><input name="managementCompany" placeholder="Example: Urban Community Management" minlength="2" maxlength="120" autocomplete="organization"></label>
+                    <label data-professional-field hidden>Your Designation<span>Your responsibility in the organization</span><select name="designation"><option value="">Select designation</option><option>Founder / Owner</option><option>Property Manager</option><option>Facility Manager</option><option>Community Manager</option><option>Operations Manager</option><option>Consultant</option></select></label>
+                    <label data-professional-field hidden>Societies Managed<span>Current community portfolio size</span><select name="portfolioSize"><option value="">Select portfolio size</option><option>Setting up my first society</option><option>1–5 societies</option><option>6–20 societies</option><option>More than 20 societies</option></select></label>
+                    <label>Your Name<span>Primary workspace administrator</span><input name="name" placeholder="Enter your full name" minlength="2" maxlength="100" autocomplete="name" required></label>
+                    <label>Phone Number<span>Used for onboarding updates</span><input name="phone" type="tel" placeholder="+91 98765 43210" pattern="[+0-9 ()-]{10,18}" autocomplete="tel" required></label>
+                    <label>Email Address<span>Your administrator login email</span><input name="email" type="email" placeholder="you@example.com" maxlength="160" autocomplete="email" required></label>
+                    <label>City<span>Primary society location</span><select name="city" autocomplete="address-level2" required><option value="">Select city</option><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option><option>Other</option></select></label>
+                </div>
+                <button class="button-primary demo-submit" type="submit"><span>Continue to Secure Setup</span><b aria-hidden="true">→</b></button>
+                <div class="registration-assurance"><span>✓ No payment now</span><span>✓ Secure setup</span><span>✓ Approval protected</span></div>
             </form>
         </div>
     </section>
@@ -256,20 +264,51 @@
 </footer>
 
 <div class="modal hidden" id="registerModal" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
-    <div class="modal-card">
+    <form class="modal-card registration-modal-card" id="registerDetailsForm">
         <button class="close" id="closeRegisterModal" type="button" aria-label="Close registration">×</button>
-        <h2 id="registerModalTitle">Register Society</h2>
-        <p>Create your apartment community workspace and start the onboarding flow.</p>
-        <label>Society Name<input id="societyName" placeholder="Example: Green Nest Apartments"></label>
-        <label>Admin Name<input id="societyAdminName" placeholder="Committee contact name"></label>
-        <label>Admin Email<input id="societyAdminEmail" type="email" placeholder="contact@community.com"></label>
-        <label>Phone<input id="societyPhone" placeholder="Mobile number"></label>
-        <label>Address<input id="societyAddress" placeholder="Street and locality"></label>
-        <label>City<select id="societyCity"><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option></select></label>
-        <label>Temporary Admin Password<input id="societyPassword" type="password" placeholder="At least 8 characters"></label>
-        <label>SaaS Subscription Plan<select id="societyPlanSelect"><option value="Free Trial">Free Trial (14 Days · 25 Flats)</option><option value="Standard" selected>Standard Tier (₹2,999/mo · 150 Flats)</option><option value="Premium">Enterprise / Premium (₹7,999/mo · Unlimited)</option></select></label>
-        <button class="button-primary full" type="button" id="submitSociety">Submit Registration</button>
-    </div>
+        <div class="registration-heading">
+            <span class="registration-step">Step 2 of 2</span>
+            <h2 id="registerModalTitle">Complete Society Registration</h2>
+            <p>Review your details, secure the administrator account, and submit the workspace for platform approval.</p>
+        </div>
+        <fieldset class="registration-section">
+            <legend><i>1</i><span><strong>Society identity</strong><small>Official profile used to create and identify the isolated workspace.</small></span></legend>
+            <div class="registration-grid">
+                <label>Society Name<input id="societyName" minlength="3" maxlength="120" autocomplete="organization" required></label>
+                <label>Society Type<select id="societyType" required><option value="">Select society type</option><option>Co-operative Housing Society</option><option>Apartment Owners Association</option><option>Resident Welfare Association</option><option>Gated Community</option><option>Builder-managed Community</option><option>Commercial Complex</option></select></label>
+                <label>Registration Number<span>Optional for societies awaiting registration</span><input id="societyRegistrationNumber" maxlength="60" placeholder="Example: TN/CHS/2026/00124"></label>
+                <label>Total Flats / Units<input id="societyTotalUnits" type="number" min="1" max="100000" placeholder="Example: 128" inputmode="numeric" required></label>
+                <label>Number of Wings / Blocks<input id="societyTotalWings" type="number" min="0" max="1000" placeholder="Example: 4" inputmode="numeric" required></label>
+            </div>
+        </fieldset>
+        <fieldset class="registration-section">
+            <legend><i>2</i><span><strong>Registered address</strong><small>Primary location for society operations and official communication.</small></span></legend>
+            <div class="registration-grid">
+                <label class="registration-wide">Complete Address<textarea id="societyAddress" rows="3" minlength="8" maxlength="300" placeholder="Building, street, area and locality" autocomplete="street-address" required></textarea></label>
+                <label>City<select id="societyCity" autocomplete="address-level2" required><option value="">Select city</option><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option><option>Other</option></select></label>
+                <label>State / Union Territory<input id="societyState" maxlength="80" placeholder="Example: Tamil Nadu" autocomplete="address-level1" required></label>
+                <label>Postal Code<input id="societyPostalCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN code" autocomplete="postal-code" required></label>
+                <label>Country<select id="societyCountry" autocomplete="country-name" required><option value="India" selected>India</option></select></label>
+            </div>
+        </fieldset>
+        <fieldset class="registration-section">
+            <legend><i>3</i><span><strong>Administrator account</strong><small>This authorized person becomes the first Society Admin after approval.</small></span></legend>
+            <div class="registration-grid">
+                <label>Admin Name<input id="societyAdminName" minlength="2" maxlength="100" autocomplete="name" required></label>
+                <label>Designation<select id="societyAdminDesignation" required><option value="">Select designation</option><option>President</option><option>Secretary</option><option>Treasurer</option><option>Committee Member</option><option>Society Manager</option><option>Facility Manager</option><option>Authorized Representative</option></select></label>
+                <label>Admin Email<input id="societyAdminEmail" type="email" maxlength="160" autocomplete="email" required></label>
+                <label>Phone Number<input id="societyPhone" type="tel" pattern="[+0-9 ()-]{10,18}" autocomplete="tel" required></label>
+                <label class="registration-wide">Password<div class="password-field"><input id="societyPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Minimum 8 characters" required><button id="toggleSocietyPassword" type="button" aria-label="Show password">Show</button></div><span class="password-guidance" id="passwordGuidance">Use 8+ characters with a number and symbol.</span></label>
+            </div>
+        </fieldset>
+        <fieldset class="registration-section">
+            <legend><i>4</i><span><strong>Plan preference</strong><small>Your selection is reviewed before activation; no payment is collected here.</small></span></legend>
+            <label>Preferred Plan<select id="societyPlanSelect" required><option value="Free Trial">Free Trial · 14 days · up to 25 flats</option><option value="Standard" selected>Standard · up to 150 flats</option><option value="Premium">Premium · unlimited flats</option></select></label>
+        </fieldset>
+        <label class="registration-consent"><input id="registrationConsent" type="checkbox" required><span>I confirm that I am authorized to register this society and agree to the <a href="/terms/onboarding" target="_blank">platform and onboarding terms</a>.</span></label>
+        <p class="registration-state" id="registrationState" role="status" aria-live="polite"></p>
+        <div class="registration-actions"><button class="button-ghost" id="backToRegistrationBasics" type="button">← Back</button><button class="button-primary" type="submit" id="submitSociety"><span>Submit for Approval</span><b aria-hidden="true">→</b></button></div>
+    </form>
 </div>
 
 <div class="modal hidden" id="dashboardLoginModal" role="dialog" aria-modal="true" aria-labelledby="dashboardLoginTitle">
@@ -277,15 +316,15 @@
         <button class="close" id="closeDashboardLoginModal" type="button" aria-label="Close login">×</button>
         <h2 id="dashboardLoginTitle">Login</h2>
         <p id="dashboardLoginHelp">Enter your credentials to open your workspace.</p>
-        <label>Username<input id="dashboardUsername" autocomplete="username" placeholder="username"></label>
-        <label>Password<input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="password"></label>
+        <label>Email ID<input id="dashboardUsername" type="email" autocomplete="username" placeholder="name@example.com"></label>
+        <label>Password<div class="password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="password"><button id="toggleDashboardPassword" type="button" aria-label="Show password">Show</button></div></label>
         <button class="button-primary full" type="button" id="submitDashboardLogin">Login & Open Dashboard</button>
     </div>
 </div>
 
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-<script src="/shared/js/theme.js?v=20260803-v1"></script>
-<script src="/smartapartment/js/landing.js?v=20260721-recording-v1"></script>
-<script src="/smartapartment/js/app.js?v=20260721-recording-v1"></script>
+<script src="/shared/js/theme.js?v=20260824-header-v1"></script>
+<script src="/smartapartment/js/landing.js?v=20260824-static-testimonials-v1"></script>
+<script src="/smartapartment/js/app.js?v=20260824-login-password-v1"></script>
 </body>
 </html>

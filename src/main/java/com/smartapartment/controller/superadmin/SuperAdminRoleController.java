@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,18 +32,38 @@ public class SuperAdminRoleController {
     public ResponseEntity<List<Map<String, Object>>> getRoles() {
         seedPolicies();
         return ResponseEntity.ok(policies.findAllByOrderByRoleNameAsc().stream()
-                .map(policy -> Map.<String, Object>of("id", policy.getId(), "role", policy.getRoleName(),
-                        "permissions", policy.getPermissions(), "status", policy.isActive() ? "Active" : "Disabled"))
+                .map(this::policyResponse)
                 .toList());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updatePolicy(@PathVariable Long id, @RequestBody RolePolicyRequest request) {
         RoleAccessPolicy policy = policies.findById(id).orElseThrow(() -> new IllegalArgumentException("Role policy was not found"));
-        policy.setPermissions(request.permissions().trim());
+        String summary = clean(request.permissions());
+        if (summary.isBlank()) throw new IllegalArgumentException("Permissions summary is required");
+        int timeout = request.sessionTimeoutMinutes() == null ? 30 : request.sessionTimeoutMinutes();
+        int sessions = request.maxConcurrentSessions() == null ? 2 : request.maxConcurrentSessions();
+        double approvalLimit = request.approvalLimit() == null ? 0D : request.approvalLimit();
+        if (timeout < 5 || timeout > 1440) throw new IllegalArgumentException("Session timeout must be between 5 and 1440 minutes");
+        if (sessions < 1 || sessions > 20) throw new IllegalArgumentException("Concurrent sessions must be between 1 and 20");
+        if (approvalLimit < 0) throw new IllegalArgumentException("Approval limit cannot be negative");
+
+        policy.setPermissions(summary);
+        policy.setModulePermissions(clean(request.modulePermissions()));
+        policy.setAllowedActions(clean(request.allowedActions()));
+        policy.setDataScope(normalizeScope(request.dataScope()));
+        policy.setApprovalLimit(approvalLimit);
+        policy.setSessionTimeoutMinutes(timeout);
+        policy.setMaxConcurrentSessions(sessions);
+        policy.setMfaRequired(request.mfaRequired());
+        policy.setSensitiveActionReauth(request.sensitiveActionReauth());
+        policy.setIpRestrictionEnabled(request.ipRestrictionEnabled());
+        policy.setAuditLoggingEnabled(request.auditLoggingEnabled());
+        policy.setExportAllowed(request.exportAllowed());
+        policy.setPolicyNotes(clean(request.policyNotes()));
         policy.setActive(request.active());
         RoleAccessPolicy saved = policies.save(policy);
-        return ResponseEntity.ok(Map.of("id", saved.getId(), "role", saved.getRoleName(), "permissions", saved.getPermissions(), "status", saved.isActive() ? "Active" : "Disabled"));
+        return ResponseEntity.ok(policyResponse(saved));
     }
 
     @PostMapping("/provision")
@@ -94,11 +115,48 @@ public class SuperAdminRoleController {
         };
     }
 
+    private Map<String, Object> policyResponse(RoleAccessPolicy policy) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", policy.getId());
+        response.put("role", policy.getRoleName());
+        response.put("permissions", policy.getPermissions());
+        response.put("modulePermissions", clean(policy.getModulePermissions()));
+        response.put("allowedActions", clean(policy.getAllowedActions()));
+        response.put("dataScope", policy.getDataScope() == null ? "ASSIGNED_SOCIETY" : policy.getDataScope());
+        response.put("approvalLimit", policy.getApprovalLimit() == null ? 0D : policy.getApprovalLimit());
+        response.put("sessionTimeoutMinutes", policy.getSessionTimeoutMinutes() == null ? 30 : policy.getSessionTimeoutMinutes());
+        response.put("maxConcurrentSessions", policy.getMaxConcurrentSessions() == null ? 2 : policy.getMaxConcurrentSessions());
+        response.put("mfaRequired", Boolean.TRUE.equals(policy.getMfaRequired()));
+        response.put("sensitiveActionReauth", policy.getSensitiveActionReauth() == null || policy.getSensitiveActionReauth());
+        response.put("ipRestrictionEnabled", Boolean.TRUE.equals(policy.getIpRestrictionEnabled()));
+        response.put("auditLoggingEnabled", policy.getAuditLoggingEnabled() == null || policy.getAuditLoggingEnabled());
+        response.put("exportAllowed", Boolean.TRUE.equals(policy.getExportAllowed()));
+        response.put("policyNotes", clean(policy.getPolicyNotes()));
+        response.put("active", policy.isActive());
+        response.put("status", policy.isActive() ? "Active" : "Disabled");
+        return response;
+    }
+
+    private String clean(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String normalizeScope(String value) {
+        String scope = clean(value).toUpperCase();
+        return switch (scope) {
+            case "OWN_RECORDS", "ASSIGNED_SOCIETY", "ALL_SOCIETIES", "PLATFORM_WIDE" -> scope;
+            default -> "ASSIGNED_SOCIETY";
+        };
+    }
+
     private void seedPolicies() {
         Arrays.stream(UserRole.values()).forEach(role -> policies.findByRoleName(role.name()).orElseGet(() -> {
             RoleAccessPolicy policy = new RoleAccessPolicy(); policy.setRoleName(role.name()); policy.setPermissions(permissionsFor(role)); policy.setActive(true); return policies.save(policy);
         }));
     }
 
-    public record RolePolicyRequest(String permissions, boolean active) {}
+    public record RolePolicyRequest(String permissions, String modulePermissions, String allowedActions,
+            String dataScope, Double approvalLimit, Integer sessionTimeoutMinutes, Integer maxConcurrentSessions,
+            boolean mfaRequired, boolean sensitiveActionReauth, boolean ipRestrictionEnabled,
+            boolean auditLoggingEnabled, boolean exportAllowed, String policyNotes, boolean active) {}
 }

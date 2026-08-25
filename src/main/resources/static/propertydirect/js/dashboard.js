@@ -42,6 +42,7 @@ const dashboardStorageKey = `propertydirect-dashboard-state:v6:${dashboardRole}`
 const publishedListingsStorageKey = "propertydirect-published-listings:v1";
 const ownerContactRequestsStorageKey = "propertydirect-owner-contact-requests:v1";
 const ownerPlanStorageKey = "propertydirect-owner-active-plan:v1";
+const propertyProfileStorageKey = `propertydirect-profile:v1:${dashboardRole}`;
 let modal = document.getElementById("dashboardModal");
 let modalTitle = document.getElementById("modalTitle");
 let modalText = document.getElementById("modalText");
@@ -73,6 +74,67 @@ function wireAutosave() {
     document.addEventListener("change", event => {
         if (event.target.closest(".dash-main")) persistDashboardState();
     });
+}
+
+function propertyProfileDefaults() {
+    const profiles = {
+        superadmin: { fullName: "Super Admin", email: "superadmin@propertydirect.in", phone: "+91 98765 43210", alternatePhone: "", employeeId: "PD-SA-001", department: "Platform Administration", designation: "Root Platform Administrator", address: "PropertyDirect Headquarters", city: "Bengaluru", state: "Karnataka", postalCode: "560001", timezone: "Asia/Kolkata", language: "English", twoFactor: "Enabled", roleLabel: "Super Administrator" },
+        admin: { fullName: "Property Moderator", email: "admin@propertydirect.in", phone: "+91 98765 43211", alternatePhone: "", employeeId: "PD-AD-014", department: "Marketplace Operations", designation: "Property Operations Administrator", address: "PropertyDirect Operations Centre", city: "Bengaluru", state: "Karnataka", postalCode: "560001", timezone: "Asia/Kolkata", language: "English", twoFactor: "Enabled", roleLabel: "Administrator" },
+        customer: { fullName: "Property Customer", email: "customer@propertydirect.in", phone: "+91 98765 43212", alternatePhone: "", employeeId: "PD-CU-1024", department: "Buyer / Tenant Account", designation: "Verified Customer", address: "12, Green Park Road", city: "Bengaluru", state: "Karnataka", postalCode: "560066", timezone: "Asia/Kolkata", language: "English", twoFactor: "Optional", roleLabel: "Customer" }
+    };
+    return profiles[dashboardRole] || profiles.customer;
+}
+
+function readPropertyProfile() {
+    const defaults = propertyProfileDefaults();
+    try { return { ...defaults, ...JSON.parse(localStorage.getItem(propertyProfileStorageKey) || "{}") }; }
+    catch { return defaults; }
+}
+
+function propertyProfileMarkup(profile) {
+    const initials = profile.fullName.split(/\s+/).map(word => word[0]).join("").slice(0, 2).toUpperCase();
+    return `
+        <div class="property-profile-layout">
+            <aside class="property-profile-summary">
+                <div class="property-profile-avatar">${initials}</div>
+                <h3>${profile.fullName}</h3><p>${profile.roleLabel}</p><span class="status active">Active account</span>
+                <dl><div><dt>Profile ID</dt><dd>${profile.employeeId}</dd></div><div><dt>Member since</dt><dd>August 2026</dd></div><div><dt>Last login</dt><dd>Today, 10:42 AM</dd></div><div><dt>Profile status</dt><dd>100% complete</dd></div></dl>
+            </aside>
+            <div class="property-profile-card">
+                <div class="property-profile-head"><div><h3>Profile information</h3><p>Maintain your personal, contact, address, role and account-security information.</p></div><div class="property-profile-actions"><button type="button" class="profile-cancel" data-profile-action="cancel" hidden>Cancel</button><button type="button" class="primary" data-profile-action="edit">Edit profile</button><button type="button" class="primary" data-profile-action="save" hidden>Save changes</button></div></div>
+                <form class="property-profile-form" id="propertyProfileForm">
+                    <div class="property-profile-section"><strong>Personal details</strong><small>Your primary identity and communication information.</small></div>
+                    <label>Full name<input name="fullName" value="${profile.fullName}" required disabled></label><label>Email address<input name="email" type="email" value="${profile.email}" required disabled></label><label>Mobile number<input name="phone" value="${profile.phone}" required disabled></label><label>Alternate mobile<input name="alternatePhone" value="${profile.alternatePhone}" placeholder="Optional" disabled></label>
+                    <div class="property-profile-section"><strong>Role and organisation</strong><small>Account ownership and operational responsibility.</small></div>
+                    <label>Profile / employee ID<input name="employeeId" value="${profile.employeeId}" disabled></label><label>Account role<input value="${profile.roleLabel}" disabled data-permanent-disabled></label><label>Department / account type<input name="department" value="${profile.department}" disabled></label><label>Designation<input name="designation" value="${profile.designation}" disabled></label>
+                    <div class="property-profile-section"><strong>Address and preferences</strong><small>Location, language and regional settings.</small></div>
+                    <label class="profile-wide">Address<textarea name="address" disabled>${profile.address}</textarea></label><label>City<input name="city" value="${profile.city}" disabled></label><label>State<input name="state" value="${profile.state}" disabled></label><label>Postal code<input name="postalCode" value="${profile.postalCode}" disabled></label><label>Timezone<select name="timezone" disabled><option selected>${profile.timezone}</option><option>UTC</option><option>Asia/Dubai</option></select></label><label>Language<select name="language" disabled><option selected>${profile.language}</option><option>Hindi</option><option>Tamil</option><option>Kannada</option></select></label><label>Two-factor authentication<select name="twoFactor" disabled><option ${profile.twoFactor === "Enabled" ? "selected" : ""}>Enabled</option><option ${profile.twoFactor === "Optional" ? "selected" : ""}>Optional</option><option>Disabled</option></select></label>
+                </form>
+            </div>
+        </div>`;
+}
+
+function ensureRoleProfileSection() {
+    const nav = document.querySelector(".dash-sidebar .sidebar-nav");
+    const main = document.querySelector("main.dash-main");
+    if (!nav || !main) return;
+    let navButton = nav.querySelector('[data-panel="profile"]');
+    if (!navButton) { navButton = document.createElement("button"); navButton.type = "button"; navButton.dataset.panel = "profile"; navButton.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg><span>My Profile</span>'; nav.appendChild(navButton); }
+    let section = main.querySelector('[data-view="profile"]');
+    if (!section) { section = document.createElement("section"); section.className = "dash-panel hidden"; section.dataset.view = "profile"; main.insertBefore(section, document.getElementById("dashboardModal") || null); }
+    section.innerHTML = propertyProfileMarkup(readPropertyProfile());
+}
+
+function setPropertyProfileEditing(editing) {
+    const form = document.getElementById("propertyProfileForm"); if (!form) return;
+    form.querySelectorAll("input,select,textarea").forEach(field => { if (!field.hasAttribute("data-permanent-disabled")) field.disabled = !editing; });
+    document.querySelector('[data-profile-action="edit"]')?.toggleAttribute("hidden", editing); document.querySelector('[data-profile-action="save"]')?.toggleAttribute("hidden", !editing); document.querySelector('[data-profile-action="cancel"]')?.toggleAttribute("hidden", !editing);
+    form.closest(".property-profile-card")?.classList.toggle("is-editing", editing);
+}
+
+function savePropertyProfile() {
+    const form = document.getElementById("propertyProfileForm"); if (!form || !form.reportValidity()) return;
+    const saved = { ...readPropertyProfile(), ...Object.fromEntries(new FormData(form).entries()) }; localStorage.setItem(propertyProfileStorageKey, JSON.stringify(saved)); ensureRoleProfileSection(); showToast("✓ Profile changes saved");
 }
 
 function readPublishedListings() {
@@ -365,16 +427,16 @@ const actionForms = {
     "post-property": {
         title: "Publish Apartment",
         text: "Add the apartment to your live listings.",
-        fields: ["Apartment title", "City", "Locality", "Rent / Price", "Apartment type", "BHK"],
+        fields: ["Apartment title", "City", "Locality", "Full property address", "Listing purpose|select:Rent,Sale,Lease", "Property type|select:Apartment,Villa,Independent House,Studio,Plot,Commercial", "BHK configuration|select:1 BHK,2 BHK,3 BHK,4 BHK,5+ BHK", "Built-up area (sq.ft)|number", "Monthly rent / sale price|number", "Security deposit|number", "Maintenance charge|number", "Furnishing|select:Unfurnished,Semi Furnished,Fully Furnished", "Available from|date", "Preferred tenant / buyer", "Parking details", "Owner name", "Owner mobile|tel", "Listing description and amenities|textarea"],
         save: (values) => {
             const form = readPostApartmentForm();
             const title = values[0] || form.title || "New Apartment";
             const city = values[1] || form.city || "Bangalore";
             const locality = values[2] || form.locality || "Owner Listed";
-            const price = values[3] || form.price || "₹28,000";
-            const type = values[4] || form.type || "Rent Apartment";
-            const bhk = values[5] || form.bhk || "2 BHK";
-            const listing = savePublishedListing({ title: `${bhk} ${title}`, city, locality, price, type, bhk, deposit: form.deposit, sqft: form.sqft });
+            const price = values[8] || form.price || "₹28,000";
+            const type = `${values[4] || "Rent"} ${values[5] || form.type || "Apartment"}`;
+            const bhk = values[6] || form.bhk || "2 BHK";
+            const listing = savePublishedListing({ title: `${bhk} ${title}`, city, locality, price, type, bhk, deposit: values[9] || form.deposit, sqft: values[7] ? `${values[7]} sqft` : form.sqft, maintenance:values[10],furnishing:values[11],available:values[12],tenant:values[13],parking:values[14],owner:values[15],phone:values[16],notes:values[17],address:values[3] });
             addListing(listing.title, type, "Live", price, listing);
             addTask(`Review newly posted apartment: ${title} (${price})`);
             incrementStat("live", 1);
@@ -402,9 +464,9 @@ const actionForms = {
     "add-lead": {
         title: "Add Apartment Lead",
         text: "Create a lead and add it to the lead table.",
-        fields: ["Lead name", "Apartment need", "Status"],
+        fields: ["Lead name", "Mobile number|tel", "Email address|email", "Requirement type|select:Rent,Buy,Lease", "Preferred city", "Preferred localities", "Property / BHK requirement", "Budget minimum|number", "Budget maximum|number", "Move-in target|date", "Lead source|select:Website,Referral,Campaign,Walk-in,Partner", "Lead priority|select:LOW,NORMAL,HIGH,HOT", "Detailed preferences|textarea"],
         save: (values) => {
-            addLead(values[0] || "New Lead", values[1] || "2 BHK apartment", values[2] || "New");
+            addLead(values[0] || "New Lead", values[6] || "2 BHK apartment", values[11] || "New");
             incrementStat("leads", 1);
             return receipt(`Lead added: ${values[0] || "New Lead"}`, activeModalTarget, values, [`<strong>Next:</strong> Lead table updated`]);
         }
@@ -412,9 +474,9 @@ const actionForms = {
     "new-visit": {
         title: "Schedule Visit",
         text: "Add a new apartment visit schedule.",
-        fields: ["Visitor name", "Date and time", "Apartment"],
+        fields: ["Visitor name", "Mobile number|tel", "Email address|email", "Apartment / listing", "Visit date|date", "Start time|time", "End time|time", "Visitor count|number", "Visit mode|select:In-person,Video tour,Agent-assisted", "Assigned relationship manager", "Meeting point / access instructions|textarea"],
         save: (values) => {
-            addVisit(`${values[1] || "Tomorrow 5 PM"} - ${values[0] || "Customer"} (${values[2] || "Apartment"})`);
+            addVisit(`${values[4] || "Tomorrow"} ${values[5] || "5 PM"} - ${values[0] || "Customer"} (${values[3] || "Apartment"})`);
             incrementStat("visits", 1);
             return receipt(`Visit scheduled for ${values[0] || "Customer"}`, activeModalTarget, values, [`<strong>Next:</strong> Visit schedule updated`]);
         }
@@ -422,34 +484,34 @@ const actionForms = {
     "add-payment": {
         title: "Add Payment",
         text: "Record a plan or service payment.",
-        fields: ["Payment item", "Amount", "Status"],
+        fields: ["Payment item / purpose", "Payer name", "Payer email|email", "Amount|number", "Tax amount|number", "Payment date|date", "Payment method|select:UPI,Card,Net banking,Bank transfer,Cash,Cheque", "Transaction reference", "Payment status|select:PENDING,PAID,FAILED,REFUNDED", "Invoice / receipt number", "Settlement notes|textarea"],
         save: (values) => {
-            addPayment(values[0] || "Apartment Service", values[1] || "₹999", values[2] || "Pending");
+            addPayment(values[0] || "Apartment Service", values[3] || "₹999", values[8] || "Pending");
             return receipt(`Payment added: ${values[0] || "Apartment Service"}`, activeModalTarget, values, [`<strong>Amount:</strong> ${values[1] || "₹999"}`]);
         }
     },
     "book-service": {
         title: "Book Apartment Service",
         text: "Confirm a service request for this apartment.",
-        fields: ["Service date", "Apartment", "Notes"],
+        fields: ["Service category|select:Painting,Cleaning,Packers and Movers,Legal Verification,Home Loan,Property Inspection,Maintenance,Other", "Apartment / listing", "Service address", "Preferred date|date", "Preferred time|time", "Contact person", "Contact mobile|tel", "Access permission|select:Owner present,Tenant present,Security access,Call before arrival", "Budget estimate|number", "Service requirements and notes|textarea"],
         save: (values) => {
-            addServiceRequest(values[1] || activeModalTarget?.textContent?.trim() || "Apartment service", values[0] || "Selected date", values[2] || "Requested");
-            addTask(`Service booked: ${values[1] || "Apartment"} on ${values[0] || "selected date"}`);
+            addServiceRequest(values[1] || activeModalTarget?.textContent?.trim() || "Apartment service", values[3] || "Selected date", values[9] || "Requested");
+            addTask(`Service booked: ${values[1] || "Apartment"} on ${values[3] || "selected date"}`);
             return receipt(`Service booked for ${values[1] || "Apartment"}`, activeModalTarget, values);
         }
     },
     upgrade: {
         title: "Upgrade To Assisted",
         text: "Confirm Assisted plan activation with managed listing support.",
-        fields: ["Billing name", "Phone"],
+        fields: ["Billing name", "Mobile number|tel", "Billing email|email", "Plan duration|select:Monthly,Quarterly,Half-yearly,Annual", "Listing count|number", "Billing address", "GSTIN (optional)", "Upgrade instructions|textarea"],
         save: (values) => activateOwnerPlan("Assisted", activeModalTarget, values)
     },
     support: {
         title: "Raise Support Ticket",
         text: "Send an issue to support.",
-        fields: ["Issue title", "Description"],
+        fields: ["Issue title", "Category|select:Listing,Payment,Visit,Owner contact,Service,Account,Refund,Technical,Other", "Priority|select:LOW,NORMAL,HIGH,URGENT", "Related listing / reference", "Contact name", "Contact mobile|tel", "Contact email|email", "Preferred response|select:Phone,Email,WhatsApp,In-app", "Attachment reference", "Detailed description|textarea"],
         save: (values) => {
-            addSupportTicket(values[0] || readNearbyFields(activeModalTarget)[0]?.replace("Issue: ", "") || "Support issue", values[1] || "Customer requested help");
+            addSupportTicket(values[0] || readNearbyFields(activeModalTarget)[0]?.replace("Issue: ", "") || "Support issue", values[9] || "Customer requested help");
             let state = document.getElementById("supportState");
             if (!state) {
                 const heading = document.querySelector('[data-view="support"] .dash-card h3');
@@ -463,18 +525,18 @@ const actionForms = {
     schedule: {
         title: "Schedule Site Visit",
         text: "Choose a convenient visit slot.",
-        fields: ["Apartment", "Date", "Time"],
+        fields: ["Apartment / listing", "Visit date|date", "Start time|time", "End time|time", "Visitor name", "Visitor mobile|tel", "Visitor count|number", "Visit mode|select:In-person visit,Virtual tour,Agent callback", "Assigned agent", "Access and parking instructions|textarea"],
         save: (values) => {
-            addVisit(`${values[1] || "Selected date"} ${values[2] || ""} - ${values[0] || "Apartment"}`);
+            addVisit(`${values[1] || "Selected date"} ${values[2] || ""} - ${values[0] || "Apartment"} · ${values[4] || "Visitor"}`);
             return receipt(`Site visit scheduled for ${values[0] || "Apartment"}`, activeModalTarget, values);
         }
     },
     pay: {
         title: "Pay Rent",
         text: "Record a secure rent payment.",
-        fields: ["Apartment / owner", "Amount", "Payment reference"],
+        fields: ["Apartment / owner", "Billing month", "Base rent amount|number", "Maintenance amount|number", "Utility / other charges|number", "Late fee|number", "Payment method|select:UPI,Card,Net banking,Bank transfer", "Payment reference", "Receipt email|email", "Payment note|textarea"],
         save: (values) => {
-            addRentPayment(values[0] || "Current apartment", values[1] || "₹28,000", values[2] || "Manual reference");
+            addRentPayment(values[0] || "Current apartment", values[2] || "₹28,000", values[7] || "Manual reference");
             const state = document.getElementById("rentPayState");
             if (state) state.textContent = "Last rent payment recorded";
             return receipt("Rent payment completed", activeModalTarget, values);
@@ -483,7 +545,7 @@ const actionForms = {
     call: {
         title: "Owner Contact",
         text: "Confirm that you want to unlock this owner contact.",
-        fields: ["Contact note"],
+        fields: ["Contact purpose", "Preferred contact time", "Customer mobile|tel", "Customer email|email", "Consent confirmed|select:Yes,No", "Contact note|textarea"],
         save: (values) => {
             const row = activeModalTarget?.closest("tr");
             const status = row?.querySelector(".status");
@@ -574,13 +636,13 @@ const actionForms = {
     "manage-plan": {
         title: "Manage Plan",
         text: "Update pricing and availability for this plan.",
-        fields: ["Plan price", "Plan benefits"],
+        fields: ["Plan name", "Plan price|number", "Billing cycle|select:Monthly,Quarterly,Annual", "Listing limit|number", "Lead limit|number", "Featured listing days|number", "Support level|select:Standard,Priority,Dedicated manager", "Plan status|select:ACTIVE,DRAFT,PAUSED", "Plan benefits and conditions|textarea"],
         save: (values) => receipt("Plan updated", activeModalTarget, values)
     },
     "resolve-category-item": {
         title: "Resolve Category Item",
         text: "Add a resolution note for this item.",
-        fields: ["Resolution note"],
+        fields: ["Item reference", "Resolution category|select:Corrected,Approved,Rejected,Duplicate,Escalated,No action required", "Resolved by", "Resolution date|date", "Customer notified|select:Yes,No", "Evidence reference", "Resolution note|textarea"],
         save: (values) => receipt("Item resolved", activeModalTarget, values)
     },
     inspect: {
@@ -601,7 +663,7 @@ const actionForms = {
     "add-row": {
         title: "Add New Record",
         text: "Create a new entry for this table or administrative section.",
-        fields: ["Item Name / Title", "Category / Group", "Status / Role"],
+        fields: ["Item name / title", "Category / group", "Status / role|select:ACTIVE,PENDING,DRAFT,UNDER REVIEW,DISABLED", "Owner / responsible team", "Effective date|date", "Contact / reference", "Priority|select:LOW,NORMAL,HIGH,URGENT", "Detailed administrative notes|textarea"],
         save: (values) => {
             const table = activeModalTarget?.closest(".dash-card")?.querySelector("table tbody");
             if (table) {
@@ -667,21 +729,66 @@ function detailedModalFields(action, config, target) {
     const context = getContext(target);
     const row = selectedRowValues(target);
     const record = row[0] || context.target || "";
-    const base = config.fields.map((field, index) => modalInput(field, String(index), row[index] || "", field.toLowerCase().includes("date") ? "date" : "text", index === 0));
+    const section = (title, description, icon="◆") => `<div class="pd-form-section"><i>${icon}</i><div><strong>${safeHtml(title)}</strong><small>${safeHtml(description)}</small></div></div>`;
+    const renderConfiguredField = (field, index) => {
+        const [label,typeSpec=""] = field.split("|");
+        if(typeSpec.startsWith("select:")) return modalInput(label,String(index),row[index]||"","select",index===0,typeSpec.slice(7).split(","));
+        const type = typeSpec || (label.toLowerCase().includes("date") ? "date" : "text");
+        return modalInput(label,String(index),row[index]||"",type,index===0);
+    };
+    const base = config.fields.flatMap((field,index)=>{
+        const headings=[];
+        if(index===0) headings.push(section("Primary details","Identify the record and its main purpose","1"));
+        if(config.fields.length>=8 && index===4) headings.push(section("Operational details","Schedule, classification, amounts and responsibility","2"));
+        if(config.fields.length>=12 && index===8) headings.push(section("Contact, compliance & notes","Supporting references, contact information and full context","3"));
+        return [...headings,renderConfiguredField(field,index)];
+    });
     const fields = [...base];
     const add = (label, key, value, type, required, options) => fields.push(modalInput(label, key, value, type, required, options));
 
     if (action === "edit-row") {
         if (context.panel === "roles") {
-            return [
+            const rootPolicy = /super admin|root/i.test(record + " " + (target?.textContent || ""));
+            const policyFields = [
+                section("Policy identity and ownership", "Define who receives this policy and where it sits in the access hierarchy.", "1"),
                 modalInput("Role or permission group", "0", record, "text", true),
-                modalInput("Access scope", "1", row[1] || "Platform operations", "select", true, ["Platform operations", "Listing review", "Customer support", "Finance review", "Read-only audit access"]),
-                modalInput("Policy status", "2", row[2] || "Active", "select", true, ["Active", "Restricted", "Under review", "Suspended"]),
-                modalInput("Two-factor authentication", "mfa", "Required", "select", true, ["Required", "Optional", "Exempt by approval"]),
-                modalInput("Session duration", "session", "8 hours", "select", true, ["4 hours", "8 hours", "12 hours", "24 hours"]),
-                modalInput("IP allowlist", "ipAllowlist", "Admin corporate network", "text"),
-                modalInput("Change reason", "reason", "", "textarea", true)
-            ].join("");
+                modalInput("Policy reference ID", "policyId", rootPolicy ? "PD-RBAC-ROOT-001" : "PD-RBAC-GROUP-001", "text", true),
+                modalInput("Policy description", "description", row[2] || "Operational access policy", "textarea", true),
+                modalInput("Access scope", "1", row[1] || "Platform operations", "select", true, ["Global platform access", "Platform operations", "Listing review", "Customer support", "Finance review", "Read-only audit access"]),
+                modalInput("Reports to / parent policy", "parentPolicy", rootPolicy ? "No parent — root authority" : "Super Admin root policy", "text", true),
+                modalInput("Policy status", "2", "Active", "select", true, ["Active", "Restricted", "Under review", "Suspended", "Archived"]),
+                section("Module-level permissions", "Choose the exact authority available in each PropertyDirect operational module.", "2"),
+                modalInput("Customer accounts", "customerPermission", rootPolicy ? "Full control" : "View and manage", "select", true, ["No access", "View only", "View and manage", "Full control"]),
+                modalInput("Property listings", "listingPermission", "Approve and manage", "select", true, ["No access", "View only", "Create and edit", "Approve and manage", "Full control"]),
+                modalInput("KYC and verification", "kycPermission", "Approve and reject", "select", true, ["No access", "View only", "Request documents", "Approve and reject", "Full control"]),
+                modalInput("Payments, refunds and payouts", "financePermission", rootPolicy ? "Full financial control" : "View only", "select", true, ["No access", "View only", "Review transactions", "Approve within limit", "Full financial control"]),
+                modalInput("Plans and pricing", "pricingPermission", rootPolicy ? "Publish changes" : "View only", "select", true, ["No access", "View only", "Create draft", "Publish changes"]),
+                modalInput("Support and disputes", "supportPermission", "Resolve and escalate", "select", true, ["No access", "View only", "Respond", "Resolve and escalate", "Full control"]),
+                modalInput("Audit logs and backups", "auditPermission", rootPolicy ? "Export and restore" : "View only", "select", true, ["No access", "View only", "Export logs", "Run backup", "Export and restore"]),
+                modalInput("System configuration", "systemPermission", rootPolicy ? "Full control" : "No access", "select", true, ["No access", "View only", "Edit non-critical settings", "Full control"]),
+                section("Approval authority and limits", "Set financial, listing and escalation thresholds for this role.", "3"),
+                modalInput("Maximum refund approval (Rs.)", "refundLimit", rootPolicy ? "1000000" : "10000", "number", true),
+                modalInput("Maximum payout approval (Rs.)", "payoutLimit", rootPolicy ? "5000000" : "0", "number", true),
+                modalInput("Property approval authority", "propertyApproval", rootPolicy ? "All property types" : "Standard residential listings", "select", true, ["No approval authority", "Standard residential listings", "Residential and commercial", "All property types"]),
+                modalInput("Escalation destination", "escalation", rootPolicy ? "Platform owner / board" : "Super Administrator", "text", true),
+                section("Authentication and session security", "Apply mandatory identity, network, device and session restrictions.", "4"),
+                modalInput("Two-factor authentication", "mfa", "Required", "select", true, ["Required", "Optional", "Hardware key required", "Exempt by documented approval"]),
+                modalInput("Session duration", "session", rootPolicy ? "4 hours" : "8 hours", "select", true, ["2 hours", "4 hours", "8 hours", "12 hours", "24 hours"]),
+                modalInput("Concurrent session limit", "concurrentSessions", rootPolicy ? "1" : "2", "number", true),
+                modalInput("IP allowlist", "ipAllowlist", "Admin corporate network", "text", true),
+                modalInput("Device trust policy", "devicePolicy", "Managed devices only", "select", true, ["Any verified device", "Managed devices only", "Named device allowlist", "Hardware-key devices only"]),
+                modalInput("Geographic access", "geoAccess", "India", "text", true),
+                modalInput("Permitted working hours", "workingHours", "06:00 - 23:00 IST", "text", true),
+                modalInput("Failed-login lockout", "lockout", "5 attempts / 30 minutes", "select", true, ["3 attempts / 60 minutes", "5 attempts / 30 minutes", "10 attempts / 15 minutes"]),
+                section("Change control and audit", "Document when this policy applies, who authorized it, and why it changed.", "5"),
+                modalInput("Effective date", "effectiveDate", new Date().toISOString().slice(0, 10), "date", true),
+                modalInput("Review / expiry date", "reviewDate", "", "date"),
+                modalInput("Approved by", "approvedBy", rootPolicy ? "Platform owner" : "Super Administrator", "text", true),
+                modalInput("Change ticket / reference", "changeTicket", "", "text", true),
+                modalInput("Notify affected users", "notifyUsers", "Email and in-app notification", "select", true, ["Email and in-app notification", "In-app notification only", "Do not notify"]),
+                modalInput("Detailed change reason and risk note", "reason", "", "textarea", true)
+            ];
+            return `<div class="form-grid pd-detailed-form pd-rbac-form">${policyFields.join("")}</div>`;
         }
         if (["admins", "users"].includes(context.panel)) {
             return [
@@ -747,6 +854,7 @@ function detailedModalFields(action, config, target) {
     } else {
         add("Internal note", "reason", "", "textarea");
     }
+    if(!fields.some(field=>field.includes("pd-form-section"))) fields.unshift(section("Additional details","Complete the supporting information for this action","+") );
     return `<div class="form-grid pd-detailed-form">${fields.join("")}</div>`;
 }
 
@@ -755,8 +863,10 @@ function openModal(action, target) {
     if (!config) return false;
     ensureModal();
     activeModalTarget = target;
-    modalTitle.textContent = config.title;
-    modalText.textContent = config.text;
+    const context = getContext(target);
+    const rootPolicyEdit = action === "edit-row" && context.panel === "roles" && /root|super admin/i.test((target?.textContent || "") + " " + (target?.closest("tr")?.textContent || ""));
+    modalTitle.textContent = action === "edit-row" && context.panel === "roles" ? (rootPolicyEdit ? "Edit root access policy" : "Edit permission group") : config.title;
+    modalText.textContent = action === "edit-row" && context.panel === "roles" ? "Configure detailed module permissions, approval authority, security restrictions and audit controls for this access policy." : config.text;
     modalFields.innerHTML = detailedModalFields(action, config, target);
     modalSave.onclick = () => {
         const values = readModalFields(modalFields);
@@ -871,8 +981,18 @@ function openPanel(panel, updateHistory = true) {
     });
     const title = document.getElementById("panelTitle");
     if (title) title.textContent = panelTitles[panel] || "Dashboard";
+    document.body.dataset.activePanel = panel;
     if (updateHistory && location.hash !== `#${panel}`) history.pushState(null, "", `#${panel}`);
     selectedView.focus({ preventScroll: true });
+    const nav = document.querySelector(".dash-sidebar .sidebar-nav");
+    const activeItem = nav?.querySelector("[data-panel].active");
+    if (nav && activeItem) {
+        const itemTop = activeItem.offsetTop;
+        const itemBottom = itemTop + activeItem.offsetHeight;
+        if (panel === "overview") nav.scrollTop = 0;
+        else if (itemTop < nav.scrollTop) nav.scrollTop = Math.max(0, itemTop - 12);
+        else if (itemBottom > nav.scrollTop + nav.clientHeight) nav.scrollTop = itemBottom - nav.clientHeight + 12;
+    }
 }
 
 function animateStats() {
@@ -2232,6 +2352,10 @@ function handleSimpleAction(action, target) {
 }
 
 document.addEventListener("click", (event) => {
+    const profileAction = event.target.closest("[data-profile-action]");
+    if (profileAction) { event.preventDefault(); if (profileAction.dataset.profileAction === "edit") setPropertyProfileEditing(true); if (profileAction.dataset.profileAction === "cancel") { ensureRoleProfileSection(); showToast("Profile changes cancelled"); } if (profileAction.dataset.profileAction === "save") savePropertyProfile(); return; }
+    const navigationItem = event.target.closest(".sidebar-nav [data-panel]");
+    if (navigationItem) { event.preventDefault(); openPanel(navigationItem.dataset.panel); if (innerWidth <= 900) document.body.classList.remove("sidebar-open"); return; }
     const panelTile = event.target.closest("[data-category-panel]");
     if (panelTile) {
         openPanel(panelTile.dataset.categoryPanel);
@@ -2284,7 +2408,32 @@ window.addEventListener("hashchange", () => {
     if (panel) openPanel(panel, false);
 });
 
+function setupPropertyDirectSidebar(){
+    const sidebar=document.querySelector(".dash-sidebar");
+    const header=document.querySelector(".dash-header");
+    if(!sidebar||!header||sidebar.dataset.parityReady)return;
+    sidebar.dataset.parityReady="true";
+    const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close navigation");close.innerHTML="×";sidebar.appendChild(close);
+    const menu=document.createElement("button");menu.type="button";menu.className="dashboard-menu-toggle pd-sidebar-menu";menu.setAttribute("aria-label","Open navigation");menu.setAttribute("title","Open sidebar");menu.innerHTML="<span></span><span></span><span></span>";document.body.appendChild(menu);
+    const closeSidebar=()=>{if(innerWidth<=900)document.body.classList.remove("sidebar-open");else document.body.classList.add("sidebar-collapsed")};
+    const openSidebar=()=>{document.body.classList.remove("sidebar-collapsed");document.body.classList.add("sidebar-open")};
+    close.addEventListener("click",closeSidebar);menu.addEventListener("click",openSidebar);
+    sidebar.querySelectorAll("[data-panel]").forEach(item=>item.addEventListener("click",()=>{if(innerWidth<=900)document.body.classList.remove("sidebar-open")}));
+    const nav=sidebar.querySelector(".sidebar-nav");
+    if(nav){
+        const resetNavigationPosition=()=>{
+            const currentPanel=location.hash.replace("#","")||"overview";
+            if(currentPanel==="overview")nav.scrollTop=0;
+        };
+        resetNavigationPosition();
+        requestAnimationFrame(resetNavigationPosition);
+        window.addEventListener("load",()=>setTimeout(resetNavigationPosition,80),{once:true});
+    }
+}
+
 restoreDashboardState();
+ensureRoleProfileSection();
+setupPropertyDirectSidebar();
 ensureCustomerDashboardScaffold();
 syncPublishedListingsToAdminTable();
 syncOwnerContactRequestsToDashboards();

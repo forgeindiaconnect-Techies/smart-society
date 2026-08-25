@@ -154,7 +154,6 @@
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
                 <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
-                <a href="#control" class="nav-link btn btn-link text-start text-decoration-none" data-panel="control"><i class="fa-solid fa-sliders me-2"></i> Control Center</a>
                 <a href="#flats" class="nav-link btn btn-link text-start text-decoration-none" data-panel="flats"><i class="fa-solid fa-building me-2"></i> Blocks & Flats</a>
                 <a href="#residents" class="nav-link btn btn-link text-start text-decoration-none" data-panel="residents"><i class="fa-solid fa-users me-2"></i> Residents</a>
                 <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Billing</a>
@@ -184,7 +183,6 @@
             <!-- Topbar -->
             <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
                 <div>
-                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Green Nest Apartments</p>
                     <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
                 </div>
                 <div class="d-flex align-items-center gap-3 header-actions">
@@ -230,12 +228,12 @@
                     
                     <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
                         <h4 class="fw-bold mb-3">Today</h4>
-                        <p class="text-muted mb-4">Admin is the operating authority for this society: approve residents, assign complaints, activate flats, approve expenses, publish announcements, and control billing actions.</p>
+                        <p class="text-muted mb-4">Use the dedicated modules to manage residents, complaints, flats, expenses, announcements, visitors, and billing records.</p>
                         <div class="d-flex flex-wrap gap-2 pill-row" aria-label="Today’s operational priorities">
-                            <button type="button" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="visitors"><i class="fa-solid fa-arrow-right me-1"></i>18 visitors approved</button>
+                            <button type="button" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="visitors"><i class="fa-solid fa-arrow-right me-1"></i>18 visitor records</button>
                             <button type="button" class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="amenities"><i class="fa-solid fa-arrow-right me-1"></i>6 amenity bookings</button>
-                            <button type="button" class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="expenses"><i class="fa-solid fa-arrow-right me-1"></i>3 expenses waiting approval</button>
-                            <button type="button" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="complaints"><i class="fa-solid fa-arrow-right me-1"></i>8 complaints need assignment</button>
+                            <button type="button" class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="expenses"><i class="fa-solid fa-arrow-right me-1"></i>3 expense records</button>
+                            <button type="button" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="complaints"><i class="fa-solid fa-arrow-right me-1"></i>8 open complaints</button>
                         </div>
                     </div>
 
@@ -246,7 +244,6 @@
                                 <p class="text-muted mb-0">Open the most common Society Admin tasks in one click.</p>
                             </div>
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-primary rounded-pill" data-panel="control"><i class="fa-solid fa-list-check me-2"></i>Review approvals</button>
                                 <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="residents"><i class="fa-solid fa-user-plus me-2"></i>Manage residents</button>
                                 <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage billing</button>
                                 <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="announcements"><i class="fa-solid fa-bullhorn me-2"></i>Publish notice</button>
@@ -266,7 +263,7 @@
                 </section>
 
                 <!-- Control Center -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="control">
+                <section class="d-none" data-view="control" th:if="${false}">
                     <div class="row g-4 mb-4 stats">
                         <div class="col-md-3"><article class="card p-4 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Pending Approvals</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">23</strong></article></div>
                         <div class="col-md-3"><article class="card p-4 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Assignments Due</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">8</strong></article></div>
@@ -342,10 +339,10 @@
                         </div>
                         <div class="card-body px-4 pb-4 table-responsive">
                             <table class="table table-hover align-middle" data-table="flats">
-                                <thead class="table-light"><tr><th>Flat</th><th>Owner</th><th>Block</th><th>Floor</th><th>Unit Type</th><th>Occupancy</th><th>Action</th></tr></thead>
+                                <thead class="table-light"><tr><th>Flat</th><th>Owner</th><th>Contact</th><th>Block / Floor</th><th>Unit</th><th>Area</th><th>Parking</th><th>Occupancy</th><th>Action</th></tr></thead>
                                 <tbody>
-                                    <tr><td>A-101</td><td>Ramesh</td><td>Block A</td><td>1</td><td>2BHK</td><td><span class="badge bg-success status active">Occupied</span></td><td><button class="btn btn-sm btn-light" data-action="save">Edit</button></td></tr>
-                                    <tr><td>B-204</td><td>Meena</td><td>Block B</td><td>2</td><td>2BHK</td><td><span class="badge bg-secondary status pending">Vacant</span></td><td><button class="btn btn-sm btn-primary" data-action="approve">Activate</button></td></tr>
+                                    <tr><td>A-101</td><td>Ramesh</td><td>—</td><td>Block A · Floor 1</td><td>2BHK</td><td>—</td><td>—</td><td><span class="badge bg-success status active">Occupied</span></td><td><button class="btn btn-sm btn-light" data-action="save">Edit</button></td></tr>
+                                    <tr><td>B-204</td><td>Meena</td><td>—</td><td>Block B · Floor 2</td><td>2BHK</td><td>—</td><td>—</td><td><span class="badge bg-secondary status pending">Vacant</span></td><td><button class="btn btn-sm btn-primary" data-action="approve">Activate</button></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -355,13 +352,18 @@
                 <!-- Residents -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="residents">
                     <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0">Residents</h4>
-                            <button class="btn btn-primary rounded-pill btn-sm" data-action="add" data-table="residents"><i class="fa-solid fa-user-plus me-1"></i> Invite Resident</button>
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-start card-head gap-3">
+                            <div><h4 class="fw-bold mb-1">Residents &amp; Society Team</h4><p class="small text-muted mb-0">Create resident accounts and operational staff access for this society.</p></div>
+                            <div class="d-flex flex-wrap justify-content-end gap-2 people-action-bar">
+                                <button class="btn btn-primary rounded-pill btn-sm" data-action="add" data-table="residents"><i class="fa-solid fa-house-user me-1"></i> Add Resident</button>
+                                <button class="btn btn-outline-primary rounded-pill btn-sm" data-action="add" data-table="security-users"><i class="fa-solid fa-shield-halved me-1"></i> Add Security</button>
+                                <button class="btn btn-outline-primary rounded-pill btn-sm" data-action="add" data-table="maintenance-users"><i class="fa-solid fa-screwdriver-wrench me-1"></i> Add Maintenance</button>
+                                <button class="btn btn-outline-primary rounded-pill btn-sm" data-action="add" data-table="accountant-users"><i class="fa-solid fa-calculator me-1"></i> Add Accountant</button>
+                            </div>
                         </div>
                         <div class="card-body px-4 pb-4 table-responsive">
                             <table class="table table-hover align-middle" data-table="residents">
-                                <thead class="table-light"><tr><th>Name</th><th>Flat</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+                                <thead class="table-light"><tr><th>Name</th><th>Contact</th><th>Flat / Employee ID</th><th>Account Type</th><th>Assignment</th><th>Status</th><th>Action</th></tr></thead>
                                 <tbody>
                                     <tr><td>Kavya N</td><td>A-101</td><td>Owner</td><td><span class="badge bg-success status active">Active</span></td><td><button class="btn btn-sm btn-outline-primary" data-action="notify">Notify</button></td></tr>
                                     <tr><td>Vijay P</td><td>C-303</td><td>Tenant</td><td><span class="badge bg-warning text-dark status pending">Pending KYC</span></td><td><button class="btn btn-sm btn-primary" data-action="approve">Approve</button></td></tr>
@@ -432,52 +434,55 @@
                 
                 <!-- Admin Itemized Invoice Generation Modal (Preserved Inline Styling for Modal functionality) -->
                 <div id="adminItemizedModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 99999; justify-content: center; align-items: center; padding: 1rem;">
-                    <div style="background: #f6f8ff; width: 100%; max-width: 720px; border: 1px solid #c7d2fe; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(30, 64, 175, 0.35); padding: 2rem; max-height: 90vh; overflow-y: auto; color: #0f172a;">
+                    <div style="background: #f6f8ff; width: 100%; max-width: 1040px; border: 1px solid #c7d2fe; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(30, 64, 175, 0.35); padding: 2rem; max-height: 92vh; overflow-y: auto; color: #0f172a;">
                         <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #2563eb, #4f46e5); border-radius: 19px 19px 0 0; padding: 1.25rem 2rem; margin: -2rem -2rem 1.5rem;">
                             <div>
                                 <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #ffffff;">Generate Detailed Itemized Monthly Bills</h3>
-                                <p style="margin: 2px 0 0 0; font-size: 0.825rem; color: #dbeafe;">Specify exact base rates, water sub-meters, sinking funds, reserve funds, parking fees, and GST rates.</p>
+                                <p style="margin: 2px 0 0 0; font-size: 0.825rem; color: #dbeafe;">Create audit-ready invoices with billing periods, itemized charges, meter readings, tax breakup, arrears and payment instructions.</p>
                             </div>
                             <button type="button" onclick="closeAdminItemizedModal()" style="background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); font-size: 1.25rem; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: #ffffff;">&times;</button>
                         </div>
 
-                        <form onsubmit="handleAdminItemizedSubmit(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div style="grid-column: span 2;">
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">1. Billing Month & Year</label>
-                                <input id="adminBatchMonth" value="August 2026" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">2. Base Upkeep Rate (per sq.ft)</label>
-                                <input id="adminBatchBaseRate" type="number" step="0.01" value="1.35" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">3. Water Sub-Meter Rate (per unit)</label>
-                                <input id="adminBatchWaterRate" type="number" step="0.01" value="3.50" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">4. Common Area Power & DG Fee (Rs)</label>
-                                <input id="adminBatchPowerFee" type="number" value="253" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">5. Sinking Fund Contribution (Rs)</label>
-                                <input id="adminBatchSinkingFee" type="number" value="150" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">6. Repair & Painting Reserve (Rs)</label>
-                                <input id="adminBatchRepairFee" type="number" value="100" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">7. Covered Parking Fee (Rs)</label>
-                                <input id="adminBatchParkingFee" type="number" value="100" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">8. GST Tax Rate (%)</label>
-                                <input id="adminBatchGstRate" type="number" value="18" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px;">9. Payment Due Date</label>
-                                <input id="adminBatchDueDate" value="15-Aug-2026" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
-                            </div>
+                        <form id="adminDetailedInvoiceForm" onsubmit="handleAdminItemizedSubmit(event)" class="row g-3">
+                            <div class="col-12"><h6 class="fw-bold text-primary border-bottom pb-2 mb-0"><i class="fa-solid fa-file-lines me-2"></i>Invoice identity & billing period</h6></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Billing month</label><input class="form-control" id="adminBatchMonth" type="month" value="2026-08" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Invoice number prefix</label><input class="form-control" id="adminInvoicePrefix" value="SS-MNT" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Invoice date</label><input class="form-control" id="adminInvoiceDate" type="date" value="2026-08-01" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Billing period from</label><input class="form-control" id="adminPeriodStart" type="date" value="2026-08-01" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Billing period to</label><input class="form-control" id="adminPeriodEnd" type="date" value="2026-08-31" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Payment due date</label><input class="form-control" id="adminBatchDueDate" type="date" value="2026-08-15" required></div>
+
+                            <div class="col-12 mt-4"><h6 class="fw-bold text-primary border-bottom pb-2 mb-0"><i class="fa-solid fa-list-check me-2"></i>Maintenance & usage line items</h6></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Default billable area (sq.ft)</label><input class="form-control" id="adminDefaultArea" type="number" min="1" value="1000" required><div class="form-text">Used only when a flat has no saved area.</div></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Base upkeep rate / sq.ft</label><input class="form-control invoice-calc" id="adminBatchBaseRate" type="number" min="0" step="0.01" value="1.35" required></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Common power & DG fee (Rs.)</label><input class="form-control invoice-calc" id="adminBatchPowerFee" type="number" min="0" step="0.01" value="253"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Previous water reading</label><input class="form-control invoice-calc" id="adminWaterPrevious" type="number" min="0" step="0.01" value="120"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Current water reading</label><input class="form-control invoice-calc" id="adminWaterCurrent" type="number" min="0" step="0.01" value="130"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Water rate / unit (Rs.)</label><input class="form-control invoice-calc" id="adminBatchWaterRate" type="number" min="0" step="0.01" value="3.50"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Sinking fund (Rs.)</label><input class="form-control invoice-calc" id="adminBatchSinkingFee" type="number" min="0" step="0.01" value="150"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Repair reserve (Rs.)</label><input class="form-control invoice-calc" id="adminBatchRepairFee" type="number" min="0" step="0.01" value="100"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Covered parking fee (Rs.)</label><input class="form-control invoice-calc" id="adminBatchParkingFee" type="number" min="0" step="0.01" value="100"><div class="form-text">Applied only to flats with a parking slot.</div></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Amenities / clubhouse fee (Rs.)</label><input class="form-control invoice-calc" id="adminAmenityFee" type="number" min="0" step="0.01" value="0"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Other charge (Rs.)</label><input class="form-control invoice-calc" id="adminOtherCharges" type="number" min="0" step="0.01" value="0"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Other charge description</label><input class="form-control" id="adminOtherDescription" placeholder="Festival cleaning, access card, etc."></div>
+
+                            <div class="col-12 mt-4"><h6 class="fw-bold text-primary border-bottom pb-2 mb-0"><i class="fa-solid fa-scale-balanced me-2"></i>Balance, adjustments & GST breakup</h6></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Previous outstanding (Rs.)</label><input class="form-control invoice-calc" id="adminPreviousBalance" type="number" min="0" step="0.01" value="0"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Credit / waiver (Rs.)</label><input class="form-control invoice-calc" id="adminCreditAdjustment" type="number" min="0" step="0.01" value="0"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Round-off adjustment (Rs.)</label><input class="form-control invoice-calc" id="adminRoundOff" type="number" step="0.01" value="0"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">CGST rate (%)</label><input class="form-control invoice-calc" id="adminCgstRate" type="number" min="0" step="0.01" value="9"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">SGST rate (%)</label><input class="form-control invoice-calc" id="adminSgstRate" type="number" min="0" step="0.01" value="9"></div>
+                            <div class="col-md-4"><div class="rounded-3 bg-white border p-3 h-100"><span class="small text-muted d-block">Estimated amount / default flat</span><strong class="fs-4 text-primary" id="adminInvoiceEstimate">Rs. 0.00</strong><small class="d-block text-muted">Actual amount uses each flat's saved area and parking.</small></div></div>
+
+                            <div class="col-12 mt-4"><h6 class="fw-bold text-primary border-bottom pb-2 mb-0"><i class="fa-solid fa-building-columns me-2"></i>Tax registration & payment instructions</h6></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Society GSTIN</label><input class="form-control" id="adminSocietyGstin" value="33AAACS1234F1Z8"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Society PAN</label><input class="form-control" id="adminSocietyPan" value="AAACS1234F"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Bank name</label><input class="form-control" id="adminBankName" value="HDFC Bank"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">Bank account number</label><input class="form-control" id="adminBankAccount" value="XXXXXX8921"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">IFSC code</label><input class="form-control" id="adminBankIfsc" value="HDFC0000123"></div>
+                            <div class="col-md-4"><label class="form-label small fw-bold">UPI ID</label><input class="form-control" id="adminUpiId" value="smartsociety@hdfcbank"></div>
+                            <div class="col-md-6"><label class="form-label small fw-bold">Payment terms</label><textarea class="form-control" id="adminPaymentTerms" rows="2">Pay on or before the due date. Late payment charges apply after the due date.</textarea></div>
+                            <div class="col-md-6"><label class="form-label small fw-bold">Resident-facing notes</label><textarea class="form-control" id="adminInvoiceNotes" rows="2" placeholder="Billing clarification contact, policy note, or statutory message"></textarea></div>
                             <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
                                 <button type="button" onclick="closeAdminItemizedModal()" style="padding: 0.65rem 1.25rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; cursor: pointer;">Cancel</button>
                                 <button type="submit" style="padding: 0.65rem 1.25rem; background: linear-gradient(135deg, #2563eb, #4f46e5); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);">+ Confirm & Generate</button>
@@ -488,22 +493,44 @@
                 <script>
                     function openAdminItemizedModal() { document.getElementById('adminItemizedModal').style.display = 'flex'; }
                     function closeAdminItemizedModal() { document.getElementById('adminItemizedModal').style.display = 'none'; }
+                    function adminInvoiceValue(id) { return Number(document.getElementById(id)?.value || 0); }
+                    function updateAdminInvoiceEstimate() {
+                        const base = adminInvoiceValue('adminDefaultArea') * adminInvoiceValue('adminBatchBaseRate');
+                        const waterUnits = Math.max(0, adminInvoiceValue('adminWaterCurrent') - adminInvoiceValue('adminWaterPrevious'));
+                        const water = waterUnits * adminInvoiceValue('adminBatchWaterRate');
+                        const taxable = base + water + adminInvoiceValue('adminBatchPowerFee') + adminInvoiceValue('adminBatchSinkingFee') +
+                            adminInvoiceValue('adminBatchRepairFee') + adminInvoiceValue('adminBatchParkingFee') + adminInvoiceValue('adminAmenityFee') + adminInvoiceValue('adminOtherCharges');
+                        const tax = taxable * (adminInvoiceValue('adminCgstRate') + adminInvoiceValue('adminSgstRate')) / 100;
+                        const total = taxable + tax + adminInvoiceValue('adminPreviousBalance') - adminInvoiceValue('adminCreditAdjustment') + adminInvoiceValue('adminRoundOff');
+                        document.getElementById('adminInvoiceEstimate').textContent = `Rs. ${Math.max(0,total).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+                    }
+                    document.querySelectorAll('#adminDetailedInvoiceForm input').forEach(input => input.addEventListener('input', updateAdminInvoiceEstimate));
+                    updateAdminInvoiceEstimate();
                     async function handleAdminItemizedSubmit(e) {
                         e.preventDefault();
                         const month = document.getElementById('adminBatchMonth').value;
-                        const base = Number(document.getElementById('adminBatchBaseRate').value || 0);
-                        const water = Number(document.getElementById('adminBatchWaterRate').value || 0);
-                        const power = Number(document.getElementById('adminBatchPowerFee').value || 0);
-                        const sinking = Number(document.getElementById('adminBatchSinkingFee').value || 0);
-                        const repair = Number(document.getElementById('adminBatchRepairFee').value || 0);
-                        const parking = Number(document.getElementById('adminBatchParkingFee').value || 0);
-                        const gst = Number(document.getElementById('adminBatchGstRate').value || 0);
-                        const amount = Math.max(1, Math.round((base * 100 + water * 10 + power + sinking + repair + parking) * (1 + gst / 100)));
+                        const payload = {
+                            month, invoicePrefix: document.getElementById('adminInvoicePrefix').value, invoiceDate: document.getElementById('adminInvoiceDate').value,
+                            periodStart: document.getElementById('adminPeriodStart').value, periodEnd: document.getElementById('adminPeriodEnd').value,
+                            dueDate: document.getElementById('adminBatchDueDate').value, defaultAreaSqFt: adminInvoiceValue('adminDefaultArea'),
+                            baseRatePerSqFt: adminInvoiceValue('adminBatchBaseRate'), waterPreviousReading: adminInvoiceValue('adminWaterPrevious'),
+                            waterCurrentReading: adminInvoiceValue('adminWaterCurrent'), waterRatePerUnit: adminInvoiceValue('adminBatchWaterRate'),
+                            commonPowerFee: adminInvoiceValue('adminBatchPowerFee'), sinkingFund: adminInvoiceValue('adminBatchSinkingFee'),
+                            repairReserve: adminInvoiceValue('adminBatchRepairFee'), parkingFee: adminInvoiceValue('adminBatchParkingFee'),
+                            amenityFee: adminInvoiceValue('adminAmenityFee'), otherCharges: adminInvoiceValue('adminOtherCharges'),
+                            otherChargeDescription: document.getElementById('adminOtherDescription').value, previousBalance: adminInvoiceValue('adminPreviousBalance'),
+                            creditAdjustment: adminInvoiceValue('adminCreditAdjustment'), cgstRate: adminInvoiceValue('adminCgstRate'),
+                            sgstRate: adminInvoiceValue('adminSgstRate'), roundOff: adminInvoiceValue('adminRoundOff'),
+                            paymentTerms: document.getElementById('adminPaymentTerms').value, bankName: document.getElementById('adminBankName').value,
+                            bankAccountNumber: document.getElementById('adminBankAccount').value, bankIfsc: document.getElementById('adminBankIfsc').value,
+                            upiId: document.getElementById('adminUpiId').value, societyGstin: document.getElementById('adminSocietyGstin').value,
+                            societyPan: document.getElementById('adminSocietyPan').value, notes: document.getElementById('adminInvoiceNotes').value
+                        };
                         const submit = e.target.querySelector('button[type="submit"]');
                         submit.disabled = true;
                         submit.textContent = 'Generating…';
                         try {
-                            const response = await fetch(`/api/billing/generate?amount=${encodeURIComponent(amount)}&month=${encodeURIComponent(month)}`, { method: 'POST', headers: { Accept: 'application/json' } });
+                            const response = await fetch('/api/billing/generate-detailed', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
                             const result = await response.json().catch(() => ({}));
                             if (!response.ok) throw new Error(result.message || 'Unable to generate bills');
                             closeAdminItemizedModal();
@@ -601,27 +628,29 @@
                             <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-3 py-2" id="announcementState">Draft ready</span>
                         </div>
                         <div class="card-body px-4 pb-4">
-                            <div class="row g-4 form-grid mb-4">
-                                <div class="col-md-8 form-floating">
-                                    <input type="text" class="form-control" id="announcementTitle" maxlength="120" placeholder="Announcement title" value="Water supply maintenance">
-                                    <label for="announcementTitle">Announcement title</label>
+                            <form id="announcementComposer" class="announcement-composer">
+                                <div class="row g-3">
+                                    <div class="col-12"><div class="announcement-section-title"><i class="fa-solid fa-pen-to-square"></i><div><strong>Notice content</strong><span>Use a short title and include dates, times, locations and expected resident action.</span></div></div></div>
+                                    <div class="col-lg-8"><label class="form-label fw-semibold" for="announcementTitle">Announcement title <span class="text-danger">*</span></label><input type="text" class="form-control" id="announcementTitle" maxlength="120" placeholder="Example: Water supply interruption on 26 August" required></div>
+                                    <div class="col-lg-4"><label class="form-label fw-semibold" for="announcementCategory">Category</label><select class="form-select" id="announcementCategory"><option>MAINTENANCE</option><option>WATER SUPPLY</option><option>POWER</option><option>COMMUNITY EVENT</option><option>MEETING</option><option>SECURITY</option><option>RULE CHANGE</option><option>GENERAL</option></select></div>
+                                    <div class="col-12"><div class="d-flex justify-content-between"><label class="form-label fw-semibold" for="announcementMessage">Detailed message <span class="text-danger">*</span></label><span class="small text-muted" id="announcementCharacterCount">0 / 3000 characters</span></div><textarea class="form-control" id="announcementMessage" placeholder="Explain what is happening, affected areas, schedule, precautions and whom residents should contact..." maxlength="3000" rows="6" required></textarea></div>
+
+                                    <div class="col-12 mt-4"><div class="announcement-section-title"><i class="fa-solid fa-users"></i><div><strong>Audience & notification</strong><span>Resident notices are shown to every active resident account in this society.</span></div></div></div>
+                                    <div class="col-lg-4"><label class="form-label fw-semibold" for="announcementAudience">Send to</label><select class="form-select" id="announcementAudience"><option value="RESIDENTS" selected>All residents</option><option value="ALL">Residents and society staff</option><option value="STAFF">Society staff only</option></select></div>
+                                    <div class="col-lg-8"><label class="form-label fw-semibold d-block">Delivery channels</label><div class="announcement-options"><label><input type="checkbox" id="announcementInApp" checked> <span><strong>Resident dashboard notification</strong><small>Show in Notice Board and display an unread alert.</small></span></label><label><input type="checkbox" id="announcementEmail"> <span><strong>Email notification flag</strong><small>Mark this notice for email delivery when mail service is configured.</small></span></label></div></div>
+
+                                    <div class="col-12 mt-4"><div class="announcement-section-title"><i class="fa-solid fa-calendar-days"></i><div><strong>Schedule & validity</strong><span>Control when the notice becomes visible and when it leaves the active notice board.</span></div></div></div>
+                                    <div class="col-md-6"><label class="form-label fw-semibold" for="announcementEffectiveFrom">Effective from</label><input class="form-control" type="datetime-local" id="announcementEffectiveFrom"></div>
+                                    <div class="col-md-6"><label class="form-label fw-semibold" for="announcementValidUntil">Visible until</label><input class="form-control" type="datetime-local" id="announcementValidUntil"></div>
+
+                                    <div class="col-12 mt-4"><div class="announcement-section-title"><i class="fa-solid fa-circle-info"></i><div><strong>Response & supporting details</strong><span>Add a contact and clearly indicate whether residents must take action.</span></div></div></div>
+                                    <div class="col-md-4"><label class="form-label fw-semibold" for="announcementContactPerson">Contact person / department</label><input class="form-control" id="announcementContactPerson" placeholder="Society office / Facility manager"></div>
+                                    <div class="col-md-4"><label class="form-label fw-semibold" for="announcementContactPhone">Contact number</label><input class="form-control" id="announcementContactPhone" type="tel" placeholder="10-digit mobile or office number"></div>
+                                    <div class="col-md-4"><label class="form-label fw-semibold" for="announcementAttachment">Attachment / circular reference</label><input class="form-control" id="announcementAttachment" placeholder="Circular number or document URL"></div>
+                                    <div class="col-12"><div class="announcement-options announcement-flags"><label><input type="checkbox" id="announcementEmergency"> <span><strong>Urgent notice</strong><small>Highlights the announcement in red for residents.</small></span></label><label><input type="checkbox" id="announcementActionRequired"> <span><strong>Resident action required</strong><small>Shows a clear action-required badge.</small></span></label></div></div>
+                                    <div class="col-12 d-flex justify-content-end align-items-center gap-3 border-top pt-3 mt-4"><button type="reset" class="btn btn-light rounded-pill px-4">Clear draft</button><button type="button" class="btn btn-primary rounded-pill px-4" data-backend-action="announcement-publish"><i class="fa-solid fa-paper-plane me-2"></i>Publish &amp; Notify Residents</button></div>
                                 </div>
-                                <div class="col-md-4 form-floating">
-                                    <select class="form-select" id="announcementAudience"><option value="ALL">All residents &amp; staff</option><option value="RESIDENTS">Residents only</option><option value="STAFF">Society staff only</option></select>
-                                    <label for="announcementAudience">Send to</label>
-                                </div>
-                                <div class="col-md-12 form-floating">
-                                    <textarea class="form-control" id="announcementMessage" placeholder="Write the announcement details" maxlength="3000" style="height: 135px">Tomorrow 10 AM to 12 PM</textarea>
-                                    <label for="announcementMessage">Message</label>
-                                </div>
-                                <div class="col-md-12 d-flex align-items-center justify-content-between flex-wrap gap-3">
-                                    <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" id="announcementEmergency"><label class="form-check-label fw-semibold" for="announcementEmergency">Mark as urgent notice</label></div>
-                                    <span class="small text-muted" id="announcementCharacterCount">0 / 3000 characters</span>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <button class="btn btn-primary rounded-pill px-4" data-backend-action="announcement-publish"><i class="fa-solid fa-paper-plane me-2"></i>Publish Announcement</button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     <div class="card shadow-sm border-0 rounded-4">
@@ -852,7 +881,6 @@
                         <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Flat capacity</span><strong class="fs-4 fw-bold text-info mt-2 d-block" id="saasFlatCapacity">12 / 150 Flats</strong><small class="text-muted mt-2">138 flats remaining</small></article></div>
                         <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Next renewal</span><strong class="fs-4 fw-bold text-warning mt-2 d-block" id="saasNextRenewal">01 Sep 2026</strong><small class="text-muted mt-2">Rs. 2,999 + applicable taxes</small></article></div>
                     </div>
-                    <div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Plan coverage & limits</h4><p class="text-muted mb-0">Features currently available to your society team.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-sm-6"><div class="border rounded-4 p-3 h-100"><strong><i class="fa-solid fa-building text-primary me-2"></i>Core operations</strong><p class="text-muted small mb-0 mt-2">Blocks, flats, residents, visitors, complaints, announcements and billing.</p></div></div><div class="col-sm-6"><div class="border rounded-4 p-3 h-100"><strong><i class="fa-solid fa-calendar-check text-primary me-2"></i>Amenity bookings</strong><p class="text-muted small mb-0 mt-2">Resident bookings, admin approvals, payment modes and price control.</p></div></div><div class="col-sm-6"><div class="border rounded-4 p-3 h-100"><strong><i class="fa-solid fa-chart-line text-primary me-2"></i>Analytics & reports</strong><p class="text-muted small mb-0 mt-2">Collection, operational and society-level metrics with export-ready logs.</p></div></div><div class="col-sm-6"><div class="border rounded-4 p-3 h-100"><strong><i class="fa-solid fa-shield-halved text-primary me-2"></i>Security & support</strong><p class="text-muted small mb-0 mt-2">Role access, audit trail, support assistance and platform security controls.</p></div></div></div><hr><div class="d-flex flex-wrap gap-3 small"><span><strong>Residents:</strong> Up to 750</span><span><strong>Admin users:</strong> Up to 10</span><span><strong>Audit history:</strong> 90 days</span><span><strong>Support:</strong> Business hours</span></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Billing profile</h4><p class="text-muted mb-0">Subscription and renewal settings.</p></div><div class="card-body px-4 pb-4"><dl class="row mb-0 small"><dt class="col-6 text-muted fw-normal">Billing cycle</dt><dd class="col-6 text-end">Monthly</dd><dt class="col-6 text-muted fw-normal">Billing contact</dt><dd class="col-6 text-end">Society Administrator</dd><dt class="col-6 text-muted fw-normal">Renewal preference</dt><dd class="col-6 text-end text-success">Auto-renew</dd><dt class="col-6 text-muted fw-normal">Payment method</dt><dd class="col-6 text-end">Bank transfer</dd><dt class="col-6 text-muted fw-normal">Tax invoice</dt><dd class="col-6 text-end">Enabled</dd></dl><button type="button" class="btn btn-outline-primary w-100 rounded-pill mt-3" data-subscription-action="support">Request billing assistance</button></div></div></div></div>
                     <div class="card shadow-sm border-0 rounded-4 mt-4"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">SaaS invoice history</h4><p class="text-muted mb-0">Subscription invoices and payment confirmation for this workspace.</p></div><button type="button" class="btn btn-outline-primary rounded-pill btn-sm" data-subscription-action="export"><i class="fa-solid fa-download me-1"></i>Export invoice history</button></div><div class="card-body px-4 pb-4"><div class="table-responsive"><table class="table table-hover align-middle mb-0" id="saasInvoiceTable"><thead class="table-light"><tr><th>Invoice number</th><th>Plan</th><th>Billing cycle</th><th>Amount</th><th>Payment status</th><th>Invoice date</th><th>Action</th></tr></thead><tbody><tr><td>INV-SAAS-20260801</td><td>Standard Tier</td><td>01 Aug – 31 Aug 2026</td><td>Rs. 2,999</td><td><span class="status active">Paid</span></td><td>01 Aug 2026</td><td><button type="button" class="btn btn-sm btn-outline-primary" data-subscription-action="invoice" data-invoice="INV-SAAS-20260801">Download</button></td></tr><tr><td>INV-SAAS-20260701</td><td>Standard Tier</td><td>01 Jul – 31 Jul 2026</td><td>Rs. 2,999</td><td><span class="status active">Paid</span></td><td>01 Jul 2026</td><td><button type="button" class="btn btn-sm btn-outline-primary" data-subscription-action="invoice" data-invoice="INV-SAAS-20260701">Download</button></td></tr></tbody></table></div></div></div>
                 </section>
 
@@ -861,7 +889,7 @@
                     <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4 d-flex flex-wrap justify-content-between gap-3 align-items-center"><div><span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-2">Society reporting workspace</span><h3 class="fw-bold mb-1">Reports and analytics</h3><p class="text-muted mb-0">Review financial, operational and service health before exporting a committee-ready report.</p></div><button type="button" class="btn btn-primary rounded-pill" data-society-report="all"><i class="fa-solid fa-file-arrow-down me-2"></i>Export reporting pack</button></div></div>
                     <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4"><div class="row g-3 align-items-end"><div class="col-md-4"><label class="form-label fw-semibold">Reporting period</label><select class="form-select" id="reportPeriod"><option>Current month</option><option>Previous month</option><option>Current financial year</option></select></div><div class="col-md-4"><label class="form-label fw-semibold">Focus area</label><select class="form-select" id="reportFocus"><option>All operational areas</option><option>Billing and collections</option><option>Gate and visitor operations</option><option>Complaints and service teams</option><option>Occupancy and residents</option></select></div><div class="col-md-4 d-flex gap-2"><button type="button" class="btn btn-outline-primary flex-grow-1" data-society-report="refresh"><i class="fa-solid fa-rotate me-2"></i>Refresh insights</button><button type="button" class="btn btn-primary flex-grow-1" data-society-report="all"><i class="fa-solid fa-download me-2"></i>Export CSV</button></div></div><p class="small text-muted mb-0 mt-3" id="reportPreparedAt"><i class="fa-regular fa-clock me-1"></i>Prepared from the latest available society records.</p></div></div>
                     <div class="row g-4 mb-4 stats"><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Billing collection</span><strong class="fs-2 text-primary d-block mt-2">86%</strong><small class="text-muted mt-2">Rs. 4.30L collected of Rs. 5.00L billed</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Visitor entries</span><strong class="fs-2 text-info d-block mt-2">1,248</strong><small class="text-muted mt-2">42 delayed exits requiring review</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Complaint SLA</span><strong class="fs-2 text-success d-block mt-2">14h</strong><small class="text-muted mt-2">92% resolved within target</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Occupancy</span><strong class="fs-2 text-dark d-block mt-2">94%</strong><small class="text-muted mt-2">301 occupied of 320 total flats</small></article></div></div>
-                    <div class="row g-4"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Collection and operational snapshot</h4><p class="text-muted mb-0">Key health indicators for committee review.</p></div><div class="card-body px-4 pb-4"><div class="d-grid gap-3"><div><div class="d-flex justify-content-between small fw-semibold mb-1"><span>Maintenance collection</span><span class="text-primary">86%</span></div><div class="progress" style="height:10px"><div class="progress-bar" style="width:86%"></div></div></div><div><div class="d-flex justify-content-between small fw-semibold mb-1"><span>Resident KYC completion</span><span class="text-success">94%</span></div><div class="progress" style="height:10px"><div class="progress-bar bg-success" style="width:94%"></div></div></div><div><div class="d-flex justify-content-between small fw-semibold mb-1"><span>Complaint resolution within SLA</span><span class="text-info">92%</span></div><div class="progress" style="height:10px"><div class="progress-bar bg-info" style="width:92%"></div></div></div></div><div class="row g-3 mt-2"><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Pending bills</span><strong class="fs-5">46</strong></div></div><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Open complaints</span><strong class="fs-5">12</strong></div></div><div class="col-sm-4"><div class="border rounded-3 p-3 h-100"><span class="small text-muted d-block">Upcoming bookings</span><strong class="fs-5">18</strong></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Reports ready to export</h4><p class="text-muted mb-0">Download individual operational registers.</p></div><div class="list-group list-group-flush"><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" data-society-report="billing"><span><i class="fa-solid fa-receipt text-primary me-2"></i>Monthly billing and collections</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" data-society-report="visitors"><span><i class="fa-solid fa-user-shield text-primary me-2"></i>Visitor and gate activity</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" data-society-report="complaints"><span><i class="fa-solid fa-screwdriver-wrench text-primary me-2"></i>Complaint resolution register</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" data-society-report="expenses"><span><i class="fa-solid fa-wallet text-primary me-2"></i>Expenses and approvals</span><i class="fa-solid fa-download"></i></button></div></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Reports ready to export</h4><p class="text-muted mb-0">Download individual operational registers.</p></div><div class="list-group list-group-flush"><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4" data-society-report="billing"><span><i class="fa-solid fa-receipt text-primary me-2"></i>Monthly billing and collections</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4" data-society-report="visitors"><span><i class="fa-solid fa-user-shield text-primary me-2"></i>Visitor and gate activity</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4" data-society-report="complaints"><span><i class="fa-solid fa-screwdriver-wrench text-primary me-2"></i>Complaint resolution register</span><i class="fa-solid fa-download"></i></button><button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4" data-society-report="expenses"><span><i class="fa-solid fa-wallet text-primary me-2"></i>Expenses and approvals</span><i class="fa-solid fa-download"></i></button></div></div>
                     <div class="card shadow-sm border-0 rounded-4 mt-4"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center"><div><h4 class="fw-bold mb-1">Recent report activity</h4><p class="text-muted mb-0">Latest scheduled and on-demand reports.</p></div><span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Exports enabled</span></div><div class="card-body px-4 pb-4"><div class="table-responsive"><table class="table align-middle mb-0"><thead class="table-light"><tr><th>Report</th><th>Period</th><th>Prepared for</th><th>Last generated</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Monthly billing and collections</td><td>August 2026</td><td>Society committee</td><td>Today, 10:30 AM</td><td><span class="status active">Ready</span></td><td><button type="button" class="btn btn-sm btn-outline-primary" data-society-report="billing">Download</button></td></tr><tr><td>Visitor and gate activity</td><td>August 2026</td><td>Security lead</td><td>Today, 09:15 AM</td><td><span class="status active">Ready</span></td><td><button type="button" class="btn btn-sm btn-outline-primary" data-society-report="visitors">Download</button></td></tr><tr><td>Complaint resolution register</td><td>August 2026</td><td>Maintenance committee</td><td>Yesterday, 06:00 PM</td><td><span class="status active">Ready</span></td><td><button type="button" class="btn btn-sm btn-outline-primary" data-society-report="complaints">Download</button></td></tr></tbody></table></div></div></div>
                 </section>
             </div>

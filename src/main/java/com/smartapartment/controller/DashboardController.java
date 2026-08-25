@@ -71,6 +71,12 @@ public class DashboardController {
         return "dashboards/maintenance";
     }
 
+    @GetMapping("/dashboards/accountant")
+    public String accountantDashboard(HttpSession session) {
+        if (!isLoggedIn(session, "smartapartment", "accountant")) return "redirect:/?loginRequired=true";
+        return "dashboards/accountant";
+    }
+
     @GetMapping("/terms/onboarding")
     public String onboardingTerms() {
         return "terms/onboarding";

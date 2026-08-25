@@ -273,15 +273,26 @@ function openModal(kind) {
             <datalist id="propertydirectCityOptions">${readCityOptions().map(city => `<option value="${city}"></option>`).join("")}</datalist>
         `,
         plan: `
-            <label>Name<input placeholder="Your name"></label>
-            <label>Phone<input placeholder="Mobile number"></label>
+            <label>Full Name<input placeholder="Your name"></label>
+            <label>Mobile Number<input type="tel" placeholder="Mobile number"></label>
+            <label>Email Address<input type="email" placeholder="Email address"></label>
             <label>Requirement<select><option>Buy Apartment</option><option>Rent Apartment</option><option>Premium Search</option></select></label>
             <label>Preferred City<input placeholder="City"></label>
+            <label>Preferred Localities<input placeholder="Localities or landmarks"></label>
+            <label>Budget Range<input placeholder="Minimum and maximum budget"></label>
+            <label>Property Configuration<select><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4+ BHK</option></select></label>
+            <label>Target Move-in Date<input type="date"></label>
+            <label>Assistance Notes<textarea placeholder="Property, visit, finance or documentation support required"></textarea></label>
         `,
         contact: `
-            <label>Name<input placeholder="Your name"></label>
-            <label>Phone<input placeholder="Mobile number"></label>
-            <label>Email<input placeholder="Email address"></label>
+            <label>Full Name<input placeholder="Your name"></label>
+            <label>Mobile Number<input type="tel" placeholder="Mobile number"></label>
+            <label>Email Address<input type="email" placeholder="Email address"></label>
+            <label>Contact Purpose<select><option>Owner contact</option><option>Price negotiation</option><option>Property availability</option><option>Document clarification</option><option>Other</option></select></label>
+            <label>Preferred Contact Time<input type="datetime-local"></label>
+            <label>Current City<input placeholder="Your current city"></label>
+            <label>Consent<select><option>Yes, I consent to owner contact</option><option>No</option></select></label>
+            <label>Message to Owner<textarea placeholder="Introduce your requirement, move-in timeline and questions"></textarea></label>
         `
     };
     const [title, text] = copy[kind] || copy.login;
@@ -393,7 +404,7 @@ function setDashboardAuthMode(mode) {
             ? "Create your own PropertyDirect customer credentials and open your dashboard."
             : "Enter your credentials to open your workspace.";
     }
-    if (submitDashboardLogin) submitDashboardLogin.textContent = dashboardAuthMode === "register" ? "Create Account & Open Dashboard" : "Login & Open Dashboard";
+    if (submitDashboardLogin) submitDashboardLogin.textContent = dashboardAuthMode === "register" ? "Create Account" : "Login";
     if (dashboardAuthHelper) {
         dashboardAuthHelper.textContent = dashboardAuthMode === "register"
             ? "This creates customer access only. Admin and super admin access stays restricted."
@@ -563,6 +574,7 @@ document.addEventListener("click", (event) => {
 });
 
 document.getElementById("closeModal").addEventListener("click", () => modal.classList.add("hidden"));
+document.getElementById("cancelModal")?.addEventListener("click", () => modal.classList.add("hidden"));
 modal.addEventListener("click", (event) => {
     if (event.target === modal) modal.classList.add("hidden");
 });
@@ -581,6 +593,7 @@ document.getElementById("modalSubmit").addEventListener("click", async () => {
     showToast(messages[activeModalKind] || `Request submitted${first}`);
 });
 closeDashboardLoginModal?.addEventListener("click", () => dashboardLoginModal?.classList.add("hidden"));
+document.getElementById("cancelDashboardLoginModal")?.addEventListener("click", () => dashboardLoginModal?.classList.add("hidden"));
 dashboardLoginModal?.addEventListener("click", (event) => {
     if (event.target === dashboardLoginModal) dashboardLoginModal.classList.add("hidden");
 });

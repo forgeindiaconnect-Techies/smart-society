@@ -50,7 +50,7 @@
             playSwitchClickSound(dark);
         }
 
-        document.querySelectorAll("#electricalSwitchFixed").forEach((toggle) => {
+        document.querySelectorAll("#electricalSwitchFixed, [data-theme-toggle]").forEach((toggle) => {
             toggle.setAttribute("aria-pressed", String(dark));
             toggle.setAttribute("aria-label", `Switch to ${dark ? "light" : "dark"} mode`);
             toggle.innerHTML = createSwitchHtml(dark);
@@ -58,24 +58,32 @@
     }
 
     function createThemeToggle() {
-        if (document.getElementById("electricalSwitchFixed")) return;
+        let toggle = document.getElementById("electricalSwitchFixed");
 
-        const fixedWrapper = document.createElement("div");
-        fixedWrapper.id = "electricalSwitchFixed";
-        fixedWrapper.className = "electrical-switch-wrapper fixed-electrical-switch";
-        fixedWrapper.setAttribute("role", "button");
-        fixedWrapper.setAttribute("tabindex", "0");
-        fixedWrapper.addEventListener("click", () => {
+        if (!toggle) {
+            toggle = document.createElement("button");
+            toggle.id = "electricalSwitchFixed";
+            toggle.type = "button";
+            toggle.className = "electrical-switch-wrapper fixed-electrical-switch";
+            document.body.appendChild(toggle);
+        }
+
+        if (toggle.dataset.themeToggleBound === "true") return;
+        toggle.dataset.themeToggleBound = "true";
+        toggle.addEventListener("click", () => {
             applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
         });
-        fixedWrapper.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
-            }
-        });
+        if (toggle.tagName !== "BUTTON") {
+            toggle.setAttribute("role", "button");
+            toggle.setAttribute("tabindex", "0");
+            toggle.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+                }
+            });
+        }
 
-        document.body.appendChild(fixedWrapper);
     }
 
     const savedTheme = localStorage.getItem(storageKey);

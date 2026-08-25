@@ -29,28 +29,9 @@ public class SuperAdminMonitoringController {
     @GetMapping("/data")
     public ResponseEntity<Map<String, Object>> getMonitoringData() {
         return ResponseEntity.ok(Map.of(
-            "stats", Map.of(
-                "gateEntriesToday", "1,248",
-                "billsPending", "342",
-                "adminApprovals", "67",
-                "openRisks", "14"
-            ),
-            "watchlist", List.of(
-                Map.of("society", "Green Nest Apartments", "module", "Billing", "currentSignal", "46 unpaid bills need follow-up", "owner", "Society Admin", "accessRule", "Admin can approve waivers and mark payments"),
-                Map.of("society", "Lakeview Residency", "module", "Gate Entries", "currentSignal", "12 visitors waiting at gate", "owner", "Security + Admin", "accessRule", "Admin controls visitor policy, security records entry"),
-                Map.of("society", "Urban Heights", "module", "Complaints", "currentSignal", "8 unassigned maintenance tickets", "owner", "Society Admin", "accessRule", "Admin assigns teams and closes after resolution"),
-                Map.of("society", "Royal Gardens", "module", "Expenses", "currentSignal", "Rs. 72,000 awaiting approval", "owner", "Society Admin", "accessRule", "Admin approves or rejects vendor bills")
-            ),
-            "commandWatch", List.of(
-                Map.of("module", "Billing", "metrics", "1,500 pending bills | Rs. 4,50,000 arrears | 85% collection", "actionLabel", "Trigger Reminder", "actionType", "trigger-reminder"),
-                Map.of("module", "Gate Entries", "metrics", "1,248 check-ins | 42 delays | 120 staff entries", "actionLabel", "Audit Logs", "actionType", "audit-gate"),
-                Map.of("module", "Residents", "metrics", "4,500 records | 98% KYC | 85% occupancy", "actionLabel", "Sync KYC", "actionType", "sync-kyc"),
-                Map.of("module", "Complaints", "metrics", "145 open | 22 escalated | 12 hrs avg SLA", "actionLabel", "Escalate All", "actionType", "escalate-complaints"),
-                Map.of("module", "Amenities", "metrics", "82 bookings | Rs. 15,000 revenue | 5 damages", "actionLabel", "Review Damages", "actionType", "review-damages"),
-                Map.of("module", "Expenses", "metrics", "Rs. 4.2M spent | 14 pending approvals", "actionLabel", "Audit Expenses", "actionType", "audit-expenses"),
-                Map.of("module", "Announcements", "metrics", "12 active notices | 85% read rate", "actionLabel", "Broadcast Global", "actionType", "global-broadcast"),
-                Map.of("module", "Reports", "metrics", "24 generated today | 150 downloads", "actionLabel", "Force Generation", "actionType", "force-reports")
-            )
+            "stats", Map.of("gateEntriesToday", "0", "billsPending", "0", "adminApprovals", "0", "openRisks", "0"),
+            "watchlist", List.of(),
+            "commandWatch", List.of()
         ));
     }
 

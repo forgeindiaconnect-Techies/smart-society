@@ -960,6 +960,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
     </style>
+    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260825-18">
 </head>
 <body class="apartment-page">
 <header class="topbar compact">
@@ -970,7 +971,7 @@
         <button class="primary small" id="listingSearchButton">Search</button>
     </div>
     <nav class="nav">
-        <a href="/" class="smartsociety-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(29, 55, 108, 0.08); color: #1d376c !important; font-weight: 700; font-size: 0.82rem; border-radius: 8px; border: 1px solid rgba(29, 55, 108, 0.2); text-decoration: none; transition: all 0.2s ease;">
+        <a href="/" class="smartsociety-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
             SmartSociety
         </a>
@@ -1055,7 +1056,7 @@
             <label>Phone<input placeholder="Mobile number"></label>
             <label>Email<input placeholder="Email address"></label>
         </div>
-        <button class="primary full" id="modalSubmit">Submit</button>
+        <div class="pd-public-modal-actions"><button class="pd-modal-cancel" id="cancelModal" type="button">Cancel</button><button class="primary" id="modalSubmit">Submit</button></div>
     </div>
 </div>
 <div class="toast hidden" id="toast"></div>

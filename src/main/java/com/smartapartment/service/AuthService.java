@@ -59,6 +59,13 @@ public class AuthService {
         tenant.setPhone(request.phone());
         tenant.setAddress(request.address());
         tenant.setCity(request.city());
+        tenant.setState(request.state());
+        tenant.setCountry(request.country());
+        tenant.setPostalCode(request.postalCode());
+        tenant.setSocietyType(request.societyType());
+        tenant.setRegistrationNumber(request.registrationNumber());
+        tenant.setTotalUnits(request.totalUnits());
+        tenant.setTotalWings(request.totalWings());
         tenant.setApproved(false);
         tenantRepository.save(tenant);
 
@@ -67,6 +74,7 @@ public class AuthService {
         admin.setFullName(request.adminName());
         admin.setEmail(adminEmail);
         admin.setPhone(request.phone());
+        admin.setDesignation(request.adminDesignation());
         admin.setRole(UserRole.SOCIETY_ADMIN);
         admin.setPasswordHash(passwordEncoder.encode(request.password()));
         userRepository.save(admin);

@@ -18,9 +18,10 @@
     }
 
     async function api(path, options = {}) {
+        const multipart = options.body instanceof FormData;
         const response = await fetch(`${apiRoot}${path}`, {
             ...options,
-            headers: {Accept: "application/json", ...(options.body ? {"Content-Type": "application/json"} : {}), ...options.headers}
+            headers: {Accept: "application/json", ...(options.body && !multipart ? {"Content-Type": "application/json"} : {}), ...options.headers}
         });
         const payload = await response.json().catch(() => ({}));
         if (response.status === 401 || response.status === 403) throw new Error("Please sign in with the required PropertyDirect role.");
@@ -163,7 +164,7 @@
         body.replaceChildren(...items.map(item => {
             const row = document.createElement("tr"); cell(row, item.title); cell(row, item.listingType); cell(row, currency(item.price));
             const status = cell(row, ""); status.replaceChildren(statusBadge(item.verificationStatus)); cell(row, item.viewCount || 0);
-            const actions = cell(row, ""); if (item.verificationStatus !== "VERIFIED") actions.appendChild(actionButton("Verify", "verify-listing", item.id)); actions.append(" ", actionButton("Deactivate", "deactivate-listing", item.id));
+            const actions = cell(row, ""); actions.appendChild(actionButton("Deactivate", "deactivate-listing", item.id));
             return row;
         }));
         const stat = document.querySelector('[data-stat="live"]'); if (stat) stat.textContent = items.filter(item => item.status === "ACTIVE").length;
@@ -178,11 +179,33 @@
             price: Number(String(input.price || "").replace(/[^\d.]/g, "")), deposit: input.deposit ? Number(input.deposit) : null,
             maintenance: input.maintenance ? Number(input.maintenance) : null, areaSqft: input.areaSqft ? Number(input.areaSqft) : null,
             bhk: input.bhk, furnishing: input.furnishing, parking: input.parking, availableFrom: input.availableFrom || null,
-            amenities: input.amenities, imageUrl: input.imageUrl, notes: input.notes
+            amenities: input.amenities, imageUrl: null, latitude: input.latitude ? Number(input.latitude) : null, longitude: input.longitude ? Number(input.longitude) : null,
+            notes: [input.description, input.address ? `Address: ${input.address}` : ""].filter(Boolean).join("\n")
         };
         if (!payload.title || !payload.locality || !payload.city || !payload.price) throw new Error("Title, city, locality and a valid price are required.");
-        await api("/listings", {method: "POST", body: JSON.stringify(payload)});
-        form.reset(); notify("Property published and sent for verification."); await loadOwnerListings(); openPanel("listings");
+        const photos = [...(form.querySelector('[name="photos"]')?.files || [])];
+        if (photos.length < 10) throw new Error("Please upload at least 10 property photos.");
+        if (photos.length > 20) throw new Error("Please upload no more than 20 property photos.");
+        const body = new FormData(); body.append("listing", new Blob([JSON.stringify(payload)], {type: "application/json"})); photos.forEach(photo => body.append("photos", photo));
+        await api("/listings/with-photos", {method: "POST", body});
+        form.reset(); document.getElementById("propertyPhotoPreview")?.replaceChildren(); const count = document.getElementById("propertyPhotoCount"); if (count) count.textContent = "No photos selected";
+        notify("Property submitted. It will become public after Super Admin approval."); await loadOwnerListings(); openPanel("listings");
+    }
+
+    function ensureSuperadminGovernancePanel() {
+        if (role !== "superadmin") return;
+        const nav = document.querySelector(".sidebar-nav"); const main = document.querySelector("main.dash-main"); if (!nav || !main) return;
+        if (!nav.querySelector('[data-panel="customers"]')) { const button = document.createElement("button"); button.type = "button"; button.dataset.panel = "customers"; button.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg><span>Customers & Approvals</span>'; nav.appendChild(button); }
+        if (!main.querySelector('[data-view="customers"]')) { const section = document.createElement("section"); section.className = "dash-panel hidden"; section.dataset.view = "customers"; section.innerHTML = '<div class="dash-card customer-governance-card"><div class="card-head"><div><h3>Customers and property approvals</h3><p>Review registered PropertyDirect customers and approve submitted properties before public publication.</p></div><button class="primary small" type="button" data-property-api-action="refresh-governance">Refresh</button></div><div class="customer-governance-stats"><article><span>Registered customers</span><strong id="registeredCustomerCount">0</strong><small>All PropertyDirect customer accounts</small></article><article><span>Pending properties</span><strong id="pendingPropertyCount">0</strong><small>Waiting for Super Admin review</small></article><article><span>Approved properties</span><strong id="approvedPropertyCount">0</strong><small>Visible in public search</small></article></div><div class="governance-grid"><section><div class="governance-title"><h4>Registered customer details</h4><span id="customerTableState">Loading…</span></div><div class="dashboard-table-scroll"><table><thead><tr><th>Customer</th><th>Contact</th><th>Username</th><th>Registered</th><th>Properties</th></tr></thead><tbody id="propertyCustomerRows"></tbody></table></div></section><section><div class="governance-title"><h4>Pending property approvals</h4><span>Approval controls public visibility</span></div><div class="approval-card-list" id="propertyApprovalRows"></div></section></div></div>'; main.insertBefore(section, document.getElementById("dashboardModal") || null); }
+    }
+
+    async function loadSuperadminGovernance() {
+        if (role !== "superadmin") return;
+        const [summary, customers, pending] = await Promise.all([api("/admin/summary"), api("/admin/customers"), api("/admin/listings?verificationStatus=PENDING")]);
+        document.getElementById("registeredCustomerCount").textContent = summary.registeredCustomers; document.getElementById("pendingPropertyCount").textContent = summary.pendingListings; document.getElementById("approvedPropertyCount").textContent = summary.approvedListings;
+        const customerRows = document.getElementById("propertyCustomerRows"); if (customerRows) customerRows.replaceChildren(...customers.map(item => { const row = document.createElement("tr"); cell(row, `${item.name} (#${item.id})`); cell(row, `${item.email} · ${item.phone}`); cell(row, item.username); cell(row, item.registeredAt ? new Date(item.registeredAt).toLocaleDateString("en-IN") : "—"); cell(row, item.listingCount); return row; }));
+        const state = document.getElementById("customerTableState"); if (state) state.textContent = `${customers.length} registered`;
+        const approvalRows = document.getElementById("propertyApprovalRows"); if (approvalRows) { const cards = pending.map(item => { const card = document.createElement("article"); card.className = "property-approval-card"; const photos = String(item.imageUrls || item.imageUrl || "").split(/\n/).filter(Boolean); card.innerHTML = `<div class="approval-photo-strip">${photos.slice(0,4).map(url => `<img src="${url}" alt="Property photo">`).join("")}</div><div class="approval-card-body"><div><h5>${item.title}</h5><p>${item.society} · ${item.locality}, ${item.city}</p><small>${item.bhk} · ${item.areaSqft || "—"} sq ft · ${currency(item.price)} · ${photos.length} photos</small></div><div class="approval-actions"><button type="button" data-property-api-action="approve-property" data-listing-id="${item.id}">Approve & publish</button><button type="button" data-property-api-action="reject-property" data-listing-id="${item.id}">Reject</button></div></div>`; return card; }); if (!cards.length) { const empty = document.createElement("p"); empty.className = "governance-empty"; empty.textContent = "No properties are waiting for approval."; cards.push(empty); } approvalRows.replaceChildren(...cards); }
     }
 
     async function handle(button) {
@@ -203,6 +226,9 @@
             else if (action === "verify-listing") { await api(`/listings/${button.dataset.listingId}/verification?status=VERIFIED`, {method: "PATCH"}); notify("Listing marked as verified."); await loadOwnerListings(); }
             else if (action === "deactivate-listing") { await api(`/listings/${button.dataset.listingId}`, {method: "DELETE"}); notify("Listing deactivated."); await loadOwnerListings(); }
             else if (action === "publish-owner-listing") await createOwnerListing(form);
+            else if (action === "refresh-governance") await loadSuperadminGovernance();
+            else if (action === "approve-property") { await api(`/listings/${button.dataset.listingId}/verification?status=VERIFIED`, {method: "PATCH"}); notify("Property approved and published publicly."); await loadSuperadminGovernance(); }
+            else if (action === "reject-property") { await api(`/listings/${button.dataset.listingId}/verification?status=REJECTED`, {method: "PATCH"}); notify("Property submission rejected."); await loadSuperadminGovernance(); }
         } catch (error) { notify(error.message); }
         finally { button.disabled = false; }
     }
@@ -226,7 +252,10 @@
         try {
             if (role === "customer") await Promise.all([searchListings(), loadSaved(), loadSavedSearches(), loadVisits(), loadServices(), loadOwnerListings()]);
             else if (role === "admin") await loadOwnerListings();
+            else if (role === "superadmin") { ensureSuperadminGovernancePanel(); await loadSuperadminGovernance(); }
             document.documentElement.dataset.propertyBackendConnected = "true";
         } catch (error) { console.error("PropertyDirect workflow hydration failed", error); notify(error.message); }
     });
+
+    document.addEventListener("change", event => { if (!event.target.matches("#propertyPhotoFiles")) return; const files = [...event.target.files]; const count = document.getElementById("propertyPhotoCount"); if (count) { count.textContent = `${files.length} photo${files.length === 1 ? "" : "s"} selected${files.length < 10 ? " — add at least 10" : " — ready"}`; count.classList.toggle("is-invalid", files.length < 10); } const preview = document.getElementById("propertyPhotoPreview"); if (preview) preview.replaceChildren(...files.slice(0,20).map(file => { const img = document.createElement("img"); img.src = URL.createObjectURL(file); img.alt = file.name; return img; })); });
 })();

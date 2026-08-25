@@ -98,16 +98,15 @@
         const dotsRoot = document.getElementById("phoneDots");
         if (!root || !dotsRoot || slides.length < 2) return;
         let active = 0;
-        let timer = 0;
         const dots = slides.map((_, index) => {
             const dot = document.createElement("button");
             dot.type = "button";
             dot.setAttribute("aria-label", `Show workspace preview ${index + 1}`);
-            dot.addEventListener("click", () => show(index, true));
+            dot.addEventListener("click", () => show(index));
             dotsRoot.appendChild(dot);
             return dot;
         });
-        function show(index, resetTimer = false) {
+        function show(index) {
             active = (index + slides.length) % slides.length;
             slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === active));
             dots.forEach((dot, dotIndex) => {
@@ -154,19 +153,8 @@
                 dot.classList.toggle("active", selected);
                 dot.setAttribute("aria-current", selected ? "true" : "false");
             });
-            if (resetTimer) start();
         }
-        function stop() { window.clearInterval(timer); }
-        function start() {
-            stop();
-            if (!reducedMotion) timer = window.setInterval(() => show(active + 1), 3500);
-        }
-        viewport.addEventListener("mouseenter", stop);
-        viewport.addEventListener("mouseleave", start);
-        viewport.addEventListener("focusin", stop);
-        viewport.addEventListener("focusout", start);
         show(0);
-        start();
     }
 
     const tutorialTabs = [...document.querySelectorAll("[data-tutorial-filter]")];
@@ -188,7 +176,47 @@
     const personaTabs = [...document.querySelectorAll("[data-demo-persona]")];
     const societyField = document.getElementById("inlineSocietyField");
     const societyInput = demoForm?.elements.societyName;
+    const professionalFields = [...document.querySelectorAll("[data-professional-field]")];
+    const registerModal = document.getElementById("registerModal");
+    const registerDetailsForm = document.getElementById("registerDetailsForm");
+    const closeRegisterModal = document.getElementById("closeRegisterModal");
+    const backToRegistrationBasics = document.getElementById("backToRegistrationBasics");
+    const submitSociety = document.getElementById("submitSociety");
+    const registrationState = document.getElementById("registrationState");
+    const societyPassword = document.getElementById("societyPassword");
+    const passwordGuidance = document.getElementById("passwordGuidance");
+    const toggleSocietyPassword = document.getElementById("toggleSocietyPassword");
+    const societyCity = document.getElementById("societyCity");
     let persona = "society";
+    let modalPreviouslyFocused = null;
+
+    const field = id => document.getElementById(id);
+    const setField = (id, value) => {
+        const element = field(id);
+        if (element) element.value = value || "";
+    };
+
+    function setRegistrationState(message = "", type = "") {
+        if (!registrationState) return;
+        registrationState.textContent = message;
+        registrationState.className = `registration-state${type ? ` ${type}` : ""}`;
+    }
+
+    function openRegistrationModal() {
+        if (!registerModal) return;
+        modalPreviouslyFocused = document.activeElement;
+        registerModal.classList.remove("hidden");
+        document.body.classList.add("modal-open");
+        setRegistrationState();
+        window.setTimeout(() => field("societyAddress")?.focus(), 80);
+    }
+
+    function closeRegistrationModal(restoreFocus = true) {
+        registerModal?.classList.add("hidden");
+        document.body.classList.remove("modal-open");
+        if (restoreFocus && modalPreviouslyFocused instanceof HTMLElement) modalPreviouslyFocused.focus();
+    }
+
     function selectPersona(nextPersona) {
         persona = nextPersona === "professional" ? "professional" : "society";
         personaTabs.forEach(tab => {
@@ -199,26 +227,126 @@
         const professional = persona === "professional";
         if (societyField) societyField.hidden = professional;
         if (societyInput) societyInput.required = !professional;
+        professionalFields.forEach(item => {
+            item.hidden = !professional;
+            item.querySelectorAll("input, select").forEach(control => control.required = professional);
+        });
+        const heading = demoForm?.querySelector(".registration-heading p");
+        if (heading) heading.textContent = professional
+            ? "Tell us who will manage the community. You can confirm the first society workspace next."
+            : "Tell us who is setting up the workspace. You will review the society and administrator details next.";
     }
     personaTabs.forEach(tab => tab.addEventListener("click", () => selectPersona(tab.dataset.demoPersona)));
     demoForm?.addEventListener("submit", event => {
         event.preventDefault();
         if (!demoForm.reportValidity()) return;
         const values = Object.fromEntries(new FormData(demoForm).entries());
-        const societyName = values.societyName || `${values.name}'s Managed Community`;
-        const assign = (id, value) => {
-            const element = document.getElementById(id);
-            if (element) element.value = value || "";
-        };
-        assign("societyName", societyName);
-        assign("societyAdminName", values.name);
-        assign("societyAdminEmail", values.email);
-        assign("societyPhone", values.phone);
-        assign("societyCity", values.city);
+        const societyName = values.societyName || "";
+        setField("societyName", societyName);
+        setField("societyAdminName", values.name);
+        setField("societyAdminEmail", values.email);
+        setField("societyPhone", values.phone);
+        setField("societyCity", values.city);
+        setField("societyState", cityStates[values.city] || "");
         const title = document.getElementById("registerModalTitle");
-        if (title) title.textContent = persona === "professional" ? "Create a Managed Society Workspace" : "Register Society";
-        document.getElementById("registerModal")?.classList.remove("hidden");
-        window.setTimeout(() => document.getElementById("societyAddress")?.focus(), 80);
+        if (title) title.textContent = persona === "professional" ? "Complete Managed Workspace Setup" : "Complete Society Registration";
+        const modalSocietyName = field("societyName");
+        if (modalSocietyName) modalSocietyName.placeholder = persona === "professional" ? "Enter the first society to onboard" : "Example: Green Nest Apartments";
+        openRegistrationModal();
+    });
+
+    closeRegisterModal?.addEventListener("click", () => closeRegistrationModal());
+    backToRegistrationBasics?.addEventListener("click", () => closeRegistrationModal());
+    registerModal?.addEventListener("click", event => {
+        if (event.target === registerModal) closeRegistrationModal();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !registerModal?.classList.contains("hidden")) closeRegistrationModal();
+    });
+
+    toggleSocietyPassword?.addEventListener("click", () => {
+        if (!societyPassword) return;
+        const reveal = societyPassword.type === "password";
+        societyPassword.type = reveal ? "text" : "password";
+        toggleSocietyPassword.textContent = reveal ? "Hide" : "Show";
+        toggleSocietyPassword.setAttribute("aria-label", reveal ? "Hide password" : "Show password");
+    });
+
+    societyPassword?.addEventListener("input", () => {
+        const value = societyPassword.value;
+        const checks = [value.length >= 8, /\d/.test(value), /[^A-Za-z0-9]/.test(value)];
+        const score = checks.filter(Boolean).length;
+        if (!passwordGuidance) return;
+        passwordGuidance.textContent = score === 3 ? "Strong password" : score === 2 ? "Good start—add a symbol or number." : "Use 8+ characters with a number and symbol.";
+        passwordGuidance.dataset.strength = String(score);
+    });
+
+    const cityStates = {
+        Chennai: "Tamil Nadu",
+        Bangalore: "Karnataka",
+        Hyderabad: "Telangana",
+        Pune: "Maharashtra",
+        Mumbai: "Maharashtra",
+        "Delhi NCR": "Delhi"
+    };
+    societyCity?.addEventListener("change", () => {
+        const state = field("societyState");
+        if (state && cityStates[societyCity.value]) state.value = cityStates[societyCity.value];
+    });
+
+    registerDetailsForm?.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!registerDetailsForm.reportValidity() || !submitSociety) return;
+
+        const payload = {
+            societyName: field("societyName")?.value.trim() || "",
+            contactEmail: field("societyAdminEmail")?.value.trim() || "",
+            phone: field("societyPhone")?.value.trim() || "",
+            address: field("societyAddress")?.value.trim() || "",
+            city: field("societyCity")?.value || "",
+            state: field("societyState")?.value.trim() || "",
+            country: field("societyCountry")?.value || "",
+            postalCode: field("societyPostalCode")?.value.trim() || "",
+            societyType: field("societyType")?.value || "",
+            registrationNumber: field("societyRegistrationNumber")?.value.trim() || "",
+            totalUnits: Number(field("societyTotalUnits")?.value || 0),
+            totalWings: Number(field("societyTotalWings")?.value || 0),
+            adminName: field("societyAdminName")?.value.trim() || "",
+            adminDesignation: field("societyAdminDesignation")?.value || "",
+            adminEmail: field("societyAdminEmail")?.value.trim() || "",
+            password: societyPassword?.value || ""
+        };
+
+        const originalLabel = submitSociety.querySelector("span")?.textContent || "Submit for Approval";
+        submitSociety.disabled = true;
+        const buttonLabel = submitSociety.querySelector("span");
+        if (buttonLabel) buttonLabel.textContent = "Submitting securely…";
+        setRegistrationState("Creating your protected workspace request…", "loading");
+
+        try {
+            const response = await fetch("/api/auth/register-tenant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.message || "Registration could not be completed. Please review the details and try again.");
+
+            setRegistrationState(data.message || "Registration submitted successfully. Your workspace is awaiting platform approval.", "success");
+            registerDetailsForm.querySelectorAll("input, select, textarea, button").forEach(control => control.disabled = true);
+            window.setTimeout(() => {
+                closeRegistrationModal(false);
+                demoForm?.reset();
+                registerDetailsForm.reset();
+                selectPersona("society");
+                registerDetailsForm.querySelectorAll("input, select, textarea, button").forEach(control => control.disabled = false);
+                if (buttonLabel) buttonLabel.textContent = originalLabel;
+            }, 1800);
+        } catch (error) {
+            setRegistrationState(error.message, "error");
+            submitSociety.disabled = false;
+            if (buttonLabel) buttonLabel.textContent = originalLabel;
+        }
     });
     selectPersona("society");
 

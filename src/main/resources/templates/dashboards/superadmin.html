@@ -25,22 +25,24 @@
         #sidebar .nav-link i { width: 20px; text-align: center; }
         #sidebar .sidebar-footer { padding: .9rem !important; }
         .main-content { background: #f7f8fb; }
-        .main-content .topbar { min-height: 138px; padding: 2rem 1.85rem !important; border-bottom: 1px solid #e8ebf2; box-shadow: none; }
-        .main-content .topbar h2 { font-size: clamp(1.8rem, 2.4vw, 2.45rem); letter-spacing: -.035em; }
-        .main-content .dashboard-container { max-width: 1500px; width: 100%; margin: 0 auto; padding: 1.8rem !important; }
-        section[data-view="monitoring"] .stats { display: grid !important; grid-template-columns: repeat(4, minmax(190px, 250px)); justify-content: start; gap: 16px; margin: 0 0 1.35rem !important; }
+        .main-content .topbar { min-height: 88px; padding: 1rem 1.25rem !important; border-bottom: 0 !important; background: #f7f8fb; box-shadow: none; }
+        .main-content .topbar:not(.overview-context) { min-height: 78px; padding-block: .85rem !important; }
+        body.dashboard-sidebar-closed .main-content .topbar { padding-left: 6rem !important; }
+        .main-content .topbar h2 { font-size: clamp(1.5rem, 2vw, 1.85rem); letter-spacing: -.035em; }
+        .main-content .dashboard-container { max-width: 1280px; width: 100%; margin: 0 auto; padding: 1.15rem 1.25rem 2rem !important; }
+        section[data-view="monitoring"] .stats { display: grid !important; grid-template-columns: repeat(4, minmax(170px, 1fr)); justify-content: start; gap: .8rem; margin: 0 0 1rem !important; }
         section[data-view="monitoring"] .stats > div { width: auto !important; max-width: none !important; padding: 0 !important; }
-        section[data-view="monitoring"] .stats article { min-height: 84px !important; height: auto !important; padding: .7rem 1.1rem !important; display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left !important; border: 1px solid #e7ebf3 !important; border-radius: 14px !important; background: #fff; box-shadow: 0 5px 16px rgba(29,42,72,.045) !important; }
-        section[data-view="monitoring"] .stats article:hover { transform: translateY(-3px) !important; }
+        section[data-view="monitoring"] .stats article { min-height: 82px !important; height: auto !important; padding: .75rem .9rem !important; display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left !important; border: 1px solid #dfe6f1 !important; border-radius: 12px !important; background: #fff; box-shadow: 0 5px 16px rgba(29,42,72,.04) !important; }
+        section[data-view="monitoring"] .stats article:hover { transform: none !important; }
         section[data-view="monitoring"] .stats article span { margin-bottom: .25rem; color: #68758b !important; font-size: .65rem !important; letter-spacing: .04em; }
-        section[data-view="monitoring"] .stats article strong { margin: 0 !important; font-size: 1.5rem !important; line-height: 1; }
-        section[data-view="monitoring"] .monitoring-card { border: 1px solid #e7ebf3 !important; box-shadow: 0 8px 28px rgba(29,42,72,.055) !important; }
-        section[data-view="monitoring"] .monitoring-card .card-header { padding: 1.4rem 1.6rem 0 !important; }
-        section[data-view="monitoring"] .monitoring-card .card-body { padding: 1.15rem 1.6rem 1.5rem !important; }
+        section[data-view="monitoring"] .stats article strong { margin: 0 !important; font-size: 1.3rem !important; line-height: 1; }
+        section[data-view="monitoring"] .monitoring-card { border: 1px solid #dfe6f1 !important; border-radius: 14px !important; box-shadow: 0 7px 22px rgba(29,42,72,.045) !important; }
+        section[data-view="monitoring"] .monitoring-card .card-header { padding: .9rem 1rem .55rem !important; }
+        section[data-view="monitoring"] .monitoring-card .card-body { padding: .55rem 1rem 1rem !important; }
         section[data-view="monitoring"] .table { margin-bottom: 0; }
-        section[data-view="monitoring"] .resident-inbox-card { width: 100% !important; max-width: none !important; margin-top: 2rem !important; padding: 1.45rem 1.8rem !important; border: 1px solid #e7ebf3 !important; border-radius: 18px !important; background: #fff !important; box-shadow: 0 8px 28px rgba(29,42,72,.055) !important; }
-        section[data-view="monitoring"] .resident-inbox-card .card-head { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 1rem; margin: 0 0 1.2rem !important; }
-        section[data-view="monitoring"] .resident-inbox-card .card-head h2 { margin: 0 !important; font-size: 1.35rem !important; font-weight: 750; }
+        section[data-view="monitoring"] .resident-inbox-card { width: 100% !important; max-width: none !important; margin-top: 1rem !important; padding: 1rem !important; border: 1px solid #dfe6f1 !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 7px 22px rgba(29,42,72,.045) !important; }
+        section[data-view="monitoring"] .resident-inbox-card .card-head { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: .75rem; margin: 0 0 .75rem !important; }
+        section[data-view="monitoring"] .resident-inbox-card .card-head h2 { margin: 0 !important; font-size: 1.1rem !important; font-weight: 750; }
         section[data-view="monitoring"] .resident-inbox-card .inline-state { flex: 0 0 auto; }
         section[data-view="monitoring"] .resident-inbox-card table { width: 100% !important; table-layout: fixed; margin: 0; }
         section[data-view="monitoring"] .resident-inbox-card th, section[data-view="monitoring"] .resident-inbox-card td { padding: .8rem .65rem !important; vertical-align: middle; }
@@ -49,7 +51,7 @@
         section[data-view="monitoring"] .resident-inbox-card th:nth-child(3) { width: 28%; }
         section[data-view="monitoring"] .resident-inbox-card th:nth-child(4) { width: 26%; }
         @media (max-width: 1100px) { section[data-view="monitoring"] .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 820px) { #sidebar { width: 74px !important; min-width: 74px; } #sidebar .sidebar-header h4, #sidebar .nav-link:not(.active) { font-size: 0; } #sidebar .nav-link { justify-content: center; padding-inline: .4rem !important; } #sidebar .nav-link i { font-size: 1rem; } .main-content .topbar { padding: 1.35rem 1rem !important; } .main-content .dashboard-container { padding: 1rem !important; } }
+        @media (max-width: 820px) { #sidebar { width: 74px !important; min-width: 74px; } #sidebar .sidebar-header h4, #sidebar .nav-link:not(.active) { font-size: 0; } #sidebar .nav-link { justify-content: center; padding-inline: .4rem !important; } #sidebar .nav-link i { font-size: 1rem; } .main-content .topbar { padding: .85rem 1rem !important; } .main-content .dashboard-container { padding: .85rem !important; } }
         @media (max-width: 560px) { section[data-view="monitoring"] .stats { grid-template-columns: 1fr; } section[data-view="monitoring"] .resident-inbox-card { overflow-x: auto; padding: 1.1rem !important; } section[data-view="monitoring"] .resident-inbox-card .card-head { align-items: flex-start !important; flex-direction: column !important; } section[data-view="monitoring"] .resident-inbox-card table { min-width: 620px; } .header-actions { gap: .45rem !important; } }
     </style>
     <div class="dashboard-layout">
@@ -68,11 +70,9 @@
                 <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Subscriptions</a>
                 <a href="#users" class="nav-link btn btn-link text-start text-decoration-none" data-panel="users"><i class="fa-solid fa-users me-2"></i> Users</a>
                 <a href="#analytics" class="nav-link btn btn-link text-start text-decoration-none" data-panel="analytics"><i class="fa-solid fa-chart-pie me-2"></i> Analytics</a>
-                <a href="#system-config" class="nav-link btn btn-link text-start text-decoration-none" data-panel="system-config"><i class="fa-solid fa-server me-2"></i> System & Security</a>
                 <a href="#access-roles" class="nav-link btn btn-link text-start text-decoration-none" data-panel="access-roles"><i class="fa-solid fa-user-shield me-2"></i> Roles & Access</a>
                 <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
-                <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup"><i class="fa-solid fa-money-bill-transfer me-2"></i> Finance & Gateways</a>
-                <a href="#communications" class="nav-link btn btn-link text-start text-decoration-none" data-panel="communications"><i class="fa-solid fa-bullhorn me-2"></i> Communications</a>
+                <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup"><i class="fa-solid fa-receipt me-2"></i> Subscription Payments</a>
                 <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
@@ -85,12 +85,12 @@
         <!-- Main Content Area -->
         <main class="main main-content">
             <!-- Topbar -->
-            <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+            <header class="topbar overview-context p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown" id="dashboardTopbar">
                 <div>
-                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Platform Owner Console</p>
+                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow" id="overviewConsoleLabel">Platform Owner Console</p>
                     <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
                 </div>
-                <div class="d-flex align-items-center gap-3 header-actions">
+                <div class="d-flex align-items-center gap-3 header-actions" id="overviewHeaderActions">
                     <span class="badge badge-soft-success px-3 py-2 rounded-pill inline-state" id="platformNoticeState"><i class="fa-solid fa-check-circle me-1"></i> Ready to notify</span>
                     <button class="btn btn-primary rounded-pill shadow-sm px-4" id="btnOpenPlatformNoticeModal" data-bs-toggle="modal" data-bs-target="#platformNoticeModal"><i class="fa-solid fa-paper-plane me-2"></i>Send Platform Notice</button>
                 </div>
@@ -185,7 +185,7 @@
                     <div class="card shadow-sm border-0 rounded-4 mb-4 monitoring-card">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0"><i class="fa-solid fa-satellite-dish text-primary me-2"></i>Apartment Command Watch</h4>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="notify"><i class="fa-solid fa-download me-2"></i>Export Summary</button>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" id="monitoringExportButton" type="button"><i class="fa-solid fa-download me-2"></i>Export Summary</button>
                         </div>
                         <div class="card-body px-4 pb-4">
                             <p class="text-muted small mb-4">Super Admin gets read-level visibility across every important apartment workflow. Approval and assignment buttons stay with the society Admin so daily operations remain controlled by the local authorized team.</p>
@@ -223,7 +223,7 @@
                             <div class="row g-3 mb-4 form-grid">
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small fw-bold">Filter Society</label>
-                                    <select id="auditSocietyFilter" class="form-select shadow-none border-light-subtle"><option value="ALL">All Societies</option><option value="Green Nest">Green Nest</option><option value="Lakeview Res.">Lakeview Residency</option><option value="Urban Heights">Urban Heights</option><option value="Royal Gardens">Royal Gardens</option></select>
+                                    <select id="auditSocietyFilter" class="form-select shadow-none border-light-subtle"><option value="ALL">All Societies</option></select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small fw-bold">Filter Module</label>
@@ -258,52 +258,11 @@
 
                 <!-- Subscriptions -->
                 <section class="d-none subscriptions-panel" data-view="subscriptions">
-                    <div class="card shadow-sm border-0 rounded-4 mb-4 subscription-command-card">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0">Subscription Admin Control</h4>
-                        </div>
-                        <div class="card-body px-4 pb-0">
-                            <ul class="nav nav-tabs subscription-subtabs border-0" role="tablist">
-                                <li class="nav-item"><button class="nav-link border-0 text-dark active fw-bold" data-subtab="plans">Plans</button></li>
-                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="mapping">Society Mapping</button></li>
-                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="admins">Admin Access</button></li>
-                                <li class="nav-item"><button class="nav-link border-0 text-muted" data-subtab="rules">Billing Rules</button></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- Plans Subpanel -->
-                    <div class="subscription-subpanel" data-subpanel="plans">
-                        <div class="card shadow-sm border-0 rounded-4">
-                            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">Platform Subscription Plans</h4><p class="text-muted small mb-0">Changes apply to the shared plan catalogue used across SmartSociety.</p></div><button class="btn btn-primary btn-sm rounded-pill px-3" id="btnAddSubscriptionPlan" type="button"><i class="fa-solid fa-plus me-1"></i>Add Plan</button></div>
-                            <div class="card-body px-4 pb-4 table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>Plan</th><th>Monthly price</th><th>Flats</th><th>Residents</th><th>Features</th><th>Action</th></tr></thead><tbody id="subscriptionPlansTable"></tbody></table></div>
-                        </div>
-                    </div>
-                    <!-- Mapping Subpanel -->
-                    <div class="subscription-subpanel d-none" data-subpanel="mapping">
-                        <div class="card shadow-sm border-0 rounded-4">
-                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Society Plan Mapping</h4></div>
-                            <div class="card-body px-4 pb-4 table-responsive">
-                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Society</th><th>Plan</th><th>Flats</th><th>Renewal</th><th>Admin Owner</th><th>Status</th><th>Action</th></tr></thead><tbody id="subscriptionMappingTable"></tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Admins Subpanel -->
-                    <div class="subscription-subpanel d-none" data-subpanel="admins">
-                        <div class="card shadow-sm border-0 rounded-4">
-                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Society Admin Access</h4></div>
-                            <div class="card-body px-4 pb-4 table-responsive">
-                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Admin</th><th>Society</th><th>Role</th><th>Last Login</th><th>MFA</th><th>Status</th><th>Action</th></tr></thead><tbody id="subscriptionAdminsTable"></tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Rules Subpanel -->
-                    <div class="subscription-subpanel d-none" data-subpanel="rules">
-                        <div class="card shadow-sm border-0 rounded-4">
-                            <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Billing Rules</h4></div>
-                            <div class="card-body px-4 pb-4 table-responsive">
-                                <table class="table table-hover align-middle"><thead class="table-light"><tr><th>Rule</th><th>Plan</th><th>Amount</th><th>Cycle</th><th>Grace</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRulesTable"></tbody></table>
-                            </div>
-                        </div>
+                    <div class="subscription-simple-heading"><div><span>PLAN CATALOGUE</span><h3>Three SmartSociety subscriptions</h3><p>Manage the three plans available to every registered society.</p></div><div class="subscription-catalogue-count"><strong id="subscriptionPlanCount">3</strong><small>available plans</small></div></div>
+                    <div class="subscription-plan-catalogue" id="subscriptionPlanCards"></div>
+                    <div class="subscription-mapping-section">
+                        <div class="subscription-simple-heading"><div><span>SOCIETY SUBSCRIPTIONS</span><h3>Society-to-plan details</h3><p>Review each registered society’s current plan and change the assignment when required.</p></div><div class="subscription-mapping-summary"><strong id="assignedSocietyCount">0</strong><small>societies assigned</small></div></div>
+                        <div class="table-responsive"><table class="table align-middle subscription-mapping-table"><thead><tr><th>Society</th><th>Location</th><th>Current plan</th><th>Started</th><th>Next renewal</th><th>Status</th><th>Change plan</th></tr></thead><tbody id="societyPlanAssignmentTable"></tbody></table></div>
                     </div>
                 </section>
 
@@ -378,36 +337,11 @@
 
                 <!-- Analytics -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="analytics">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3"><div><h4 class="fw-bold mb-1">Platform Analytics</h4><p class="text-muted mb-0 small">A detailed view of revenue, adoption, collections and platform operations.</p></div><button type="button" id="btnExportAnalytics" class="btn btn-outline-primary rounded-pill px-3"><i class="fa-solid fa-download me-2"></i>Export Summary</button></div>
-                    <div class="row g-3 mb-4">
-                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Monthly recurring revenue</span><i class="fa-solid fa-chart-line text-primary"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsMrr">Loading...</div><div class="small text-success mt-2"><i class="fa-solid fa-arrow-trend-up me-1"></i>18% growth vs last month</div></div></div></div>
-                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Active engagement</span><i class="fa-solid fa-users text-info"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsVisitors">Loading...</div><div class="small text-muted mt-2">Visitor and resident activity</div></div></div></div>
-                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Payment success</span><i class="fa-solid fa-credit-card text-success"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsPayments">Loading...</div><div class="small text-success mt-2">Collection health is stable</div></div></div></div>
-                        <div class="col-xl-3 col-md-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="text-muted small fw-bold text-uppercase">Service response</span><i class="fa-solid fa-stopwatch text-warning"></i></div><div class="fs-3 fw-bold mt-3" id="analyticsSla">Loading...</div><div class="small text-muted mt-2">Average complaint closure time</div></div></div></div>
-                    </div>
-                    <div class="row g-4 mb-4">
-                        <div class="col-lg-8"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between"><div><h5 class="fw-bold mb-1">Revenue & Collections Trend</h5><p class="small text-muted mb-0">Monthly recurring revenue compared with collections.</p></div><span class="badge bg-success-subtle text-success align-self-start">Last 6 months</span></div><div class="card-body px-4 pb-4"><div id="analyticsRevenueChart" class="d-flex align-items-end justify-content-around gap-2" style="height:200px"></div><div class="d-flex justify-content-around small text-muted mt-2"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div><div class="d-flex gap-3 small mt-3"><span><i class="fa-solid fa-square text-primary me-1"></i>Revenue</span><span><i class="fa-solid fa-square text-info me-1"></i>Collections</span></div></div></div></div>
-                        <div class="col-lg-4"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Operational Health</h5><p class="small text-muted mb-0">Today's platform activity.</p></div><div class="card-body px-4 pb-4"><div class="d-flex justify-content-between border-bottom py-3"><span>Gate entries</span><strong class="text-primary">1,248</strong></div><div class="d-flex justify-content-between border-bottom py-3"><span>Maintenance requests</span><strong>28</strong></div><div class="d-flex justify-content-between border-bottom py-3"><span>Open payment follow-ups</span><strong class="text-warning">342</strong></div><div class="d-flex justify-content-between pt-3"><span>Platform availability</span><strong class="text-success">99.99%</strong></div></div></div></div>
-                    </div>
-                    <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Society Performance</h5><p class="small text-muted mb-0">Compare adoption, collection health and service performance across registered societies.</p></div><div class="card-body px-4 pb-4 table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Society</th><th>Plan</th><th>Active Users</th><th>Collection Rate</th><th>Open Requests</th><th>Service SLA</th><th>Health</th></tr></thead><tbody id="analyticsSocietyTable"></tbody></table></div></div>
-                    <div class="row g-4"><div class="col-lg-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Subscription Mix</h5><p class="small text-muted mb-0">Current distribution of active society plans.</p></div><div class="card-body px-4 pb-4" id="analyticsSubscriptionMix"></div></div></div><div class="col-lg-6"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="fw-bold mb-1">Recommended Actions</h5><p class="small text-muted mb-0">Priorities based on current platform activity.</p></div><div class="card-body px-4 pb-4"><div class="d-flex gap-3 border-bottom py-2"><i class="fa-solid fa-circle-exclamation text-warning mt-1"></i><div><strong>Follow up on pending collections</strong><div class="small text-muted">342 bills need society-admin attention.</div></div></div><div class="d-flex gap-3 border-bottom py-3"><i class="fa-solid fa-user-shield text-primary mt-1"></i><div><strong>Review pending admin access</strong><div class="small text-muted">67 approvals are awaiting verification.</div></div></div><div class="d-flex gap-3 pt-3"><i class="fa-solid fa-bullhorn text-success mt-1"></i><div><strong>Keep residents informed</strong><div class="small text-muted">Use a platform notice for important service updates.</div></div></div></div></div></div></div>
-                </section>
-
-                <!-- System & Security -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="system-config">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0">System & Security</h4>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill" id="btnAddIntegration" type="button"><i class="fa-solid fa-plus me-2"></i>Add Integration</button>
-                        </div>
-                        <div class="card-body px-4 pb-4 table-responsive">
-                            <p class="text-muted small mb-4">Manage 3rd-party API integrations, Webhooks, and Security Keys.</p>
-                            <table class="table table-hover align-middle" id="apiIntegrationsTable">
-                                <thead class="table-light"><tr><th>Integration Name</th><th>Type</th><th>Status</th><th>Last Sync</th><th>Action</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <div class="analytics-heading"><div><span>LIVE PLATFORM INTELLIGENCE</span><h3>Platform Analytics</h3><p>Revenue, adoption, collections, and service metrics calculated from real SmartSociety records.</p></div><div class="analytics-heading-actions"><small id="analyticsGeneratedAt">Waiting for live data</small><button type="button" id="btnExportAnalytics"><i class="fa-solid fa-download"></i>Export analytics</button></div></div>
+                    <div class="analytics-kpi-grid"><article><i class="fa-solid fa-indian-rupee-sign"></i><span>Monthly recurring revenue</span><strong id="analyticsMrr">Rs. 0</strong><small>Active society subscriptions</small></article><article><i class="fa-solid fa-users"></i><span>Active engagement</span><strong id="analyticsVisitors">0</strong><small>Users and visitor records</small></article><article><i class="fa-solid fa-credit-card"></i><span>Payment success</span><strong id="analyticsPayments">0%</strong><small>Paid maintenance bills</small></article><article><i class="fa-solid fa-stopwatch"></i><span>Service response</span><strong id="analyticsSla">0 hours</strong><small>Average resolved complaint time</small></article></div>
+                    <div class="analytics-main-grid"><section><div class="analytics-section-title"><div><h4>Revenue and collections</h4><p>Actual billed and collected amounts for the latest six months.</p></div><span>6 months</span></div><div id="analyticsRevenueChart" class="analytics-live-chart"></div></section><section><div class="analytics-section-title"><div><h4>Operational totals</h4><p>Current records across real society workspaces.</p></div></div><div id="analyticsOperationalHealth" class="analytics-operational-list"></div></section></div>
+                    <section class="analytics-society-section"><div class="analytics-section-title"><div><h4>Society performance</h4><p>Plan adoption, active users, collection progress, open requests, and calculated health.</p></div></div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Society</th><th>Plan</th><th>Active users</th><th>Collection rate</th><th>Open requests</th><th>Health</th></tr></thead><tbody id="analyticsSocietyTable"></tbody></table></div></section>
+                    <div class="analytics-bottom-grid"><section><div class="analytics-section-title"><div><h4>Subscription distribution</h4><p>Real society assignments across the three plans.</p></div></div><div id="analyticsSubscriptionMix"></div></section><section><div class="analytics-section-title"><div><h4>Recommended actions</h4><p>Generated only when real records require attention.</p></div></div><div id="analyticsRecommendedActions"></div></section></div>
                 </section>
 
                 <!-- Roles & Access -->
@@ -436,26 +370,20 @@
                     </div>
                 </section>
 
-                <!-- Finance & Gateways -->
+                <!-- Subscription payments -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="finance-setup">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><h4 class="fw-bold mb-0">Payment Gateways</h4></div>
-                        <div class="card-body px-4 pb-4 table-responsive">
-                            <table class="table table-hover align-middle" id="paymentGatewaysTable">
-                                <thead class="table-light"><tr><th>Gateway</th><th>Environment</th><th>Status</th><th>Transaction Fee</th><th>Action</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                    <div class="subscription-payment-heading"><div><span>SUBSCRIPTION COLLECTIONS</span><h3>Society subscription payments</h3><p>Track paid societies and the exact recurring charges generated by their assigned plans.</p></div><div class="subscription-payment-period"><i class="fa-regular fa-calendar"></i><div><small>Reporting period</small><strong>Current subscription cycle</strong></div></div></div>
+                    <div class="subscription-payment-stats" aria-label="Subscription payment summary">
+                        <article><i class="fa-solid fa-building-circle-check text-primary"></i><div><span>Subscribed societies</span><strong id="financeSubscribedSocieties">0</strong><small>Assigned to a plan</small></div></article>
+                        <article><i class="fa-solid fa-circle-check text-success"></i><div><span>Paid societies</span><strong id="financePaidSocieties">0</strong><small>Paid plans only</small></div></article>
+                        <article><i class="fa-solid fa-indian-rupee-sign text-success"></i><div><span>Charges collected</span><strong id="financeCollectedCharges">Rs. 0</strong><small>Current recurring cycle</small></div></article>
+                        <article><i class="fa-solid fa-clock text-warning"></i><div><span>Pending charges</span><strong id="financePendingCharges">Rs. 0</strong><small id="financePendingSocieties">0 societies pending</small></div></article>
                     </div>
-                </section>
-
-                <!-- Communications -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="communications">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 card-head"><div><h4 class="fw-bold mb-1">Global Communications</h4><p class="small text-muted mb-0">Manage the official templates used for platform communication.</p></div></div>
-                        <div class="card-body px-4 pb-4 table-responsive">
-                            <table class="table table-hover align-middle" id="communicationsTable">
-                                <thead class="table-light"><tr><th>Template</th><th>Channel</th><th>Subject</th><th>Status</th><th>Action</th></tr></thead>
+                    <div class="subscription-payment-register">
+                        <div class="subscription-payment-register__head"><div><h4>Society payment register</h4><p>Amounts come directly from each society’s assigned subscription plan.</p></div><span id="financePaymentRowCount">0 records</span></div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0" id="subscriptionPaymentsTable">
+                                <thead><tr><th>Society</th><th>Subscription plan</th><th>Billing cycle</th><th>Plan charge</th><th>Payment status</th><th>Subscription started</th><th>Next renewal</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -484,12 +412,122 @@
         #platformNoticeModal .notice-audience-card strong { display: block; font-size: .86rem; }
         #platformNoticeModal .notice-audience-card span { display: block; margin-top: .1rem; color: #71809a; font-size: .75rem; line-height: 1.35; }
         #platformNoticeModal .notice-footer-note { color: #71809a; font-size: .78rem; }
-        #addSocietyModal .modal-dialog { max-width: 520px; }
-        #addSocietyModal .modal-content { overflow: hidden; border: 0; }
-        #addSocietyModal .modal-header { color: #fff; background: linear-gradient(135deg, #2856e8, #503ee7); }
-        #addSocietyModal .form-label { color: #53627c; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
-        #addSocietyModal .form-control { border: 1px solid #dce3f0; border-radius: 11px; box-shadow: none; }
-        #addSocietyModal .form-control:focus { border-color: #5269ec; box-shadow: 0 0 0 .22rem rgba(82,105,236,.13); }
+        #addSocietyModal { overflow: hidden; }
+        #addSocietyModal .modal-dialog { width: min(980px, calc(100vw - 2rem)); max-width: 980px; height: min(900px, calc(100dvh - 2rem)); margin: 1rem auto; }
+        #addSocietyModal .modal-content { display:flex; height:100%; max-height:none; overflow:hidden; border:0; }
+        #addSocietyModal .modal-header { flex:0 0 auto; color:#fff; background:linear-gradient(135deg,#2856e8,#503ee7); }
+        #addSocietyModal form { display:flex; flex:1 1 auto; flex-direction:column; min-height:0; overflow:hidden; }
+        #addSocietyModal .modal-body { flex:1 1 auto; min-height:0; overflow-x:hidden; overflow-y:auto !important; overscroll-behavior:contain; scrollbar-gutter:stable; -webkit-overflow-scrolling:touch; background:#f7f9fd; }
+        #addSocietyModal .modal-body::-webkit-scrollbar { width:10px; }
+        #addSocietyModal .modal-body::-webkit-scrollbar-thumb { border:3px solid #f7f9fd; border-radius:999px; background:#a9b5cc; }
+        #addSocietyModal .modal-body::-webkit-scrollbar-track { background:#f7f9fd; }
+        #addSocietyModal .society-form-intro { display:flex; gap:.8rem; align-items:flex-start; padding:1rem; border:1px solid #dbe5ff; border-radius:14px; background:#eef3ff; color:#355078; }
+        #addSocietyModal .society-form-intro i { display:grid; place-items:center; flex:0 0 36px; width:36px; height:36px; border-radius:10px; color:#fff; background:#4161ec; }
+        #addSocietyModal .society-form-section { padding:1.15rem; border:1px solid #e0e6f1; border-radius:15px; background:#fff; }
+        #addSocietyModal .society-form-section + .society-form-section { margin-top:1rem; }
+        #addSocietyModal .society-form-section__heading { display:flex; gap:.75rem; align-items:center; margin-bottom:1rem; }
+        #addSocietyModal .society-form-section__heading i { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; color:#3159e8; background:#edf1ff; }
+        #addSocietyModal .society-form-section__heading strong { display:block; color:#172238; font-size:.93rem; }
+        #addSocietyModal .society-form-section__heading span { display:block; margin-top:.1rem; color:#75839a; font-size:.75rem; }
+        #addSocietyModal .form-label { margin-bottom:.4rem; color:#53627c; font-size:.7rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+        #addSocietyModal .form-control, #addSocietyModal .form-select { min-height:46px; border:1px solid #dce3f0; border-radius:11px; background:#fff; box-shadow:none; }
+        #addSocietyModal textarea.form-control { min-height:88px; resize:vertical; }
+        #addSocietyModal .form-control:focus, #addSocietyModal .form-select:focus { border-color:#5269ec; box-shadow:0 0 0 .22rem rgba(82,105,236,.13); }
+        #addSocietyModal .password-field { position:relative; }
+        #addSocietyModal .password-field .form-control { padding-right:4.5rem; }
+        #addSocietyModal .password-field button { position:absolute; z-index:3; top:50%; right:.45rem; transform:translateY(-50%); border:0; border-radius:8px; padding:.35rem .65rem; color:#3159e8; background:#edf1ff; font-size:.72rem; font-weight:800; }
+        #addSocietyModal .password-requirements { display:flex; flex-wrap:wrap; gap:.4rem .9rem; margin-top:.55rem; color:#71809a; font-size:.7rem; }
+        #addSocietyModal .password-requirements span::before { content:'✓'; margin-right:.28rem; color:#19a974; font-weight:900; }
+        #addSocietyModal .field-help { margin-top:.3rem; color:#8491a6; font-size:.7rem; }
+        #addSocietyModal .society-approval-box { display:flex; gap:.8rem; align-items:flex-start; height:100%; padding:.9rem; border:1px solid #dce3f0; border-radius:12px; background:#f8faff; }
+        #addSocietyModal .society-approval-box input { margin-top:.2rem; }
+        #addSocietyModal .society-approval-box strong { display:block; color:#26344d; font-size:.82rem; }
+        #addSocietyModal .society-approval-box span { display:block; margin-top:.18rem; color:#75839a; font-size:.72rem; line-height:1.4; }
+        #addSocietyModal .modal-footer { flex:0 0 auto; background:#fff; }
+        @media (max-width: 767px) { #addSocietyModal .modal-dialog { width:calc(100vw - 1rem); height:calc(100dvh - 1rem); margin:.5rem auto; } #addSocietyModal .society-form-section { padding:1rem; } }
+        #subscriptionPlanModal { z-index:12060; overflow:hidden; }
+        body.plan-editor-open .modal-backdrop { z-index:12050 !important; }
+        #subscriptionPlanModal .modal-dialog { width:min(860px,calc(100vw - 2rem)); max-width:860px; height:calc(100dvh - 2rem); margin:1rem auto; }
+        #subscriptionPlanModal .modal-content { display:flex; height:100%; max-height:none; overflow:hidden; }
+        #subscriptionPlanModal .modal-header { flex:0 0 auto; padding:.9rem 1.25rem; }
+        #subscriptionPlanModal form { display:flex; flex:1 1 auto; flex-direction:column; min-height:0; overflow:hidden; }
+        #subscriptionPlanModal .modal-body { flex:1 1 auto; min-height:0; overflow-x:hidden; overflow-y:auto !important; overscroll-behavior:contain; scrollbar-gutter:stable; padding:1.15rem 1.25rem !important; }
+        #subscriptionPlanModal .modal-footer { flex:0 0 auto; padding:.8rem 1.25rem !important; }
+        #subscriptionPlanModal .plan-editor-intro { align-items:flex-start; margin-bottom:1rem; padding-bottom:1rem; }
+        #subscriptionPlanModal .plan-editor-intro h6,#subscriptionPlanModal .plan-editor-section h6 { font-size:.98rem; }
+        #subscriptionPlanModal .plan-editor-intro p,#subscriptionPlanModal .plan-editor-section p { font-size:.78rem; }
+        #subscriptionPlanModal .plan-status-switch { flex:0 0 220px; padding:.55rem .7rem; }
+        #subscriptionPlanModal .plan-editor-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem 1rem; }
+        #subscriptionPlanModal .plan-editor-grid .wide { grid-column:1/-1; }
+        #subscriptionPlanModal .plan-editor-grid .form-control,#subscriptionPlanModal .plan-editor-grid .form-select { min-height:42px; padding:.55rem .7rem; }
+        #subscriptionPlanModal .plan-editor-grid textarea.form-control { min-height:72px; }
+        #subscriptionPlanModal .plan-editor-section { margin-top:1.1rem; padding-top:1rem; }
+        #subscriptionPlanModal .plan-editor-section__title { margin-bottom:.75rem; }
+        #subscriptionPlanModal .plan-feature-grid { gap:.55rem .75rem; }
+        #subscriptionPlanModal .plan-feature-grid label { padding:.62rem .7rem; }
+        #subscriptionPlanModal .plan-feature-grid small { font-size:.72rem; }
+        #subscriptionPlanModal .plan-editor-publishing { padding-bottom:.2rem; }
+        #subscriptionPlanModalStatus { flex:1; min-height:1.15rem; color:#c62828; font-size:.78rem; font-weight:700; }
+        @media (max-width:640px) { #subscriptionPlanModal .modal-dialog { width:calc(100vw - 1rem); height:calc(100dvh - 1rem); margin:.5rem auto; } #subscriptionPlanModal .plan-editor-intro,#subscriptionPlanModal .plan-editor-publishing { flex-direction:column; } #subscriptionPlanModal .plan-status-switch { flex:auto; width:100%; } #subscriptionPlanModal .plan-editor-grid,#subscriptionPlanModal .plan-feature-grid { grid-template-columns:1fr; } #subscriptionPlanModal .plan-editor-grid .wide { grid-column:auto; } }
+        #rolePolicyModal { z-index:12070; overflow:hidden; }
+        body.role-policy-editor-open .modal-backdrop { z-index:12065 !important; }
+        #rolePolicyModal .modal-dialog { width:min(900px,calc(100vw - 2rem)); max-width:900px; height:calc(100dvh - 2rem); margin:1rem auto; }
+        #rolePolicyModal .modal-content { display:flex; height:100%; overflow:hidden; }
+        #rolePolicyModal .modal-header { flex:0 0 auto; padding:.9rem 1.25rem; }
+        #rolePolicyModal form { display:flex; flex:1 1 auto; flex-direction:column; min-height:0; overflow:hidden; }
+        #rolePolicyModal .modal-body { flex:1 1 auto; min-height:0; overflow-x:hidden; overflow-y:auto !important; overscroll-behavior:contain; scrollbar-gutter:stable; padding:1.1rem 1.25rem !important; background:#f7f9fd; }
+        #rolePolicyModal .modal-footer { flex:0 0 auto; padding:.8rem 1.25rem !important; background:#fff; }
+        #rolePolicyModal .policy-intro { display:flex; gap:.75rem; align-items:flex-start; margin-bottom:.9rem; padding:.8rem .9rem; border:1px solid #dbe5ff; border-radius:12px; color:#355078; background:#eef3ff; }
+        #rolePolicyModal .policy-intro i { display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px; border-radius:9px; color:#fff; background:#4161ec; }
+        #rolePolicyModal .policy-section { padding:1rem; border:1px solid #e0e6f1; border-radius:14px; background:#fff; }
+        #rolePolicyModal .policy-section + .policy-section { margin-top:.85rem; }
+        #rolePolicyModal .policy-section-title { display:flex; gap:.65rem; align-items:center; margin-bottom:.8rem; }
+        #rolePolicyModal .policy-section-title i { display:grid; place-items:center; width:31px; height:31px; border-radius:9px; color:#3159e8; background:#edf1ff; }
+        #rolePolicyModal .policy-section-title strong { display:block; color:#172238; font-size:.9rem; }
+        #rolePolicyModal .policy-section-title span { display:block; color:#75839a; font-size:.7rem; }
+        #rolePolicyModal .form-label { margin-bottom:.35rem; color:#53627c; font-size:.68rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+        #rolePolicyModal .form-control,#rolePolicyModal .form-select { min-height:41px; border-color:#dce3f0; border-radius:10px; box-shadow:none; }
+        #rolePolicyModal textarea.form-control { min-height:72px; resize:vertical; }
+        #rolePolicyModal .policy-option-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.55rem; }
+        #rolePolicyModal .policy-option { display:flex; gap:.55rem; align-items:flex-start; min-height:48px; padding:.65rem .7rem; border:1px solid #e0e6f1; border-radius:10px; background:#fbfcff; cursor:pointer; }
+        #rolePolicyModal .policy-option input { flex:0 0 auto; margin-top:.17rem; }
+        #rolePolicyModal .policy-option strong { display:block; color:#2b3850; font-size:.76rem; }
+        #rolePolicyModal .policy-option small { display:block; margin-top:.08rem; color:#7b889d; font-size:.65rem; line-height:1.25; }
+        #rolePolicyModal .policy-switch-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem .8rem; }
+        #rolePolicyModal .policy-switch { padding:.65rem .75rem; border:1px solid #e0e6f1; border-radius:10px; background:#fbfcff; }
+        #rolePolicyModalStatus { flex:1; min-height:1.1rem; color:#c62828; font-size:.76rem; font-weight:700; }
+        @media(max-width:700px){#rolePolicyModal .modal-dialog{width:calc(100vw - 1rem);height:calc(100dvh - 1rem);margin:.5rem auto}#rolePolicyModal .policy-option-grid,#rolePolicyModal .policy-switch-grid{grid-template-columns:1fr}}
+        section[data-view="finance-setup"] { color:#1d2738; }
+        .subscription-payment-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:1.25rem; margin-bottom:1.4rem; }
+        .subscription-payment-heading span { display:block; margin-bottom:.25rem; color:#3159e8; font-size:.7rem; font-weight:850; letter-spacing:.09em; }
+        .subscription-payment-heading h3 { margin:0; font-size:1.55rem; font-weight:800; letter-spacing:-.025em; }
+        .subscription-payment-heading p { margin:.35rem 0 0; color:#728098; font-size:.84rem; }
+        .subscription-payment-period { display:flex; gap:.65rem; align-items:center; padding:.65rem .85rem; border:1px solid #e0e6f1; border-radius:12px; background:#fff; }
+        .subscription-payment-period i { color:#4161ec; }
+        .subscription-payment-period small,.subscription-payment-period strong { display:block; white-space:nowrap; }
+        .subscription-payment-period small { color:#8491a6; font-size:.62rem; }
+        .subscription-payment-period strong { color:#344158; font-size:.74rem; }
+        .subscription-payment-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; margin-bottom:1.25rem; }
+        .subscription-payment-stats article { display:flex; gap:.85rem; align-items:center; min-height:105px; padding:1rem 1.1rem; border:1px solid #e2e7f0; border-radius:15px; background:#fff; box-shadow:0 7px 22px rgba(32,47,78,.045); }
+        .subscription-payment-stats article > i { display:grid; place-items:center; flex:0 0 38px; width:38px; height:38px; border-radius:11px; background:#f0f4ff; }
+        .subscription-payment-stats span,.subscription-payment-stats strong,.subscription-payment-stats small { display:block; }
+        .subscription-payment-stats span { color:#65728a; font-size:.66rem; font-weight:800; letter-spacing:.025em; text-transform:uppercase; }
+        .subscription-payment-stats strong { margin:.12rem 0; color:#18243a; font-size:1.35rem; line-height:1.2; }
+        .subscription-payment-stats small { color:#8a96a9; font-size:.66rem; }
+        .subscription-payment-register { overflow:hidden; border:1px solid #e2e7f0; border-radius:16px; background:#fff; box-shadow:0 8px 28px rgba(32,47,78,.045); }
+        .subscription-payment-register__head { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.15rem 1.25rem; border-bottom:1px solid #e8ecf3; }
+        .subscription-payment-register__head h4 { margin:0; font-size:1.05rem; font-weight:800; }
+        .subscription-payment-register__head p { margin:.2rem 0 0; color:#7b879b; font-size:.74rem; }
+        .subscription-payment-register__head > span { padding:.35rem .65rem; border-radius:999px; color:#3159e8; background:#edf1ff; font-size:.69rem; font-weight:800; }
+        #subscriptionPaymentsTable thead th { padding:.8rem 1rem; border-bottom:1px solid #dce3ee; color:#647087; background:#f8faff; font-size:.66rem; letter-spacing:.035em; text-transform:uppercase; white-space:nowrap; }
+        #subscriptionPaymentsTable tbody td { padding:.85rem 1rem; border-color:#edf0f5; color:#344158; font-size:.78rem; }
+        #subscriptionPaymentsTable .society-cell strong,#subscriptionPaymentsTable .society-cell small { display:block; }
+        #subscriptionPaymentsTable .society-cell strong { color:#1d293e; font-size:.8rem; }
+        #subscriptionPaymentsTable .society-cell small { margin-top:.1rem; color:#8995a8; font-size:.67rem; }
+        #subscriptionPaymentsTable .payment-amount { color:#172238; font-weight:800; white-space:nowrap; }
+        #subscriptionPaymentsTable .empty-payment-register { padding:2.8rem 1rem; color:#7d899d; text-align:center; }
+        @media(max-width:1100px){.subscription-payment-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @media(max-width:650px){.subscription-payment-heading{align-items:flex-start;flex-direction:column}.subscription-payment-period{width:100%}.subscription-payment-stats{grid-template-columns:1fr}.subscription-payment-register__head{align-items:flex-start;flex-direction:column}}
         @media (max-width: 575px) { #platformNoticeModal .notice-audience { grid-template-columns: 1fr; } }
     </style>
 
@@ -564,29 +602,105 @@
 
     <!-- Add Society Modal -->
     <div class="modal fade" id="addSocietyModal" tabindex="-1" aria-labelledby="addSocietyModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content shadow-lg rounded-4">
-                <div class="modal-header border-0 px-4 py-3">
-                    <div><div class="small text-white-50 text-uppercase fw-bold">Platform onboarding</div><h5 class="modal-title fw-bold mb-0" id="addSocietyModalLabel">Add a society</h5></div>
+                <div class="modal-header border-0 px-4 px-md-5 py-3">
+                    <div><div class="small text-white-50 text-uppercase fw-bold">Society onboarding</div><h5 class="modal-title fw-bold mb-0" id="addSocietyModalLabel">Create a complete society profile</h5></div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-add-society-close aria-label="Close"></button>
                 </div>
                 <form id="addSocietyForm">
-                    <div class="modal-body p-4">
-                        <p class="text-muted small mb-4">Create the society profile first. It will stay pending until you approve it.</p>
-                        <div class="mb-3"><label class="form-label" for="newSocietyName">Society name</label><input class="form-control py-2" id="newSocietyName" required placeholder="e.g. Green Heights Apartments"></div>
-                        <div class="mb-3"><label class="form-label" for="newSocietyCity">City</label><input class="form-control py-2" id="newSocietyCity" required placeholder="e.g. Chennai"></div>
-                        <div><label class="form-label" for="newSocietyEmail">Contact email <span class="text-muted fw-normal text-lowercase">(optional)</span></label><input type="email" class="form-control py-2" id="newSocietyEmail" placeholder="admin@society.com"></div>
+                    <div class="modal-body p-4 p-md-5" id="addSocietyScrollableBody" tabindex="0" aria-label="Society onboarding form fields">
+                        <div class="society-form-intro mb-4"><i class="fa-solid fa-building-circle-check"></i><div><strong class="d-block mb-1">Complete the onboarding record</strong><small>Capture the society, location, capacity, administrator contact and plan details. A unique workspace code is generated automatically.</small></div></div>
+
+                        <section class="society-form-section">
+                            <div class="society-form-section__heading"><i class="fa-solid fa-building"></i><div><strong>1. Society identity</strong><span>Legal and public-facing information for this community.</span></div></div>
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label" for="newSocietyName">Society name *</label><input class="form-control" id="newSocietyName" required maxlength="120" placeholder="e.g. Lakeview Residency"></div>
+                                <div class="col-md-3"><label class="form-label" for="newSocietyType">Society type *</label><select class="form-select" id="newSocietyType" required><option value="" selected disabled>Select type</option><option>Apartment complex</option><option>Gated community</option><option>Co-operative housing society</option><option>Condominium</option><option>Residential association</option></select></div>
+                                <div class="col-md-3"><label class="form-label" for="newSocietyRegistration">Registration number</label><input class="form-control" id="newSocietyRegistration" maxlength="80" placeholder="Official ID"></div>
+                                <div class="col-12"><label class="form-label" for="newSocietyWebsite">Website <span class="text-muted fw-normal text-lowercase">(optional)</span></label><input type="url" class="form-control" id="newSocietyWebsite" maxlength="255" placeholder="https://society.example.com"><div class="field-help">Add the official society website if one is available.</div></div>
+                            </div>
+                        </section>
+
+                        <section class="society-form-section">
+                            <div class="society-form-section__heading"><i class="fa-solid fa-location-dot"></i><div><strong>2. Registered address</strong><span>Used for billing, notices and location-based operations.</span></div></div>
+                            <div class="row g-3">
+                                <div class="col-12"><label class="form-label" for="newSocietyAddress">Complete address *</label><textarea class="form-control" id="newSocietyAddress" required maxlength="500" placeholder="Building, street and locality"></textarea></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyCity">City *</label><input class="form-control" id="newSocietyCity" required maxlength="80" placeholder="e.g. Chennai"></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyState">State *</label><input class="form-control" id="newSocietyState" required maxlength="80" placeholder="e.g. Tamil Nadu"></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyPostalCode">Postal code *</label><input class="form-control" id="newSocietyPostalCode" required maxlength="12" pattern="[A-Za-z0-9 -]{4,12}" placeholder="e.g. 600001"></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyCountry">Country *</label><select class="form-select" id="newSocietyCountry" required><option value="India" selected>India</option><option>United Arab Emirates</option><option>Singapore</option><option>Other</option></select></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyWings">Blocks / wings *</label><input type="number" class="form-control" id="newSocietyWings" required min="1" max="500" placeholder="e.g. 5"></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyUnits">Total flats / units *</label><input type="number" class="form-control" id="newSocietyUnits" required min="1" max="100000" placeholder="e.g. 250"></div>
+                            </div>
+                        </section>
+
+                        <section class="society-form-section">
+                            <div class="society-form-section__heading"><i class="fa-solid fa-user-shield"></i><div><strong>3. Society administrator account</strong><span>Create the first administrator who will securely sign in and manage this society workspace.</span></div></div>
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminName">Administrator name *</label><input class="form-control" id="newSocietyAdminName" required maxlength="100" autocomplete="name" placeholder="Full name"></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminDesignation">Designation *</label><input class="form-control" id="newSocietyAdminDesignation" required maxlength="100" placeholder="e.g. Society Secretary"></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminEmail">Administrator email address *</label><input type="email" class="form-control" id="newSocietyAdminEmail" required maxlength="160" autocomplete="username" placeholder="admin@society.com"><div class="field-help">This becomes the administrator's login username.</div></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminPhone">Administrator phone number *</label><input type="tel" class="form-control" id="newSocietyAdminPhone" required maxlength="20" pattern="[0-9+() -]{7,20}" autocomplete="tel" placeholder="+91 98765 43210"></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminPassword">Create password *</label><div class="password-field"><input type="password" class="form-control" id="newSocietyAdminPassword" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Minimum 8 characters"><button type="button" data-toggle-society-password aria-label="Show administrator passwords">Show</button></div></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminPasswordConfirm">Confirm password *</label><input type="password" class="form-control" id="newSocietyAdminPasswordConfirm" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Enter the password again"></div>
+                                <div class="col-12"><div class="password-requirements"><span>At least 8 characters</span><span>One uppercase letter</span><span>One lowercase letter</span><span>One number</span><span>One symbol</span></div></div>
+                            </div>
+                        </section>
+
+                        <section class="society-form-section">
+                            <div class="society-form-section__heading"><i class="fa-solid fa-credit-card"></i><div><strong>4. Subscription and approval</strong><span>Choose the initial plan and decide whether the workspace needs a separate review.</span></div></div>
+                            <div class="row g-3 align-items-stretch">
+                                <div class="col-md-6"><label class="form-label" for="newSocietyPlan">Initial subscription plan</label><select class="form-select" id="newSocietyPlan"><option value="">No plan — assign later</option></select><div class="field-help">Plan dates begin when this society is created.</div></div>
+                                <div class="col-md-6"><label class="form-label">Workspace approval</label><label class="society-approval-box" for="newSocietyApproved"><input class="form-check-input" type="checkbox" id="newSocietyApproved"><span><strong>Approve immediately</strong><span>Leave unchecked to create the society with a pending approval status.</span></span></label></div>
+                                <div class="col-12"><label class="form-label" for="newSocietyNotes">Internal onboarding notes</label><textarea class="form-control" id="newSocietyNotes" maxlength="1500" placeholder="Record verification details, migration requirements, preferred onboarding date, or special instructions."></textarea><div class="field-help">These notes are for the platform administration team.</div></div>
+                            </div>
+                        </section>
                     </div>
-                    <div class="modal-footer border-0 px-4 pb-4 pt-0"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-add-society-close>Cancel</button><button class="btn btn-primary rounded-pill px-4" id="btnCreateSociety" type="submit"><i class="fa-solid fa-plus me-2"></i>Create Society</button></div>
+                    <div class="modal-footer border-0 px-4 px-md-5 py-3"><span class="small text-muted me-auto"><i class="fa-solid fa-shield-halved me-1"></i>Required fields are marked with *</span><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-add-society-close>Cancel</button><button class="btn btn-primary rounded-pill px-4" id="btnCreateSociety" type="submit"><i class="fa-solid fa-building-circle-check me-2"></i>Create Society</button></div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="subscriptionPlanModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
+    <div class="modal fade" id="subscriptionPlanModal" tabindex="-1" aria-labelledby="subscriptionPlanModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4 plan-editor-modal">
             <div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global plan catalogue</div><h5 class="modal-title fw-bold mb-0" id="subscriptionPlanModalTitle">Add subscription plan</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-plan-modal-close aria-label="Close"></button></div>
-            <form id="subscriptionPlanForm"><input type="hidden" id="subscriptionPlanId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small" for="planName">Plan name</label><input class="form-control" id="planName" required placeholder="e.g. Standard"></div><div class="row g-3"><div class="col-6"><label class="form-label fw-bold small" for="planPrice">Monthly price (Rs.)</label><input class="form-control" id="planPrice" type="number" min="0" required></div><div class="col-6"><label class="form-label fw-bold small" for="planFlats">Maximum flats</label><input class="form-control" id="planFlats" type="number" min="1" required></div><div class="col-12"><label class="form-label fw-bold small" for="planResidents">Maximum residents</label><input class="form-control" id="planResidents" type="number" min="1" required></div></div><div class="mt-4"><div class="form-label fw-bold small">Included features</div><div class="d-flex flex-wrap gap-3"><label class="form-check"><input class="form-check-input" type="checkbox" id="planVisitors"><span class="form-check-label">Visitors</span></label><label class="form-check"><input class="form-check-input" type="checkbox" id="planAmenities"><span class="form-check-label">Amenities</span></label><label class="form-check"><input class="form-check-input" type="checkbox" id="planAnalytics"><span class="form-check-label">Analytics</span></label></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-plan-modal-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4" id="btnSaveSubscriptionPlan">Save Plan</button></div></form>
+            <form id="subscriptionPlanForm"><input type="hidden" id="subscriptionPlanId"><div class="modal-body" id="subscriptionPlanScrollableBody" tabindex="0" aria-label="Subscription plan fields">
+                <div class="plan-editor-intro"><div><span>SUBSCRIPTION CONFIGURATION</span><h6>Plan identity and commercial terms</h6><p>Define how this plan is presented, billed, limited, and supported across every society.</p></div><label class="plan-status-switch"><input type="checkbox" id="planActive"><span><strong>Plan active</strong><small>Available for assignment</small></span></label></div>
+                <div class="plan-editor-grid">
+                    <label><span>Plan name *</span><input class="form-control" id="planName" required maxlength="80" placeholder="e.g. Standard"></label>
+                    <label><span>Plan code *</span><input class="form-control" id="planCode" required maxlength="30" placeholder="e.g. STANDARD"></label>
+                    <label class="wide"><span>Customer-facing description</span><textarea class="form-control" id="planDescription" rows="3" maxlength="500" placeholder="Explain who this plan is for and its main benefits"></textarea></label>
+                    <label><span>Price (Rs.) *</span><input class="form-control" id="planPrice" type="number" min="0" step="0.01" required></label>
+                    <label><span>Billing cycle</span><select class="form-select" id="planBillingCycle"><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="HALF_YEARLY">Half-yearly</option><option value="ANNUAL">Annual</option></select></label>
+                    <label><span>Free trial days</span><input class="form-control" id="planTrialDays" type="number" min="0" max="365"></label>
+                    <label><span>Payment grace days</span><input class="form-control" id="planGraceDays" type="number" min="0" max="90"></label>
+                </div>
+                <div class="plan-editor-section"><div class="plan-editor-section__title"><i class="fa-solid fa-gauge-high"></i><div><h6>Usage and team limits</h6><p>Set clear capacity limits for societies assigned to this plan.</p></div></div><div class="plan-editor-grid plan-limit-grid">
+                    <label><span>Maximum flats *</span><input class="form-control" id="planFlats" type="number" min="1" required></label>
+                    <label><span>Maximum residents *</span><input class="form-control" id="planResidents" type="number" min="1" required></label>
+                    <label><span>Society administrators</span><input class="form-control" id="planMaxAdmins" type="number" min="0"></label>
+                    <label><span>Security staff</span><input class="form-control" id="planMaxSecurity" type="number" min="0"></label>
+                    <label><span>Maintenance staff</span><input class="form-control" id="planMaxMaintenance" type="number" min="0"></label>
+                    <label><span>Document storage (GB)</span><input class="form-control" id="planStorage" type="number" min="0"></label>
+                    <label><span>Audit history (days)</span><input class="form-control" id="planAuditDays" type="number" min="1"></label>
+                    <label><span>Support level</span><select class="form-select" id="planSupportLevel"><option value="COMMUNITY">Community</option><option value="STANDARD">Standard</option><option value="PRIORITY">Priority</option><option value="DEDICATED">Dedicated manager</option></select></label>
+                </div></div>
+                <div class="plan-editor-section"><div class="plan-editor-section__title"><i class="fa-solid fa-puzzle-piece"></i><div><h6>Included modules and capabilities</h6><p>Enable only the workflows societies receive with this subscription.</p></div></div><div class="plan-feature-grid">
+                    <label><input type="checkbox" id="planVisitors"><span><strong>Visitor management</strong><small>Pre-approval, check-in, passes and gate records.</small></span></label>
+                    <label><input type="checkbox" id="planAmenities"><span><strong>Amenity booking</strong><small>Schedules, approvals, payments and availability.</small></span></label>
+                    <label><input type="checkbox" id="planBilling"><span><strong>Maintenance billing</strong><small>Invoices, recurring dues and resident balances.</small></span></label>
+                    <label><input type="checkbox" id="planComplaints"><span><strong>Complaint management</strong><small>Tickets, assignments, escalation and resolution.</small></span></label>
+                    <label><input type="checkbox" id="planAnnouncements"><span><strong>Announcements</strong><small>Society notices and targeted communication.</small></span></label>
+                    <label><input type="checkbox" id="planExpenses"><span><strong>Expense approvals</strong><small>Vendor expenses, approval flow and audit history.</small></span></label>
+                    <label><input type="checkbox" id="planAnalytics"><span><strong>Advanced analytics</strong><small>Operational, finance and engagement reporting.</small></span></label>
+                    <label><input type="checkbox" id="planPayments"><span><strong>Payment gateway</strong><small>Online collections, receipts and reconciliation.</small></span></label>
+                    <label><input type="checkbox" id="planApi"><span><strong>API access</strong><small>Approved integrations and external automation.</small></span></label>
+                    <label><input type="checkbox" id="planPrioritySupport"><span><strong>Priority support</strong><small>Faster response and escalated technical support.</small></span></label>
+                </div></div>
+                <div class="plan-editor-section plan-editor-publishing"><div><h6>Catalogue presentation</h6><p>Highlight this plan as the recommended option on plan selectors.</p></div><label><input type="checkbox" id="planFeatured"><span><strong>Mark as featured / most used</strong><small>Adds a prominent recommendation badge.</small></span></label></div>
+            </div><div class="modal-footer border-0"><span id="subscriptionPlanModalStatus" role="status" aria-live="polite"></span><button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" data-plan-modal-close>Cancel</button><button type="submit" class="btn btn-primary px-4" id="btnSaveSubscriptionPlan"><i class="fa-solid fa-floppy-disk me-2"></i>Save changes</button></div></form>
         </div></div>
     </div>
 
@@ -594,26 +708,87 @@
 
     <div class="modal fade" id="platformUserModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform access</div><h5 class="modal-title fw-bold mb-0">Edit user</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-platform-user-close aria-label="Close"></button></div><form id="platformUserForm"><input type="hidden" id="platformUserId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small" for="platformUserName">Full name</label><input class="form-control" id="platformUserName" required></div><div class="row g-3"><div class="col-md-7"><label class="form-label fw-bold small" for="platformUserRole">Role</label><select class="form-select" id="platformUserRole" required><option value="SUPER_ADMIN">Super Admin</option><option value="SOCIETY_ADMIN">Society Admin</option><option value="RESIDENT">Resident</option><option value="SECURITY_STAFF">Security Staff</option><option value="MAINTENANCE_STAFF">Maintenance Staff</option><option value="ACCOUNTANT">Accountant</option></select></div><div class="col-md-5"><label class="form-label fw-bold small" for="platformUserStatus">Account status</label><select class="form-select" id="platformUserStatus"><option value="active">Active</option><option value="locked">Locked</option></select></div><div class="col-12"><label class="form-label fw-bold small">Society</label><input class="form-control" id="platformUserSociety" disabled></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-platform-user-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save User</button></div></form></div></div></div>
 
-    <div class="modal fade" id="integrationModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">System connection</div><h5 class="modal-title fw-bold mb-0" id="integrationModalTitle">Add integration</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-integration-close aria-label="Close"></button></div><form id="integrationForm"><input type="hidden" id="integrationId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Integration name</label><input class="form-control" id="integrationName" required placeholder="e.g. Twilio SMS"></div><div class="mb-3"><label class="form-label fw-bold small">Purpose / description</label><input class="form-control" id="integrationDescription" placeholder="e.g. Transactional messages"></div><div class="mb-3"><label class="form-label fw-bold small">Webhook URL <span class="text-muted fw-normal">(optional)</span></label><input class="form-control" id="integrationWebhook" type="url" placeholder="https://..."></div><div class="mb-3"><label class="form-label fw-bold small">API key <span class="text-muted fw-normal">(optional)</span></label><input class="form-control" id="integrationApiKey" type="password" placeholder="Enter a key only when changing it"></div><div class="form-check form-switch"><input class="form-check-input" id="integrationActive" type="checkbox" checked><label class="form-check-label" for="integrationActive">Enable this integration</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-integration-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Integration</button></div></form></div></div></div>
+    <div class="modal fade" id="rolePolicyModal" tabindex="-1" aria-labelledby="rolePolicyModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global access policy</div><h5 class="modal-title fw-bold mb-0" id="rolePolicyModalTitle">Configure role permissions</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-role-policy-close aria-label="Close"></button></div>
+            <form id="rolePolicyForm"><input type="hidden" id="rolePolicyId">
+                <div class="modal-body">
+                    <div class="policy-intro"><i class="fa-solid fa-shield-halved"></i><div><strong class="d-block small">Build a complete role policy</strong><span class="small">Choose exactly what this role can access, which actions it can perform, and the security rules applied to every assigned user.</span></div></div>
 
-    <div class="modal fade" id="rolePolicyModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global access policy</div><h5 class="modal-title fw-bold mb-0">Edit role access</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-role-policy-close aria-label="Close"></button></div><form id="rolePolicyForm"><input type="hidden" id="rolePolicyId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Role</label><input class="form-control" id="rolePolicyName" disabled></div><div class="mb-3"><label class="form-label fw-bold small">Permissions summary</label><textarea class="form-control" id="rolePolicyPermissions" rows="4" required></textarea><div class="form-text">Describe the access this role is allowed across SmartSociety.</div></div><div class="form-check form-switch"><input class="form-check-input" id="rolePolicyActive" type="checkbox" checked><label class="form-check-label" for="rolePolicyActive">Role is active and available for assignment</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-role-policy-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Access Policy</button></div></form></div></div></div>
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-id-badge"></i><div><strong>1. Policy identity</strong><span>Role name and an administrator-friendly summary.</span></div></div>
+                        <div class="row g-3"><div class="col-md-4"><label class="form-label" for="rolePolicyName">System role</label><input class="form-control bg-light" id="rolePolicyName" disabled></div><div class="col-md-8"><label class="form-label" for="rolePolicyPermissions">Permissions summary *</label><input class="form-control" id="rolePolicyPermissions" required maxlength="1000" placeholder="e.g. Finance operations and society billing approvals"></div></div>
+                    </section>
+
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-table-cells-large"></i><div><strong>2. Module access</strong><span>Select every workspace area visible to this role.</span></div></div>
+                        <div class="policy-option-grid" id="rolePolicyModules">
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="DASHBOARD"><span><strong>Dashboard</strong><small>Overview and assigned metrics</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="SOCIETIES"><span><strong>Societies</strong><small>Society and workspace records</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="USERS"><span><strong>Users & residents</strong><small>Accounts, profiles and access</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="VISITORS"><span><strong>Visitors & security</strong><small>Gate entries and approvals</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="BILLING"><span><strong>Billing & payments</strong><small>Bills, dues and receipts</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="EXPENSES"><span><strong>Expenses</strong><small>Vendor expenses and approvals</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="AMENITIES"><span><strong>Amenities</strong><small>Facilities and bookings</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="COMPLAINTS"><span><strong>Complaints</strong><small>Tickets and escalations</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="REPORTS"><span><strong>Reports & analytics</strong><small>Insights and exports</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="NOTICES"><span><strong>Communications</strong><small>Notices and notifications</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="AUDIT"><span><strong>Audit logs</strong><small>Activity and security events</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="SETTINGS"><span><strong>Settings</strong><small>Workspace configuration</small></span></label>
+                        </div>
+                    </section>
+
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-list-check"></i><div><strong>3. Allowed actions</strong><span>Control what the role may do inside selected modules.</span></div></div>
+                        <div class="policy-option-grid" id="rolePolicyActions">
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="VIEW"><span><strong>View</strong><small>Read records and details</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="CREATE"><span><strong>Create</strong><small>Add new records</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="EDIT"><span><strong>Edit</strong><small>Modify existing records</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="APPROVE"><span><strong>Approve</strong><small>Authorize controlled workflows</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="DELETE"><span><strong>Delete</strong><small>Remove permitted records</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="ASSIGN"><span><strong>Assign</strong><small>Allocate tasks and owners</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="EXPORT"><span><strong>Export</strong><small>Download reports and data</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="MANAGE_USERS"><span><strong>Manage users</strong><small>Provision and restrict accounts</small></span></label>
+                            <label class="policy-option"><input class="form-check-input" type="checkbox" value="CONFIGURE"><span><strong>Configure</strong><small>Change operational settings</small></span></label>
+                        </div>
+                    </section>
+
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-filter-circle-dollar"></i><div><strong>4. Scope and approval controls</strong><span>Set the data boundary and financial authority for this role.</span></div></div>
+                        <div class="row g-3"><div class="col-md-6"><label class="form-label" for="rolePolicyDataScope">Data access scope</label><select class="form-select" id="rolePolicyDataScope"><option value="OWN_RECORDS">Own records only</option><option value="ASSIGNED_SOCIETY">Assigned society only</option><option value="ALL_SOCIETIES">All societies</option><option value="PLATFORM_WIDE">Platform-wide</option></select></div><div class="col-md-6"><label class="form-label" for="rolePolicyApprovalLimit">Maximum approval amount (Rs.)</label><input class="form-control" id="rolePolicyApprovalLimit" type="number" min="0" step="0.01" value="0"><div class="form-text">Use 0 when the role has no financial approval authority.</div></div></div>
+                    </section>
+
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-lock"></i><div><strong>5. Security and session controls</strong><span>Apply additional safeguards to every user assigned this role.</span></div></div>
+                        <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label" for="rolePolicySessionTimeout">Inactive session timeout (minutes)</label><input class="form-control" id="rolePolicySessionTimeout" type="number" min="5" max="1440" value="30" required></div><div class="col-md-6"><label class="form-label" for="rolePolicyMaxSessions">Maximum concurrent sessions</label><input class="form-control" id="rolePolicyMaxSessions" type="number" min="1" max="20" value="2" required></div></div>
+                        <div class="policy-switch-grid">
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyMfa" type="checkbox"><label class="form-check-label small fw-semibold" for="rolePolicyMfa">Require multi-factor authentication</label></div>
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyReauth" type="checkbox" checked><label class="form-check-label small fw-semibold" for="rolePolicyReauth">Re-authenticate sensitive actions</label></div>
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyIpRestriction" type="checkbox"><label class="form-check-label small fw-semibold" for="rolePolicyIpRestriction">Enforce approved IP ranges</label></div>
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyAudit" type="checkbox" checked><label class="form-check-label small fw-semibold" for="rolePolicyAudit">Record detailed audit events</label></div>
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyExport" type="checkbox"><label class="form-check-label small fw-semibold" for="rolePolicyExport">Permit data and report exports</label></div>
+                            <div class="policy-switch form-check form-switch"><input class="form-check-input" id="rolePolicyActive" type="checkbox" checked><label class="form-check-label small fw-semibold" for="rolePolicyActive">Role active and assignable</label></div>
+                        </div>
+                    </section>
+
+                    <section class="policy-section"><div class="policy-section-title"><i class="fa-solid fa-note-sticky"></i><div><strong>6. Internal policy notes</strong><span>Document exceptions, review requirements, or ownership details.</span></div></div><label class="form-label" for="rolePolicyNotes">Administrator notes</label><textarea class="form-control" id="rolePolicyNotes" rows="3" maxlength="2000" placeholder="Add internal guidance for future policy reviews"></textarea></section>
+                </div>
+                <div class="modal-footer border-0"><span id="rolePolicyModalStatus" role="status" aria-live="polite"></span><button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" data-role-policy-close>Cancel</button><button type="submit" class="btn btn-primary px-4" id="btnSaveRolePolicy"><i class="fa-solid fa-floppy-disk me-2"></i>Save access policy</button></div>
+            </form>
+        </div></div>
+    </div>
 
     <div class="modal fade" id="privacyReviewModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Privacy decision</div><h5 class="modal-title fw-bold mb-0">Review data request</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-privacy-close aria-label="Close"></button></div><form id="privacyReviewForm"><input type="hidden" id="privacyRequestId"><div class="modal-body p-4"><div class="alert alert-warning small"><i class="fa-solid fa-triangle-exclamation me-2"></i>Approving records the deletion/anonymization decision. Confirm the request before proceeding.</div><div class="mb-3"><label class="form-label fw-bold small">Request</label><input class="form-control" id="privacyRequestSummary" disabled></div><div class="mb-3"><label class="form-label fw-bold small">Decision</label><select class="form-select" id="privacyDecision"><option value="approve">Approve and process request</option><option value="reject">Reject request</option></select></div><div class="mb-0"><label class="form-label fw-bold small">Review note</label><textarea class="form-control" id="privacyDecisionNote" rows="3" required placeholder="Reason for approval or rejection"></textarea></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-privacy-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Decision</button></div></form></div></div></div>
 
     <div class="modal fade" id="gatewayConfigModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Finance configuration</div><h5 class="modal-title fw-bold mb-0">Configure payment gateway</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-gateway-close aria-label="Close"></button></div><form id="gatewayConfigForm"><input type="hidden" id="gatewayConfigId"><div class="modal-body p-4"><div class="row g-3"><div class="col-md-6"><label class="form-label fw-bold small">Gateway</label><input class="form-control" id="gatewayProvider" required></div><div class="col-md-6"><label class="form-label fw-bold small">Environment</label><select class="form-select" id="gatewayEnvironment"><option>Sandbox</option><option>Production</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Merchant ID</label><input class="form-control" id="gatewayMerchantId" required></div><div class="col-md-6"><label class="form-label fw-bold small">Transaction fee</label><input class="form-control" id="gatewayFee" placeholder="e.g. 2.0%"></div><div class="col-12"><label class="form-label fw-bold small">API key <span class="text-muted fw-normal">(only enter to change)</span></label><input class="form-control" id="gatewayApiKey" type="password"></div></div><div class="form-check form-switch mt-4"><input class="form-check-input" id="gatewayInvoicing" type="checkbox"><label class="form-check-label" for="gatewayInvoicing">Enable digital invoicing</label></div><div class="form-check form-switch mt-2"><input class="form-check-input" id="gatewayActive" type="checkbox"><label class="form-check-label" for="gatewayActive">Activate this gateway</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-gateway-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Gateway</button></div></form></div></div></div>
 
-    <div class="modal fade" id="templateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform communication</div><h5 class="modal-title fw-bold mb-0">Edit notification template</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-template-close aria-label="Close"></button></div><form id="templateForm"><input type="hidden" id="templateId"><div class="modal-body p-4"><div class="row g-3"><div class="col-md-7"><label class="form-label fw-bold small">Template name</label><input class="form-control" id="templateName" required></div><div class="col-md-5"><label class="form-label fw-bold small">Channel</label><select class="form-select" id="templateChannel"><option>EMAIL</option><option>SMS</option><option>PUSH</option></select></div><div class="col-12"><label class="form-label fw-bold small">Subject</label><input class="form-control" id="templateSubject" required></div><div class="col-12"><label class="form-label fw-bold small">Message</label><textarea class="form-control" id="templateBody" rows="5" required></textarea></div></div><div class="form-check form-switch mt-3"><input class="form-check-input" id="templateActive" type="checkbox"><label class="form-check-label" for="templateActive">Template is active</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-template-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Template</button></div></form></div></div></div>
     
     <div th:replace="~{fragments/layout :: scripts}"></div>
     <!-- Make sure dashboard.js functions map correctly - keeping old dashboard CSS around for things not overwritten -->    <script>
         const dashboardTitles = {
             overview: "Overview", monitoring: "Apartment Command Watch", "audit-logs": "Granular Audit Logs",
             societies: "Societies", subscriptions: "Subscriptions", users: "Users", analytics: "Analytics",
-            "system-config": "System & Security", "access-roles": "Roles & Access", "privacy-data": "Database & Privacy",
-            "finance-setup": "Finance & Gateways", communications: "Communications", settings: "Settings"
+            "access-roles": "Roles & Access", "privacy-data": "Database & Privacy",
+            "finance-setup": "Subscription Payments", settings: "Settings"
         };
         
         window.forceOpenPanel = function(panel) {
+            if (!document.querySelector(`[data-view="${panel}"]`)) panel = "overview";
             console.log("Switching to panel: " + panel);
             
             // 1. Hide all views
@@ -641,6 +816,14 @@
             if (titleEl) {
                 titleEl.textContent = dashboardTitles[panel] || "Dashboard";
             }
+
+            // Overview-only platform identity and communication controls.
+            const isOverview = panel === "overview";
+            document.getElementById("overviewConsoleLabel")?.classList.toggle("d-none", !isOverview);
+            document.getElementById("overviewHeaderActions")?.classList.toggle("d-none", !isOverview);
+            const dashboardTopbar = document.getElementById("dashboardTopbar");
+            dashboardTopbar?.classList.toggle("overview-context", isOverview);
+            dashboardTopbar?.classList.toggle("d-none", !isOverview);
             
             // 5. Update URL Hash silently
             if (location.hash !== `#${panel}`) {
@@ -650,16 +833,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btnExportAnalytics')?.addEventListener('click', () => {
-                const rows = Array.of(
-                    Array.of("SmartSociety Platform Analytics"), Array.of("Metric", "Current value"),
-                    Array.of("Monthly recurring revenue", document.getElementById('analyticsMrr')?.textContent.trim() || ""),
-                    Array.of("Active engagement", document.getElementById('analyticsVisitors')?.textContent.trim() || ""),
-                    Array.of("Payment success", document.getElementById('analyticsPayments')?.textContent.trim() || ""),
-                    Array.of("Service response", document.getElementById('analyticsSla')?.textContent.trim() || "")
-                );
+                const data=window.platformAnalytics||{},k=data.kpis||{},o=data.operational||{};
+                const rows=[["SmartSociety Platform Analytics"],["Generated",data.generatedAt||new Date().toISOString()],[],["KEY PERFORMANCE INDICATORS"],["Metric","Current value"],["Monthly recurring revenue",k.mrr||0],["Active users",k.activeUsers||0],["Visitor records",k.visitorRecords||0],["Payment success rate",`${k.paymentSuccessRate||0}%`],["Average resolution time",`${k.averageResolutionHours||0} hours`],[],["OPERATIONAL TOTALS"],["Registered societies",o.registeredSocieties||0],["Gate / visitor records",o.gateEntries||0],["Maintenance requests",o.maintenanceRequests||0],["Open payment follow-ups",o.openPaymentFollowUps||0],[],["SOCIETY PERFORMANCE"],["Society","Plan","Active users","Collection rate","Open requests","Health"],...(data.societies||[]).map(item=>[item.society,item.plan,item.activeUsers,`${item.collectionRate}%`,item.openRequests,item.health]),[],["REVENUE AND COLLECTIONS"],["Month","Billed","Collected"],...(data.revenueTrend||[]).map(item=>[item.month,item.billed,item.collected])];
                 const csv = rows.map(row => row.map(value => `\"${String(value).replaceAll('\"', '\"\"')}\"`).join(',')).join('\n');
-                const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = 'smartsociety-analytics-summary.csv'; link.click(); URL.revokeObjectURL(link.href);
-                showToast('✓ Analytics summary downloaded.');
+                const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); link.download = 'smartsociety-platform-analytics.csv'; link.click(); URL.revokeObjectURL(link.href);
+                showToast('✓ Detailed live analytics downloaded.');
             });
             // Forcefully attach direct click handlers to all sidebar links and buttons
             document.querySelectorAll('[data-panel]').forEach(el => {
@@ -684,11 +862,21 @@
                 forceOpenPanel("overview");
             }
 
-            // Add Society: a compact form replaces the old browser prompts.
+            // Add Society: detailed platform onboarding form.
             const addSocietyModal = document.getElementById("addSocietyModal");
             const addSocietyForm = document.getElementById("addSocietyForm");
             const openAddSocietyModal = () => {
                 if (!addSocietyModal) return;
+                const planSelect = document.getElementById("newSocietyPlan");
+                if (planSelect) {
+                    const selected = planSelect.value;
+                    planSelect.replaceChildren(new Option("No plan — assign later", ""));
+                    (window.platformPlans || []).filter(plan => plan.active !== false).forEach(plan => {
+                        const price = Number(plan.monthlyPrice || 0).toLocaleString("en-IN");
+                        planSelect.add(new Option(`${plan.name} · Rs. ${price} / month`, String(plan.id)));
+                    });
+                    planSelect.value = [...planSelect.options].some(option => option.value === selected) ? selected : "";
+                }
                 if (typeof bootstrap !== "undefined") return bootstrap.Modal.getOrCreateInstance(addSocietyModal).show();
                 addSocietyModal.style.display = "block";
                 addSocietyModal.classList.add("show");
@@ -702,26 +890,78 @@
             document.getElementById("btnOpenAddSocietyModal")?.addEventListener("click", openAddSocietyModal);
             document.querySelectorAll("[data-add-society-close]").forEach(button => button.addEventListener("click", closeAddSocietyModal));
             addSocietyModal?.addEventListener("click", event => { if (event.target === addSocietyModal) closeAddSocietyModal(); });
+            document.querySelector("[data-toggle-society-password]")?.addEventListener("click", event => {
+                const fields = [document.getElementById("newSocietyAdminPassword"), document.getElementById("newSocietyAdminPasswordConfirm")].filter(Boolean);
+                const show = fields.some(field => field.type === "password");
+                fields.forEach(field => field.type = show ? "text" : "password");
+                event.currentTarget.textContent = show ? "Hide" : "Show";
+                event.currentTarget.setAttribute("aria-label", `${show ? "Hide" : "Show"} administrator passwords`);
+            });
             addSocietyForm?.addEventListener("submit", async event => {
                 event.preventDefault();
-                const name = document.getElementById("newSocietyName")?.value.trim();
-                const city = document.getElementById("newSocietyCity")?.value.trim();
-                const contactEmail = document.getElementById("newSocietyEmail")?.value.trim() || "";
-                if (!name || !city) return;
+                if (!addSocietyForm.checkValidity()) {
+                    addSocietyForm.reportValidity();
+                    return;
+                }
+                const value = id => document.getElementById(id)?.value.trim() || "";
+                const name = value("newSocietyName");
+                const selectedPlan = value("newSocietyPlan");
+                const adminPassword = value("newSocietyAdminPassword");
+                const passwordConfirmation = value("newSocietyAdminPasswordConfirm");
+                const securePassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
+                if (!securePassword.test(adminPassword)) {
+                    document.getElementById("newSocietyAdminPassword")?.setCustomValidity("Use at least 8 characters with uppercase, lowercase, a number and a symbol.");
+                    addSocietyForm.reportValidity();
+                    document.getElementById("newSocietyAdminPassword")?.setCustomValidity("");
+                    return;
+                }
+                if (adminPassword !== passwordConfirmation) {
+                    document.getElementById("newSocietyAdminPasswordConfirm")?.setCustomValidity("Passwords do not match.");
+                    addSocietyForm.reportValidity();
+                    document.getElementById("newSocietyAdminPasswordConfirm")?.setCustomValidity("");
+                    return;
+                }
+                const payload = {
+                    societyName: name,
+                    societyType: value("newSocietyType"),
+                    registrationNumber: value("newSocietyRegistration"),
+                    website: value("newSocietyWebsite"),
+                    address: value("newSocietyAddress"),
+                    city: value("newSocietyCity"),
+                    state: value("newSocietyState"),
+                    postalCode: value("newSocietyPostalCode"),
+                    country: value("newSocietyCountry"),
+                    totalWings: Number(value("newSocietyWings")),
+                    totalUnits: Number(value("newSocietyUnits")),
+                    contactName: value("newSocietyAdminName"),
+                    contactEmail: value("newSocietyAdminEmail"),
+                    phone: value("newSocietyAdminPhone"),
+                    adminName: value("newSocietyAdminName"),
+                    adminDesignation: value("newSocietyAdminDesignation"),
+                    adminEmail: value("newSocietyAdminEmail"),
+                    adminPhone: value("newSocietyAdminPhone"),
+                    adminPassword,
+                    subscriptionPlanId: selectedPlan ? Number(selectedPlan) : null,
+                    approved: Boolean(document.getElementById("newSocietyApproved")?.checked),
+                    onboardingNotes: value("newSocietyNotes")
+                };
                 const submitButton = document.getElementById("btnCreateSociety");
                 submitButton.disabled = true;
+                const originalLabel = submitButton.innerHTML;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Creating workspace…';
                 try {
-                    const response = await fetch("/api/platform/tenants", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ societyName: name, city, contactEmail }) });
+                    const response = await fetch("/api/platform/tenants", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
                     const created = await response.json().catch(() => ({}));
                     if (!response.ok) throw new Error(created.message || "Unable to create society");
                     closeAddSocietyModal();
                     addSocietyForm.reset();
-                    showToast(`✓ ${created.societyName || name} added and ready for approval.`);
+                    showToast(`✓ ${created.societyName || name} created ${created.approved ? "and approved" : "with pending approval"}.`);
                     loadPlatformBackendData();
                 } catch (error) {
                     showToast(error.message || "Unable to create society");
                 } finally {
                     submitButton.disabled = false;
+                    submitButton.innerHTML = originalLabel;
                 }
             });
 
@@ -729,29 +969,60 @@
             const planForm = document.getElementById("subscriptionPlanForm");
             const showPlanModal = plan => {
                 planForm.reset();
+                document.getElementById("subscriptionPlanModalStatus").textContent = "";
                 document.getElementById("subscriptionPlanId").value = plan?.id || "";
                 document.getElementById("subscriptionPlanModalTitle").textContent = plan ? "Edit subscription plan" : "Add subscription plan";
                 document.getElementById("planName").value = plan?.name || "";
+                document.getElementById("planCode").value = plan?.planCode || (plan?.name || "").toUpperCase().replace(/[^A-Z0-9]+/g, "_");
+                document.getElementById("planDescription").value = plan?.description || "";
                 document.getElementById("planPrice").value = plan?.monthlyPrice ?? "0";
                 document.getElementById("planFlats").value = plan?.maxApartments ?? "50";
                 document.getElementById("planResidents").value = plan?.maxResidents ?? "100";
+                document.getElementById("planMaxAdmins").value = plan?.maxAdmins ?? "1";
+                document.getElementById("planMaxSecurity").value = plan?.maxSecurityStaff ?? "1";
+                document.getElementById("planMaxMaintenance").value = plan?.maxMaintenanceStaff ?? "1";
+                document.getElementById("planStorage").value = plan?.storageGb ?? "5";
+                document.getElementById("planAuditDays").value = plan?.auditHistoryDays ?? "30";
+                document.getElementById("planTrialDays").value = plan?.trialDays ?? "0";
+                document.getElementById("planGraceDays").value = plan?.graceDays ?? "0";
+                document.getElementById("planBillingCycle").value = plan?.billingCycle || "MONTHLY";
+                document.getElementById("planSupportLevel").value = plan?.supportLevel || "STANDARD";
+                document.getElementById("planActive").checked = plan?.active !== false;
+                document.getElementById("planFeatured").checked = !!plan?.featured;
                 document.getElementById("planVisitors").checked = !!plan?.visitorManagement;
                 document.getElementById("planAmenities").checked = !!plan?.amenityBooking;
                 document.getElementById("planAnalytics").checked = !!plan?.analytics;
-                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(planModal).show();
+                document.getElementById("planBilling").checked = !!plan?.billingManagement;
+                document.getElementById("planComplaints").checked = !!plan?.complaintManagement;
+                document.getElementById("planAnnouncements").checked = !!plan?.announcementManagement;
+                document.getElementById("planExpenses").checked = !!plan?.expenseManagement;
+                document.getElementById("planPayments").checked = !!plan?.paymentGateway;
+                document.getElementById("planApi").checked = !!plan?.apiAccess;
+                document.getElementById("planPrioritySupport").checked = !!plan?.prioritySupport;
+                document.body.classList.add("plan-editor-open");
+                document.getElementById("subscriptionPlanScrollableBody").scrollTop = 0;
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(planModal, {backdrop:true, keyboard:true, focus:true}).show();
                 else { planModal.style.display = "block"; planModal.classList.add("show"); }
             };
-            const closePlanModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(planModal)?.hide(); else { planModal.style.display = "none"; planModal.classList.remove("show"); } };
+            const closePlanModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(planModal)?.hide(); else { planModal.style.display = "none"; planModal.classList.remove("show"); document.body.classList.remove("plan-editor-open"); } };
+            planModal?.addEventListener("hidden.bs.modal", () => document.body.classList.remove("plan-editor-open"));
+            planModal?.addEventListener("shown.bs.modal", () => document.getElementById("planName")?.focus({preventScroll:true}));
+            document.addEventListener("catalogue-plan-edit", event => {
+                const plan = (window.platformPlans || []).find(item => String(item.id) === String(event.detail?.planId));
+                if (plan) showPlanModal(plan); else showToast("The selected plan could not be loaded. Refresh the page and try again.");
+            });
             document.querySelectorAll("[data-plan-modal-close]").forEach(button => button.addEventListener("click", closePlanModal));
             planModal?.addEventListener("click", event => { if (event.target === planModal) closePlanModal(); });
             document.getElementById("btnAddSubscriptionPlan")?.addEventListener("click", () => showPlanModal(null));
             document.addEventListener("click", event => { const button = event.target.closest("[data-plan-action]"); if (!button) return; const row = button.closest("tr"); const mappedName = row?.children[1]?.textContent.trim().toLowerCase(); const plan = button.dataset.planAction === "review" ? (window.platformPlans || []).find(item => item.name.toLowerCase() === mappedName || item.name.toLowerCase().replace(/ plan$/, "") === mappedName) : (window.platformPlans || []).find(item => String(item.id) === row?.dataset.planId); if (plan) showPlanModal(plan); else showToast("The linked plan is not available in the global catalogue."); });
             planForm?.addEventListener("submit", async event => {
                 event.preventDefault();
+                if (!planForm.checkValidity()) { planForm.reportValidity(); return; }
                 const id = document.getElementById("subscriptionPlanId").value;
-                const payload = { name: document.getElementById("planName").value.trim(), monthlyPrice: Number(document.getElementById("planPrice").value), maxApartments: Number(document.getElementById("planFlats").value), maxResidents: Number(document.getElementById("planResidents").value), visitorManagement: document.getElementById("planVisitors").checked, amenityBooking: document.getElementById("planAmenities").checked, analytics: document.getElementById("planAnalytics").checked };
-                const save = document.getElementById("btnSaveSubscriptionPlan"); save.disabled = true;
-                try { const response = await fetch(`/api/platform/plans${id ? `/${id}` : ""}`, { method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save plan"); closePlanModal(); showToast(`✓ ${result.name || payload.name} is now updated globally.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save plan"); } finally { save.disabled = false; }
+                const payload = { name: document.getElementById("planName").value.trim(), planCode: document.getElementById("planCode").value.trim().toUpperCase(), description: document.getElementById("planDescription").value.trim(), monthlyPrice: Number(document.getElementById("planPrice").value), billingCycle: document.getElementById("planBillingCycle").value, trialDays: Number(document.getElementById("planTrialDays").value), graceDays: Number(document.getElementById("planGraceDays").value), maxApartments: Number(document.getElementById("planFlats").value), maxResidents: Number(document.getElementById("planResidents").value), maxAdmins: Number(document.getElementById("planMaxAdmins").value), maxSecurityStaff: Number(document.getElementById("planMaxSecurity").value), maxMaintenanceStaff: Number(document.getElementById("planMaxMaintenance").value), storageGb: Number(document.getElementById("planStorage").value), auditHistoryDays: Number(document.getElementById("planAuditDays").value), supportLevel: document.getElementById("planSupportLevel").value, active: document.getElementById("planActive").checked, featured: document.getElementById("planFeatured").checked, visitorManagement: document.getElementById("planVisitors").checked, amenityBooking: document.getElementById("planAmenities").checked, analytics: document.getElementById("planAnalytics").checked, billingManagement: document.getElementById("planBilling").checked, complaintManagement: document.getElementById("planComplaints").checked, announcementManagement: document.getElementById("planAnnouncements").checked, expenseManagement: document.getElementById("planExpenses").checked, paymentGateway: document.getElementById("planPayments").checked, apiAccess: document.getElementById("planApi").checked, prioritySupport: document.getElementById("planPrioritySupport").checked };
+                const status = document.getElementById("subscriptionPlanModalStatus");
+                const save = document.getElementById("btnSaveSubscriptionPlan"); const originalSaveLabel = save.innerHTML; save.disabled = true; status.textContent = ""; save.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving…';
+                try { const response = await fetch(`/api/platform/plans${id ? `/${id}` : ""}`, { method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save plan"); closePlanModal(); showToast(`✓ ${result.name || payload.name} is now updated globally.`); await loadPlatformBackendData(); } catch (error) { status.textContent = error.message || "Unable to save plan"; showToast(status.textContent); } finally { save.disabled = false; save.innerHTML = originalSaveLabel; }
             });
 
             const billingRuleModal = document.getElementById("billingRuleModal");
@@ -977,8 +1248,11 @@
             document.querySelectorAll('[data-action="edit-plan"]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const plan = btn.dataset.plan || "Plan";
-                    showToast(`✓ Opened Plan Editor for ${plan} Subscription.`);
+                    e.stopImmediatePropagation();
+                    const name = (btn.dataset.plan || "").toLowerCase();
+                    const plan = (window.platformPlans || []).find(item => item.name.toLowerCase() === name || item.name.toLowerCase().replace(/ plan$/, "") === name);
+                    if (plan) showPlanModal(plan);
+                    else showToast("The selected plan is still loading. Please try again.");
                 });
             });
 
@@ -990,51 +1264,76 @@
                 });
             });
 
-            const integrationModal = document.getElementById("integrationModal");
-            const integrationForm = document.getElementById("integrationForm");
-            const closeIntegrationModal = () => {
-                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(integrationModal)?.hide();
-                else if (integrationModal) { integrationModal.style.display = "none"; integrationModal.classList.remove("show"); }
-            };
-            const openIntegrationModal = row => {
-                integrationForm.reset();
-                const edit = !!row;
-                document.getElementById("integrationModalTitle").textContent = edit ? "Configure integration" : "Add integration";
-                document.getElementById("integrationId").value = row?.dataset.integrationId || "";
-                document.getElementById("integrationName").value = edit ? row.children[0].textContent.trim() : "";
-                document.getElementById("integrationDescription").value = edit ? row.children[1].textContent.trim().replace("—", "") : "";
-                document.getElementById("integrationActive").checked = !edit || row.children[2].textContent.trim() === "Active";
-                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(integrationModal).show();
-                else { integrationModal.style.display = "block"; integrationModal.classList.add("show"); }
-            };
-            document.getElementById("btnAddIntegration")?.addEventListener("click", () => openIntegrationModal());
-            document.querySelectorAll("[data-integration-close]").forEach(button => button.addEventListener("click", closeIntegrationModal));
-            integrationModal?.addEventListener("click", event => { if (event.target === integrationModal) closeIntegrationModal(); });
-            document.addEventListener("click", event => { const button = event.target.closest("[data-integration-edit]"); if (button) openIntegrationModal(button.closest("tr")); });
-            integrationForm?.addEventListener("submit", async event => {
-                event.preventDefault();
-                const id = document.getElementById("integrationId").value;
-                const payload = { serviceName: document.getElementById("integrationName").value.trim(), description: document.getElementById("integrationDescription").value.trim(), webhookUrl: document.getElementById("integrationWebhook").value.trim(), apiKey: document.getElementById("integrationApiKey").value.trim(), active: document.getElementById("integrationActive").checked };
-                try { const response = await fetch(`/api/superadmin/security/integrations${id ? `/${id}` : ""}`, { method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save integration"); closeIntegrationModal(); showToast(`✓ ${result.serviceName || payload.serviceName} saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save integration"); }
-            });
-
             const rolePolicyModal = document.getElementById("rolePolicyModal");
-            const closeRolePolicyModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(rolePolicyModal)?.hide(); else if (rolePolicyModal) { rolePolicyModal.style.display = "none"; rolePolicyModal.classList.remove("show"); } };
+            const rolePolicyChecks = (containerId, csv) => {
+                const selected = new Set(String(csv || "").split(",").map(value => value.trim()).filter(Boolean));
+                document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach(input => { input.checked = selected.has(input.value); });
+            };
+            const selectedRolePolicyChecks = containerId => [...document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)].map(input => input.value).join(",");
+            const closeRolePolicyModal = () => {
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(rolePolicyModal)?.hide();
+                else if (rolePolicyModal) { rolePolicyModal.style.display = "none"; rolePolicyModal.classList.remove("show"); document.body.classList.remove("role-policy-editor-open"); }
+            };
             document.querySelectorAll("[data-role-policy-close]").forEach(button => button.addEventListener("click", closeRolePolicyModal));
             rolePolicyModal?.addEventListener("click", event => { if (event.target === rolePolicyModal) closeRolePolicyModal(); });
+            rolePolicyModal?.addEventListener("hidden.bs.modal", () => document.body.classList.remove("role-policy-editor-open"));
             document.addEventListener("click", event => {
                 const button = event.target.closest("[data-role-policy-edit]"); if (!button) return;
                 const row = button.closest("tr");
-                document.getElementById("rolePolicyId").value = row.dataset.rolePolicyId;
-                document.getElementById("rolePolicyName").value = row.children[0].textContent.trim();
-                document.getElementById("rolePolicyPermissions").value = row.children[1].textContent.trim();
-                document.getElementById("rolePolicyActive").checked = row.children[2].textContent.trim() === "Active";
+                const id = String(row.dataset.rolePolicyId || "");
+                const policy = (window.platformRolePolicies || []).find(item => String(item.id) === id) || {};
+                document.getElementById("rolePolicyId").value = id;
+                document.getElementById("rolePolicyName").value = policy.role || row.children[0].textContent.trim();
+                document.getElementById("rolePolicyPermissions").value = policy.permissions || row.children[1].textContent.trim();
+                rolePolicyChecks("rolePolicyModules", policy.modulePermissions);
+                rolePolicyChecks("rolePolicyActions", policy.allowedActions);
+                document.getElementById("rolePolicyDataScope").value = policy.dataScope || "ASSIGNED_SOCIETY";
+                document.getElementById("rolePolicyApprovalLimit").value = Number(policy.approvalLimit || 0);
+                document.getElementById("rolePolicySessionTimeout").value = Number(policy.sessionTimeoutMinutes || 30);
+                document.getElementById("rolePolicyMaxSessions").value = Number(policy.maxConcurrentSessions || 2);
+                document.getElementById("rolePolicyMfa").checked = policy.mfaRequired === true;
+                document.getElementById("rolePolicyReauth").checked = policy.sensitiveActionReauth !== false;
+                document.getElementById("rolePolicyIpRestriction").checked = policy.ipRestrictionEnabled === true;
+                document.getElementById("rolePolicyAudit").checked = policy.auditLoggingEnabled !== false;
+                document.getElementById("rolePolicyExport").checked = policy.exportAllowed === true;
+                document.getElementById("rolePolicyNotes").value = policy.policyNotes || "";
+                document.getElementById("rolePolicyActive").checked = policy.active !== undefined ? policy.active : row.children[2].textContent.trim() === "Active";
+                document.getElementById("rolePolicyModalStatus").textContent = "";
+                document.getElementById("rolePolicyModalTitle").textContent = `Configure ${String(policy.role || "role").replaceAll("_", " ").toLowerCase()} access`;
+                document.body.classList.add("role-policy-editor-open");
                 if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(rolePolicyModal).show(); else { rolePolicyModal.style.display = "block"; rolePolicyModal.classList.add("show"); }
             });
             document.getElementById("rolePolicyForm")?.addEventListener("submit", async event => {
-                event.preventDefault(); const id = document.getElementById("rolePolicyId").value;
-                const payload = { permissions: document.getElementById("rolePolicyPermissions").value.trim(), active: document.getElementById("rolePolicyActive").checked };
-                try { const response = await fetch(`/api/superadmin/roles/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to update access policy"); closeRolePolicyModal(); showToast(`✓ ${result.role || "Role"} access policy saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to update access policy"); }
+                event.preventDefault();
+                const form = event.currentTarget;
+                if (!form.checkValidity()) { form.reportValidity(); return; }
+                const id = document.getElementById("rolePolicyId").value;
+                const status = document.getElementById("rolePolicyModalStatus");
+                const button = document.getElementById("btnSaveRolePolicy");
+                const payload = {
+                    permissions: document.getElementById("rolePolicyPermissions").value.trim(),
+                    modulePermissions: selectedRolePolicyChecks("rolePolicyModules"),
+                    allowedActions: selectedRolePolicyChecks("rolePolicyActions"),
+                    dataScope: document.getElementById("rolePolicyDataScope").value,
+                    approvalLimit: Number(document.getElementById("rolePolicyApprovalLimit").value || 0),
+                    sessionTimeoutMinutes: Number(document.getElementById("rolePolicySessionTimeout").value),
+                    maxConcurrentSessions: Number(document.getElementById("rolePolicyMaxSessions").value),
+                    mfaRequired: document.getElementById("rolePolicyMfa").checked,
+                    sensitiveActionReauth: document.getElementById("rolePolicyReauth").checked,
+                    ipRestrictionEnabled: document.getElementById("rolePolicyIpRestriction").checked,
+                    auditLoggingEnabled: document.getElementById("rolePolicyAudit").checked,
+                    exportAllowed: document.getElementById("rolePolicyExport").checked,
+                    policyNotes: document.getElementById("rolePolicyNotes").value.trim(),
+                    active: document.getElementById("rolePolicyActive").checked
+                };
+                status.textContent = "Saving policy…"; status.style.color = "#52627a"; button.disabled = true;
+                try {
+                    const response = await fetch(`/api/superadmin/roles/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(result.message || "Unable to update access policy");
+                    closeRolePolicyModal(); showToast(`✓ ${result.role || "Role"} access policy saved.`); await loadPlatformBackendData();
+                } catch (error) { status.textContent = error.message || "Unable to update access policy"; status.style.color = "#c62828"; }
+                finally { button.disabled = false; }
             });
 
             const privacyReviewModal = document.getElementById("privacyReviewModal");
@@ -1050,13 +1349,6 @@
             gatewayConfigModal?.addEventListener("click", event => { if (event.target === gatewayConfigModal) closeGatewayModal(); });
             document.addEventListener("click", event => { const button = event.target.closest("[data-gateway-config]"); if (!button) return; const row = button.closest("tr"); document.getElementById("gatewayConfigId").value = row.dataset.gatewayId; document.getElementById("gatewayProvider").value = row.children[0].textContent.trim(); document.getElementById("gatewayEnvironment").value = row.children[1].textContent.trim(); document.getElementById("gatewayFee").value = row.children[3].textContent.trim(); document.getElementById("gatewayActive").checked = row.children[2].textContent.trim() === "Active"; document.getElementById("gatewayInvoicing").checked = false; document.getElementById("gatewayMerchantId").value = ""; document.getElementById("gatewayApiKey").value = ""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(gatewayConfigModal).show(); else { gatewayConfigModal.style.display = "block"; gatewayConfigModal.classList.add("show"); } });
             document.getElementById("gatewayConfigForm")?.addEventListener("submit", async event => { event.preventDefault(); const id = document.getElementById("gatewayConfigId").value; const payload = { providerName: document.getElementById("gatewayProvider").value.trim(), environment: document.getElementById("gatewayEnvironment").value, merchantId: document.getElementById("gatewayMerchantId").value.trim(), transactionFee: document.getElementById("gatewayFee").value.trim(), apiKey: document.getElementById("gatewayApiKey").value.trim(), digitalInvoicingEnabled: document.getElementById("gatewayInvoicing").checked, active: document.getElementById("gatewayActive").checked }; try { const response = await fetch(`/api/superadmin/finance/payment-gateways/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save gateway"); closeGatewayModal(); showToast(`✓ ${result.providerName || payload.providerName} gateway saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save gateway"); } });
-
-            const templateModal = document.getElementById("templateModal");
-            const closeTemplateModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(templateModal)?.hide(); else if (templateModal) { templateModal.style.display="none"; templateModal.classList.remove("show"); } };
-            document.querySelectorAll("[data-template-close]").forEach(button => button.addEventListener("click", closeTemplateModal));
-            templateModal?.addEventListener("click", event => { if (event.target === templateModal) closeTemplateModal(); });
-            document.addEventListener("click", event => { const button=event.target.closest("[data-template-edit]"); if(!button)return; const row=button.closest("tr"); document.getElementById("templateId").value=row.dataset.templateId; document.getElementById("templateName").value=row.children[0].textContent.trim(); document.getElementById("templateChannel").value=row.children[1].textContent.trim(); document.getElementById("templateSubject").value=row.children[2].textContent.trim(); document.getElementById("templateBody").value=row.dataset.templateBody||""; document.getElementById("templateActive").checked=row.children[3].textContent.trim()==="Active"; if(typeof bootstrap!=="undefined")bootstrap.Modal.getOrCreateInstance(templateModal).show();else{templateModal.style.display="block";templateModal.classList.add("show");} });
-            document.getElementById("templateForm")?.addEventListener("submit",async event=>{event.preventDefault();const id=document.getElementById("templateId").value;const payload={templateName:document.getElementById("templateName").value.trim(),channel:document.getElementById("templateChannel").value,subject:document.getElementById("templateSubject").value.trim(),bodyContent:document.getElementById("templateBody").value.trim(),active:document.getElementById("templateActive").checked};try{const response=await fetch(`/api/superadmin/communication/templates/${id}`,{method:"PUT",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.message||"Unable to save template");closeTemplateModal();showToast(`✓ ${result.templateName||payload.templateName} saved.`);loadPlatformBackendData();}catch(error){showToast(error.message||"Unable to save template");}});
 
             // Delegated click handler for all dynamic table action buttons & general buttons
             document.addEventListener('click', (e) => {

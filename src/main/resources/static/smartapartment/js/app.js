@@ -17,6 +17,7 @@ const dashboardLoginTitle = document.getElementById("dashboardLoginTitle");
 const dashboardLoginHelp = document.getElementById("dashboardLoginHelp");
 const dashboardUsername = document.getElementById("dashboardUsername");
 const dashboardPassword = document.getElementById("dashboardPassword");
+const toggleDashboardPassword = document.getElementById("toggleDashboardPassword");
 const roleExperience = document.getElementById("roleExperience");
 const roleSearchButton = document.getElementById("roleSearchButton");
 const roleFilters = document.getElementById("roleFilters");
@@ -246,7 +247,14 @@ function openDashboardLogin({ platform, role, target }) {
     if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
     if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
     if (dashboardUsername) dashboardUsername.value = "";
-    if (dashboardPassword) dashboardPassword.value = "";
+    if (dashboardPassword) {
+        dashboardPassword.value = "";
+        dashboardPassword.type = "password";
+    }
+    if (toggleDashboardPassword) {
+        toggleDashboardPassword.textContent = "Show";
+        toggleDashboardPassword.setAttribute("aria-label", "Show password");
+    }
     dashboardLoginModal?.classList.remove("hidden");
     window.setTimeout(() => dashboardUsername?.focus(), 80);
 }
@@ -270,7 +278,10 @@ async function submitDashboardCredentials() {
             return;
         }
         dashboardLoginModal?.classList.add("hidden");
-        window.location.href = pendingDashboardLogin.target || data.redirect;
+        // The authenticated backend role is authoritative. This ensures an
+        // email/password account always opens its assigned dashboard even when
+        // login was started from a generic or different dashboard shortcut.
+        window.location.href = data.redirect;
     } catch (error) {
         showToast("Login failed. Please try again.");
     }
@@ -317,7 +328,7 @@ closeRegisterModal?.addEventListener("click", () => registerModal?.classList.add
 registerModal?.addEventListener("click", (event) => {
     if (event.target === registerModal) registerModal.classList.add("hidden");
 });
-submitSociety?.addEventListener("click", async () => {
+if (!document.getElementById("registerDetailsForm")) submitSociety?.addEventListener("click", async () => {
     const planSelect = document.getElementById("societyPlanSelect") || document.querySelector("#registerModal select");
     const planName = planSelect ? planSelect.value : "Free Trial";
     const payload = {
@@ -365,6 +376,14 @@ dashboardLoginModal?.addEventListener("click", (event) => {
     if (event.target === dashboardLoginModal) dashboardLoginModal.classList.add("hidden");
 });
 submitDashboardLogin?.addEventListener("click", submitDashboardCredentials);
+toggleDashboardPassword?.addEventListener("click", () => {
+    if (!dashboardPassword) return;
+    const reveal = dashboardPassword.type === "password";
+    dashboardPassword.type = reveal ? "text" : "password";
+    toggleDashboardPassword.textContent = reveal ? "Hide" : "Show";
+    toggleDashboardPassword.setAttribute("aria-label", reveal ? "Hide password" : "Show password");
+    dashboardPassword.focus();
+});
 dashboardPassword?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") submitDashboardCredentials();
 });

@@ -1,7 +1,6 @@
 const titles = {
     overview: "Overview",
     monitoring: "Apartment Monitoring",
-    control: "Approval Control Center",
     societies: "Society Management",
     subscriptions: "Subscriptions",
     users: "Users",
@@ -37,7 +36,7 @@ const residentAdminInboxKey = "smartapartment-resident-admin-inbox:v1";
 const residentPaymentProofsKey = "smartapartment-resident-payment-proofs:v1";
 const rolePanelRoutes = {
     superadmin: ["monitoring", "audit-logs", "societies", "subscriptions", "analytics"],
-    admin: ["control", "billing", "visitors", "complaints"],
+    admin: ["residents", "billing", "visitors", "complaints"],
     resident: ["billing", "complaints", "amenities", "announcements"],
     security: ["entries", "pass", "visitors", "entries"],
     maintenance: ["tasks", "complaints", "tasks", "profile"]
@@ -45,6 +44,396 @@ const rolePanelRoutes = {
 let activeAction = null;
 let activePaymentProof = null;
 let latestPlatformAuditStream = [];
+
+function setupDashboardSidebarControls() {
+    const sidebar = document.getElementById("sidebar") || document.querySelector(".dash-sidebar");
+    if (!sidebar || sidebar.dataset.closeControlReady === "true") return;
+    sidebar.dataset.closeControlReady = "true";
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "dashboard-sidebar-close";
+    closeButton.setAttribute("aria-label", "Close sidebar");
+    closeButton.title = "Close sidebar";
+    closeButton.textContent = "×";
+    sidebar.prepend(closeButton);
+
+    const openButton = document.createElement("button");
+    openButton.type = "button";
+    openButton.className = "dashboard-sidebar-open";
+    openButton.setAttribute("aria-label", "Open sidebar");
+    openButton.setAttribute("aria-controls", sidebar.id || "sidebar");
+    openButton.setAttribute("aria-expanded", "true");
+    openButton.title = "Open sidebar";
+    openButton.innerHTML = "<span></span><span></span><span></span>";
+    document.body.appendChild(openButton);
+
+    const setSidebarOpen = open => {
+        const sidebarWidth = sidebar.getBoundingClientRect().width || 280;
+        const transition = "transform .36s cubic-bezier(.22,1,.36,1), margin-right .36s cubic-bezier(.22,1,.36,1), opacity .24s ease";
+
+        if (open) {
+            sidebar.style.setProperty("display", "flex", "important");
+            sidebar.style.setProperty("transition", "none", "important");
+            sidebar.style.setProperty("transform", "translateX(-100%)", "important");
+            sidebar.style.setProperty("margin-right", `${-sidebarWidth}px`, "important");
+            sidebar.style.setProperty("opacity", "0", "important");
+            sidebar.style.removeProperty("pointer-events");
+            document.body.classList.remove("dashboard-sidebar-closed");
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                sidebar.style.setProperty("transition", transition, "important");
+                sidebar.style.setProperty("transform", "translateX(0)", "important");
+                sidebar.style.setProperty("margin-right", "0", "important");
+                sidebar.style.setProperty("opacity", "1", "important");
+            }));
+        } else {
+            sidebar.style.setProperty("display", "flex", "important");
+            sidebar.style.setProperty("transition", transition, "important");
+            sidebar.style.setProperty("transform", "translateX(-100%)", "important");
+            sidebar.style.setProperty("margin-right", `${-sidebarWidth}px`, "important");
+            sidebar.style.setProperty("opacity", "0", "important");
+            sidebar.style.setProperty("pointer-events", "none", "important");
+            document.body.classList.add("dashboard-sidebar-closed");
+        }
+        openButton.setAttribute("aria-expanded", String(open));
+        closeButton.setAttribute("aria-hidden", String(!open));
+        if (open) sidebar.querySelector("button, a")?.focus();
+        else openButton.focus();
+    };
+
+    closeButton.addEventListener("click", () => setSidebarOpen(false));
+    openButton.addEventListener("click", () => setSidebarOpen(true));
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !document.body.classList.contains("dashboard-sidebar-closed")) {
+            setSidebarOpen(false);
+        }
+    });
+}
+
+setupDashboardSidebarControls();
+
+function enhanceExistingDetailedForms() {
+    const schemas = {
+        billingRuleForm: [[0,"Charge definition","Name, amount and recurrence"],[5,"Schedule & automation","Next run date and automatic processing"]],
+        staffForm: [[0,"Identity & service","Worker contact, role and verification"],[4,"Access coverage","Assigned area, proof and emergency contact"],[7,"Working schedule","Days, shift timing and administrative notes"]],
+        deliveryForm: [[0,"Recipient & courier","Destination, provider and tracking identity"],[5,"Package details","Recipient, package type, condition and storage"],[9,"Evidence & instructions","Proof reference and handling notes"]],
+        pollForm: [[0,"Poll definition","Question, category and decision context"],[3,"Voting configuration","Options, closing time, audience and result visibility"]],
+        assetForm: [[0,"Asset identification","Name, category, location and serial number"],[4,"Ownership & condition","Purchase information and current condition"],[8,"Vendor, warranty & AMC","Service provider and coverage details"],[12,"Preventive maintenance","Service history, interval and maintenance notes"]],
+        expenseForm: [[0,"Expense identification","Title, category and expense date"],[3,"Vendor & invoice","Payee contact and invoice references"],[8,"Amounts & audit context","Base amount, tax and supporting description"]],
+        visitorPassForm: [[0,"Visitor & destination","Identity, contact and flat information"],[4,"Schedule & purpose","Validity, visit purpose and resident instructions"]],
+        qrPassForm: [[0,"Pass verification","QR/pass reference and visitor identity"],[3,"Gate processing","Destination, entry details and security notes"]],
+        incidentForm: [[0,"Incident classification","Type, location and related vehicle"],[3,"Facts & escalation","People involved, immediate action and full incident narrative"]]
+    };
+    Object.entries(schemas).forEach(([id, sections]) => {
+        const form = document.getElementById(id);
+        if (!form || form.dataset.detailedSectionsReady) return;
+        form.dataset.detailedSectionsReady = "true";
+        form.classList.add("detailed-record-form");
+        const originalChildren = [...form.children];
+        [...sections].reverse().forEach(([before,title,note]) => {
+            const marker = document.createElement("div");
+            marker.className = "col-12 detailed-form-section";
+            marker.innerHTML = `<strong>${title}</strong><span>${note}</span>`;
+            form.insertBefore(marker, originalChildren[before] || null);
+        });
+    });
+}
+
+enhanceExistingDetailedForms();
+
+function setupDetailedProfileSettings() {
+    const sidebarNav = document.querySelector("#sidebar nav, #sidebar .nav");
+    const content = document.querySelector(".dashboard-container");
+    if (!sidebarNav || !content || content.dataset.profileSettingsReady) return;
+    content.dataset.profileSettingsReady = "true";
+
+    const roleNames = {
+        superadmin: "Platform Owner", admin: "Society Administrator", resident: "Resident",
+        security: "Security Officer", maintenance: "Maintenance Professional", accountant: "Accountant"
+    };
+    let panel = document.querySelector('[data-view="profile"]');
+    if (!panel && dashboardRole !== "superadmin") {
+        const link = document.createElement("a");
+        link.href = "#profile";
+        link.className = "nav-link btn btn-link text-start text-decoration-none";
+        link.dataset.panel = "profile";
+        link.innerHTML = '<i class="fa-solid fa-user-gear me-2"></i> Profile Settings';
+        sidebarNav.appendChild(link);
+        panel = document.createElement("section");
+        panel.className = "d-none";
+        panel.dataset.view = "profile";
+        content.appendChild(panel);
+    }
+
+    const host = dashboardRole === "superadmin" ? document.querySelector('[data-view="settings"]') : panel;
+    if (!host) return;
+    if (panel) panel.innerHTML = "";
+    const profile = document.createElement("div");
+    profile.className = "profile-settings";
+    profile.innerHTML = `
+        <div class="profile-settings__heading">
+            <div><span class="profile-settings__eyebrow">ACCOUNT & ACCESS</span><h2>My Profile Settings</h2><p>Manage your personal details, communication choices, and account security.</p></div>
+            <span class="profile-settings__state" id="profileSaveState"><i class="fa-solid fa-circle-check"></i> Profile connected</span>
+        </div>
+        <div class="profile-settings__summary">
+            <div class="profile-avatar" id="profileAvatar">—</div>
+            <div><strong id="profileSummaryName">Loading profile…</strong><span id="profileSummaryRole">${roleNames[dashboardRole] || "Dashboard User"}</span><small id="profileSummaryEmail"></small></div>
+            <dl><div><dt>Workspace</dt><dd id="profileWorkspace">—</dd></div><div><dt>Account</dt><dd id="profileAccountStatus">—</dd></div><div><dt>MFA</dt><dd id="profileMfaStatus">—</dd></div></dl>
+        </div>
+        <form id="dashboardProfileForm" class="profile-settings__section">
+            <div class="profile-settings__section-title"><i class="fa-solid fa-address-card"></i><div><h3>Personal information</h3><p>These details identify you to the people and workflows you manage.</p></div></div>
+            <div class="profile-form-grid">
+                <label><span>Full name *</span><input id="profileFullName" autocomplete="name" maxlength="120" required></label>
+                <label><span>Email address</span><input id="profileEmail" type="email" readonly><small>Your login email is protected from profile edits.</small></label>
+                <label><span>Phone number</span><input id="profilePhone" type="tel" autocomplete="tel" maxlength="30" placeholder="Add contact number"></label>
+                <label><span>Designation / responsibility</span><input id="profileDesignation" maxlength="100" placeholder="Add your designation"></label>
+                <label><span>Dashboard role</span><input id="profileRole" readonly></label>
+                <label><span>Society / workspace</span><input id="profileTenant" readonly></label>
+            </div>
+            <div class="profile-settings__actions"><button type="reset" class="btn profile-secondary-button">Discard changes</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save profile</button></div>
+        </form>
+        <form id="dashboardPreferencesForm" class="profile-settings__section">
+            <div class="profile-settings__section-title"><i class="fa-solid fa-bell"></i><div><h3>Notifications & display</h3><p>Choose how this dashboard should keep you informed.</p></div></div>
+            <div class="profile-preference-grid">
+                <label><input type="checkbox" name="emailAlerts"><span><strong>Email notifications</strong><small>Approvals, assignments, reports, and important updates.</small></span></label>
+                <label><input type="checkbox" name="browserAlerts"><span><strong>Dashboard notifications</strong><small>Show timely alerts while you are signed in.</small></span></label>
+                <label><input type="checkbox" name="weeklySummary"><span><strong>Weekly activity summary</strong><small>Receive a concise summary of relevant activity.</small></span></label>
+                <label><input type="checkbox" name="securityAlerts"><span><strong>Security alerts</strong><small>Important sign-in and account protection messages.</small></span></label>
+                <label class="profile-select"><span><strong>Language</strong><small>Dashboard display language.</small></span><select name="language"><option value="en">English</option><option value="ta">Tamil</option><option value="hi">Hindi</option></select></label>
+                <label class="profile-select"><span><strong>Time zone</strong><small>Used for activity and report times.</small></span><select name="timezone"><option value="Asia/Calcutta">India Standard Time (IST)</option><option value="UTC">UTC</option></select></label>
+            </div>
+            <div class="profile-settings__actions"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save preferences</button></div>
+        </form>
+        <form id="dashboardPasswordForm" class="profile-settings__section">
+            <div class="profile-settings__section-title"><i class="fa-solid fa-shield-halved"></i><div><h3>Password & security</h3><p>Use at least 8 characters with a number and symbol.</p></div></div>
+            <div class="profile-form-grid profile-password-grid">
+                <label><span>Current password</span><div class="profile-password"><input name="currentPassword" type="password" autocomplete="current-password" required><button type="button" data-password-toggle aria-label="Show current password"><i class="fa-regular fa-eye"></i></button></div></label>
+                <label><span>New password</span><div class="profile-password"><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required><button type="button" data-password-toggle aria-label="Show new password"><i class="fa-regular fa-eye"></i></button></div></label>
+                <label><span>Confirm new password</span><div class="profile-password"><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required><button type="button" data-password-toggle aria-label="Show confirmation"><i class="fa-regular fa-eye"></i></button></div></label>
+            </div>
+            <div class="profile-security-note"><i class="fa-solid fa-lock"></i><span><strong>Account protection</strong>Your password is stored securely. You will use the new password at your next sign-in.</span></div>
+            <div class="profile-settings__actions"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-key"></i> Update password</button></div>
+        </form>`;
+    if (dashboardRole === "superadmin") {
+        const separator = document.createElement("div");
+        separator.className = "profile-platform-separator";
+        separator.innerHTML = "<span>Platform configuration</span><p>Controls below apply across the SmartSociety platform.</p>";
+        host.prepend(separator);
+        host.prepend(profile);
+    } else host.appendChild(profile);
+
+    let loadedProfile = null;
+    const state = (message, error = false) => {
+        const node = document.getElementById("profileSaveState");
+        if (!node) return;
+        node.classList.toggle("is-error", error);
+        node.innerHTML = `<i class="fa-solid fa-${error ? "circle-exclamation" : "circle-check"}"></i> ${message}`;
+    };
+    const paint = data => {
+        loadedProfile = data;
+        profile.querySelector("#profileFullName").value = data.name || "";
+        profile.querySelector("#profileEmail").value = data.email || "";
+        profile.querySelector("#profilePhone").value = data.phone || "";
+        profile.querySelector("#profileDesignation").value = data.designation || "";
+        profile.querySelector("#profileRole").value = String(data.role || roleNames[dashboardRole] || "").replaceAll("_", " ");
+        profile.querySelector("#profileTenant").value = data.tenantId || "Platform";
+        profile.querySelector("#profileSummaryName").textContent = data.name || "Profile";
+        profile.querySelector("#profileSummaryEmail").textContent = data.email || "";
+        profile.querySelector("#profileSummaryRole").textContent = roleNames[dashboardRole] || String(data.role || "").replaceAll("_", " ");
+        profile.querySelector("#profileWorkspace").textContent = data.tenantId || "Platform";
+        profile.querySelector("#profileAccountStatus").textContent = data.accountLocked ? "Locked" : "Active";
+        profile.querySelector("#profileMfaStatus").textContent = data.mfaEnabled ? "Enabled" : "Not enabled";
+        profile.querySelector("#profileAvatar").textContent = (data.name || "U").split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+        state("Profile up to date");
+    };
+    const request = async (url, options = {}) => {
+        const response = await fetch(url, { ...options, headers: { Accept: "application/json", ...(options.body ? { "Content-Type": "application/json" } : {}), ...options.headers } });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.message || body.error || "Unable to save these settings");
+        return body;
+    };
+    request("/api/society/me").then(paint).catch(error => state(error.message, true));
+    profile.querySelector("#dashboardProfileForm").addEventListener("reset", event => { event.preventDefault(); if (loadedProfile) paint(loadedProfile); });
+    profile.querySelector("#dashboardProfileForm").addEventListener("submit", async event => {
+        event.preventDefault(); state("Saving profile…");
+        try { paint(await request("/api/society/me", { method: "PUT", body: JSON.stringify({ name: profile.querySelector("#profileFullName").value, phone: profile.querySelector("#profilePhone").value, designation: profile.querySelector("#profileDesignation").value }) })); showToast("✓ Profile settings saved."); }
+        catch (error) { state(error.message, true); showToast(error.message); }
+    });
+    const preferenceKey = `smartapartment-profile-preferences:v1:${dashboardRole}`;
+    const preferences = profile.querySelector("#dashboardPreferencesForm");
+    try { const saved = JSON.parse(localStorage.getItem(preferenceKey) || "{}"); [...preferences.elements].forEach(input => { if (!input.name || saved[input.name] === undefined) return; input.type === "checkbox" ? input.checked = saved[input.name] : input.value = saved[input.name]; }); } catch (_) {}
+    preferences.addEventListener("submit", event => { event.preventDefault(); const values = {}; [...preferences.elements].forEach(input => { if (input.name) values[input.name] = input.type === "checkbox" ? input.checked : input.value; }); localStorage.setItem(preferenceKey, JSON.stringify(values)); state("Preferences saved"); showToast("✓ Notification and display preferences saved."); });
+    profile.querySelectorAll("[data-password-toggle]").forEach(button => button.addEventListener("click", () => { const input = button.previousElementSibling; const show = input.type === "password"; input.type = show ? "text" : "password"; button.innerHTML = `<i class="fa-regular fa-eye${show ? "-slash" : ""}"></i>`; }));
+    profile.querySelector("#dashboardPasswordForm").addEventListener("submit", async event => {
+        event.preventDefault(); const form = event.currentTarget; const currentPassword = form.currentPassword.value; const newPassword = form.newPassword.value;
+        if (newPassword !== form.confirmPassword.value) { state("New passwords do not match", true); return; }
+        state("Updating password…");
+        try { const result = await request("/api/society/me/password", { method: "PUT", body: JSON.stringify({ currentPassword, newPassword }) }); form.reset(); state("Password updated"); showToast(`✓ ${result.message}`); }
+        catch (error) { state(error.message, true); showToast(error.message); }
+    });
+}
+
+setupDetailedProfileSettings();
+
+function setupDetailedMonitoringExport() {
+    const trigger = document.getElementById("monitoringExportButton");
+    if (!trigger || trigger.dataset.exportReady) return;
+    trigger.dataset.exportReady = "true";
+    const modal = document.createElement("div");
+    modal.className = "monitoring-export-dialog hidden";
+    modal.id = "monitoringExportDialog";
+    modal.innerHTML = `<div class="monitoring-export-card" role="dialog" aria-modal="true" aria-labelledby="monitoringExportTitle">
+        <div class="monitoring-export-header"><div><span>APARTMENT COMMAND WATCH</span><h2 id="monitoringExportTitle">Export detailed monitoring report</h2><p>Choose the exact period, scope, sections, and output format for this report.</p></div><button type="button" data-monitoring-export-close aria-label="Close export report">×</button></div>
+        <form id="monitoringExportForm">
+            <section><div class="monitoring-export-section-title"><i class="fa-regular fa-file-lines"></i><div><h3>Report details</h3><p>Name and identify the generated document.</p></div></div><div class="monitoring-export-grid">
+                <label class="wide"><span>Report title *</span><input name="title" value="Apartment Monitoring Report" maxlength="120" required></label>
+                <label><span>Prepared by *</span><input name="preparedBy" maxlength="100" placeholder="Enter responsible person" required></label>
+                <label><span>Reference / purpose</span><input name="purpose" maxlength="120" placeholder="e.g. Monthly governance review"></label>
+            </div></section>
+            <section><div class="monitoring-export-section-title"><i class="fa-regular fa-calendar"></i><div><h3>Reporting period and society scope</h3><p>Limit the report to the required date range and workspace.</p></div></div><div class="monitoring-export-grid">
+                <label><span>Period preset</span><select name="preset"><option value="today">Today</option><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="custom">Custom range</option></select></label>
+                <label><span>Society</span><select name="society"><option value="ALL">All societies</option></select></label>
+                <label><span>From date *</span><input name="fromDate" type="date" required></label>
+                <label><span>To date *</span><input name="toDate" type="date" required></label>
+            </div></section>
+            <section><div class="monitoring-export-section-title"><i class="fa-solid fa-list-check"></i><div><h3>Report sections</h3><p>Select the operational information to include.</p></div></div><div class="monitoring-export-options">
+                <label><input type="checkbox" name="summary" checked><span><strong>Executive summary</strong><small>Gate entries, pending bills, approvals, and open risks.</small></span></label>
+                <label><input type="checkbox" name="commandWatch" checked><span><strong>Command Watch metrics</strong><small>Module-level live metrics, trends, and action ownership.</small></span></label>
+                <label><input type="checkbox" name="watchlist" checked><span><strong>Live society watchlist</strong><small>Current signals, responsible owners, and access rules.</small></span></label>
+                <label><input type="checkbox" name="auditContext"><span><strong>Audit context</strong><small>Selected society/module filters and available audit-event count.</small></span></label>
+            </div></section>
+            <section><div class="monitoring-export-section-title"><i class="fa-solid fa-sliders"></i><div><h3>Output options</h3><p>Control the file structure and supporting information.</p></div></div><div class="monitoring-export-grid">
+                <label><span>File format</span><select name="format"><option value="csv">CSV spreadsheet</option><option value="json">JSON data file</option></select></label>
+                <label><span>File name</span><input name="fileName" value="apartment-monitoring-report" maxlength="80" pattern="[A-Za-z0-9_-]+" required><small>Letters, numbers, hyphens, and underscores only.</small></label>
+                <label class="wide"><span>Report notes</span><textarea name="notes" rows="3" maxlength="500" placeholder="Add review notes, exceptions, or follow-up instructions"></textarea></label>
+            </div><div class="monitoring-export-inline-options"><label><input type="checkbox" name="generatedAt" checked> Include generation timestamp</label><label><input type="checkbox" name="emptyRows" checked> Include clear “no records” messages</label></div></section>
+            <div class="monitoring-export-validation" role="status" aria-live="polite"></div>
+            <div class="monitoring-export-actions"><button type="button" class="monitoring-export-cancel" data-monitoring-export-close>Cancel</button><button type="submit" class="monitoring-export-submit"><i class="fa-solid fa-download"></i> Generate and download report</button></div>
+        </form></div>`;
+    document.body.appendChild(modal);
+    const form = modal.querySelector("form");
+    const close = () => { modal.classList.add("hidden"); document.body.classList.remove("monitoring-export-open"); trigger.focus(); };
+    const open = () => {
+        const society = form.elements.society;
+        const selected = society.value;
+        society.replaceChildren(new Option("All societies", "ALL"));
+        (window.platformTenants || []).forEach(tenant => { const name = String(tenant.societyName || "").trim(); if (name) society.add(new Option(name, name)); });
+        if ([...society.options].some(option => option.value === selected)) society.value = selected;
+        modal.classList.remove("hidden"); document.body.classList.add("monitoring-export-open"); form.elements.title.focus();
+    };
+    const iso = date => date.toISOString().slice(0, 10);
+    const applyPreset = () => {
+        const today = new Date(); const start = new Date(today); const preset = form.elements.preset.value;
+        if (preset === "today") start.setDate(today.getDate()); else if (preset !== "custom") start.setDate(today.getDate() - (Number(preset) - 1));
+        if (preset !== "custom") { form.elements.fromDate.value = iso(start); form.elements.toDate.value = iso(today); }
+    };
+    const tableRows = selector => [...document.querySelectorAll(`${selector} tr`)].map(row => [...row.cells].map(cell => cell.textContent.trim())).filter(row => row.some(Boolean) && !row.join(" ").toLowerCase().includes("no records"));
+    const quote = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
+    const buildReport = values => {
+        const stats = [...document.querySelectorAll('[data-view="monitoring"] .stats article')].map(card => ({ metric: card.querySelector("span")?.textContent.trim() || "Metric", value: card.querySelector("strong")?.textContent.trim() || "0" }));
+        const commandRows = tableRows("#commandWatchGrid"); const watchRows = tableRows("#liveSocietyWatchlistTable");
+        return { metadata: { title: values.title, preparedBy: values.preparedBy, purpose: values.purpose, society: values.society === "ALL" ? "All societies" : values.society, fromDate: values.fromDate, toDate: values.toDate, notes: values.notes, generatedAt: values.generatedAt ? new Date().toISOString() : undefined }, sections: { executiveSummary: values.summary ? stats : undefined, commandWatch: values.commandWatch ? commandRows.map(row => ({ module: row[0] || "", metricsAndTrends: row[1] || "", action: row[2] || "" })) : undefined, liveSocietyWatchlist: values.watchlist ? watchRows.map(row => ({ society: row[0] || "", module: row[1] || "", currentSignal: row[2] || "", owner: row[3] || "", accessRule: row[4] || "" })) : undefined, auditContext: values.auditContext ? { societyFilter: document.getElementById("auditSocietyFilter")?.selectedOptions[0]?.textContent || "All Societies", moduleFilter: document.getElementById("auditModuleFilter")?.selectedOptions[0]?.textContent || "All Modules", availableEvents: latestPlatformAuditStream.length } : undefined } };
+    };
+    const toCsv = (report, includeEmpty) => {
+        const rows = [[report.metadata.title], ["Prepared by", report.metadata.preparedBy], ["Purpose", report.metadata.purpose], ["Society scope", report.metadata.society], ["Period", `${report.metadata.fromDate} to ${report.metadata.toDate}`]];
+        if (report.metadata.generatedAt) rows.push(["Generated", report.metadata.generatedAt]); if (report.metadata.notes) rows.push(["Notes", report.metadata.notes]);
+        if (report.sections.executiveSummary) { rows.push([], ["EXECUTIVE SUMMARY"], ["Metric", "Value"]); report.sections.executiveSummary.forEach(item => rows.push([item.metric, item.value])); }
+        if (report.sections.commandWatch) { rows.push([], ["COMMAND WATCH METRICS"], ["Module", "Live metrics and trends", "Action"]); report.sections.commandWatch.forEach(item => rows.push([item.module, item.metricsAndTrends, item.action])); if (!report.sections.commandWatch.length && includeEmpty) rows.push(["No command-watch records available"]); }
+        if (report.sections.liveSocietyWatchlist) { rows.push([], ["LIVE SOCIETY WATCHLIST"], ["Society", "Module", "Current signal", "Owner", "Access rule"]); report.sections.liveSocietyWatchlist.forEach(item => rows.push([item.society, item.module, item.currentSignal, item.owner, item.accessRule])); if (!report.sections.liveSocietyWatchlist.length && includeEmpty) rows.push(["No watchlist records available"]); }
+        if (report.sections.auditContext) rows.push([], ["AUDIT CONTEXT"], ["Society filter", report.sections.auditContext.societyFilter], ["Module filter", report.sections.auditContext.moduleFilter], ["Available events", report.sections.auditContext.availableEvents]);
+        return rows.map(row => row.map(quote).join(",")).join("\n");
+    };
+    trigger.addEventListener("click", open); modal.querySelectorAll("[data-monitoring-export-close]").forEach(button => button.addEventListener("click", close)); modal.addEventListener("click", event => { if (event.target === modal) close(); }); form.elements.preset.addEventListener("change", applyPreset); applyPreset();
+    form.addEventListener("submit", event => {
+        event.preventDefault(); const selectedSections = ["summary", "commandWatch", "watchlist", "auditContext"].some(name => form.elements[name].checked); const status = modal.querySelector(".monitoring-export-validation");
+        if (!selectedSections) { status.textContent = "Select at least one report section."; return; }
+        if (form.elements.fromDate.value > form.elements.toDate.value) { status.textContent = "The From date must be before or equal to the To date."; return; }
+        status.textContent = ""; const values = Object.fromEntries(new FormData(form)); ["summary", "commandWatch", "watchlist", "auditContext", "generatedAt", "emptyRows"].forEach(name => values[name] = form.elements[name].checked); const report = buildReport(values); const format = values.format; const content = format === "json" ? JSON.stringify(report, null, 2) : toCsv(report, values.emptyRows); downloadText(`${values.fileName}.${format}`, content); close(); showToast(`✓ Detailed monitoring report exported as ${format.toUpperCase()}.`);
+    });
+}
+
+setupDetailedMonitoringExport();
+
+function renderSubscriptionCatalogue(plans, tenants) {
+    const cards = document.getElementById("subscriptionPlanCards");
+    const assignmentBody = document.getElementById("societyPlanAssignmentTable");
+    if (!cards || !assignmentBody) return;
+    const money = value => `Rs. ${Number(value || 0).toLocaleString("en-IN")}`;
+    const featureLabels = plan => [
+        plan.complaintManagement && "Complaints", plan.announcementManagement && "Announcements",
+        plan.billingManagement && "Maintenance billing", plan.visitorManagement && "Visitor management",
+        plan.amenityBooking && "Amenity booking", plan.expenseManagement && "Expense approvals",
+        plan.analytics && "Advanced analytics", plan.paymentGateway && "Online payments",
+        plan.apiAccess && "API access", plan.prioritySupport && "Priority support"
+    ].filter(Boolean);
+    cards.replaceChildren(...plans.map((plan, index) => {
+        const card = document.createElement("article");
+        card.className = `subscription-catalogue-card plan-${String(plan.name || "").toLowerCase()}`;
+        card.innerHTML = `<div class="subscription-catalogue-card__top"><span>${index === 0 ? "STARTER" : index === 1 ? "MOST POPULAR" : "SCALE"}</span><em class="${plan.active === false ? "is-inactive" : ""}">${plan.active === false ? "Inactive" : "Active"}</em></div><h4>${plan.name}</h4><p>${plan.description || "SmartSociety subscription plan"}</p><div class="subscription-price"><strong>${money(plan.monthlyPrice)}</strong><span>/ ${String(plan.billingCycle || "MONTHLY").toLowerCase()}</span></div><dl><div><dt>Flats</dt><dd>${Number(plan.maxApartments || 0).toLocaleString("en-IN")}</dd></div><div><dt>Residents</dt><dd>${Number(plan.maxResidents || 0).toLocaleString("en-IN")}</dd></div><div><dt>Audit history</dt><dd>${plan.auditHistoryDays || 0} days</dd></div></dl><ul>${featureLabels(plan).slice(0, 6).map(feature => `<li><i class="fa-solid fa-check"></i>${feature}</li>`).join("") || "<li>No additional modules enabled</li>"}</ul><button type="button" data-catalogue-plan-edit="${plan.id}"><i class="fa-solid fa-pen-to-square"></i>Edit ${plan.name} plan</button>`;
+        return card;
+    }));
+    document.getElementById("subscriptionPlanCount").textContent = plans.length;
+    const planById = new Map(plans.map(plan => [String(plan.id), plan]));
+    let assigned = 0;
+    assignmentBody.replaceChildren(...tenants.map(tenant => {
+        const current = planById.get(String(tenant.subscriptionPlanId)); if (current) assigned++;
+        const row = document.createElement("tr"); row.dataset.tenantId = tenant.id;
+        const options = plans.map(plan => `<option value="${plan.id}" ${String(plan.id) === String(tenant.subscriptionPlanId) ? "selected" : ""}>${plan.name}</option>`).join("");
+        row.innerHTML = `<td><strong>${tenant.societyName || "Unnamed society"}</strong><small>${tenant.contactEmail || "No contact email"}</small></td><td>${[tenant.city, tenant.state].filter(Boolean).join(", ") || "Not provided"}</td><td><span class="subscription-current-plan ${current ? `plan-${current.name.toLowerCase()}` : "unassigned"}">${current?.name || "Unassigned"}</span></td><td>${tenant.subscriptionStartedOn || "—"}</td><td>${tenant.subscriptionRenewsOn || "—"}</td><td><span class="subscription-assignment-status ${tenant.subscriptionStatus === "ACTIVE" ? "active" : ""}">${tenant.subscriptionStatus || "Not assigned"}</span></td><td><div class="subscription-assignment-control"><select aria-label="Select plan for ${tenant.societyName}"><option value="">Select plan</option>${options}</select><button type="button" data-assign-society-plan>Save</button></div></td>`;
+        return row;
+    }));
+    if (!tenants.length) { const row=document.createElement("tr");row.innerHTML='<td colspan="7" class="text-center text-muted py-5">No registered societies are available for subscription assignment.</td>';assignmentBody.appendChild(row); }
+    document.getElementById("assignedSocietyCount").textContent = assigned;
+}
+
+document.addEventListener("click", async event => {
+    const edit = event.target.closest("[data-catalogue-plan-edit]");
+    if (edit) {
+        event.preventDefault(); event.stopImmediatePropagation();
+        document.dispatchEvent(new CustomEvent("catalogue-plan-edit", { detail: { planId: edit.dataset.cataloguePlanEdit } }));
+        return;
+    }
+    const save = event.target.closest("[data-assign-society-plan]");
+    if (!save) return;
+    event.preventDefault();
+    const row = save.closest("tr"); const planId = row?.querySelector("select")?.value;
+    if (!row?.dataset.tenantId || !planId) { showToast("Select a subscription plan first."); return; }
+    save.disabled = true; save.textContent = "Saving…";
+    try {
+        const response = await fetch(`/api/platform/tenants/${row.dataset.tenantId}/plan?planId=${encodeURIComponent(planId)}`, { method: "PUT", headers: { Accept: "application/json" } });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.message || "Unable to assign this plan");
+        showToast(`✓ Subscription updated for ${body.societyName || "society"}.`);
+        await loadPlatformBackendData();
+    } catch (error) { showToast(error.message || "Unable to assign this plan"); }
+    finally { save.disabled = false; save.textContent = "Save"; }
+});
+
+function removeStaticDashboardOperationalData() {
+    document.querySelectorAll("[data-view] table tbody").forEach(tbody => {
+        const columns = tbody.closest("table")?.querySelectorAll("thead th").length || 1;
+        tbody.innerHTML = `<tr class="dashboard-empty-row"><td colspan="${columns}" class="text-muted text-center py-4">No records available.</td></tr>`;
+    });
+
+    const metricSelectors = [
+        "[data-view] .stats strong",
+        "[data-view] .billing-summary-item strong",
+        "[data-view] .visitor-stat strong",
+        "[data-view] .row.g-3.mb-4 .card-body strong.fs-5",
+        "[data-view] .row.g-3.mb-4 .card-body strong.fs-2"
+    ];
+    document.querySelectorAll(metricSelectors.join(",")).forEach(metric => {
+        const current = metric.textContent.trim();
+        metric.textContent = /rs\.|₹/i.test(current) ? "Rs. 0" : /%/.test(current) ? "0%" : "0";
+    });
+
+    document.querySelectorAll("[data-view] [data-profile-field][value], [data-view] input[id^='prof'][value], [data-view] input[id^='tech'][value]").forEach(field => {
+        field.value = "";
+        field.removeAttribute("value");
+    });
+}
+
+removeStaticDashboardOperationalData();
 
 function auditStatusClass(status) {
     return ["SUCCESS", "APPROVED", "PAID_VERIFIED", "BROADCASTED", "AUTHENTICATED"].includes(status)
@@ -149,10 +538,11 @@ async function loadSocietyBackendData() {
 
     try {
         const optional = path => request(path).catch(() => []);
-        const [overview, apartments, residents, complaints, visitors, bills, amenityItems, bookingItems, noticeItems, me, expenseItems, paymentItems] = await Promise.all([
+        const [overview, apartments, residents, complaints, visitors, bills, amenityItems, bookingItems, noticeItems, me, expenseItems, paymentItems, teamItems] = await Promise.all([
             request("overview"), optional("apartments"), optional("residents"),
-            optional("complaints"), optional("visitors"), optional("bills"), optional("amenities"), optional("bookings"), optional("announcements"), request("me"), optional("finance/expenses"), optional("finance/payments")
+            optional("complaints"), optional("visitors"), optional("bills"), optional("amenities"), optional("bookings"), optional("announcements"), request("me"), optional("finance/expenses"), optional("finance/payments"), dashboardRole === "admin" ? optional("team-users") : Promise.resolve([])
         ]);
+        window.platformTenants = tenants;
         const overviewByLabel = {"total flats":overview.totalApartments,"residents":overview.totalResidents,
             "unpaid bills":overview.unpaidBills,"open complaints":overview.pendingComplaints,
             "open requests":overview.pendingComplaints,"inside visitors":overview.visitorCount};
@@ -160,8 +550,8 @@ async function loadSocietyBackendData() {
             const label=card.querySelector("span")?.textContent.trim().toLowerCase(); const node=card.querySelector("strong");
             if (node && overviewByLabel[label] !== undefined) node.textContent = overviewByLabel[label];
         });
-        fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;r.dataset.block=a.block||"Block A";r.dataset.floor=a.floor||0;r.dataset.unitType=a.type||"2BHK";c(r,a.unitNo);c(r,a.ownerName);c(r,a.block||"Block A");c(r,a.floor||0);c(r,a.type);s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
-        fill('table[data-table="residents"]', residents, (x,c,s) => { const r=document.createElement("tr");c(r,x.name);c(r,x.unitNo);c(r,x.residentType);s(r,"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
+        fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,a.unitNo);c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
+        fill('table[data-table="residents"]', [...residents,...teamItems], (x,c,s) => { const r=document.createElement("tr");const team=Boolean(x.role);c(r,x.name);c(r,[x.phone,x.email].filter(Boolean).join(" · ")||"—");c(r,team?(x.employeeId||"—"):(x.unitNo||"—"));c(r,team?x.role.replaceAll("_"," "):x.residentType);c(r,team?([x.designation,x.workShift].filter(Boolean).join(" · ")||"Society team"):(x.vehicleNumber?`Vehicle: ${x.vehicleNumber}`:"Resident access"));s(r,x.accountLocked?"LOCKED":"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="billing"]', bills, (b,c,s) => { const r=document.createElement("tr");r.dataset.recordId=b.id;if(dashboardRole==="resident"){c(r,b.month);c(r,"Maintenance");}else{c(r,b.unitNo);c(r,b.month);}c(r,`Rs. ${b.totalAmount}`);s(r,b.paymentStatus);const td=document.createElement("td");if(b.paymentStatus==="PAID")td.textContent="Paid";else{const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-success";button.dataset.action="pay";button.textContent="Mark Paid";td.appendChild(button);}r.appendChild(td);return r; });
         fill('table[data-table="complaints"],table[data-table="maintenance-complaints"]', complaints, (x,c,s,table) => { const r=document.createElement("tr");r.dataset.recordId=x.id;c(r,x.title);if(dashboardRole==="resident"){c(r,x.category);s(r,x.status);}else if(dashboardRole==="maintenance"){c(r,x.unitNo);s(r,x.status);}else{c(r,x.unitNo);c(r,x.assignedTo||x.category);s(r,x.status);}const td=document.createElement("td");const closed=["RESOLVED","CLOSED"].includes(x.status);if(dashboardRole==="resident")td.textContent="Admin controlled";else if(closed){const badge=document.createElement("span");badge.className="badge bg-success-subtle text-success-emphasis";badge.textContent="Closed";td.appendChild(badge);}else if(dashboardRole==="maintenance"){const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-primary";b.dataset.backendAction=x.status==="IN_PROGRESS"?"complaint-resolve":"complaint-start";b.textContent=x.status==="IN_PROGRESS"?"Mark Fixed":"Start Work";td.appendChild(b);}else{const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-outline-danger";b.dataset.backendAction="complaint-close";b.textContent="Close Ticket";td.appendChild(b);}r.appendChild(td);return r; });
         fill('table[data-table="visitors"],table[data-table="entries"]', visitors, (v,c,s,table) => { const r=document.createElement("tr");r.dataset.recordId=v.id;c(r,v.name);if(dashboardRole==="admin"){c(r,v.unitNo);c(r,v.purpose);c(r,v.expectedAt);}else{c(r,v.phone);c(r,v.unitNo);if(table.dataset.table==="entries"){c(r,v.purpose);c(r,v.resident);}else{c(r,v.checkInAt||v.expectedAt);}}s(r,v.status);const td=document.createElement("td");if(v.status==="CHECKED_OUT")td.textContent="Checked out";else{const b=document.createElement("button");b.dataset.backendAction=v.status==="CHECKED_IN"?"visitor-checkout":"visitor-checkin";b.textContent=v.status==="CHECKED_IN"?"Check Out":"Check In";td.appendChild(b);}r.appendChild(td);return r; });
@@ -171,6 +561,7 @@ async function loadSocietyBackendData() {
         renderPaymentRegister();
         window.societyAmenities = amenityItems;
         window.societyResidents = residents;
+        window.societyApartments = apartments;
         renderAmenityBookingDesk(amenityItems, bookingItems, residents);
         renderAnnouncements(noticeItems);
         const nameField=document.querySelector('[data-profile-field="name"]');const emailField=document.querySelector('[data-profile-field="email"]');if(nameField)nameField.value=me.name;if(emailField)emailField.value=me.email;
@@ -183,35 +574,44 @@ async function loadSocietyBackendData() {
 async function loadPlatformBackendData(){
     try{
         const get=async p=>{const r=await fetch(`/api/${p}`,{headers:{Accept:"application/json"}});if(!r.ok)throw new Error("Platform data unavailable");return r.json();};
-        const [overview,tenants,users, plans, integrations, roles, privacyReqs, gateways, comms, monitoring, audit, subscriptions, analytics]=await Promise.all([
+        const [overview,tenants,users, plans, roles, privacyReqs, gateways, monitoring, audit, subscriptions, analytics]=await Promise.all([
             get("platform/overview"),get("platform/tenants"),get("platform/users"),get("platform/plans"),
-            get("superadmin/security/integrations").catch(()=>[]),
             get("superadmin/roles/list").catch(()=>[]),
             get("superadmin/data/privacy/requests").catch(()=>[]),
             get("superadmin/finance/payment-gateways").catch(()=>[]),
-            get("superadmin/communication/templates").catch(()=>[]),
             get("superadmin/monitoring/data").catch(()=>({stats:{}, watchlist:[]})),
             get("superadmin/audit/data").catch(()=>({stats:{}, stream:[]})),
             get("superadmin/subscriptions/data").catch(()=>({mapping:[], admins:[], rules:[]})),
             get("superadmin/analytics/data").catch(()=>({}))
         ]);
+        const auditSocietyFilter = document.getElementById("auditSocietyFilter");
+        if (auditSocietyFilter) {
+            const selectedSociety = auditSocietyFilter.value || "ALL";
+            auditSocietyFilter.replaceChildren(new Option("All Societies", "ALL"));
+            tenants.forEach(tenant => {
+                const name = String(tenant.societyName || "").trim();
+                if (name) auditSocietyFilter.add(new Option(name, name));
+            });
+            auditSocietyFilter.value = [...auditSocietyFilter.options].some(option => option.value === selectedSociety) ? selectedSociety : "ALL";
+        }
         const byLabel={"active societies":overview.tenants,"platform users":overview.users,"pending approvals":overview.pendingTenants,
                        "gate entries today": monitoring.stats.gateEntriesToday, "bills pending": monitoring.stats.billsPending, "admin approvals": monitoring.stats.adminApprovals, "open risks": monitoring.stats.openRisks,
                        "audit events logged": audit.stats.auditEventsLogged, "minute actions today": audit.stats.minuteActionsToday, "security overrides": audit.stats.securityOverrides, "system health": audit.stats.systemHealth};
-        
+
         document.querySelectorAll('.stats article').forEach(card=>{const key=card.querySelector("span")?.textContent.trim().toLowerCase();const value=card.querySelector("strong");if(value&&byLabel[key]!==undefined)value.textContent=byLabel[key];});
         const fill=(selector,items,rowBuilder)=>document.querySelectorAll(selector).forEach(table=>{const body=table;if(table.tagName==="TABLE") { const tb=table.tBodies[0]; if(tb) tb.replaceChildren(...items.map(rowBuilder)); } else { table.replaceChildren(...items.map(rowBuilder)); }});
         const td=(row,value)=>{const cell=document.createElement("td");cell.textContent=value??"";row.appendChild(cell);};
-        fill('table[data-table="societies"]',tenants,t=>{const r=document.createElement("tr");r.dataset.recordId=t.id;td(r,t.societyName);td(r,t.city);td(r,"Unassigned");td(r,t.approved?"Approved":"Pending");const c=document.createElement("td");c.innerHTML=`<button class="btn btn-sm btn-outline-primary me-1" data-backend-action="edit-society">Edit</button><button class="btn btn-sm ${t.approved?'btn-outline-danger':'btn-outline-success'}" data-backend-action="${t.approved?'suspend-society':'approve-society'}">${t.approved?'Suspend':'Approve'}</button>`;r.appendChild(c);return r;});
+        const planById = new Map(plans.map(plan => [String(plan.id), plan]));
+        fill('table[data-table="societies"]',tenants,t=>{const r=document.createElement("tr");r.dataset.recordId=t.id;td(r,t.societyName);td(r,[t.city,t.state].filter(Boolean).join(", "));td(r,planById.get(String(t.subscriptionPlanId))?.name||"Unassigned");td(r,t.approved?"Approved":"Pending");const c=document.createElement("td");c.innerHTML=`<button class="btn btn-sm btn-outline-primary me-1" data-backend-action="edit-society">Edit</button><button class="btn btn-sm ${t.approved?'btn-outline-danger':'btn-outline-success'}" data-backend-action="${t.approved?'suspend-society':'approve-society'}">${t.approved?'Suspend':'Approve'}</button>`;r.appendChild(c);return r;});
         fill('table[data-table="users"]',users,u=>{const r=document.createElement("tr");r.dataset.userId=u.id;td(r,u.name);td(r,u.role);td(r,u.tenantId);td(r,u.locked?"Locked":"Active");const c=document.createElement("td");c.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-platform-user-edit>Edit User</button>`;r.appendChild(c);return r;});
         window.platformPlans = plans;
+        renderSubscriptionCatalogue(plans, tenants);
         fill('#subscriptionPlansTable', plans, plan=>{const r=document.createElement("tr");r.dataset.planId=plan.id;td(r,plan.name);td(r,`Rs. ${plan.monthlyPrice}`);td(r,plan.maxApartments);td(r,plan.maxResidents);td(r,[plan.visitorManagement&&"Visitors",plan.amenityBooking&&"Amenities",plan.analytics&&"Analytics"].filter(Boolean).join(" · ") || "Core");const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-plan-action='edit'>Edit Plan</button>";r.appendChild(c);return r;});
         
-        fill('#apiIntegrationsTable', integrations, i=>{const r=document.createElement("tr");r.dataset.integrationId=i.id;td(r,i.serviceName);td(r,i.description || "—");const status=document.createElement("td");status.innerHTML=`<span class="badge ${i.active?'bg-success':'bg-secondary'}">${i.active?'Active':'Disabled'}</span>`;r.appendChild(status);td(r,i.updatedAt ? new Date(i.updatedAt).toLocaleString() : "Just now");const c=document.createElement("td");c.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-integration-edit>Configure</button>`;r.appendChild(c);return r;});
+        window.platformRolePolicies = roles;
         fill('#accessRolesTable', roles, ro=>{const r=document.createElement("tr");r.dataset.rolePolicyId=ro.id;td(r,ro.role);td(r,ro.permissions);const status=document.createElement("td");status.innerHTML=`<span class="badge ${ro.status==='Active'?'bg-success':'bg-secondary'}">${ro.status}</span>`;r.appendChild(status);const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-role-policy-edit>Edit</button>";r.appendChild(c);return r;});
         fill('#privacyRequestsTable', privacyReqs, p=>{const r=document.createElement("tr");r.dataset.privacyRequestId=p.id;td(r,`PRQ-${p.id}`);td(r,p.details);td(r,p.requestType);const status=document.createElement("td");status.innerHTML=`<span class="badge ${p.status==='Pending'?'bg-warning text-dark':p.status==='Processed'?'bg-success':'bg-secondary'}">${p.status}</span>`;r.appendChild(status);const c=document.createElement("td");c.innerHTML=p.status==='Pending'?"<button type='button' class='btn btn-sm btn-outline-danger' data-privacy-review>Review</button>":"<span class='small text-muted'>Completed</span>";r.appendChild(c);return r;});
         fill('#paymentGatewaysTable', gateways, g=>{const r=document.createElement("tr");r.dataset.gatewayId=g.id;td(r,g.providerName);td(r,g.environment || "Sandbox");const status=document.createElement("td");status.innerHTML=`<span class="badge ${g.active?'bg-success':'bg-secondary'}">${g.active?'Active':'Disabled'}</span>`;r.appendChild(status);td(r,g.transactionFee || "—");const c=document.createElement("td");c.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-gateway-config>Configure</button>`;r.appendChild(c);return r;});
-        fill('#communicationsTable', comms, c=>{const r=document.createElement("tr");r.dataset.templateId=c.id;r.dataset.templateBody=c.bodyContent||"";td(r,c.templateName);td(r,c.channel);td(r,c.subject);const status=document.createElement("td");status.innerHTML=`<span class="badge ${c.active?'bg-success':'bg-secondary'}">${c.active?'Active':'Disabled'}</span>`;r.appendChild(status);const btn=document.createElement("td");btn.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-template-edit>Edit</button>`;r.appendChild(btn);return r;});
         
         fill('#liveSocietyWatchlistTable', monitoring.watchlist, m=>{const r=document.createElement("tr");td(r,m.society);td(r,m.module);td(r,m.currentSignal);td(r,m.owner);td(r,m.accessRule);return r;});
         if(monitoring.commandWatch) {
@@ -231,23 +631,50 @@ async function loadPlatformBackendData(){
         fill('#subscriptionMappingTable', subscriptions.mapping, m=>{const r=document.createElement("tr");td(r,m.society);td(r,m.plan);td(r,m.flats);td(r,m.renewal);td(r,m.adminOwner);const s=document.createElement("td");s.innerHTML=`<span class="badge ${m.status==='Current'?'bg-success':m.status==='Renewal Due'?'bg-warning text-dark':'bg-danger'}">${m.status}</span>`;r.appendChild(s);const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-plan-action='review'>Review Plan</button>";r.appendChild(c);return r;});
         fill('#subscriptionAdminsTable', subscriptions.admins, a=>{const r=document.createElement("tr");td(r,a.admin);td(r,a.society);td(r,a.role);td(r,a.lastLogin);td(r,a.mfa);const s=document.createElement("td");s.innerHTML=`<span class="badge ${a.status==='Active'?'bg-success':a.status==='MFA Pending'?'bg-warning text-dark':'bg-danger'}">${a.status}</span>`;r.appendChild(s);const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-access-audit>Audit Access</button>";r.appendChild(c);return r;});
         fill('#billingRulesTable', subscriptions.rules, u=>{const r=document.createElement("tr");r.dataset.ruleId=u.id;td(r,u.rule);td(r,u.plan);td(r,u.amount);td(r,u.cycle);td(r,u.grace);const s=document.createElement("td");s.innerHTML=`<span class="badge ${u.status==='Active'||u.status==='Live'?'bg-success':'bg-secondary'}">${u.status}</span>`;r.appendChild(s);const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-billing-rule-edit>Edit Rule</button>";r.appendChild(c);return r;});
-        
-        if (analytics.mrr) {
-            document.getElementById('analyticsMrr').textContent = analytics.mrr;
-            document.getElementById('analyticsVisitors').textContent = analytics.visitors;
-            document.getElementById('analyticsPayments').textContent = analytics.payments;
-            document.getElementById('analyticsSla').textContent = analytics.sla;
+
+        const paymentSummary = subscriptions.paymentSummary || {};
+        const subscriptionPayments = subscriptions.payments || [];
+        const setFinanceText = (id, value) => { const element=document.getElementById(id); if(element) element.textContent=value; };
+        const rupees = value => `Rs. ${Number(value || 0).toLocaleString("en-IN", {minimumFractionDigits:0, maximumFractionDigits:2})}`;
+        const localDate = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"}) : "Not scheduled";
+        setFinanceText("financeSubscribedSocieties", Number(paymentSummary.subscribedSocieties || 0).toLocaleString("en-IN"));
+        setFinanceText("financePaidSocieties", Number(paymentSummary.paidSocieties || 0).toLocaleString("en-IN"));
+        setFinanceText("financeCollectedCharges", rupees(paymentSummary.collectedCharges));
+        setFinanceText("financePendingCharges", rupees(paymentSummary.pendingCharges));
+        setFinanceText("financePendingSocieties", `${Number(paymentSummary.pendingSocieties || 0).toLocaleString("en-IN")} ${Number(paymentSummary.pendingSocieties || 0) === 1 ? "society" : "societies"} pending`);
+        setFinanceText("financePaymentRowCount", `${subscriptionPayments.length.toLocaleString("en-IN")} ${subscriptionPayments.length === 1 ? "record" : "records"}`);
+        const paymentTableBody = document.querySelector("#subscriptionPaymentsTable tbody");
+        if (paymentTableBody) {
+            if (!subscriptionPayments.length) {
+                const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=7;cell.className="empty-payment-register";cell.innerHTML='<i class="fa-solid fa-receipt d-block mb-2 fs-4"></i>No societies currently have an assigned subscription plan.';row.appendChild(cell);paymentTableBody.replaceChildren(row);
+            } else {
+                paymentTableBody.replaceChildren(...subscriptionPayments.map(payment => {
+                    const row=document.createElement("tr");
+                    const society=document.createElement("td");society.className="society-cell";const societyName=document.createElement("strong");societyName.textContent=payment.society || "Unnamed society";const location=document.createElement("small");location.textContent=payment.location || "Location not recorded";society.append(societyName,location);row.appendChild(society);
+                    td(row,payment.plan || "Unassigned");td(row,String(payment.billingCycle || "MONTHLY").replaceAll("_"," "));
+                    const amount=document.createElement("td");amount.className="payment-amount";amount.textContent=rupees(payment.billingAmount);row.appendChild(amount);
+                    const status=document.createElement("td");const badge=document.createElement("span");badge.className=`badge ${payment.paymentStatus === "PAID" ? "bg-success" : payment.paymentStatus === "FREE" ? "bg-primary" : "bg-warning text-dark"}`;badge.textContent=payment.paymentStatus || "PENDING";status.appendChild(badge);row.appendChild(status);
+                    td(row,localDate(payment.subscriptionStartedOn));td(row,localDate(payment.nextRenewalOn));return row;
+                }));
+            }
         }
+
+        window.platformAnalytics = analytics;
+        const kpis=analytics.kpis||{},operational=analytics.operational||{};
+        const metric=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=value;};
+        metric("analyticsMrr",`Rs. ${Number(kpis.mrr||0).toLocaleString("en-IN")}`);
+        metric("analyticsVisitors",Number(kpis.activeUsers||0)+Number(kpis.visitorRecords||0));
+        metric("analyticsPayments",`${Number(kpis.paymentSuccessRate||0).toFixed(1)}%`);
+        metric("analyticsSla",`${Number(kpis.averageResolutionHours||0).toFixed(1)} hours`);
+        metric("analyticsGeneratedAt",analytics.generatedAt?`Updated ${new Date(analytics.generatedAt).toLocaleString([], {dateStyle:"medium",timeStyle:"short"})}`:"No analytics generated yet");
         const chart=document.getElementById("analyticsRevenueChart");
-        if(chart){const data=[[52,48],[57,51],[61,58],[66,61],[70,67],[76,73]];chart.replaceChildren(...data.map(([revenue,collection])=>{const group=document.createElement("div");group.className="d-flex align-items-end gap-1 h-100";group.innerHTML=`<span class="rounded-top bg-primary" style="width:15px;height:${revenue}%" title="Revenue Rs. ${revenue}K"></span><span class="rounded-top bg-info" style="width:15px;height:${collection}%" title="Collections Rs. ${collection}K"></span>`;return group;}));}
+        if(chart){const trend=analytics.revenueTrend||[],max=Math.max(0,...trend.flatMap(item=>[Number(item.billed||0),Number(item.collected||0)]));if(max===0)chart.innerHTML='<div class="analytics-empty"><i class="fa-solid fa-chart-column"></i><strong>No revenue activity yet</strong><span>The chart will appear after real bills and collections are recorded.</span></div>';else chart.replaceChildren(...trend.map(item=>{const group=document.createElement("div");group.className="analytics-chart-month";group.innerHTML=`<div><i style="height:${Math.max(3,Number(item.billed||0)/max*100)}%" title="Billed: Rs. ${Number(item.billed||0).toLocaleString("en-IN")}"></i><b style="height:${Math.max(3,Number(item.collected||0)/max*100)}%" title="Collected: Rs. ${Number(item.collected||0).toLocaleString("en-IN")}"></b></div><span>${item.month}</span>`;return group;}));}
+        const health=document.getElementById("analyticsOperationalHealth");if(health){const items=[["Registered societies",operational.registeredSocieties||0],["Gate / visitor records",operational.gateEntries||0],["Maintenance requests",operational.maintenanceRequests||0],["Payment follow-ups",operational.openPaymentFollowUps||0]];health.replaceChildren(...items.map(([label,value])=>{const row=document.createElement("div");row.innerHTML=`<span>${label}</span><strong>${Number(value).toLocaleString("en-IN")}</strong>`;return row;}));}
         const societyTable=document.getElementById("analyticsSocietyTable");
-        if(societyTable){const performance=[
-            ["Green Nest Apartments","Premium","1,840","96%","4","8h","Excellent","success"],
-            ["Lakeview Residency","Standard","920","89%","9","14h","Good","primary"],
-            ["Urban Heights","Free","310","74%","15","22h","Needs attention","warning text-dark"]
-        ]; societyTable.replaceChildren(...performance.map(item=>{const tr=document.createElement("tr");tr.innerHTML=`<td class="fw-semibold">${item[0]}</td><td>${item[1]}</td><td>${item[2]}</td><td><div class="d-flex align-items-center gap-2"><div class="progress flex-grow-1" style="height:7px"><div class="progress-bar bg-success" style="width:${item[3]}"></div></div><span class="small">${item[3]}</span></div></td><td>${item[4]}</td><td>${item[5]}</td><td><span class="badge bg-${item[7]}">${item[6]}</span></td>`;return tr;}));}
+        if(societyTable){const rows=(analytics.societies||[]).map(item=>{const row=document.createElement("tr");row.innerHTML=`<td><strong>${item.society}</strong></td><td>${item.plan}</td><td>${item.activeUsers}</td><td>${Number(item.collectionRate||0).toFixed(1)}%</td><td>${item.openRequests}</td><td><span class="analytics-health ${String(item.health).toLowerCase().replaceAll(" ","-")}">${item.health}</span></td>`;return row;});if(!rows.length){const empty=document.createElement("tr");empty.innerHTML='<td colspan="6" class="text-center text-muted py-5">No registered societies are available for comparison.</td>';rows.push(empty);}societyTable.replaceChildren(...rows);}
         const mix=document.getElementById("analyticsSubscriptionMix");
-        if(mix){const total=Math.max(tenants.length,1),counts={Premium:1,Standard:1,Free:Math.max(tenants.length-2,1)};mix.replaceChildren(...Object.entries(counts).map(([plan,count])=>{const width=Math.round(count/total*100);const item=document.createElement("div");item.className="mb-3";item.innerHTML=`<div class="d-flex justify-content-between small mb-1"><span class="fw-semibold">${plan}</span><span>${count} societ${count===1?"y":"ies"}</span></div><div class="progress" style="height:9px"><div class="progress-bar ${plan==="Premium"?"bg-primary":plan==="Standard"?"bg-info":"bg-secondary"}" style="width:${width}%"></div></div>`;return item;}));}
+        if(mix){const entries=Object.entries(analytics.subscriptionMix||{}),total=entries.reduce((sum,[,count])=>sum+Number(count),0);if(!entries.length)mix.innerHTML='<div class="analytics-empty compact"><strong>No subscription assignments</strong><span>Assign plans to registered societies to see the distribution.</span></div>';else mix.replaceChildren(...entries.map(([plan,count])=>{const row=document.createElement("div");const percent=total?Math.round(Number(count)/total*100):0;row.className="analytics-mix-row";row.innerHTML=`<div><strong>${plan}</strong><span>${count} societ${Number(count)===1?"y":"ies"} · ${percent}%</span></div><progress max="100" value="${percent}"></progress>`;return row;}));}
+        const actions=document.getElementById("analyticsRecommendedActions");if(actions){const items=analytics.recommendations||[];if(!items.length)actions.innerHTML='<div class="analytics-empty compact"><i class="fa-solid fa-circle-check"></i><strong>No immediate actions</strong><span>There are no data-backed recommendations at this time.</span></div>';else actions.replaceChildren(...items.map(item=>{const row=document.createElement("div");row.className=`analytics-action ${item.level||"primary"}`;row.innerHTML=`<i class="fa-solid fa-circle-exclamation"></i><div><strong>${item.title}</strong><span>${item.detail}</span></div>`;return row;}));}
 
     }catch(error){console.error("Platform hydration failed",error);}
 }
@@ -257,6 +684,25 @@ async function mutateSociety(path, method, body) {
     const result = await response.json().catch(()=>({}));
     if(!response.ok) throw new Error(result.message || "The operation could not be completed");
     return result;
+}
+
+function flatPayload(values = [], row = null) {
+    const numberOrNull = value => value === "" || value == null ? null : Number(value);
+    return {
+        unitNo: values[0] || row?.dataset.unitNo || row?.children[0]?.textContent.trim() || "",
+        ownerName: values[1] || row?.dataset.ownerName || row?.children[1]?.textContent.trim() || "",
+        occupancy: values[2] || row?.dataset.occupancy || row?.querySelector(".status")?.textContent.trim().toUpperCase().replaceAll(" ", "_") || "VACANT",
+        block: values[3] || row?.dataset.block || "Block A",
+        floor: Number(values[4] || row?.dataset.floor || 0),
+        unitType: values[5] || row?.dataset.type || "2BHK",
+        ownerPhone: values[6] ?? row?.dataset.ownerPhone ?? "",
+        ownerEmail: values[7] ?? row?.dataset.ownerEmail ?? "",
+        builtUpAreaSqFt: numberOrNull(values[8] ?? row?.dataset.builtUpAreaSqFt),
+        parkingSlot: values[9] ?? row?.dataset.parkingSlot ?? "",
+        monthlyMaintenance: numberOrNull(values[10] ?? row?.dataset.monthlyMaintenance),
+        possessionDate: values[11] || row?.dataset.possessionDate || null,
+        notes: values[12] ?? row?.dataset.notes ?? ""
+    };
 }
 
 function renderAnnouncements(noticeItems = []) {
@@ -301,7 +747,23 @@ function renderAnnouncements(noticeItems = []) {
         updateCount();
         return;
     }
-    document.querySelectorAll('[data-view="announcements"] .card').forEach(card=>{if(dashboardRole!=="resident")return;const heading=card.querySelector("h2");card.replaceChildren();if(heading)card.appendChild(heading);noticeItems.forEach(n=>{const h=document.createElement("h3");h.textContent=n.title;const p=document.createElement("p");p.textContent=n.message;card.append(h,p);});});
+    const list = document.getElementById("residentAnnouncementList");
+    if (!list) return;
+    list.replaceChildren();
+    const residentNotices = noticeItems.filter(n => ["ALL","RESIDENTS"].includes(String(n.audience || "ALL").toUpperCase()));
+    if (!residentNotices.length) { list.innerHTML = '<div class="text-center text-muted py-5"><i class="fa-regular fa-bell-slash fs-2 d-block mb-2"></i>No active society notices.</div>'; return; }
+    residentNotices.forEach(notice => {
+        const article = document.createElement("article");
+        article.className = `alert border-start border-4 shadow-sm mb-3 ${notice.emergency ? "alert-danger border-danger" : "alert-info border-primary"}`;
+        const badges = [notice.category ? `<span class="badge text-bg-light me-2">${escapeAttribute(notice.category.replaceAll("_"," "))}</span>` : "", notice.actionRequired ? '<span class="badge text-bg-warning">Action required</span>' : ""].join("");
+        const contact = [notice.contactPerson, notice.contactPhone].filter(Boolean).join(" · ");
+        article.innerHTML = `<div class="d-flex justify-content-between align-items-start gap-3"><h5 class="alert-heading fw-bold mb-2"><i class="fa-solid ${notice.emergency ? "fa-triangle-exclamation" : "fa-bullhorn"} me-2"></i>${escapeAttribute(notice.title)}</h5><div>${badges}</div></div><p class="mb-2" style="white-space:pre-wrap">${escapeAttribute(notice.message)}</p>${contact ? `<p class="small mb-2"><strong>Contact:</strong> ${escapeAttribute(contact)}</p>` : ""}${notice.attachmentReference ? `<p class="small mb-2"><strong>Reference:</strong> ${escapeAttribute(notice.attachmentReference)}</p>` : ""}<hr class="my-2 opacity-25"><p class="mb-0 small fw-semibold">Published by Society Admin · ${notice.createdAt ? new Date(notice.createdAt).toLocaleString([], {dateStyle:"medium",timeStyle:"short"}) : "Just now"}${notice.validUntil ? ` · Visible until ${new Date(notice.validUntil).toLocaleString([], {dateStyle:"medium",timeStyle:"short"})}` : ""}</p>`;
+        list.appendChild(article);
+    });
+    const noticeNav = document.querySelector('[data-panel="announcements"]');
+    if (noticeNav && !noticeNav.querySelector(".resident-notice-count")) { const badge=document.createElement("span"); badge.className="resident-notice-count badge rounded-pill text-bg-danger ms-auto"; badge.textContent=String(residentNotices.length); noticeNav.appendChild(badge); }
+    const unseen = residentNotices.filter(n => n.inAppNotification && !localStorage.getItem(`smartsociety-notice-seen-${n.id}`));
+    if (unseen.length) { showToast(`${unseen.length} new society notice${unseen.length === 1 ? "" : "s"}. Open Notice Board to read.`); unseen.forEach(n => localStorage.setItem(`smartsociety-notice-seen-${n.id}`,"1")); }
 }
 
 function renderAmenityBookingDesk(amenityItems = [], bookingItems = [], residents = []) {
@@ -615,7 +1077,12 @@ document.addEventListener("click",event=>{
         const audience = panel?.querySelector("#announcementAudience")?.value || "ALL";
         const emergency = Boolean(panel?.querySelector("#announcementEmergency")?.checked);
         if (!title || !message) { showToast("Enter both an announcement title and message."); button.disabled = false; return; }
-        operation=mutateSociety("society/announcements","POST",{title,message,audience,emergency});
+        const payload={title,message,audience,emergency,category:panel?.querySelector("#announcementCategory")?.value || "GENERAL",
+            effectiveFrom:panel?.querySelector("#announcementEffectiveFrom")?.value || null,validUntil:panel?.querySelector("#announcementValidUntil")?.value || null,
+            actionRequired:Boolean(panel?.querySelector("#announcementActionRequired")?.checked),contactPerson:panel?.querySelector("#announcementContactPerson")?.value.trim() || "",
+            contactPhone:panel?.querySelector("#announcementContactPhone")?.value.trim() || "",attachmentReference:panel?.querySelector("#announcementAttachment")?.value.trim() || "",
+            inAppNotification:Boolean(panel?.querySelector("#announcementInApp")?.checked),emailNotification:Boolean(panel?.querySelector("#announcementEmail")?.checked)};
+        operation=mutateSociety("society/announcements","POST",payload);
     }
     else if(action==="amenity-book"){const start=new Date(Date.now()+86400000);start.setMinutes(0,0,0);const end=new Date(start.getTime()+3600000);operation=mutateSociety("society/bookings","POST",{amenityId:Number(button.dataset.amenityId),startTime:start.toISOString().slice(0,19),endTime:end.toISOString().slice(0,19)});}
     else if(action.startsWith("visitor-"))operation=mutateSociety(`society/visitors/${id}/${action.endsWith("checkout")?"checkout":"checkin"}`,"PATCH");
@@ -648,7 +1115,7 @@ document.addEventListener("click",event=>{
             const message = panel?.querySelector("#announcementMessage");
             if (message) message.value = "";
             panel?.querySelector("#announcementEmergency") && (panel.querySelector("#announcementEmergency").checked = false);
-            showToast("✓ Announcement published to the selected audience.");
+            showToast(`✓ Announcement published. ${result.residentCount || 0} resident account(s) can now see it.`);
         }
         if (action === "suspend-society") showToast("✓ Society suspended. Platform access has been paused.");
         if (action === "approve-society") showToast("✓ Society approved and activated.");
@@ -2072,7 +2539,7 @@ function actionConfig(action, button) {
     const label = buttonLabel(button).toLowerCase();
     const queue = dashboardRole === "admin" ? controlQueueRowData(button) : null;
     if (dashboardRole === "admin" && action === "amenity-booking") {
-        return ["Add Amenity Booking", "Record who booked the amenity, their flat, required date and time, payment method, and booking charge.", ["Amenity", "Booked by / flat", "Start date & time", "End date & time", "Payment method|select:ONLINE,CASH", "Payment reference (optional)"]];
+        return ["Add Detailed Amenity Booking", "Record the complete reservation, event, attendance, setup, access, payment and compliance details.", ["Amenity", "Booked by / flat", "Start date & time", "End date & time", "Event type|select:BIRTHDAY,MEETING,CELEBRATION,SPORTS,RELIGIOUS EVENT,COMMUNITY EVENT,OTHER", "Event purpose / description", "Expected guests|number", "Children attending|number", "Vehicles expected|number", "Organizer name", "Organizer mobile|tel", "Organizer email|email", "Seating / setup style|select:STANDARD,THEATRE,CLASSROOM,ROUND TABLE,OPEN FLOOR,CUSTOM", "Equipment required", "Catering details", "Decoration details", "Accessibility requirements", "Vehicle numbers / parking instructions", "Payment method|select:ONLINE,CASH,BANK TRANSFER,UPI", "Payment reference", "Security deposit (Rs.)|number", "Deposit status|select:NOT REQUIRED,PENDING,RECEIVED,WAIVED", "Emergency contact|tel", "Terms accepted|select:Yes,No", "Special instructions / cleanup notes|textarea"]];
     }
     if (dashboardRole === "admin" && action === "amenity-price-edit") {
         return ["Edit Amenity Price", `Update the price and approval setting for ${button.dataset.amenityName || "this amenity"}.`, ["Amenity name", "Capacity|number", "Booking price (Rs.)|number", "Approval required|select:Yes,No"]];
@@ -2130,7 +2597,7 @@ function actionConfig(action, button) {
     if (action === "save" && label.includes("edit")) {
         const table = button.closest("table")?.dataset.table || "";
         const editFields = {
-            flats: ["Flat", "Owner", "Occupancy", "Block", "Floor", "Unit Type"],
+            flats: ["Flat number", "Owner name", "Occupancy|select:VACANT,OCCUPIED,UNDER_MAINTENANCE", "Block", "Floor|number", "Unit type|select:1BHK,2BHK,3BHK,4BHK,DUPLEX,PENTHOUSE", "Owner mobile|tel", "Owner email|email", "Built-up area (sq.ft)|number", "Parking slot", "Monthly maintenance (Rs.)|number", "Possession date|date", "Notes|textarea"],
             residents: ["Name", "Flat", "Role", "Email", "Temporary Password"],
             billing: ["Flat / Month", "Type", "Amount", "Status"],
             visitors: ["Visitor", "Flat", "Purpose", "Expected Time", "Status"],
@@ -2161,13 +2628,13 @@ function actionConfig(action, button) {
         return ["Contact Admin", "Send a clear message to the society admin team.", ["Message"]];
     }
     if (action === "add" && table === "entries") {
-        return ["New gate entry", "Record an approved visitor, delivery or service staff entry.", ["Visitor name", "Mobile number", "Flat / unit", "Purpose", "Approved by"]];
+        return ["New Detailed Gate Entry", "Record identity, destination, visit purpose, vehicle, timing and gate verification details.", ["Visitor / staff name", "Mobile number|tel", "Email address|email", "Flat / unit", "Entry type|select:GUEST,DELIVERY,SERVICE_STAFF,CAB,DOMESTIC_STAFF,VENDOR", "Purpose / company", "Persons count|number", "Vehicle number", "ID proof type|select:None,Aadhaar,Driving Licence,Passport,Voter ID,Company ID", "ID proof last 4 / reference", "Host / approved by", "Expected exit time|datetime-local", "Gate notes|textarea"]];
     }
     if (action === "add" && table === "visitors") {
-        return ["Add Visitor", "Create a visitor record for society access tracking.", ["Visitor name", "Flat / unit", "Purpose", "Expected time"]];
+        return ["Add Detailed Visitor", "Create a complete visitor record with identity, host, schedule, vehicle and access instructions.", ["Visitor full name", "Mobile number|tel", "Email address|email", "Flat / unit", "Entry type|select:GUEST,DELIVERY,SERVICE_STAFF,CAB,DOMESTIC_STAFF,VENDOR", "Purpose / organisation", "Persons count|number", "Expected arrival|datetime-local", "Vehicle number", "ID proof type|select:None,Aadhaar,Driving Licence,Passport,Voter ID,Company ID", "ID proof last 4 / reference", "Photo / document reference", "Special access instructions|textarea"]];
     }
     if (action === "add" && table === "passes") {
-        return ["Create visitor pass", "Create a pre-approved pass for the gate desk.", ["Visitor name", "Flat / unit", "Valid date", "Purpose"]];
+        return ["Create Detailed Visitor Pass", "Create a traceable pre-authorised gate pass with identity, validity and host instructions.", ["Visitor full name", "Mobile number|tel", "Flat / unit", "Visit type|select:GUEST,DELIVERY,SERVICE,VENDOR,CAB", "Purpose / organisation", "Valid from|datetime-local", "Valid until|datetime-local", "Persons count|number", "Vehicle number", "ID proof reference", "Host instructions|textarea"]];
     }
     if (action === "add" && table === "societies") {
         return ["Add Society", "Register a society tenant with city, plan and onboarding status.", ["Society name", "City", "Plan", "Admin email"]];
@@ -2176,16 +2643,24 @@ function actionConfig(action, button) {
         return ["Create Platform User", "Create an account, assign a role, and connect the user to the right society.", ["Full name", "Role", "Society", "Email / phone"]];
     }
     if (action === "add" && table === "flats") {
-        return ["Add Flat", "Create a live flat record with ownership, block and occupancy details.", ["Flat number", "Owner name", "Occupancy|select:VACANT,OCCUPIED,UNDER_MAINTENANCE", "Block", "Floor|number", "Unit type|select:1BHK,2BHK,3BHK,PENTHOUSE"]];
+        return ["Add Flat", "Create a complete flat profile with property, ownership, contact, parking and maintenance details.", ["Flat number", "Owner name", "Occupancy|select:VACANT,OCCUPIED,UNDER_MAINTENANCE", "Block / tower", "Floor|number", "Unit type|select:1BHK,2BHK,3BHK,4BHK,DUPLEX,PENTHOUSE", "Owner mobile|tel", "Owner email|email", "Built-up area (sq.ft)|number", "Parking slot", "Monthly maintenance (Rs.)|number", "Possession date|date", "Notes|textarea"]];
     }
     if (action === "add" && table === "residents") {
-        return ["Invite Resident", "Invite a resident and connect them to a flat.", ["Resident name", "Flat / unit", "Owner or tenant", "Mobile / email"]];
+        return ["Add Resident", "Create a complete resident login and connect it to an existing flat.", ["Full name", "Email address|email", "Mobile number|tel", "Flat / unit", "Resident type|select:OWNER,TENANT,FAMILY_MEMBER", "Move-in date|date", "Vehicle number", "Residential address|textarea", "Emergency contact name", "Emergency contact phone|tel", "Profile notes|textarea", "Temporary password|password"]];
+    }
+    if (action === "add" && ["security-users","maintenance-users","accountant-users"].includes(table)) {
+        const config = table === "security-users"
+            ? ["Add Security Staff", "SECURITY_STAFF", "Security Officer", "Day Shift,Evening Shift,Night Shift,Rotational"]
+            : table === "maintenance-users"
+            ? ["Add Maintenance Staff", "MAINTENANCE_STAFF", "Maintenance Technician", "General Shift,Morning Shift,Evening Shift,On Call"]
+            : ["Add Accountant", "ACCOUNTANT", "Society Accountant", "General Shift,Part Time,Remote / Hybrid"];
+        return [config[0], `Create a secure ${config[2].toLowerCase()} account with contact, employment and emergency details.`, ["Full name", "Email address|email", "Mobile number|tel", `Designation`, "Employee ID", "Joining date|date", `Work shift|select:${config[3]}`, "Residential address|textarea", "Emergency contact name", "Emergency contact phone|tel", "Administrative notes|textarea", "Temporary password|password"]];
     }
     if (action === "add" && table === "complaints") {
         if (dashboardRole === "resident") {
-            return ["Raise Complaint", "Send a detailed complaint to the society admin and maintenance team.", ["Issue", "Category", "Location / flat", "Urgency", "Description"]];
+            return ["Raise Detailed Complaint", "Create a traceable service request with complete incident, contact, access and evidence information for the society team.", ["Issue / complaint title", "Category|select:Plumbing,Electrical,Lift / Elevator,Security,Cleaning,Carpentry,Pest Control,Water Supply,Power Supply,Common Area,Parking,Other", "Subcategory / issue type", "Priority|select:LOW,NORMAL,HIGH,URGENT,EMERGENCY", "Incident date & time|datetime-local", "Exact location / room / common area", "Preferred contact method|select:PHONE,EMAIL,WHATSAPP,IN_APP", "Contact phone|tel", "Allow maintenance staff entry|select:No,Yes", "Photo / video / document reference", "Detailed problem description, observations and access instructions|textarea"]];
         }
-        return ["Create Complaint", "Create a tracked ticket with the right category, priority, and details for the maintenance team.", ["Issue", "Flat / unit", "Category|select:Plumbing,Electrical,Security,Cleaning,Other", "Priority|select:LOW,NORMAL,HIGH,URGENT", "Description|textarea"]];
+        return ["Create Detailed Complaint", "Create a complete, traceable service ticket with resident, incident, access, contact and assignment information.", ["Issue / complaint title", "Flat / unit", "Category|select:Plumbing,Electrical,Lift / Elevator,Security,Cleaning,Carpentry,Pest Control,Water Supply,Power Supply,Common Area,Parking,Other", "Subcategory / issue type", "Priority|select:LOW,NORMAL,HIGH,URGENT,EMERGENCY", "Incident date & time|datetime-local", "Exact location / room / area", "Preferred contact|select:PHONE,EMAIL,WHATSAPP,IN_APP", "Contact phone|tel", "Allow staff entry|select:No,Yes", "Assign team|select:Unassigned,Plumbing Team,Electrical Team,Security Team,Housekeeping,Facility Team,External Vendor", "Photo / document reference", "Detailed description and access instructions|textarea"]];
     }
     if (action === "add" && table === "expenses") {
         return ["Add Expense", "Record an expense for approval.", ["Expense title", "Vendor", "Amount"]];
@@ -2221,7 +2696,7 @@ function actionConfig(action, button) {
         return ["Reject Payment Proof", "Reject only if the screenshot is wrong, unclear, duplicate, or not matching the bill. The resident bill will stay unpaid.", ["Rejection reason"]];
     }
     const configs = {
-        add: ["Add record", `Create a new item in ${titles[panel] || panel}.`, ["Name / title", "Details"]],
+        add: ["Add Detailed Record", `Create a complete item in ${titles[panel] || panel}.`, ["Name / title", "Category", "Effective date|date", "Responsible person", "Contact / reference", "Detailed notes|textarea"]],
         save: ["Save changes", `Confirm updates for ${titles[panel] || panel}.`, []],
         notify: ["Send Notification", `Write a message for: ${context.target}.`, ["Message"]],
         generate: ["Generate Detailed Monthly Bills", "Create itemized maintenance bills per flat with base rates, water meters, sinking funds, reserve funds, parking fees, and GST tax breakdowns.", ["Billing month", "Base rate (per sq.ft)", "Water sub-meter rate (per unit)", "Common power backup fee", "Sinking fund contribution", "Building repair reserve", "Covered parking fee", "GST tax rate (%)", "Payment due date"]],
@@ -2229,15 +2704,15 @@ function actionConfig(action, button) {
             ? ["Mark Bill Paid", "Record verified payment details so the receipt is exact for this flat and resident.", ["Payment method", "Reference number", "Received date", "Proof / screenshot filename", "Admin note"]]
             : ["Confirm payment", "Record this payment as completed.", ["Reference number"]],
         book: dashboardRole === "resident"
-            ? ["Book Amenity", `Request ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()} with the details admin needs for approval.`, ["Date", "Time slot", "Guests / vehicles", "Purpose"]]
-            : ["Confirm booking", `Reserve ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()}.`, ["Date", "Time"]],
-        approve: ["Approve item", `Confirm approval for ${context.target}.`, ["Approval note"]],
+            ? ["Book Amenity", `Request ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()} with complete scheduling and usage details.`, ["Booking date|date", "Start time|time", "End time|time", "Guests count|number", "Vehicles count|number", "Purpose / event", "Contact number|tel", "Special setup or access notes|textarea"]]
+            : ["Confirm Detailed Booking", `Reserve ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()}.`, ["Booked for / resident", "Flat / unit", "Booking date|date", "Start time|time", "End time|time", "Guests count|number", "Payment reference", "Booking notes|textarea"]],
+        approve: ["Review and Approve", `Record a traceable decision for ${context.target}.`, ["Decision|select:APPROVED,APPROVED_WITH_CONDITIONS", "Effective date|date", "Reviewed by", "Verification reference", "Conditions / approval note|textarea"]],
         suspend: ["Suspend society", "Provide a reason before suspending access.", ["Reason"]],
-        assign: ["Assign complaint", "Choose the team responsible for this request.", ["Team"]],
-        checkin: ["Visitor check-in", "Confirm visitor entry details.", ["Gate note"]],
-        checkout: ["Visitor check-out", "Confirm that the visitor has left.", ["Exit note"]],
-        complete: ["Complete task", "Add a completion note for this task.", ["Completion note"]],
-        close: ["Close complaint", "Add the resolution used to close this complaint.", ["Resolution"]],
+        assign: ["Assign Detailed Work", "Route this request with responsibility, priority and deadline information.", ["Team|select:Plumbing Team,Electrical Team,Security Team,Housekeeping,Facility Team,External Vendor", "Assigned person", "Priority|select:LOW,NORMAL,HIGH,URGENT", "Start by|datetime-local", "Complete by|datetime-local", "Work scope / instructions|textarea"]],
+        checkin: ["Visitor Check-in", "Confirm identity, pass, vehicle and gate-entry details.", ["Identity verified|select:Yes,No", "Pass / QR reference", "Persons entering|number", "Vehicle number", "Entry gate", "Items carried", "Gate note|textarea"]],
+        checkout: ["Visitor Check-out", "Record the complete exit and any exception details.", ["Exit date & time|datetime-local", "Persons exiting|number", "Pass returned|select:Yes,No,Not applicable", "Exit gate", "Vehicle number", "Incident / exit note|textarea"]],
+        complete: ["Complete Detailed Task", "Record work performed, materials, cost and completion evidence.", ["Completion date & time|datetime-local", "Completed by", "Work performed|textarea", "Parts / materials used", "Cost (Rs.)|number", "Photo / document reference", "Follow-up required|select:No,Yes", "Follow-up notes|textarea"]],
+        close: ["Close Detailed Complaint", "Document the final resolution and closure information.", ["Resolution category|select:FIXED,NO_FAULT_FOUND,DUPLICATE,RESIDENT_UNAVAILABLE,VENDOR_COMPLETED,OTHER", "Root cause", "Resolution performed|textarea", "Resolved by", "Repair cost (Rs.)|number", "Parts used", "Completion reference", "Resident informed|select:Yes,No", "Closure note|textarea"]],
         inspect: ["Category details", `Review details for ${button.textContent.trim()}.`, []]
     };
     return configs[action] || [`Action: ${action}`, `Proceed with the ${action} action?`, []];
@@ -2254,18 +2729,49 @@ function openActionModal(action, button) {
     }
     const modal = ensureActionModal();
     const [title, text, fields] = actionConfig(action, button);
-    const tableName = button.closest("table")?.dataset.table || "";
+    const tableName = button.closest("table")?.dataset.table || button.dataset.table || "";
     const row = button.closest("tr");
     const existingValues = action === "amenity-price-edit"
         ? [button.dataset.amenityName || "", button.dataset.amenityCapacity || "", button.dataset.amenityPrice || "0", button.dataset.amenityApproval || "Yes"]
         : action === "save" && buttonLabel(button).toLowerCase().includes("edit")
-        ? (tableName === "flats" && row ? [row.children[0]?.textContent.trim() || "", row.children[1]?.textContent.trim() || "", row.querySelector(".status")?.textContent.trim() || "VACANT", row.dataset.block || row.children[2]?.textContent.trim() || "Block A", row.dataset.floor || row.children[3]?.textContent.trim() || "0", row.dataset.unitType || row.children[4]?.textContent.trim() || "2BHK"] : rowValues(button))
+        ? (tableName === "flats" && row ? [row.dataset.unitNo||row.children[0]?.textContent.trim()||"",row.dataset.ownerName||row.children[1]?.textContent.trim()||"",row.dataset.occupancy||row.querySelector(".status")?.textContent.trim()||"VACANT",row.dataset.block||"Block A",row.dataset.floor||"0",row.dataset.type||"2BHK",row.dataset.ownerPhone||"",row.dataset.ownerEmail||"",row.dataset.builtUpAreaSqFt||"",row.dataset.parkingSlot||"",row.dataset.monthlyMaintenance||"",row.dataset.possessionDate||"",row.dataset.notes||""] : rowValues(button))
         : [];
     activeAction = { action, button };
     modal.querySelector("#dashboardActionTitle").textContent = title;
     modal.querySelector("#dashboardActionText").textContent = text;
+    const isFlatForm = tableName === "flats" && (action === "add" || action === "save");
+    const isPeopleForm = action === "add" && ["residents","security-users","maintenance-users","accountant-users"].includes(tableName);
+    const isComplaintForm = action === "add" && tableName === "complaints";
+    const isResidentComplaintForm = isComplaintForm && dashboardRole === "resident";
+    const isDetailedWorkflow = fields.length >= 7;
+    modal.querySelector(".dashboard-action-card")?.classList.toggle("flat-detail-card", isFlatForm || isPeopleForm || isComplaintForm || isDetailedWorkflow);
     modal.querySelector("#dashboardActionFields").innerHTML = fields
-        .map((field, index) => actionInputMarkup(action, field, index, existingValues[index]))
+        .map((field, index) => {
+            const section = isFlatForm && index === 0 ? '<div class="flat-form-section"><strong>Property details</strong><span>Identify and classify the flat</span></div>'
+                : isFlatForm && index === 6 ? '<div class="flat-form-section"><strong>Owner contact</strong><span>Primary ownership and communication details</span></div>'
+                : isFlatForm && index === 8 ? '<div class="flat-form-section"><strong>Area, parking &amp; billing</strong><span>Operational information used by society administration</span></div>'
+                : isPeopleForm && index === 0 ? '<div class="flat-form-section"><strong>Personal &amp; contact details</strong><span>Identity and primary communication information</span></div>'
+                : isPeopleForm && index === 3 ? `<div class="flat-form-section"><strong>${tableName === "residents" ? "Residence details" : "Employment details"}</strong><span>${tableName === "residents" ? "Flat, occupancy and vehicle information" : "Role assignment, joining date and work shift"}</span></div>`
+                : isPeopleForm && index === 8 ? '<div class="flat-form-section"><strong>Emergency information</strong><span>Contact used if urgent assistance is required</span></div>'
+                : isPeopleForm && index === 11 ? '<div class="flat-form-section"><strong>Account access</strong><span>Temporary password must contain at least 8 characters</span></div>'
+                : isComplaintForm && index === 0 ? '<div class="flat-form-section"><strong>Complaint identification</strong><span>Resident, flat and issue classification</span></div>'
+                : isComplaintForm && index === (isResidentComplaintForm ? 4 : 5) ? '<div class="flat-form-section"><strong>Incident details</strong><span>When and exactly where the issue occurred</span></div>'
+                : isComplaintForm && index === (isResidentComplaintForm ? 6 : 7) ? '<div class="flat-form-section"><strong>Contact &amp; access</strong><span>How to contact the resident and whether staff may enter</span></div>'
+                : isComplaintForm && index === (isResidentComplaintForm ? 9 : 10) ? `<div class="flat-form-section"><strong>${isResidentComplaintForm ? "Evidence &amp; full description" : "Assignment &amp; evidence"}</strong><span>${isResidentComplaintForm ? "Supporting reference, observations and entry instructions" : "Initial routing, supporting reference and full description"}</span></div>`
+                : ["visitors","entries"].includes(tableName) && index === 0 ? '<div class="flat-form-section"><strong>Visitor identity</strong><span>Name, contact and destination details</span></div>'
+                : ["visitors","entries"].includes(tableName) && index === 4 ? '<div class="flat-form-section"><strong>Visit &amp; access details</strong><span>Entry classification, purpose, group size and vehicle</span></div>'
+                : ["visitors","entries"].includes(tableName) && index === 9 ? '<div class="flat-form-section"><strong>Verification &amp; instructions</strong><span>Identity reference, evidence and gate directions</span></div>'
+                : tableName === "passes" && index === 0 ? '<div class="flat-form-section"><strong>Visitor &amp; host</strong><span>Identity, contact and destination</span></div>'
+                : tableName === "passes" && index === 3 ? '<div class="flat-form-section"><strong>Pass validity</strong><span>Visit classification, schedule and vehicle details</span></div>'
+                : action === "amenity-booking" && index === 0 ? '<div class="flat-form-section"><strong>Reservation &amp; schedule</strong><span>Select the amenity, resident and complete booking period</span></div>'
+                : action === "amenity-booking" && index === 4 ? '<div class="flat-form-section"><strong>Event &amp; attendance</strong><span>Purpose, guest composition and expected vehicle load</span></div>'
+                : action === "amenity-booking" && index === 9 ? '<div class="flat-form-section"><strong>Organizer contact</strong><span>Responsible person and communication details</span></div>'
+                : action === "amenity-booking" && index === 12 ? '<div class="flat-form-section"><strong>Setup, services &amp; access</strong><span>Seating, equipment, catering, decoration and accessibility</span></div>'
+                : action === "amenity-booking" && index === 18 ? '<div class="flat-form-section"><strong>Payment, deposit &amp; compliance</strong><span>Transaction information, emergency contact and booking terms</span></div>'
+                : isDetailedWorkflow && index === 0 && !isFlatForm && !isPeopleForm && !isComplaintForm ? '<div class="flat-form-section"><strong>Required details</strong><span>Complete all relevant information before confirming</span></div>'
+                : "";
+            return section + actionInputMarkup(action, field, index, existingValues[index]);
+        })
         .join("");
     const save = modal.querySelector("#dashboardActionSave");
     save.textContent = "Confirm";
@@ -2297,6 +2803,9 @@ function actionInputMarkup(action, field, index, value = "") {
             inputHtml = `<select data-action-input="${index}">${options}</select>`;
         } else if (typeInfo === "textarea") {
             inputHtml = `<textarea data-action-input="${index}" placeholder="${labelText}">${escapeAttribute(value)}</textarea>`;
+        } else if (typeInfo === "datetime-local") {
+            const defaultTime = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16);
+            inputHtml = `<input type="datetime-local" data-action-input="${index}" value="${escapeAttribute(value || defaultTime)}">`;
         } else {
             inputHtml = `<input type="${typeInfo}" data-action-input="${index}" placeholder="${labelText}" value="${escapeAttribute(value)}">`;
         }
@@ -2306,6 +2815,9 @@ function actionInputMarkup(action, field, index, value = "") {
         ];
         const val = value || defaults[index] || "";
         inputHtml = `<input data-action-input="${index}" value="${escapeAttribute(val)}">`;
+    } else if (action === "add" && field === "Flat / unit" && Array.isArray(window.societyApartments)) {
+        const options = window.societyApartments.map(flat => `<option value="${escapeAttribute(flat.unitNo)}">${escapeAttribute(flat.unitNo)} — ${escapeAttribute(flat.block)} · Floor ${escapeAttribute(flat.floor)}</option>`).join("");
+        inputHtml = `<select data-action-input="${index}"><option value="">Select an existing flat</option>${options}</select>`;
     } else if (action === "add" && field.toLowerCase().includes("expected time")) {
         const defaultTime = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16);
         inputHtml = `<input type="datetime-local" data-action-input="${index}" value="${escapeAttribute(value || defaultTime)}">`;
@@ -2361,12 +2873,20 @@ function performAction(action, button, values = []) {
     }
 
     if (dashboardRole === "admin" && action === "amenity-booking") {
-        const [amenityId, residentId, startTime, endTime, paymentMethod, paymentReference] = values;
+        const [amenityId, residentId, startTime, endTime, eventType, eventPurpose, expectedGuests, childrenCount, vehicleCount,
+            organizerName, organizerPhone, organizerEmail, setupStyle, equipmentRequired, cateringDetails, decorationDetails,
+            accessibilityNeeds, vehicleDetails, paymentMethod, paymentReference, securityDeposit, depositStatus,
+            emergencyContact, termsAccepted, specialInstructions] = values;
         if (!amenityId || !residentId || !startTime || !endTime || !paymentMethod) return { title: "Booking details required", lines: ["Select the amenity and resident, then enter the requested date, time and payment method."] };
-        mutateSociety("society/bookings/admin", "POST", { amenityId: Number(amenityId), residentId: Number(residentId), startTime, endTime, paymentMethod, paymentReference: paymentReference || "" })
+        if (!eventPurpose || !organizerName || !organizerPhone || termsAccepted !== "Yes") return { title: "Complete booking details required", lines: ["Enter the event purpose and organizer contact, then confirm that the amenity terms are accepted."] };
+        mutateSociety("society/bookings/admin", "POST", { amenityId: Number(amenityId), residentId: Number(residentId), startTime, endTime,
+            eventType, eventPurpose, expectedGuests: Number(expectedGuests || 1), childrenCount: Number(childrenCount || 0), vehicleCount: Number(vehicleCount || 0),
+            organizerName, organizerPhone, organizerEmail, setupStyle, equipmentRequired, cateringDetails, decorationDetails,
+            accessibilityNeeds, vehicleDetails, paymentMethod, paymentReference: paymentReference || "", securityDeposit: Number(securityDeposit || 0),
+            depositStatus, emergencyContact, termsAccepted: termsAccepted === "Yes", specialInstructions })
             .then(() => { loadSocietyBackendData(); showToast("Amenity booking recorded"); })
             .catch(error => showToast(error.message || "Amenity booking could not be recorded"));
-        return { title: "Amenity booking recorded", lines: ["The booking has been added with its resident, flat, payment method and current amenity price."] };
+        return { title: "Detailed amenity booking recorded", lines: [`<strong>Event:</strong> ${eventType} · ${eventPurpose}`, `<strong>Attendance:</strong> ${expectedGuests || 1} guests · ${vehicleCount || 0} vehicles`, `<strong>Organizer:</strong> ${organizerName} · ${organizerPhone}`, `<strong>Payment:</strong> ${paymentMethod} · Deposit ${depositStatus}`] };
     }
 
     if (dashboardRole === "admin" && action === "amenity-price-edit") {
@@ -2380,10 +2900,10 @@ function performAction(action, button, values = []) {
 
     if (dashboardRole === "admin" && action === "save" && button.closest('table[data-table="flats"]')) {
         const row = button.closest("tr");
-        const payload = { unitNo: values[0] || row?.children[0]?.textContent.trim(), ownerName: values[1] || row?.children[1]?.textContent.trim(), occupancy: values[2] || row?.querySelector(".status")?.textContent.trim() || "VACANT", block: values[3] || row?.dataset.block || "Block A", floor: Number(values[4] || row?.dataset.floor || 0), unitType: values[5] || row?.dataset.unitType || row?.children[2]?.textContent.trim() || "2BHK" };
+        const payload = flatPayload(values, row);
         if (!payload.unitNo || !payload.ownerName) return { title: "Flat details required", lines: ["Enter a flat number and owner name before saving."] };
         if (row?.dataset.recordId) mutateSociety(`society/apartments/${row.dataset.recordId}`, "PATCH", payload).then(() => loadSocietyBackendData()).catch(error => showToast(error.message || "Flat could not be updated"));
-        if (row) { row.children[0].textContent = payload.unitNo; row.children[1].textContent = payload.ownerName; row.children[2].textContent = payload.block; row.children[3].textContent = payload.floor; row.children[4].textContent = payload.unitType; row.dataset.block = payload.block; row.dataset.floor = payload.floor; row.dataset.unitType = payload.unitType; setStatus(button, payload.occupancy, "active"); }
+        if (row) Object.entries(payload).forEach(([key,value])=>row.dataset[key]=value??"");
         appendDashboardActivity(`Flat updated: ${payload.unitNo}`);
         persistDashboardState();
         return { title: "Flat updated", lines: [`<strong>Flat:</strong> ${payload.unitNo}`, `<strong>Owner:</strong> ${payload.ownerName}`, `<strong>Block:</strong> ${payload.block} · Floor ${payload.floor}`, `<strong>Type:</strong> ${payload.unitType}`, `<strong>Occupancy:</strong> ${payload.occupancy}`] };
@@ -2777,13 +3297,17 @@ function performAction(action, button, values = []) {
     if (action === "add") {
         const table = button.dataset.table;
         if (dashboardRole === "resident" && table === "complaints") {
-            mutateSociety("society/complaints","POST",{title:values[0]||"Resident complaint",category:values[1]||"General",priority:values[3]||"NORMAL",description:values[4]||values[2]||"No extra details"})
+            const payload={title:values[0]||"Resident complaint",category:values[1]||"Other",subcategory:values[2]||"",
+                priority:values[3]||"NORMAL",incidentAt:values[4]||null,locationDetails:values[5]||"",
+                preferredContactMethod:values[6]||"IN_APP",reporterPhone:values[7]||"",accessPermission:values[8]==="Yes",
+                attachmentReference:values[9]||"",description:values[10]||"No additional description provided",residentId:null,assignedTo:""};
+            mutateSociety("society/complaints","POST",payload)
                 .then(()=>loadSocietyBackendData()).catch(error=>showToast(error.message));
-            addResidentComplaint(values);
+            addResidentComplaint([values[0],values[1],values[5],values[3],values[10]]);
             pushResidentInboxItem({
                 type: "Complaint",
                 title: values[0] || "Resident complaint",
-                details: `${values[1] || "General"} | ${values[2] || "Flat A-101"} | ${values[3] || "Normal"} | ${values[4] || "No extra details"}`
+                details: `${values[1] || "Other"} | ${values[5] || "Resident flat"} | ${values[3] || "NORMAL"} | ${values[10] || "No extra details"}`
             });
             persistDashboardState();
             showToast(`✓ Complaint raised: ${values[0] || "Resident complaint"}`);
@@ -2792,9 +3316,13 @@ function performAction(action, button, values = []) {
                 lines: [
                     `<strong>Issue:</strong> ${values[0] || "Resident complaint"}`,
                     `<strong>Category:</strong> ${values[1] || "General"}`,
-                    `<strong>Location:</strong> ${values[2] || "Flat A-101"}`,
+                    `<strong>Subcategory:</strong> ${values[2] || "Not specified"}`,
                     `<strong>Urgency:</strong> ${values[3] || "Normal"}`,
-                    `<strong>Details:</strong> ${values[4] || "No extra details"}`,
+                    `<strong>Location:</strong> ${values[5] || "Resident flat"}`,
+                    `<strong>Contact:</strong> ${values[6] || "IN_APP"}${values[7] ? ` · ${values[7]}` : ""}`,
+                    `<strong>Staff entry:</strong> ${values[8] || "No"}`,
+                    `<strong>Evidence:</strong> ${values[9] || "Not attached"}`,
+                    `<strong>Details:</strong> ${values[10] || "No extra details"}`,
                     `<strong>Status:</strong> Sent to society admin`
                 ]
             };
@@ -2819,6 +3347,19 @@ function performAction(action, button, values = []) {
                     `<strong>Time:</strong> ${now}`
                 ]
             };
+        }
+        if (dashboardRole === "admin" && table === "residents") {
+            const payload={name:values[0],email:values[1],phone:values[2],unitNo:values[3],residentType:values[4]||"TENANT",moveInDate:values[5]||null,vehicleNumber:values[6]||"",address:values[7]||"",emergencyContactName:values[8]||"",emergencyContactPhone:values[9]||"",notes:values[10]||"",temporaryPassword:values[11]};
+            mutateSociety("society/residents","POST",payload).then(()=>{loadSocietyBackendData();showToast("Resident account created");}).catch(e=>showToast(e.message));
+            appendDashboardActivity(`Resident added: ${payload.name}`);
+            return {title:"Resident account created",lines:[`<strong>Name:</strong> ${payload.name}`,`<strong>Flat:</strong> ${payload.unitNo}`,`<strong>Type:</strong> ${payload.residentType}`,`<strong>Login:</strong> ${payload.email}`]};
+        }
+        if (dashboardRole === "admin" && ["security-users","maintenance-users","accountant-users"].includes(table)) {
+            const role=table==="security-users"?"SECURITY_STAFF":table==="maintenance-users"?"MAINTENANCE_STAFF":"ACCOUNTANT";
+            const payload={name:values[0],email:values[1],phone:values[2],role,designation:values[3],employeeId:values[4]||"",joiningDate:values[5]||null,workShift:values[6]||"",address:values[7]||"",emergencyContactName:values[8]||"",emergencyContactPhone:values[9]||"",notes:values[10]||"",temporaryPassword:values[11]};
+            mutateSociety("society/team-users","POST",payload).then(()=>{loadSocietyBackendData();showToast(`${payload.designation} account created`);}).catch(e=>showToast(e.message));
+            appendDashboardActivity(`${role.replaceAll("_"," ")} added: ${payload.name}`);
+            return {title:"Society team account created",lines:[`<strong>Name:</strong> ${payload.name}`,`<strong>Role:</strong> ${role.replaceAll("_"," ")}`,`<strong>Designation:</strong> ${payload.designation}`,`<strong>Employee ID:</strong> ${payload.employeeId||"Not assigned"}`,`<strong>Login:</strong> ${payload.email}`]};
         }
         const rows = {
             societies: [values[0] || "New Society", values[1] || "Chennai", values[2] || "Standard", "<span class='status pending'>Pending</span>", "<button data-action='approve'>Approve</button>"],
@@ -2847,9 +3388,9 @@ function performAction(action, button, values = []) {
         if (dashboardRole === "admin") {
             appendDashboardActivity(`${table === "flats" ? "Flat added" : table === "residents" ? "Resident invited" : table === "visitors" ? "Visitor added" : table === "complaints" ? "Complaint ticket created" : table === "expenses" ? "Expense added" : "Record added"}: ${values[0] || "New item"}`);
             if(table==="expenses")mutateSociety("society/finance/expenses","POST",{category:values[0]||"General",vendor:values[1]||"Vendor",amount:Math.max(1,moneyNumber(values[2]||"1")),date:new Date().toISOString().slice(0,10)}).then(()=>loadSocietyBackendData()).catch(e=>showToast(e.message));
-            if(table==="flats")mutateSociety("society/apartments","POST",{unitNo:values[0],ownerName:values[1],occupancy:values[2]||"VACANT",block:values[3]||"Block A",floor:Number(values[4]||0),unitType:values[5]||"2BHK"}).then(()=>loadSocietyBackendData()).catch(e=>showToast(e.message));
-            if(table==="residents")mutateSociety("society/residents","POST",{name:values[0],unitNo:values[1],residentType:values[2]||"TENANT",email:values[3],temporaryPassword:values[4]}).then(()=>loadSocietyBackendData()).catch(e=>showToast(e.message));
-            if(table==="visitors"||table==="complaints")fetch("/api/society/residents").then(r=>r.json()).then(list=>{const resident=list.find(x=>x.unitNo===(values[1]||""))||list[0];if(!resident)throw new Error("Add a resident before creating this record");return table==="visitors"?mutateSociety("society/visitors","POST",{name:values[0]||"Visitor",phone:"0000000000",purpose:values[2]||"Guest",expectedAt:(values[3]||new Date(Date.now()+3600000).toISOString().slice(0,19)),residentId:resident.id}):mutateSociety("society/complaints","POST",{title:values[0]||"Complaint",category:values[2]||"General",priority:values[3]||"NORMAL",description:values[4]||"Created by society administrator",residentId:resident.id});}).then(()=>loadSocietyBackendData()).catch(e=>showToast(e.message));
+            if(table==="flats")mutateSociety("society/apartments","POST",flatPayload(values)).then(()=>loadSocietyBackendData()).catch(e=>showToast(e.message));
+            if(table==="visitors")fetch("/api/society/residents").then(r=>r.json()).then(list=>{const resident=list.find(x=>x.unitNo===(values[3]||""));if(!resident)throw new Error("Select a flat that has an active resident");return mutateSociety("society/visitors","POST",{name:values[0],phone:values[1],email:values[2]||"",residentId:resident.id,unitNo:values[3],entryType:values[4]||"GUEST",purpose:values[5]||"Guest visit",personsCount:Number(values[6]||1),expectedAt:values[7]||new Date(Date.now()+3600000).toISOString().slice(0,19),vehicleNumber:values[8]||"",idProofType:values[9]||"",idProofNumber:values[10]||"",photoReference:values[11]||"",specialInstructions:values[12]||""});}).then(()=>{loadSocietyBackendData();showToast("Detailed visitor record created");}).catch(e=>showToast(e.message));
+            if(table==="complaints")fetch("/api/society/residents").then(r=>r.json()).then(list=>{const resident=list.find(x=>x.unitNo===(values[1]||""));if(!resident)throw new Error("Select a flat that has an active resident");return mutateSociety("society/complaints","POST",{title:values[0],residentId:resident.id,category:values[2]||"Other",subcategory:values[3]||"",priority:values[4]||"NORMAL",incidentAt:values[5]||null,locationDetails:values[6]||"",preferredContactMethod:values[7]||"IN_APP",reporterPhone:values[8]||resident.phone||"",accessPermission:values[9]==="Yes",assignedTo:values[10]==="Unassigned"?"":values[10]||"",attachmentReference:values[11]||"",description:values[12]||"No additional description provided"});}).then(()=>{loadSocietyBackendData();showToast("Detailed complaint created");}).catch(e=>showToast(e.message));
         }
     }
     if (action === "generate") {

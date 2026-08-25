@@ -71,7 +71,6 @@
             <!-- Topbar -->
             <header class="topbar p-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
                 <div>
-                    <p class="text-uppercase text-primary fw-bold mb-1 small tracking-wide eyebrow">Resident Portal • Flat A-101 (Owner: Kavya N)</p>
                     <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
                 </div>
                 <div class="d-flex align-items-center gap-3 header-actions">
@@ -118,7 +117,6 @@
                             <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-bullhorn me-1"></i> 2 Active Notices</span>
                         </div>
                     </div>
-                    <div class="row g-3"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="d-flex justify-content-between align-items-start gap-3 mb-3"><div><h5 class="fw-bold mb-1">Your home action list</h5><p class="small text-muted mb-0">The tasks that need attention for Flat A-101.</p></div><span class="badge badge-soft-warning">2 actions due</span></div><div class="row g-3 small"><div class="col-md-6"><div class="border-start border-4 border-danger ps-3"><strong class="d-block">August maintenance due</strong><span class="text-muted">Rs. 3,600 due by 15 Aug. Pay online to receive the receipt instantly.</span></div></div><div class="col-md-6"><div class="border-start border-4 border-warning ps-3"><strong class="d-block">Plumbing ticket in progress</strong><span class="text-muted">Ramesh is assigned. Add a comment or mark resolved after the repair.</span></div></div><div class="col-md-6"><div class="border-start border-4 border-primary ps-3"><strong class="d-block">Two guest passes active</strong><span class="text-muted">Share the pass code only with the named guest and check the time window.</span></div></div><div class="col-md-6"><div class="border-start border-4 border-success ps-3"><strong class="d-block">Clubhouse booking tomorrow</strong><span class="text-muted">Review the booking time and payment status before your slot.</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Need help quickly?</h5><p class="small text-muted">Use the correct channel so your request reaches the right team.</p><div class="row g-2"><div class="col-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="pass"><i class="fa-solid fa-id-badge me-1"></i>Guest pass</button></div><div class="col-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="complaints"><i class="fa-solid fa-wrench me-1"></i>Helpdesk</button></div><div class="col-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="billing"><i class="fa-solid fa-credit-card me-1"></i>Pay dues</button></div><div class="col-6"><button type="button" class="btn btn-outline-primary rounded-pill w-100" data-panel="announcements"><i class="fa-solid fa-bullhorn me-1"></i>Notices</button></div></div></div></div></div></div>
                 </section>
 
                 <!-- Maintenance Dues Section -->
@@ -367,7 +365,12 @@
 
                 <!-- Amenities Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="amenities">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">My upcoming booking</span><strong class="fs-5 text-success">Clubhouse</strong><span class="small text-muted">Tomorrow, 5:00 PM</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Available today</span><strong class="fs-5 text-primary">Gym</strong><span class="small text-muted">6:00 AM - 10:00 PM</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Guest parking</span><strong class="fs-5 text-success">04 slots</strong><span class="small text-muted">Currently free</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Booking payment</span><strong class="fs-5 text-warning">Online</strong><span class="small text-muted">Required where applicable</span></div></div></div></div>
+                    <div class="row g-3 mb-4 amenity-summary-grid">
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success"><div class="amenity-summary-icon"><i class="fa-solid fa-calendar-check"></i></div><div><span>My upcoming booking</span><strong class="text-success">Clubhouse</strong><small>Tomorrow, 5:00 PM</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary"><div class="amenity-summary-icon"><i class="fa-solid fa-clock"></i></div><div><span>Available today</span><strong class="text-primary">Gym</strong><small>6:00 AM - 10:00 PM</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success"><div class="amenity-summary-icon"><i class="fa-solid fa-square-parking"></i></div><div><span>Guest parking</span><strong class="text-success">04 slots</strong><small>Currently free</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-warning"><div class="amenity-summary-icon"><i class="fa-solid fa-credit-card"></i></div><div><span>Booking payment</span><strong class="text-warning">Online</strong><small>Required where applicable</small></div></article></div>
+                    </div>
                     <div class="row g-4 grid">
                         <div class="col-md-4">
                             <article class="card p-4 h-100 shadow-sm border-0 rounded-4">
@@ -399,25 +402,17 @@
 
                 <!-- Announcements Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="announcements">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Active notices</span><strong class="fs-5 text-primary">02</strong><span class="small text-muted">Read latest updates</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Important service update</span><strong class="fs-5 text-warning">Tomorrow</strong><span class="small text-muted">Water interruption</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Community event</span><strong class="fs-5 text-success">Sunday</strong><span class="small text-muted">Clubhouse meeting</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Notice preferences</span><strong class="fs-5 text-primary">Enabled</strong><span class="small text-muted">App notifications on</span></div></div></div></div>
+                    <div class="row g-3 mb-4 notice-summary-grid">
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-bullhorn"></i></div><div><span>Active notices</span><strong class="text-primary">02</strong><small>Read latest updates</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-warning notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><span>Important service update</span><strong class="text-warning">Tomorrow</strong><small>Water interruption</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-people-group"></i></div><div><span>Community event</span><strong class="text-success">Sunday</strong><small>Clubhouse meeting</small></div></article></div>
+                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-bell"></i></div><div><span>Notice preferences</span><strong class="text-primary">Enabled</strong><small>App notifications on</small></div></article></div>
+                    </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 card-head">
                             <h4 class="fw-bold mb-0">Digital Notice Board</h4>
                         </div>
-                        <div class="card-body px-4 pb-4">
-                            <div class="alert alert-info border-start border-4 border-info shadow-sm mb-4" role="alert">
-                                <h5 class="alert-heading fw-bold"><i class="fa-solid fa-droplet text-info me-2"></i>Overhead Tank Cleaning Notice</h5>
-                                <p class="mb-2">Please note that water supply will be suspended tomorrow between 10:00 AM and 1:00 PM for annual tank maintenance.</p>
-                                <hr class="my-2 border-info opacity-25">
-                                <p class="mb-0 small fw-bold">Posted by Society Admin • Aug 03, 2026</p>
-                            </div>
-                            <div class="alert alert-success border-start border-4 border-success shadow-sm mb-0" role="alert">
-                                <h5 class="alert-heading fw-bold"><i class="fa-solid fa-flag text-success me-2"></i>Independence Day Celebration Meeting</h5>
-                                <p class="mb-2">All residents are invited to the clubhouse on Sunday at 5:00 PM to finalize event plans and cultural performances.</p>
-                                <hr class="my-2 border-success opacity-25">
-                                <p class="mb-0 small fw-bold">Posted by Cultural Committee • Aug 01, 2026</p>
-                            </div>
-                        </div>
+                        <div class="card-body px-4 pb-4" id="residentAnnouncementList"><div class="text-center text-muted py-4">Loading society notices…</div></div>
                     </div>
                     <div class="card border-0 shadow-sm rounded-4 mt-4"><div class="card-body p-4"><h5 class="fw-bold mb-1">Notice board guidance</h5><p class="small text-muted mb-0">Check this page before contacting the office about planned maintenance, water supply, events or community rules. Important notices remain available here for reference even after a notification is dismissed.</p></div></div>
                 </section>

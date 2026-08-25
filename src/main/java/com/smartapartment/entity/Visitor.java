@@ -21,11 +21,21 @@ public class Visitor extends BaseEntity {
 
     private String visitorPhone;
 
+    private String visitorEmail;
+
     private String purpose;
 
     private String vehicleNumber;
 
     private String photoReference;
+
+    private String idProofType;
+
+    private String idProofNumber;
+
+    private Integer personsCount;
+
+    private String specialInstructions;
 
     private String entryType = "GUEST";
 

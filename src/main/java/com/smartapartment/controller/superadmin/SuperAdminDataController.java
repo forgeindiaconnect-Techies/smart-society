@@ -36,11 +36,6 @@ public class SuperAdminDataController {
 
     @GetMapping("/privacy/requests")
     public ResponseEntity<List<PrivacyDataRequest>> getDataDeletionRequests() {
-        if (requests.count() == 0) {
-            PrivacyDataRequest req = new PrivacyDataRequest();
-            req.setRequestType("Account Deletion (Moving)"); req.setStatus("Pending"); req.setDetails("Priya S requested account deletion");
-            requests.save(req);
-        }
         return ResponseEntity.ok(requests.findAllByOrderByCreatedAtDesc());
     }
 

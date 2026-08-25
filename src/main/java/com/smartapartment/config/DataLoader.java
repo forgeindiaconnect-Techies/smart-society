@@ -42,11 +42,29 @@ public class DataLoader {
                                 PasswordEncoder encoder,
                                 Environment environment) {
         return args -> {
-            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
+            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "false"));
             String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "superadmin@smartsociety");
             String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", "superadmin123");
             String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@smartsociety");
             String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", "resident123");
+
+            users.findByEmail(superAdminEmail).orElseGet(() -> {
+                AppUser superAdmin = new AppUser();
+                superAdmin.setTenantId("platform");
+                superAdmin.setFullName("Platform Super Admin");
+                superAdmin.setEmail(superAdminEmail);
+                superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
+                superAdmin.setRole(UserRole.SUPER_ADMIN);
+                return users.save(superAdmin);
+            });
+
+            ensurePlan(plans, "Free", "FREE", BigDecimal.ZERO, 50, 150, false, false, false);
+            ensurePlan(plans, "Standard", "STANDARD", new BigDecimal("4999"), 500, 1500, true, true, false);
+            ensurePlan(plans, "Premium", "PREMIUM", new BigDecimal("9999"), 5000, 15000, true, true, true);
+
+            // Production/local development starts with an empty operational workspace.
+            // Demo societies, residents, bills and activity are opt-in only.
+            if (!seedDemo) return;
 
             plans.findFirstByTenantIdAndNameOrderByIdAsc("platform", "Premium Plan").orElseGet(() -> {
                 SubscriptionPlan plan = new SubscriptionPlan();
@@ -72,16 +90,6 @@ public class DataLoader {
                 tenant.setCity("Chennai");
                 tenant.setApproved(true);
                 return tenants.save(tenant);
-            });
-
-            users.findByEmail(superAdminEmail).orElseGet(() -> {
-                AppUser superAdmin = new AppUser();
-                superAdmin.setTenantId("platform");
-                superAdmin.setFullName("Platform Super Admin");
-                superAdmin.setEmail(superAdminEmail);
-                superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
-                superAdmin.setRole(UserRole.SUPER_ADMIN);
-                return users.save(superAdmin);
             });
 
             AppUser residentUser = users.findByEmail(residentEmail).orElseGet(() -> {
@@ -213,6 +221,30 @@ public class DataLoader {
             user.setPasswordHash(encoder.encode(password));
             user.setRole(role);
             return users.save(user);
+        });
+    }
+
+    private static void ensurePlan(SubscriptionPlanRepository plans, String name, String code,
+                                   BigDecimal price, int flats, int residents,
+                                   boolean visitors, boolean amenities, boolean analytics) {
+        plans.findFirstByTenantIdAndNameOrderByIdAsc("platform", name).orElseGet(() -> {
+            SubscriptionPlan plan = new SubscriptionPlan();
+            plan.setTenantId("platform"); plan.setName(name); plan.setPlanCode(code);
+            plan.setDescription(name + " SmartSociety subscription");
+            plan.setMonthlyPrice(price); plan.setMaxApartments(flats); plan.setMaxResidents(residents);
+            plan.setMaxAdmins(name.equals("Free") ? 1 : name.equals("Standard") ? 5 : 25);
+            plan.setMaxSecurityStaff(name.equals("Free") ? 1 : name.equals("Standard") ? 10 : 50);
+            plan.setMaxMaintenanceStaff(name.equals("Free") ? 1 : name.equals("Standard") ? 10 : 50);
+            plan.setAuditHistoryDays(name.equals("Free") ? 7 : name.equals("Standard") ? 90 : 365);
+            plan.setStorageGb(name.equals("Free") ? 1 : name.equals("Standard") ? 25 : 100);
+            plan.setBillingCycle("MONTHLY"); plan.setSupportLevel(name.equals("Premium") ? "PRIORITY" : "STANDARD");
+            plan.setActive(true); plan.setFeatured(name.equals("Standard"));
+            plan.setVisitorManagement(visitors); plan.setAmenityBooking(amenities); plan.setAnalytics(analytics);
+            plan.setComplaintManagement(true); plan.setAnnouncementManagement(true);
+            plan.setBillingManagement(!name.equals("Free")); plan.setExpenseManagement(name.equals("Premium"));
+            plan.setPaymentGateway(!name.equals("Free")); plan.setApiAccess(name.equals("Premium"));
+            plan.setPrioritySupport(name.equals("Premium"));
+            return plans.save(plan);
         });
     }
 }

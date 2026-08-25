@@ -233,7 +233,7 @@
             letter-spacing: 0.1em !important;
         }
         .contact-panel .section-kicker {
-            color: #8cf0bd !important;
+            color: #ffd24a !important;
         }
         .faq-panel h2, .contact-panel h2 {
             margin: 0 0 8px !important;
@@ -296,8 +296,8 @@
         .contact-panel .submit-btn {
             padding: 9px 20px !important;
             border-radius: 10px !important;
-            background: #8cf0bd !important;
-            color: #0c1b33 !important;
+            background: #f4b400 !important;
+            color: #10204a !important;
             font-family: 'Manrope', sans-serif !important;
             font-size: 0.84rem !important;
             font-weight: 800 !important;
@@ -305,7 +305,7 @@
             cursor: pointer !important;
             margin-top: 6px !important;
             align-self: flex-start !important;
-            box-shadow: 0 4px 14px rgba(140, 240, 189, 0.25) !important;
+            box-shadow: 0 4px 14px rgba(244, 180, 0, 0.22) !important;
         }
         .faq-panel .faq-list {
             display: flex !important;
@@ -432,8 +432,10 @@
             margin: 0 !important;
         }
     </style>
+    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260825-17">
 </head>
-<body>
+<body class="propertydirect-parity-landing">
+    <div class="pd-announcement-bar"><div><span><strong>PropertyDirect:</strong> Verified homes, direct owner connections and transparent property workflows</span><a href="/propertydirect/apartments">Explore properties <span aria-hidden="true">→</span></a></div></div>
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <a href="#" class="logo">
@@ -441,13 +443,11 @@
                 <span>Property</span>Direct
             </a>
             <nav>
-                <a href="/" class="smartsociety-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(140, 240, 189, 0.15); color: #8cf0bd !important; font-weight: 700; font-size: 0.82rem; border-radius: 8px; border: 1px solid rgba(140, 240, 189, 0.35); text-decoration: none; transition: all 0.2s ease;">
+                <a href="/" class="smartsociety-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
                     SmartSociety
                 </a>
-                <a href="/propertydirect/apartments?type=BUY">Buy</a>
-                <a href="/propertydirect/apartments?type=RENT">Rent</a>
-                <a href="/propertydirect/apartments">New Projects</a>
+                <a href="/propertydirect/apartments">Properties</a>
                 <a href="#contact">Services</a>
                 <a href="#how-it-works">About</a>
                 <a href="#contact">Contact</a>
@@ -640,26 +640,27 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" placeholder="John">
+                        <input id="contactFirstName" type="text" placeholder="John" maxlength="60" required>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Doe">
+                        <input id="contactLastName" type="text" placeholder="Doe" maxlength="60" required>
                     </div>
                     <div class="form-group">
                         <label>Email Address</label>
-                        <input type="email" placeholder="john@example.com">
+                        <input id="contactEmail" type="email" placeholder="john@example.com" maxlength="160" required>
                     </div>
                     <div class="form-group">
                         <label>Phone No</label>
-                        <input type="tel" placeholder="+91 9876543210">
+                        <input id="contactPhone" type="tel" placeholder="+91 9876543210" maxlength="20" required>
                     </div>
                     <div class="form-group">
                         <label>Message</label>
-                        <textarea placeholder="How can we help you?"></textarea>
+                        <textarea id="contactMessage" placeholder="Describe how we can help you (minimum 10 characters)" maxlength="2000" required></textarea>
                     </div>
                 </div>
-                <button class="submit-btn">Send Message ↗</button>
+                <p class="pd-contact-feedback" id="contactFeedback" role="status" aria-live="polite"></p>
+                <button class="submit-btn" id="sendContactMessage" type="button">Send Message ↗</button>
             </div>
         </div></div>
     </section>
@@ -678,9 +679,40 @@
         </div>
     </section>
     
-    <footer class="footer">
-        <div class="container">
-            &copy; 2026 PropertyDirect. All rights reserved.
+    <footer class="footer pd-site-footer">
+        <div class="pd-footer-main">
+            <div class="pd-footer-brand">
+                <a href="/propertydirect" class="pd-footer-logo" aria-label="PropertyDirect home">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3V10.5Z"></path></svg>
+                    <span><b>Property</b>Direct</span>
+                </a>
+                <p>Discover verified homes, connect directly with owners, and manage every property journey from one trusted platform.</p>
+                <span class="pd-footer-trust">Verified listings · Transparent connections</span>
+            </div>
+            <div class="pd-footer-column">
+                <h3>Explore</h3>
+                <a href="/propertydirect/apartments?type=BUY">Buy a property</a>
+                <a href="/propertydirect/apartments?type=RENT">Rent a property</a>
+                <a href="/propertydirect/apartments">New projects</a>
+                <a href="/propertydirect/terms/post-property">Post your property</a>
+            </div>
+            <div class="pd-footer-column">
+                <h3>PropertyDirect</h3>
+                <a href="#how-it-works">How it works</a>
+                <a href="#featured-properties">Featured homes</a>
+                <a href="#contact">Help and support</a>
+                <a href="/propertydirect/terms/post-property">Listing guidelines</a>
+            </div>
+            <div class="pd-footer-column pd-footer-contact">
+                <h3>Contact</h3>
+                <p><strong>Customer support</strong><br>support@propertydirect.in</p>
+                <p><strong>Phone</strong><br>+91 1800 123 2026</p>
+                <p><strong>Hours</strong><br>Monday–Saturday, 9 AM–7 PM</p>
+            </div>
+        </div>
+        <div class="pd-footer-bottom">
+            <span>&copy; 2026 PropertyDirect. All rights reserved.</span>
+            <div><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Safety</a></div>
         </div>
     </footer>
 
@@ -690,7 +722,7 @@
             <h2 id="modalTitle">Get owner details</h2>
             <p id="modalText">Share your details to continue.</p>
             <div id="modalFields"></div>
-            <button class="pd-modal-submit" id="modalSubmit" type="button">Submit</button>
+            <div class="pd-public-modal-actions"><button class="pd-modal-cancel" id="cancelModal" type="button">Cancel</button><button class="pd-modal-submit" id="modalSubmit" type="button">Submit</button></div>
         </div>
     </div>
 
@@ -711,7 +743,7 @@
             <label>Username<input id="dashboardUsername" autocomplete="username" placeholder="Username or email"></label>
             <label>Password<span class="pd-password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="Password"><button id="dashboardPasswordToggle" type="button" aria-label="Show password" aria-pressed="false" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg></button></span></label>
             <p class="pd-auth-helper" id="dashboardAuthHelper">New customer? Choose Create account to make your own credentials.</p>
-            <button class="pd-modal-submit" id="submitDashboardLogin" type="button">Login &amp; Open Dashboard</button>
+            <div class="pd-public-modal-actions"><button class="pd-modal-cancel" id="cancelDashboardLoginModal" type="button">Cancel</button><button class="pd-modal-submit" id="submitDashboardLogin" type="button">Login</button></div>
         </div>
     </div>
 
@@ -777,15 +809,42 @@
         });
 
         // Contact Form
-        document.querySelector('.submit-btn').addEventListener('click', (e) => {
+        document.querySelector('#sendContactMessage').addEventListener('click', async (e) => {
             e.preventDefault();
             const btn = e.target;
             const originalText = btn.innerHTML;
-            btn.innerHTML = 'Message Sent! ✓';
-            btn.style.background = '#10b981';
-            
-            // Clear inputs
-            document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => input.value = '');
+            const feedback = document.querySelector('#contactFeedback');
+            const payload = {
+                firstName: document.querySelector('#contactFirstName').value.trim(),
+                lastName: document.querySelector('#contactLastName').value.trim(),
+                email: document.querySelector('#contactEmail').value.trim(),
+                phone: document.querySelector('#contactPhone').value.trim(),
+                message: document.querySelector('#contactMessage').value.trim()
+            };
+            feedback.textContent = '';
+            if (!payload.firstName || !payload.lastName || !payload.email || !payload.phone || payload.message.length < 10) {
+                feedback.textContent = 'Complete every field and enter a message of at least 10 characters.';
+                feedback.className = 'pd-contact-feedback error';
+                return;
+            }
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            try {
+                const response = await fetch('/api/property/contact-messages', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(result.message || 'Message could not be sent');
+                document.querySelectorAll('.contact-panel .form-group input, .contact-panel .form-group textarea').forEach(input => input.value = '');
+                feedback.textContent = result.message;
+                feedback.className = 'pd-contact-feedback success';
+                btn.textContent = 'Message Sent ✓';
+            } catch (error) {
+                feedback.textContent = error.message;
+                feedback.className = 'pd-contact-feedback error';
+                btn.innerHTML = originalText;
+            } finally {
+                btn.disabled = false;
+                setTimeout(() => { if (btn.textContent.includes('Sent')) btn.innerHTML = originalText; }, 2500);
+            }
             
             setTimeout(() => {
                 btn.innerHTML = originalText;
@@ -815,7 +874,7 @@
                 title.textContent = mode === 'register' ? 'Create customer account' : 'Login';
                 help.textContent = mode === 'register' ? 'Create your PropertyDirect customer account in a minute.' : 'Enter your credentials to open your PropertyDirect workspace.';
                 helper.textContent = mode === 'register' ? 'Customer accounts can browse, save homes, book visits and publish property listings.' : 'New here? Choose Create account to register as a customer.';
-                submit.textContent = mode === 'register' ? 'Create account & open dashboard' : 'Login & open dashboard';
+                submit.textContent = mode === 'register' ? 'Create account' : 'Login';
             };
 
             loginButton.addEventListener('click', () => {

@@ -6,10 +6,11 @@
     <title>SmartApartment Finance & Reports Terms</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260820-terms-ui-v2">
-    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260820-terms-ui-v2">
+    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260824-finance-ui">
+    <script src="/smartapartment/js/terms-navigation.js?v=20260824-operations-menu" defer></script>
 
 </head>
-<body class="recording-landing">
+<body class="recording-landing finance-terms-page">
 <div class="announcement-bar">
     <div class="landing-container announcement-inner">
         <span><strong>Finance Governance:</strong> Maintenance billing, online collection, expense auditing & financial reports</span>
@@ -40,12 +41,17 @@
 </header>
 
 <main>
-    <section class="terms-hero">
+    <section class="terms-hero finance-terms-hero">
         <div class="hero-pattern" aria-hidden="true"></div>
         <div class="landing-container terms-hero-content">
             <span class="platform-badge"><i></i> Financial & Ledger Standards</span>
             <h1>Finance & Reports <em>Policy</em></h1>
             <p>Rules and policies for maintenance billing, payment gateway reconciliations, vendor expense approvals, and community financial reporting.</p>
+            <div class="finance-policy-highlights" aria-label="Finance policy areas">
+                <span><strong>01</strong> Accurate billing</span>
+                <span><strong>02</strong> Secure collections</span>
+                <span><strong>03</strong> Clear audit trails</span>
+            </div>
             <div class="terms-tab-pills">
                 <a href="/terms/onboarding">Onboarding & Setup</a>
                 <a href="/terms/daily-operations">Daily Operations</a>
@@ -55,8 +61,8 @@
     </section>
 
     <div class="landing-container">
-        <section class="terms-layout">
-            <aside class="terms-nav">
+        <section class="terms-layout finance-terms-layout">
+            <aside class="terms-nav" aria-label="Finance topics">
                 <span class="terms-nav-title">Finance Topics</span>
                 <a class="active" href="#maintenance-billing">Maintenance Billing</a>
                 <a href="#online-payments">Online Payments</a>
@@ -151,5 +157,4 @@
 </footer>
 </body>
 </html>
-
 
