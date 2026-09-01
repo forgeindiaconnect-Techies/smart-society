@@ -340,7 +340,7 @@
         if (!button && event.target.closest('#propertySupportForm [data-action="support"]')) {
             button = event.target.closest('#propertySupportForm [data-action="support"]'); button.dataset.propertyApiAction = "support-ticket"; button.type = "submit";
         }
-        if (!button && (role === "admin" || role === "customer") && event.target.closest('#postApartmentForm [data-action="post-property"]')) {
+        if (!button && role === "customer" && event.target.closest('#postApartmentForm [data-action="post-property"]')) {
             button = event.target.closest('#postApartmentForm [data-action="post-property"]'); button.dataset.propertyApiAction = "publish-owner-listing";
         }
         if (!button) return;

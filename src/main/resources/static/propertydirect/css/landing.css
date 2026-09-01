@@ -657,3 +657,14 @@ nav a { font-size: .81rem; font-weight: 700; letter-spacing: -.01em; }
             .how-it-works, .contact { padding: 72px 0; }
             .how-img::after { right: 12px; }
         }
+
+.featured-properties-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 2rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #64748b;
+    text-align: center;
+}

@@ -15,6 +15,40 @@
             pointer-events: auto !important;
             cursor: pointer !important;
         }
+        .billing-profile-cards .billing-profile-card {
+            min-height: 126px;
+            padding: 1.15rem 1.25rem;
+            border: 1px solid #dbe5f3;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+        }
+        .billing-profile-card__label {
+            display: block;
+            margin-bottom: .55rem;
+            color: #64748b;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .055em;
+            text-transform: uppercase;
+        }
+        .billing-profile-card__value {
+            display: block;
+            color: #1f2937;
+            font-size: 1.02rem;
+            font-weight: 750;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+        }
+        .billing-section-header { gap: 1rem; }
+        .billing-section-header > div:last-child { flex-wrap: wrap; justify-content: flex-end; }
+        .accountant-invoice-table { min-width: 1120px; margin-bottom: 0; }
+        .accountant-invoice-table th { white-space: nowrap; }
+        .accountant-invoice-table td { vertical-align: middle; white-space: nowrap; }
+        @media (max-width: 767.98px) {
+            .billing-section-header { align-items: flex-start !important; flex-direction: column; }
+            .billing-section-header > div:last-child { width: 100%; justify-content: flex-start; }
+        }
     </style>
     <div class="dashboard-layout">
         
@@ -30,7 +64,6 @@
                 <a href="#expenses" class="nav-link btn btn-link text-start text-decoration-none" data-panel="expenses"><i class="fa-solid fa-arrow-trend-down me-2"></i> Expense Ledger</a>
                 <a href="#vendors" class="nav-link btn btn-link text-start text-decoration-none" data-panel="vendors"><i class="fa-solid fa-truck-fast me-2"></i> Vendor Payments</a>
                 <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Maintenance Invoices</a>
-                <a href="#reports" class="nav-link btn btn-link text-start text-decoration-none" data-panel="reports"><i class="fa-solid fa-chart-pie me-2"></i> Financial Reports</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
                 <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
@@ -160,7 +193,7 @@
                 <!-- Maintenance Billing Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="billing">
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center billing-section-header">
                             <div>
                                 <h4 class="fw-bold mb-1">Clear Tax & Maintenance Invoice Generator</h4>
                                 <p class="text-muted small mb-0">Generate itemized society maintenance bills with GST breakups, meter readings, due dates, and official payment QR codes.</p>
@@ -169,29 +202,17 @@
                         </div>
                         
                         <div class="card-body px-4 pb-4">
-                            <div class="row g-3 bg-light p-3 rounded-3 border">
-                                <div class="col-md-3">
-                                    <span class="d-block text-muted small fw-bold text-uppercase">GSTIN Reg</span>
-                                    <strong class="text-dark">33AAACS1234F1Z8</strong>
-                                </div>
-                                <div class="col-md-3">
-                                    <span class="d-block text-muted small fw-bold text-uppercase">Billing Frequency</span>
-                                    <strong class="text-dark">Monthly (1st of Month)</strong>
-                                </div>
-                                <div class="col-md-3">
-                                    <span class="d-block text-muted small fw-bold text-uppercase">Late Fee Penalty Rate</span>
-                                    <strong class="text-dark">12% p.a. after 15th</strong>
-                                </div>
-                                <div class="col-md-3">
-                                    <span class="d-block text-muted small fw-bold text-uppercase">Bank Account</span>
-                                    <strong class="text-dark">HDFC Bank - A/C 501002348921</strong>
-                                </div>
+                            <div class="row g-3 billing-profile-cards">
+                                <div class="col-sm-6 col-xl-3"><article class="billing-profile-card h-100"><span class="billing-profile-card__label">GSTIN registration</span><strong class="billing-profile-card__value">33AAACS1234F1Z8</strong></article></div>
+                                <div class="col-sm-6 col-xl-3"><article class="billing-profile-card h-100"><span class="billing-profile-card__label">Billing frequency</span><strong class="billing-profile-card__value">Monthly (1st of Month)</strong></article></div>
+                                <div class="col-sm-6 col-xl-3"><article class="billing-profile-card h-100"><span class="billing-profile-card__label">Late-fee penalty rate</span><strong class="billing-profile-card__value">12% p.a. after 15th</strong></article></div>
+                                <div class="col-sm-6 col-xl-3"><article class="billing-profile-card h-100"><span class="billing-profile-card__label">Bank account</span><strong class="billing-profile-card__value">HDFC Bank · A/C 501002348921</strong></article></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center billing-section-header">
                             <h4 class="fw-bold mb-0">Maintenance Billing & Invoices Log</h4>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="generate"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate Monthly Batch</button>
@@ -199,7 +220,7 @@
                             </div>
                         </div>
                         <div class="card-body px-4 pb-4 table-responsive">
-                            <table class="table table-hover align-middle" data-table="billing">
+                            <table class="table table-hover align-middle accountant-invoice-table" data-table="billing">
                                 <thead class="table-light">
                                     <tr><th>Invoice No.</th><th>Flat</th><th>Resident Name</th><th>Month</th><th>Maintenance Base</th><th>Water & Power</th><th>GST (18%)</th><th>Total Payable</th><th>Status</th><th>Action</th></tr>
                                 </thead>
@@ -242,44 +263,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Financial Reports Section -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="reports">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0">Financial Audit & Statements</h4>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-action="notify"><i class="fa-solid fa-file-export me-1"></i> Export P&L Report</button>
-                        </div>
-                        <div class="card-body px-4 pb-4">
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="p-4 bg-light rounded-4">
-                                        <h5 class="fw-bold text-primary"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Income & Expenditure Statement</h5>
-                                        <p class="text-muted small mb-0">Comprehensive monthly and annual profit & loss report.</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="p-4 bg-light rounded-4">
-                                        <h5 class="fw-bold text-danger"><i class="fa-solid fa-user-slash me-2"></i>Defaulter List Report</h5>
-                                        <p class="text-muted small mb-0">Flats with pending maintenance dues exceeding 30 days.</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="p-4 bg-light rounded-4">
-                                        <h5 class="fw-bold text-info"><i class="fa-solid fa-money-check-dollar me-2"></i>Vendor Payment Audit</h5>
-                                        <p class="text-muted small mb-0">Historical record of vendor payouts and contract liabilities.</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="p-4 bg-light rounded-4">
-                                        <h5 class="fw-bold text-success"><i class="fa-solid fa-landmark me-2"></i>Tax & GST Compliance</h5>
-                                        <p class="text-muted small mb-0">Quarterly tax filing statements and society audit records.</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -525,7 +508,7 @@
     <script>
         const dashboardTitles = {
             overview: "Overview", incomes: "Income Ledger", expenses: "Expense Ledger",
-            vendors: "Vendor Payments", billing: "Maintenance Invoices", reports: "Financial Reports"
+            vendors: "Vendor Payments", billing: "Maintenance Invoices"
         };
         
         window.forceOpenPanel = function(panel) {

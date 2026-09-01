@@ -189,6 +189,16 @@
             position: relative !important;
             z-index: 1 !important;
         }
+        /* The security sidebar is fixed, so its normal 260px main-content
+           offset must be explicitly removed when the navigation is closed. */
+        body.dashboard-sidebar-closed .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        body.dashboard-sidebar-closed #sidebar {
+            display: none !important;
+        }
         /* The workspace title must remain visible while any security section scrolls. */
         .main-content .topbar {
             position: sticky !important;
@@ -374,7 +384,6 @@
                             </form>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Verification decision guide</h4><p class="text-muted mb-0">Use the right path for every visitor type.</p></div><div class="card-body px-4 pb-4"><div class="row g-3"><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Valid pass / OTP</strong><span class="small text-muted">Match the guest’s name, flat and time window. Record entry and allow access only after the result confirms clearance.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Walk-in guest</strong><span class="small text-muted">Create a gate entry, call the resident through the approved contact channel and wait for a clear yes before entry.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Vendor / technician</strong><span class="small text-muted">Verify photo ID, work order, tools and destination. Confirm the approving resident or society admin.</span></div></div><div class="col-md-6"><div class="border rounded-3 p-3 h-100"><strong class="d-block mb-1">Failed verification</strong><span class="small text-muted">Do not reuse an expired code. Keep the visitor at the gate and request a fresh approval or log an incident if required.</span></div></div></div></div></div></div><div class="col-lg-5"><div class="card shadow-sm border-0 rounded-4 h-100"><div class="card-header bg-transparent border-0 pt-4 px-4"><h4 class="fw-bold mb-1">Before you allow entry</h4></div><div class="card-body px-4 pb-4"><ul class="small text-muted ps-3 mb-0"><li class="mb-2">Confirm guest identity matches the pass result.</li><li class="mb-2">Check destination flat and visit purpose.</li><li class="mb-2">Check the pass time window has not expired.</li><li class="mb-2">Record vehicle details when applicable.</li><li>Give a clear exit or return-pass instruction.</li></ul></div></div></div></div>
                 </section>
 
                 <!-- Gate Entries Section -->

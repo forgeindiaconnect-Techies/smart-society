@@ -100,30 +100,19 @@ function setupDashboardSidebarControls() {
     document.body.appendChild(openButton);
 
     const setSidebarOpen = open => {
-        const sidebarWidth = sidebar.getBoundingClientRect().width || 280;
-        const transition = "transform .36s cubic-bezier(.22,1,.36,1), margin-right .36s cubic-bezier(.22,1,.36,1), opacity .24s ease";
-
+        /* A flex child that is only translated off-screen still reserves its
+           full width. Remove it from the layout completely when closed so the
+           content area always begins at the viewport edge. */
         if (open) {
-            sidebar.style.setProperty("display", "flex", "important");
-            sidebar.style.setProperty("transition", "none", "important");
-            sidebar.style.setProperty("transform", "translateX(-100%)", "important");
-            sidebar.style.setProperty("margin-right", `${-sidebarWidth}px`, "important");
-            sidebar.style.setProperty("opacity", "0", "important");
+            sidebar.style.removeProperty("transform");
+            sidebar.style.removeProperty("margin-right");
+            sidebar.style.removeProperty("opacity");
             sidebar.style.removeProperty("pointer-events");
-            document.body.classList.remove("dashboard-sidebar-closed");
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                sidebar.style.setProperty("transition", transition, "important");
-                sidebar.style.setProperty("transform", "translateX(0)", "important");
-                sidebar.style.setProperty("margin-right", "0", "important");
-                sidebar.style.setProperty("opacity", "1", "important");
-            }));
-        } else {
+            sidebar.style.removeProperty("transition");
             sidebar.style.setProperty("display", "flex", "important");
-            sidebar.style.setProperty("transition", transition, "important");
-            sidebar.style.setProperty("transform", "translateX(-100%)", "important");
-            sidebar.style.setProperty("margin-right", `${-sidebarWidth}px`, "important");
-            sidebar.style.setProperty("opacity", "0", "important");
-            sidebar.style.setProperty("pointer-events", "none", "important");
+            document.body.classList.remove("dashboard-sidebar-closed");
+        } else {
+            sidebar.style.setProperty("display", "none", "important");
             document.body.classList.add("dashboard-sidebar-closed");
         }
         openButton.setAttribute("aria-expanded", String(open));
@@ -677,7 +666,32 @@ async function loadSocietyBackendData() {
         });
         fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,a.unitNo);c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="residents"]', [...residents,...teamItems], (x,c,s) => { const r=document.createElement("tr");const team=Boolean(x.role);c(r,x.name);c(r,[x.phone,x.email].filter(Boolean).join(" · ")||"—");c(r,team?(x.employeeId||"—"):(x.unitNo||"—"));c(r,team?x.role.replaceAll("_"," "):x.residentType);c(r,team?([x.designation,x.workShift].filter(Boolean).join(" · ")||"Society team"):(x.vehicleNumber?`Vehicle: ${x.vehicleNumber}`:"Resident access"));s(r,x.accountLocked?"LOCKED":"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
-        fill('table[data-table="billing"]', bills, (b,c,s) => { const r=document.createElement("tr");r.dataset.recordId=b.id;if(dashboardRole==="resident"){c(r,b.month);c(r,"Maintenance");}else{c(r,b.unitNo);c(r,b.month);}c(r,`Rs. ${b.totalAmount}`);s(r,b.paymentStatus);const td=document.createElement("td");if(b.paymentStatus==="PAID")td.textContent="Paid";else{const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-success";button.dataset.action="pay";button.textContent="Mark Paid";td.appendChild(button);}r.appendChild(td);return r; });
+        fill('table[data-table="billing"]', bills, (b,c,s) => {
+            const r=document.createElement("tr");
+            r.dataset.recordId=b.id;
+            const money=value=>`Rs. ${Number(value || 0).toLocaleString("en-IN", {maximumFractionDigits: 2})}`;
+            if(dashboardRole==="resident"){
+                c(r,b.month); c(r,"Maintenance"); c(r,money(b.totalAmount)); s(r,b.paymentStatus);
+            } else if(dashboardRole==="accountant") {
+                const waterAndPower=Number(b.waterAmount || 0)+Number(b.commonPowerFee || 0);
+                const gst=Number(b.cgstAmount || 0)+Number(b.sgstAmount || 0);
+                c(r,b.invoiceNumber || `INV-${String(b.id).padStart(6,"0")}`);
+                c(r,b.unitNo || "—");
+                c(r,"—");
+                c(r,b.month || "—");
+                c(r,money(b.baseAmount));
+                c(r,money(waterAndPower));
+                c(r,money(gst));
+                c(r,money(b.totalAmount));
+                s(r,b.paymentStatus || "UNPAID");
+            } else {
+                c(r,b.unitNo); c(r,b.month); c(r,money(b.totalAmount)); s(r,b.paymentStatus);
+            }
+            const td=document.createElement("td");
+            if(b.paymentStatus==="PAID") td.textContent="Paid";
+            else { const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-success";button.dataset.action="pay";button.textContent="Mark Paid";td.appendChild(button); }
+            r.appendChild(td); return r;
+        });
         fill('table[data-table="complaints"],table[data-table="maintenance-complaints"]', complaints, (x,c,s,table) => {
             const r=document.createElement("tr");
             r.dataset.recordId=x.id;
@@ -3180,6 +3194,12 @@ function actionConfig(action, button) {
     if (action === "add" && table === "expenses") {
         return ["Add Detailed Expense", "Record complete vendor, invoice, tax, payment and approval information.", ["Expense title", "Category|select:MAINTENANCE,UTILITIES,SECURITY,HOUSEKEEPING,REPAIRS,AMENITY,ADMINISTRATION,OTHER", "Expense date|date", "Vendor / payee", "Vendor phone|tel", "Vendor tax / GST number", "Invoice number", "Payment method|select:CASH,BANK_TRANSFER,UPI,CHEQUE,CARD", "Base amount (Rs.)|number", "Tax amount (Rs.)|number", "Total amount (Rs.)|number", "Cost centre / block", "Receipt / document reference", "Detailed business purpose|textarea"]];
     }
+    if (action === "add" && table === "incomes") {
+        return ["Record Detailed Income", "Create an auditable income entry with payer, receipt, banking, tax and allocation details.", ["Income category|select:MAINTENANCE_COLLECTION,AMENITY_BOOKING,INTEREST_INCOME,LATE_FEE,PARKING_FEE,EVENT_SPONSORSHIP,REFUND_RECEIVED,OTHER", "Received date|date", "Payer / source name", "Flat / unit or ledger reference", "Amount received (Rs.)|number", "Payment method|select:UPI,BANK_TRANSFER,CASH,CHEQUE,CARD,NET_BANKING", "Transaction / UTR / cheque reference", "Receipt number", "Credited bank / cash account", "Tax / GST amount (Rs.)|number", "Tax treatment|select:NOT_APPLICABLE,TAXABLE,TAX_INCLUDED,TDS_DEDUCTED", "Allocation / cost centre", "Receipt or supporting document reference", "Income status|select:RECEIVED,PARTIALLY_RECEIVED,PENDING_CONFIRMATION,REVERSED", "Recorded / verified by", "Narration and reconciliation notes|textarea"]];
+    }
+    if (action === "add" && table === "vendors") {
+        return ["Add Detailed Vendor", "Create a complete vendor profile with contract, compliance, banking and payment-control details.", ["Vendor legal name", "Trading / display name", "Service category|select:SECURITY,MAINTENANCE,PLUMBING,ELECTRICAL,HOUSEKEEPING,LANDSCAPING,WASTE_MANAGEMENT,PEST_CONTROL,LIFT_SERVICE,UTILITY,OTHER", "Service scope and deliverables|textarea", "Registered business address|textarea", "GSTIN / tax registration number", "PAN / business registration reference", "Primary contact person", "Primary mobile number|tel", "Primary email address|email", "Emergency / escalation contact|tel", "Contract / work order reference", "Contract start date|date", "Contract expiry date|date", "Billing cycle|select:ONE_TIME,MONTHLY,QUARTERLY,HALF_YEARLY,ANNUAL,ON_CALL", "Payment terms|select:ADVANCE,NET_7,NET_15,NET_30,NET_45,NET_60,ON_COMPLETION", "Service-level agreement / response time", "Beneficiary account name", "Bank name", "Account number", "IFSC / routing code", "Preferred payment method|select:BANK_TRANSFER,UPI,CHEQUE,CASH,CARD", "Approved rate / contract value (Rs.)|number", "Insurance / licence / compliance reference", "Background / document verification status|select:VERIFIED,PENDING,EXPIRED,NOT_APPLICABLE", "Vendor status|select:ACTIVE,PENDING_APPROVAL,ON_HOLD,INACTIVE", "Approved / onboarded by", "Internal vendor notes and payment instructions|textarea"]];
+    }
     if (action === "update-plan") {
         const plan = button.dataset.plan || context.target || "Selected plan";
         return [`Subscribe to ${plan}`, "Confirm complete society, billing, invoice and authorization details for this subscription.", ["Society name", "Registration / tenant ID", "Administrator name", "Administrator email|email", "Administrator phone|tel", "Billing cycle|select:MONTHLY,QUARTERLY,HALF_YEARLY,ANNUALLY", "Subscription start date|date", "Renewal date|date", "Billing contact name", "Billing email|email", "Tax / GST number", "Invoice address|textarea", "Purchase order / approval reference", "Subscription note|textarea"]];
@@ -3238,6 +3258,11 @@ function openActionModal(action, button) {
         openResidentPaymentModal(button);
         return;
     }
+    if (dashboardRole === "accountant" && action === "pay" && button.closest('[data-table="billing"]')) {
+        performAction(action, button, []);
+        showToast("Payment marked as paid");
+        return;
+    }
     if (dashboardRole === "admin" && action === "receipt" && button.closest('[data-table="billing"]')) {
         showActionReceipt(showBillingReceipt(button.closest("tr")));
         return;
@@ -3257,6 +3282,8 @@ function openActionModal(action, button) {
     const isFlatForm = tableName === "flats" && (action === "add" || action === "save");
     const isPeopleForm = action === "add" && ["residents","security-users","maintenance-users","accountant-users"].includes(tableName);
     const isComplaintForm = action === "add" && tableName === "complaints";
+    const isIncomeForm = action === "add" && tableName === "incomes";
+    const isVendorForm = action === "add" && tableName === "vendors";
     const isResidentComplaintForm = isComplaintForm && dashboardRole === "resident";
     const isDetailedWorkflow = fields.length >= 7;
     modal.querySelector(".dashboard-action-card")?.classList.toggle("flat-detail-card", isFlatForm || isPeopleForm || isComplaintForm || isDetailedWorkflow);
@@ -3273,6 +3300,14 @@ function openActionModal(action, button) {
                 : isComplaintForm && index === (isResidentComplaintForm ? 4 : 5) ? '<div class="flat-form-section"><strong>Incident details</strong><span>When and exactly where the issue occurred</span></div>'
                 : isComplaintForm && index === (isResidentComplaintForm ? 6 : 7) ? '<div class="flat-form-section"><strong>Contact &amp; access</strong><span>How to contact the resident and whether staff may enter</span></div>'
                 : isComplaintForm && index === (isResidentComplaintForm ? 9 : 10) ? `<div class="flat-form-section"><strong>${isResidentComplaintForm ? "Evidence &amp; full description" : "Assignment &amp; evidence"}</strong><span>${isResidentComplaintForm ? "Supporting reference, observations and entry instructions" : "Initial routing, supporting reference and full description"}</span></div>`
+                : isIncomeForm && index === 0 ? '<div class="flat-form-section"><strong>Income and payer</strong><span>Classify the receipt and identify who paid it</span></div>'
+                : isIncomeForm && index === 5 ? '<div class="flat-form-section"><strong>Receipt and settlement</strong><span>Payment channel, traceable reference and destination account</span></div>'
+                : isIncomeForm && index === 9 ? '<div class="flat-form-section"><strong>Tax and allocation</strong><span>Tax treatment and the ledger or cost centre for this income</span></div>'
+                : isIncomeForm && index === 13 ? '<div class="flat-form-section"><strong>Verification and notes</strong><span>Confirm the receipt status and document reconciliation details</span></div>'
+                : isVendorForm && index === 0 ? '<div class="flat-form-section"><strong>Business identity and service</strong><span>Identify the legal entity and the work it is authorised to perform</span></div>'
+                : isVendorForm && index === 7 ? '<div class="flat-form-section"><strong>Primary contact and contract</strong><span>Record the accountable person and contract schedule</span></div>'
+                : isVendorForm && index === 17 ? '<div class="flat-form-section"><strong>Banking and commercial terms</strong><span>Capture approved payment destination, rates and settlement controls</span></div>'
+                : isVendorForm && index === 23 ? '<div class="flat-form-section"><strong>Compliance and onboarding</strong><span>Verify documents, approval status and operational instructions</span></div>'
                 : ["visitors","entries"].includes(tableName) && index === 0 ? '<div class="flat-form-section"><strong>Visitor identity</strong><span>Name, contact and destination details</span></div>'
                 : ["visitors","entries"].includes(tableName) && index === 4 ? '<div class="flat-form-section"><strong>Visit &amp; access details</strong><span>Entry classification, purpose, group size and vehicle</span></div>'
                 : ["visitors","entries"].includes(tableName) && index === 9 ? '<div class="flat-form-section"><strong>Verification &amp; instructions</strong><span>Identity reference, evidence and gate directions</span></div>'
@@ -3346,6 +3381,15 @@ function actionInputMarkup(action, field, index, value = "") {
 }
 
 function actionFieldIsRequired(action, labelText, index) {
+    if (dashboardRole === "accountant" && action === "add" && /Income category|Received date|Payer \/ source name|Amount received|Payment method|Income status/.test(labelText)) {
+        return true;
+    }
+    if (dashboardRole === "accountant" && action === "add" && /Vendor legal name|Service category|Primary contact person|Primary mobile number|Contract \/ work order reference|Contract start date|Contract expiry date|Billing cycle|Payment terms|Vendor status/.test(labelText)) {
+        return true;
+    }
+    if (dashboardRole === "accountant" && action === "add" && /Flat \/ unit or ledger reference|Transaction \/ UTR|Receipt number|Credited bank|Tax treatment|Allocation|Receipt or supporting|Recorded \/ verified|Trading \/ display|Service scope|Registered business|GSTIN|PAN|Primary email|Emergency|Service-level|Beneficiary|Bank name|Account number|IFSC|Preferred payment|Approved rate|Insurance|Background|Approved \/ onboarded|Internal vendor/.test(labelText)) {
+        return false;
+    }
     if (dashboardRole === "resident" && action === "book") {
         return [0, 1, 2, 5, 6].includes(index);
     }
@@ -3689,6 +3733,15 @@ function performAction(action, button, values = []) {
         updateRowAction(button, "Assigned", "assign", true);
     }
     if (action === "pay") {
+        if (dashboardRole === "accountant" && button.closest('[data-table="billing"]')) {
+            setStatus(button, "Paid", "paid");
+            button.textContent = "Paid";
+            button.disabled = true;
+            button.dataset.action = "";
+            updateBillingStats(button);
+            persistDashboardState();
+            return { title: "Payment marked as paid", lines: [] };
+        }
         if (dashboardRole === "admin" && button.closest('[data-table="billing"]')) {
             const row = button.closest("tr");
             const data = billingRowData(row);
@@ -3823,6 +3876,78 @@ function performAction(action, button, values = []) {
     }
     if (action === "add") {
         const table = button.dataset.table;
+        if (dashboardRole === "accountant" && table === "incomes") {
+            const [category, receivedDate, payer, ledgerReference, amountValue, paymentMethod, paymentReference,
+                receiptNumber, creditedAccount, taxAmount, taxTreatment, allocation, documentReference,
+                incomeStatus, verifiedBy, notes] = values;
+            const amount = Number(amountValue || 0);
+            if (!category || !receivedDate || !payer || !Number.isFinite(amount) || amount <= 0 || !paymentMethod) {
+                return { title: "Income details required", lines: ["Enter the category, received date, payer, positive amount and payment method before recording income."] };
+            }
+            const status = incomeStatus || "RECEIVED";
+            const statusClass = status === "RECEIVED" ? "success" : status === "PARTIALLY_RECEIVED" ? "warning text-dark" : status === "REVERSED" ? "danger" : "secondary";
+            const categoryLabel = category.replaceAll("_", " ");
+            const source = `${payer}${ledgerReference ? ` · ${ledgerReference}` : ""}`;
+            const description = `${paymentMethod}${paymentReference ? ` · ${paymentReference}` : ""}${receiptNumber ? ` · Receipt ${receiptNumber}` : ""}`;
+            addRow("incomes", [
+                receivedDate,
+                categoryLabel,
+                source,
+                description,
+                `Rs. ${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                `<span class="badge bg-${statusClass}">${status.replaceAll("_", " ")}</span>`
+            ]);
+            persistDashboardState();
+            return {
+                title: "Income recorded",
+                lines: [
+                    `<strong>Category:</strong> ${categoryLabel}`,
+                    `<strong>Received from:</strong> ${payer}${ledgerReference ? ` · ${ledgerReference}` : ""}`,
+                    `<strong>Amount:</strong> Rs. ${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                    `<strong>Settlement:</strong> ${paymentMethod}${paymentReference ? ` · ${paymentReference}` : ""}`,
+                    `<strong>Receipt:</strong> ${receiptNumber || "Not provided"}${creditedAccount ? ` · ${creditedAccount}` : ""}`,
+                    `<strong>Tax:</strong> ${taxAmount ? `Rs. ${taxAmount} · ${taxTreatment}` : taxTreatment || "Not applicable"}`,
+                    `<strong>Allocation:</strong> ${allocation || "General income"}`,
+                    `<strong>Verification:</strong> ${incomeStatus || "RECEIVED"} · ${verifiedBy || "Not recorded"}`,
+                    `<strong>Supporting record:</strong> ${documentReference || "Not attached"}${notes ? ` · ${notes}` : ""}`
+                ]
+            };
+        }
+        if (dashboardRole === "accountant" && table === "vendors") {
+            const [legalName, tradingName, serviceCategory, serviceScope, businessAddress, gstin, pan,
+                contactPerson, mobile, email, emergencyContact, contractReference, contractStart, contractExpiry,
+                billingCycle, paymentTerms, serviceLevelAgreement, beneficiaryName, bankName, accountNumber,
+                ifsc, paymentMethod, contractValue, complianceReference, verificationStatus, vendorStatus,
+                approvedBy, notes] = values;
+            if (!legalName || !serviceCategory || !contactPerson || !mobile || !contractReference || !contractStart || !contractExpiry) {
+                return { title: "Vendor details required", lines: ["Enter the vendor name, service category, primary contact, mobile number and complete contract dates before onboarding the vendor."] };
+            }
+            const status = vendorStatus || "PENDING_APPROVAL";
+            const statusClass = status === "ACTIVE" ? "success" : status === "ON_HOLD" ? "warning text-dark" : status === "INACTIVE" ? "secondary" : "primary";
+            addRow("vendors", [
+                legalName,
+                serviceCategory.replaceAll("_", " "),
+                contactPerson,
+                mobile,
+                contractExpiry,
+                `<span class="badge bg-${statusClass}">${status.replaceAll("_", " ")}</span>`
+            ]);
+            persistDashboardState();
+            return {
+                title: "Vendor profile created",
+                lines: [
+                    `<strong>Vendor:</strong> ${legalName}${tradingName ? ` · ${tradingName}` : ""}`,
+                    `<strong>Service:</strong> ${serviceCategory.replaceAll("_", " ")}${serviceScope ? ` · ${serviceScope}` : ""}`,
+                    `<strong>Contact:</strong> ${contactPerson} · ${mobile}${email ? ` · ${email}` : ""}`,
+                    `<strong>Contract:</strong> ${contractReference} · ${contractStart} to ${contractExpiry}`,
+                    `<strong>Commercials:</strong> ${billingCycle} · ${paymentTerms}${contractValue ? ` · Rs. ${Number(contractValue).toLocaleString("en-IN")}` : ""}`,
+                    `<strong>Banking:</strong> ${beneficiaryName || "Not provided"}${bankName ? ` · ${bankName}` : ""}${paymentMethod ? ` · ${paymentMethod}` : ""}`,
+                    `<strong>Compliance:</strong> ${verificationStatus || "PENDING"}${complianceReference ? ` · ${complianceReference}` : ""}`,
+                    `<strong>Status:</strong> ${status.replaceAll("_", " ")}${approvedBy ? ` · ${approvedBy}` : ""}`,
+                    `<strong>Notes:</strong> ${notes || "None"}${emergencyContact ? ` · Escalation: ${emergencyContact}` : ""}${businessAddress ? ` · Address: ${businessAddress}` : ""}${gstin ? ` · GSTIN: ${gstin}` : ""}${pan ? ` · PAN: ${pan}` : ""}${ifsc ? ` · IFSC: ${ifsc}` : ""}${accountNumber ? ` · A/C: ${accountNumber}` : ""}${serviceLevelAgreement ? ` · SLA: ${serviceLevelAgreement}` : ""}`
+                ]
+            };
+        }
         if (dashboardRole === "resident" && table === "complaints") {
             const payload={title:values[0]||"Resident complaint",category:values[1]||"Other",subcategory:values[2]||"",
                 priority:values[3]||"NORMAL",incidentAt:values[4]||null,locationDetails:values[5]||"",

@@ -7,7 +7,7 @@
     <title>PropertyDirect | Find a home that feels right</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260831-blue-headings-v1">
+    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260901-approved-listings-v1">
     <style>
         *,
         *::before,
@@ -41,14 +41,24 @@
             background-position: center !important;
             background-repeat: no-repeat !important;
             background-color: #0c1b33 !important;
+            height: 620px !important;
+            min-height: 620px !important;
         }
 
         .hero::before,
         .hero::after,
         body.propertydirect-parity-landing .hero::before {
+            display: block !important;
+        }
+
+        .hero::before,
+        body.propertydirect-parity-landing .hero::before {
+            background: linear-gradient(90deg, rgba(7, 19, 44, .88) 0%, rgba(11, 34, 75, .66) 48%, rgba(11, 34, 75, .16) 100%) !important;
+            opacity: 1 !important;
+        }
+
+        .hero::after {
             display: none !important;
-            background: none !important;
-            opacity: 0 !important;
         }
 
         header {
@@ -160,7 +170,7 @@
             max-width: 1020px !important;
             width: min(92%, 1020px) !important;
             margin: 0 auto !important;
-            padding: 90px 0 140px 0 !important;
+            padding: 104px 0 126px 0 !important;
             text-align: left !important;
             display: flex !important;
             flex-direction: column !important;
@@ -200,7 +210,7 @@
             letter-spacing: -0.03em !important;
             color: #ffffff !important;
             text-align: left !important;
-            max-width: 780px !important;
+            max-width: 700px !important;
         }
 
         .hero h1 span.highlight,
@@ -784,7 +794,7 @@
                 </div>
                 <a href="/propertydirect/apartments" class="view-all">View all homes <span>→</span></a>
             </div>
-            <div class="property-grid">
+            <div class="property-grid" id="featuredProperties" aria-live="polite">
                 <!-- Card 1 -->
                 <div class="property-card">
                     <div class="property-img">
@@ -1250,7 +1260,7 @@
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok) throw new Error(result.message || 'Message could not be sent');
                 document.querySelectorAll('.contact-panel .form-group input, .contact-panel .form-group textarea').forEach(input => input.value = '');
-                feedback.textContent = result.message;
+                feedback.textContent = `${result.message}${result.id ? ` Reference: PD-MSG-${result.id}.` : ''}`;
                 feedback.className = 'pd-contact-feedback success';
                 btn.textContent = 'Message Sent ✓';
             } catch (error) {
@@ -1400,6 +1410,88 @@
                     window.location.href = url;
                 });
             });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("featuredProperties");
+            if (!grid) return;
+
+            const emptyState = (message) => {
+                const state = document.createElement("p");
+                state.className = "featured-properties-empty";
+                state.textContent = message;
+                grid.replaceChildren(state);
+            };
+
+            const formatPrice = (value) => value == null
+                ? "Price on request"
+                : `₹ ${Number(value).toLocaleString("en-IN")}`;
+
+            const createFeaturedCard = (listing) => {
+                const card = document.createElement("article");
+                card.className = "property-card";
+                card.tabIndex = 0;
+                card.setAttribute("role", "link");
+                card.setAttribute("aria-label", `View ${listing.title || "property"}`);
+
+                const image = document.createElement("div");
+                image.className = "property-img";
+                const photo = document.createElement("img");
+                photo.src = listing.imageUrl || "/propertydirect/images/orchid_enclave.jpg";
+                photo.alt = listing.title || "Approved property";
+                photo.loading = "lazy";
+                photo.style.cssText = "width:100%;height:100%;object-fit:cover;";
+                const badge = document.createElement("span");
+                badge.className = "property-badge";
+                badge.textContent = "Verified";
+                image.append(photo, badge);
+
+                const details = document.createElement("div");
+                details.className = "property-details";
+                const price = document.createElement("div");
+                price.className = "property-price";
+                price.textContent = formatPrice(listing.price);
+                const title = document.createElement("div");
+                title.className = "property-title";
+                title.textContent = listing.title || "Approved property";
+                const location = document.createElement("div");
+                location.className = "property-location";
+                location.textContent = [listing.locality, listing.city].filter(Boolean).join(", ") || "Location available on request";
+                const stats = document.createElement("div");
+                stats.className = "property-stats";
+                const statValues = [
+                    { value: listing.bhk || "Configuration", suffix: "Beds" },
+                    { value: listing.bathrooms ? `${listing.bathrooms} Baths` : "Baths", suffix: "" },
+                    { value: listing.areaSqft ? `${listing.areaSqft} sqft` : "Area on request", suffix: "" }
+                ];
+                statValues.forEach(({ value, suffix }) => {
+                        const stat = document.createElement("span");
+                        stat.className = "stat";
+                        stat.textContent = suffix && !String(value).toLowerCase().includes(suffix.toLowerCase()) ? `${value} ${suffix}` : value;
+                        stats.appendChild(stat);
+                    });
+                details.append(price, title, location, stats);
+                card.append(image, details);
+
+                const open = () => { window.location.href = `/propertydirect/apartment-detail?id=${encodeURIComponent(listing.id)}`; };
+                card.addEventListener("click", open);
+                card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } });
+                return card;
+            };
+
+            emptyState("Loading verified homes…");
+            fetch("/api/properties/public?page=0&size=4", { headers: { Accept: "application/json" } })
+                .then(response => response.ok ? response.json() : Promise.reject(new Error("Verified homes could not be loaded.")))
+                .then(payload => {
+                    const listings = Array.isArray(payload) ? payload : (payload.content || []);
+                    if (!listings.length) {
+                        emptyState("No verified homes are available yet. Check back soon.");
+                        return;
+                    }
+                    grid.replaceChildren(...listings.map(createFeaturedCard));
+                })
+                .catch(() => emptyState("Verified homes are temporarily unavailable. Please try again shortly."));
         });
     </script>
 <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
