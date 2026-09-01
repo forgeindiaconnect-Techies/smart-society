@@ -12,17 +12,6 @@ Open `http://localhost:8080`.
 
 Local H2-only demo accounts:
 
-| Role | Username | Password |
-|---|---|---|
-| Super admin | `superadmin@smartsociety` | `superadmin123` |
-| Society admin | `admin@smartsociety` | `admin123` |
-| Resident | `resident@smartsociety` | `resident123` |
-| Security staff | `security@smartsociety` | `security123` |
-| Maintenance staff | `maintenance@smartsociety` | `maintenance123` |
-| Accountant | `accountant@smartsociety` | `accountant123` |
-
-Demo passwords are created only when the H2 driver is active. Production deployments must configure users/secrets through environment variables and must set `JWT_SECRET` and `SESSION_COOKIE_SECURE=true`.
-
 ## Workflow
 
 1. A society registers and remains pending until platform approval.
