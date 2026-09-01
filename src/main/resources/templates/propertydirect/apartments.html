@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260819-v999">
-    <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260819-v999">
+    <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260831-blue-headings-v1">
+    <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -266,7 +266,8 @@
             text-align: left !important;
             padding: 9px 14px !important;
         }
-        #budgetRange {
+        #budgetRange,
+        #minBudgetRange {
             width: 100% !important;
             accent-color: #1d376c !important;
         }
@@ -961,6 +962,7 @@
         }
     </style>
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260825-18">
+<link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 </head>
 <body class="apartment-page">
 <header class="topbar compact">
@@ -991,12 +993,12 @@
         <div class="check-grid">
             <button data-filter-group="bhk" data-filter="1 BHK">1 BHK</button>
             <button data-filter-group="bhk" data-filter="2 BHK">2 BHK</button>
-            <button data-filter-group="bhk" data-filter="3 BHK">3 BHK</button>
-            <button data-filter-group="bhk" data-filter="4 BHK">4 BHK</button>
+            <button data-filter-group="bhk" data-filter="3 BHK+">3 BHK+</button>
         </div>
         <label>Budget Range</label>
-        <input id="budgetRange" type="range" min="10000" max="150000" value="80000">
-        <p class="range-copy">Up to <span id="budgetValue">₹80,000</span></p>
+        <input id="minBudgetRange" type="range" min="0" max="150000" value="0" aria-label="Minimum monthly rent">
+        <input id="budgetRange" type="range" min="10000" max="150000" value="150000">
+        <p class="range-copy"><span id="minBudgetValue">₹0</span> to <span id="budgetValue">₹1,50,000</span></p>
         <label>Availability</label>
         <div class="filter-list">
             <button data-filter-group="availability" data-filter="Ready to Move">Immediate</button>
@@ -1027,6 +1029,11 @@
                 <p class="breadcrumb">Home / Apartments / Bangalore</p>
                 <h1><span id="resultCount">0</span> verified apartments without brokerage</h1>
                 <p>Owner-listed apartment homes with rent, deposit, furnishing, availability, nearby places and visit options.</p>
+                <div class="pd-mode-tabs" style="margin-top: 10px;">
+                    <button type="button" class="pd-mode-tab active" data-search-mode="">All</button>
+                    <button type="button" class="pd-mode-tab" data-search-mode="rent">Rent</button>
+                    <button type="button" class="pd-mode-tab" data-search-mode="buy">Buy</button>
+                </div>
             </div>
             <div class="view-toggle">
                 <button class="active" data-view-mode="list">List</button>
@@ -1060,7 +1067,7 @@
     </div>
 </div>
 <div class="toast hidden" id="toast"></div>
-<script src="/propertydirect/js/apartments.js?v=20260703-owner-leads"></script>
-<script src="/shared/js/theme.js?v=20260703-modal-fix"></script>
+<script src="/shared/js/required-fields.js?v=20260826-v2"></script>
+<script src="/propertydirect/js/apartments.js?v=20260825-v9999-filter-fix"></script>
 </body>
 </html>

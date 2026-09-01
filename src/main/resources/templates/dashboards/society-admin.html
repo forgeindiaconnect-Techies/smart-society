@@ -88,12 +88,168 @@
         .billing-proof-review .payment-proof-head h4 { margin: 0; font-size: 1.45rem; line-height: 1.2; }
         .billing-proof-empty { display: flex; align-items: center; gap: .8rem; min-height: 72px; color: #64748b; }
         .billing-proof-empty i { color: #2563eb; font-size: 1.3rem; }
+        /* Compact, consistent typography for the complete Maintenance Billing workspace. */
+        body.dashboard-body[data-dashboard-role="admin"] #title {
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            line-height: 1.12 !important;
+            letter-spacing: -.03em !important;
+        }
+        [data-view="billing"] {
+            color: #252a31;
+            font-size: .78rem;
+        }
+        [data-view="billing"] .billing-workspace .card-header h4,
+        [data-view="billing"] .billing-proof-review .payment-proof-head h4 {
+            margin: 0 !important;
+            color: #252a31 !important;
+            font-size: 1rem !important;
+            font-weight: 800 !important;
+            line-height: 1.25 !important;
+            letter-spacing: -.015em !important;
+        }
+        [data-view="billing"] .billing-workspace .card-header p {
+            margin-top: .28rem !important;
+            color: #687386 !important;
+            font-size: .72rem !important;
+            line-height: 1.42 !important;
+        }
+        [data-view="billing"] .billing-info-grid span,
+        [data-view="billing"] .billing-summary-item span {
+            color: #657086 !important;
+            font-size: .64rem !important;
+            font-weight: 850 !important;
+            line-height: 1.2 !important;
+            letter-spacing: .035em !important;
+        }
+        [data-view="billing"] .billing-info-grid strong {
+            margin-top: .28rem;
+            color: #252a31 !important;
+            font-size: .8rem !important;
+            font-weight: 750 !important;
+            line-height: 1.3 !important;
+        }
+        [data-view="billing"] .billing-proof-empty {
+            min-height: 62px;
+            color: #71819a;
+            font-size: .75rem;
+        }
+        [data-view="billing"] .billing-proof-empty i {
+            font-size: 1.05rem;
+        }
+        [data-view="billing"] .billing-summary-item strong {
+            margin-top: .35rem !important;
+            font-size: 1.24rem !important;
+            font-weight: 820 !important;
+            line-height: 1.1 !important;
+        }
+        [data-view="billing"] .btn {
+            min-height: 34px !important;
+            padding: .45rem .8rem !important;
+            font-size: .68rem !important;
+            font-weight: 750 !important;
+            line-height: 1.1 !important;
+        }
+        [data-view="billing"] table th {
+            font-size: .62rem !important;
+            font-weight: 850 !important;
+            letter-spacing: .04em !important;
+        }
+        [data-view="billing"] table td {
+            font-size: .72rem !important;
+        }
+        body.dashboard-body[data-dashboard-role="admin"] .society-sync-button .sync-copy strong {
+            font-size: .78rem !important;
+            font-weight: 800 !important;
+        }
+        body.dashboard-body[data-dashboard-role="admin"] .society-sync-button .sync-copy small {
+            font-size: .6rem !important;
+        }
         .visitor-management-card .card-header { padding-top: 1.35rem !important; padding-bottom: .75rem !important; }
         .visitor-management-card .card-body { padding-top: .5rem !important; padding-bottom: 1.25rem !important; }
         .visitor-management-card .visitor-stats { margin-bottom: 1rem !important; }
         .visitor-management-card .visitor-stat { min-height: 74px; padding: .8rem 1rem !important; }
         .visitor-management-card .visitor-stat strong { font-size: 1.55rem !important; margin-top: .2rem !important; }
+        .visitor-management-card .visitor-stats > div { display: flex; }
+        .visitor-management-card .visitor-stat {
+            position: relative;
+            width: 100%;
+            min-height: 96px !important;
+            padding: 1rem 1.1rem !important;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto 1fr;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid #dce4f0 !important;
+            border-radius: 14px !important;
+            background: #fff !important;
+            box-shadow: 0 9px 24px rgba(25, 43, 75, .065) !important;
+        }
+        .visitor-management-card .visitor-stat::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 4px;
+            background: var(--visitor-card-accent);
+        }
+        .visitor-management-card .visitor-stat > i {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            color: var(--visitor-card-accent);
+            background: var(--visitor-card-soft);
+            font-size: .95rem;
+        }
+        .visitor-management-card .visitor-stat > span {
+            grid-column: 1;
+            grid-row: 1;
+            margin: 0 !important;
+            color: #68758c !important;
+            font-size: .64rem !important;
+            font-weight: 850 !important;
+            letter-spacing: .05em !important;
+        }
+        .visitor-management-card .visitor-stat > strong {
+            grid-column: 1;
+            grid-row: 2;
+            margin: .25rem 0 0 !important;
+            color: var(--visitor-card-accent) !important;
+            font-size: 1.45rem !important;
+            font-weight: 850 !important;
+            line-height: 1 !important;
+        }
+        .visitor-stat--waiting { --visitor-card-accent: #f0ad00; --visitor-card-soft: #fff7dc; }
+        .visitor-stat--inside { --visitor-card-accent: #12905a; --visitor-card-soft: #e8f8f0; }
+        .visitor-stat--checked-out { --visitor-card-accent: #657384; --visitor-card-soft: #eef2f6; }
         .visitor-management-card .table { margin-bottom: 0; }
+        [data-view="visitors"] .visitor-summary-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 1rem !important;
+            margin: 0 0 1.25rem !important;
+        }
+        [data-view="visitors"] .visitor-summary-card {
+            display: flex !important;
+            min-width: 0 !important;
+            min-height: 136px !important;
+            padding: 1.25rem 1.35rem !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            border: 1px solid #dfe6f1 !important;
+            border-radius: 14px !important;
+            background: #fff !important;
+            box-shadow: 0 7px 22px rgba(28,43,72,.06) !important;
+        }
+        [data-view="visitors"] .visitor-summary-card > span { color: #6d798e !important; font-size: .68rem !important; font-weight: 800 !important; letter-spacing: .05em !important; text-transform: uppercase !important; }
+        [data-view="visitors"] .visitor-summary-card > strong { margin-top: .45rem !important; font-size: 1.65rem !important; line-height: 1 !important; }
+        @media (max-width: 767px) { [data-view="visitors"] .visitor-summary-grid { grid-template-columns: 1fr !important; } }
         /* Subscription details must remain in the document flow.  This prevents
            older generic dashboard animations from clipping the lower panels. */
         .dashboard-container { overflow: visible !important; padding-bottom: 2rem; }
@@ -110,7 +266,30 @@
         [data-view="subscriptions"] > .row { --bs-gutter-y: 1.5rem; }
         [data-view="subscriptions"] .card { min-width: 0; overflow: visible; }
         [data-view="subscriptions"] .table-responsive { overflow-x: auto; }
+        [data-view="subscriptions"] .subscription-summary-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 1rem !important;
+            margin: 0 0 1rem !important;
+        }
+        [data-view="subscriptions"] .subscription-summary-card {
+            display: flex !important;
+            min-width: 0 !important;
+            min-height: 126px !important;
+            padding: 1.15rem !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            border: 1px solid #dfe6f1 !important;
+            border-radius: 14px !important;
+            background: #ffffff !important;
+            box-shadow: 0 7px 22px rgba(28,43,72,.06) !important;
+        }
+        [data-view="subscriptions"] .subscription-summary-card > span { color: #6d798e !important; font-size: .67rem !important; font-weight: 800 !important; letter-spacing: .05em !important; text-transform: uppercase !important; }
+        [data-view="subscriptions"] .subscription-summary-card > strong { margin: .45rem 0 .35rem !important; font-size: 1.38rem !important; line-height: 1.15 !important; }
+        [data-view="subscriptions"] .subscription-summary-card > small { color: #6d798e !important; font-size: .72rem !important; line-height: 1.35 !important; }
+        @media (max-width: 1100px) { [data-view="subscriptions"] .subscription-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
         @media (max-width: 767px) {
+            [data-view="subscriptions"] .subscription-summary-grid { grid-template-columns: 1fr !important; }
             .billing-summary-row { grid-template-columns: 1fr; }
             .billing-summary-item + .billing-summary-item { border-left: 0; border-top: 1px solid #e2e8f0; }
         }
@@ -149,8 +328,8 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
             <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
-                <i class="fa-solid fa-building-user fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
-                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+                <span class="sidebar-home-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
                 <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
@@ -172,8 +351,8 @@
                 <a href="#reports" class="nav-link btn btn-link text-start text-decoration-none" data-panel="reports"><i class="fa-solid fa-chart-pie me-2"></i> Reports</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
-                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
-                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
                 </a>
             </div>
         </aside>
@@ -186,10 +365,9 @@
                     <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
                 </div>
                 <div class="d-flex align-items-center gap-3 header-actions">
-                    <span class="badge badge-soft-success px-3 py-2 rounded-pill inline-state" id="societySyncState"><i class="fa-solid fa-rotate me-1"></i> Ready to sync</span>
-                    <button type="button" class="btn rounded-pill society-sync-button" id="societySyncButton" aria-describedby="societySyncState">
-                        <span class="sync-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
-                        <span class="sync-copy"><strong>Sync Society Data</strong><small>Refresh live records</small></span>
+                    <button type="button" class="btn rounded-pill society-sync-button" id="societyNoticeButton">
+                        <span class="sync-icon"><i class="fa-solid fa-paper-plane"></i></span>
+                        <span class="sync-copy"><strong>Send Notice</strong><small>Target a dashboard</small></span>
                     </button>
                 </div>
             </header>
@@ -200,66 +378,47 @@
                 <!-- Overview Panel -->
                 <section data-view="overview" class="animate__animated animate__fadeIn">
                     <div class="row g-4 mb-4 stats">
-                        <div class="col-md-3">
-                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                        <div class="col-xl-3 col-md-6">
+                            <article class="card p-4 h-100 shadow-sm border-0">
                                 <span class="text-muted small fw-bold text-uppercase">Total Flats</span>
                                 <strong class="fs-2 fw-bold text-primary mt-2 d-block">320</strong>
                             </article>
                         </div>
-                        <div class="col-md-3">
-                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                        <div class="col-xl-3 col-md-6">
+                            <article class="card p-4 h-100 shadow-sm border-0">
                                 <span class="text-muted small fw-bold text-uppercase">Residents</span>
                                 <strong class="fs-2 fw-bold text-success mt-2 d-block">912</strong>
                             </article>
                         </div>
-                        <div class="col-md-3">
-                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                        <div class="col-xl-3 col-md-6">
+                            <article class="card p-4 h-100 shadow-sm border-0">
                                 <span class="text-muted small fw-bold text-uppercase">Unpaid Bills</span>
                                 <strong class="fs-2 fw-bold text-warning mt-2 d-block">46</strong>
                             </article>
                         </div>
-                        <div class="col-md-3">
-                            <article class="card p-4 text-center h-100 shadow-sm border-0">
+                        <div class="col-xl-3 col-md-6">
+                            <article class="card p-4 h-100 shadow-sm border-0">
                                 <span class="text-muted small fw-bold text-uppercase">Open Complaints</span>
                                 <strong class="fs-2 fw-bold text-danger mt-2 d-block">12</strong>
                             </article>
                         </div>
                     </div>
                     
-                    <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
-                        <h4 class="fw-bold mb-3">Today</h4>
-                        <p class="text-muted mb-4">Use the dedicated modules to manage residents, complaints, flats, expenses, announcements, visitors, and billing records.</p>
-                        <div class="d-flex flex-wrap gap-2 pill-row" aria-label="Today’s operational priorities">
-                            <button type="button" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="visitors"><i class="fa-solid fa-arrow-right me-1"></i>18 visitor records</button>
-                            <button type="button" class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="amenities"><i class="fa-solid fa-arrow-right me-1"></i>6 amenity bookings</button>
-                            <button type="button" class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="expenses"><i class="fa-solid fa-arrow-right me-1"></i>3 expense records</button>
-                            <button type="button" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="complaints"><i class="fa-solid fa-arrow-right me-1"></i>8 open complaints</button>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                                <div><span class="small text-primary fw-bold text-uppercase">Operational snapshot</span><h4 class="fw-bold mb-1 mt-1">Today</h4><p class="text-muted mb-0">Open the right workspace to act on the latest society activity.</p></div>
+                                <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle rounded-pill px-3 py-2"><i class="fa-solid fa-circle-check me-1"></i>Live data</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 pill-row" aria-label="Today’s operational priorities">
+                                <button type="button" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="visitors"><i class="fa-solid fa-arrow-right me-1"></i><span id="overviewVisitorRecords">0 visitor records</span></button>
+                                <button type="button" class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="amenities"><i class="fa-solid fa-arrow-right me-1"></i><span id="overviewAmenityBookings">0 amenity bookings</span></button>
+                                <button type="button" class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="expenses"><i class="fa-solid fa-arrow-right me-1"></i><span id="overviewExpenseRecords">0 expense records</span></button>
+                                <button type="button" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-normal" data-panel="complaints"><i class="fa-solid fa-arrow-right me-1"></i><span id="overviewOpenComplaints">0 open complaints</span></button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
-                        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
-                            <div>
-                                <h4 class="fw-bold mb-1">Quick actions</h4>
-                                <p class="text-muted mb-0">Open the most common Society Admin tasks in one click.</p>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="residents"><i class="fa-solid fa-user-plus me-2"></i>Manage residents</button>
-                                <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Manage billing</button>
-                                <button type="button" class="btn btn-outline-primary rounded-pill" data-panel="announcements"><i class="fa-solid fa-bullhorn me-2"></i>Publish notice</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card p-4 shadow-sm border-0 rounded-4 activity-log" id="societyActivityLog" aria-live="polite">
-                        <h4 class="fw-bold mb-4">Admin activity</h4>
-                        <ul class="list-unstyled mb-0">
-                            <li class="d-flex mb-3 pb-3 border-bottom border-light-subtle last-0 border-0">
-                                <strong class="text-primary me-3 min-w-100px">Ready</strong>
-                                <span class="text-muted">Use the Admin tabs from top to bottom. Completed actions will appear here.</span>
-                            </li>
-                        </ul>
-                    </div>
                 </section>
 
                 <!-- Control Center -->
@@ -556,10 +715,10 @@
                             <button class="btn btn-primary rounded-pill btn-sm" data-action="add" data-table="visitors"><i class="fa-solid fa-plus me-1"></i> Add Visitor</button>
                         </div>
                         <div class="card-body px-4 pb-4">
-                            <div class="row g-3 mb-4 stats compact-stats visitor-stats">
-                                <div class="col-md-4"><article class="border rounded-3 bg-light visitor-stat"><span class="small text-muted fw-bold text-uppercase d-block">Waiting</span><strong class="fs-4 text-warning d-block mt-1">1</strong></article></div>
-                                <div class="col-md-4"><article class="border rounded-3 bg-light visitor-stat"><span class="small text-muted fw-bold text-uppercase d-block">Inside</span><strong class="fs-4 text-success d-block mt-1">1</strong></article></div>
-                                <div class="col-md-4"><article class="border rounded-3 bg-light visitor-stat"><span class="small text-muted fw-bold text-uppercase d-block">Checked Out</span><strong class="fs-4 text-secondary d-block mt-1">0</strong></article></div>
+                            <div class="visitor-summary-grid compact-stats visitor-stats">
+                                <article class="visitor-summary-card"><span>Waiting</span><strong class="text-warning">0</strong></article>
+                                <article class="visitor-summary-card"><span>Inside</span><strong class="text-success">0</strong></article>
+                                <article class="visitor-summary-card"><span>Checked Out</span><strong class="text-secondary">0</strong></article>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle" data-table="visitors">
@@ -602,8 +761,8 @@
                         </div>
                         <div class="card-body px-4 pb-4 table-responsive">
                             <table class="table align-middle mb-0" data-table="amenity-bookings">
-                                <thead class="table-light"><tr><th>Amenity</th><th>Booked by</th><th>Flat</th><th>Required date &amp; time</th><th>Payment</th><th>Price</th><th>Approval</th><th>Action</th></tr></thead>
-                                <tbody><tr><td colspan="8" class="text-muted text-center py-4">Loading amenity bookings…</td></tr></tbody>
+                                <thead class="table-light"><tr><th>Amenity</th><th>Booked by</th><th>Flat</th><th>Required date &amp; time</th><th>Payment</th><th>Price</th><th>Submitted details</th><th>Approval</th><th>Action</th></tr></thead>
+                                <tbody><tr><td colspan="9" class="text-muted text-center py-4">Loading amenity bookings…</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -853,11 +1012,11 @@
                             <button class="btn btn-outline-primary rounded-pill btn-sm" type="button" id="exportPayments"><i class="fa-solid fa-download me-1"></i> Export Payments</button>
                         </div>
                         <div class="card-body px-4 pb-4">
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-3"><div class="border rounded-4 p-3 h-100"><span class="text-muted small text-uppercase fw-bold">Collected</span><strong class="d-block fs-4 text-success mt-1" id="paymentsCollected">Rs. 0</strong><small class="text-muted" id="paymentsCount">0 successful payments</small></div></div>
-                                <div class="col-md-3"><div class="border rounded-4 p-3 h-100"><span class="text-muted small text-uppercase fw-bold">Outstanding bills</span><strong class="d-block fs-4 text-danger mt-1" id="paymentsOutstanding">Rs. 0</strong><small class="text-muted" id="paymentsDueCount">0 pending bills</small></div></div>
-                                <div class="col-md-3"><div class="border rounded-4 p-3 h-100"><span class="text-muted small text-uppercase fw-bold">This month</span><strong class="d-block fs-4 text-primary mt-1" id="paymentsThisMonth">Rs. 0</strong><small class="text-muted">Collections in current cycle</small></div></div>
-                                <div class="col-md-3"><div class="border rounded-4 p-3 h-100"><span class="text-muted small text-uppercase fw-bold">Digital payments</span><strong class="d-block fs-4 text-info mt-1" id="paymentsDigitalRate">0%</strong><small class="text-muted">UPI, cards and transfers</small></div></div>
+                            <div class="row g-4 mb-4">
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Collected</span><strong class="d-block fs-2 fw-bold text-success mt-2" id="paymentsCollected">Rs. 0</strong><small class="text-muted mt-2" id="paymentsCount">0 successful payments</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Outstanding bills</span><strong class="d-block fs-2 fw-bold text-danger mt-2" id="paymentsOutstanding">Rs. 0</strong><small class="text-muted mt-2" id="paymentsDueCount">0 pending bills</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">This month</span><strong class="d-block fs-2 fw-bold text-primary mt-2" id="paymentsThisMonth">Rs. 0</strong><small class="text-muted mt-2">Collections in current cycle</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Digital payments</span><strong class="d-block fs-2 fw-bold text-info mt-2" id="paymentsDigitalRate">0%</strong><small class="text-muted mt-2">UPI, cards and transfers</small></article></div>
                             </div>
                             <div class="row g-3 align-items-end mb-3 bg-light rounded-4 p-3">
                                 <div class="col-md-4"><label class="form-label small fw-bold">Search flat or reference</label><input id="paymentSearch" class="form-control" placeholder="e.g. A-204 or transaction ID"></div>
@@ -874,14 +1033,14 @@
 
                 <!-- Subscriptions -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="subscriptions">
-                    <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4 d-flex flex-wrap justify-content-between gap-3 align-items-center"><div><span class="badge bg-success-subtle text-success-emphasis border border-success-subtle mb-2">Subscription active</span><h3 class="fw-bold mb-1">Standard Tier</h3><p class="text-muted mb-0">Your society workspace is covered by the Standard monthly plan with all daily operations enabled.</p></div><div class="d-flex gap-2"><a href="/saas" class="btn btn-outline-primary rounded-pill"><i class="fa-solid fa-layer-group me-2"></i>View plan catalogue</a><button type="button" class="btn btn-primary rounded-pill" data-subscription-action="support"><i class="fa-solid fa-headset me-2"></i>Contact support</button></div></div></div>
-                    <div class="row g-4 mb-4 stats">
-                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Active plan</span><strong class="fs-4 fw-bold text-dark mt-2 d-block" id="saasCurrentPlan">Standard Tier</strong><small class="text-muted mt-2">Monthly subscription</small></article></div>
-                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Plan status</span><strong class="fs-4 fw-bold text-success mt-2 d-block" id="saasPlanStatus">Active</strong><small class="text-muted mt-2">Auto-renew enabled</small></article></div>
-                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Flat capacity</span><strong class="fs-4 fw-bold text-info mt-2 d-block" id="saasFlatCapacity">12 / 150 Flats</strong><small class="text-muted mt-2">138 flats remaining</small></article></div>
-                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Next renewal</span><strong class="fs-4 fw-bold text-warning mt-2 d-block" id="saasNextRenewal">01 Sep 2026</strong><small class="text-muted mt-2">Rs. 2,999 + applicable taxes</small></article></div>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4 d-flex flex-wrap justify-content-between gap-3 align-items-center"><div><span id="saasHeroStatus" class="badge bg-secondary-subtle text-secondary-emphasis border mb-2">Loading subscription</span><h3 id="saasHeroPlan" class="fw-bold mb-1">Plan details</h3><p id="saasHeroDescription" class="text-muted mb-0">Checking the subscription assigned to this society workspace.</p></div><div class="d-flex flex-wrap gap-2"><a href="/saas" class="btn btn-outline-primary rounded-pill"><i class="fa-solid fa-layer-group me-2"></i>View plan catalogue</a><button type="button" class="btn btn-primary rounded-pill" data-subscription-action="support"><i class="fa-solid fa-headset me-2"></i>Contact support</button></div></div></div>
+                    <div class="subscription-summary-grid">
+                        <article class="subscription-summary-card"><span>Active plan</span><strong class="text-dark" id="saasCurrentPlan">Loading…</strong><small id="saasPlanCycle">Billing cycle</small></article>
+                        <article class="subscription-summary-card"><span>Plan status</span><strong class="text-success" id="saasPlanStatus">Loading…</strong><small id="saasPlanStarted">Activation date</small></article>
+                        <article class="subscription-summary-card"><span>Flat capacity</span><strong class="text-info" id="saasFlatCapacity">Loading…</strong><small id="saasFlatRemaining">Capacity remaining</small></article>
+                        <article class="subscription-summary-card"><span>Next renewal</span><strong class="text-warning" id="saasNextRenewal">Loading…</strong><small id="saasRenewalAmount">Renewal amount</small></article>
                     </div>
-                    <div class="card shadow-sm border-0 rounded-4 mt-4"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">SaaS invoice history</h4><p class="text-muted mb-0">Subscription invoices and payment confirmation for this workspace.</p></div><button type="button" class="btn btn-outline-primary rounded-pill btn-sm" data-subscription-action="export"><i class="fa-solid fa-download me-1"></i>Export invoice history</button></div><div class="card-body px-4 pb-4"><div class="table-responsive"><table class="table table-hover align-middle mb-0" id="saasInvoiceTable"><thead class="table-light"><tr><th>Invoice number</th><th>Plan</th><th>Billing cycle</th><th>Amount</th><th>Payment status</th><th>Invoice date</th><th>Action</th></tr></thead><tbody><tr><td>INV-SAAS-20260801</td><td>Standard Tier</td><td>01 Aug – 31 Aug 2026</td><td>Rs. 2,999</td><td><span class="status active">Paid</span></td><td>01 Aug 2026</td><td><button type="button" class="btn btn-sm btn-outline-primary" data-subscription-action="invoice" data-invoice="INV-SAAS-20260801">Download</button></td></tr><tr><td>INV-SAAS-20260701</td><td>Standard Tier</td><td>01 Jul – 31 Jul 2026</td><td>Rs. 2,999</td><td><span class="status active">Paid</span></td><td>01 Jul 2026</td><td><button type="button" class="btn btn-sm btn-outline-primary" data-subscription-action="invoice" data-invoice="INV-SAAS-20260701">Download</button></td></tr></tbody></table></div></div></div>
+                    <div class="card shadow-sm border-0 rounded-4 mt-4"><div class="card-header bg-transparent border-0 pt-4 px-4 d-flex flex-wrap gap-3 justify-content-between align-items-center card-head"><div><h4 class="fw-bold mb-1">SaaS invoice history</h4><p class="text-muted mb-0">Subscription invoices and payment confirmation for this workspace.</p></div><button type="button" class="btn btn-outline-primary rounded-pill btn-sm" data-subscription-action="export"><i class="fa-solid fa-download me-1"></i>Export invoice history</button></div><div class="card-body px-4 pb-4"><div class="table-responsive"><table class="table table-hover align-middle mb-0" id="saasInvoiceTable"><thead class="table-light"><tr><th>Invoice number</th><th>Plan</th><th>Billing cycle</th><th>Amount</th><th>Payment status</th><th>Invoice date</th><th>Action</th></tr></thead><tbody><tr><td colspan="7" class="text-center text-muted py-5">Loading invoice history…</td></tr></tbody></table></div></div></div>
                 </section>
 
                 <!-- Reports -->
@@ -897,6 +1056,22 @@
     </div>
     
     <div id="toast" class="toast hidden bg-dark text-white p-3 rounded-3 shadow-lg position-fixed bottom-0 end-0 m-4" style="z-index: 1050;"></div>
+
+    <div class="society-sync-dialog hidden" id="societyNoticeDialog" role="dialog" aria-modal="true" aria-labelledby="societyNoticeTitle">
+        <div class="modal-card">
+            <button type="button" class="close" id="societyNoticeClose" aria-label="Close">×</button>
+            <span class="small text-primary fw-bold text-uppercase">Society communication</span>
+            <h2 id="societyNoticeTitle" class="mt-1 mb-2">Send dashboard notice</h2>
+            <p class="text-muted mb-4">Send a notice to one role. It will appear in that role’s Announcements area.</p>
+            <form id="societyNoticeForm" class="row g-3">
+                <div class="col-12"><label class="form-label fw-semibold" for="societyNoticeAudience">Send to *</label><select class="form-select" id="societyNoticeAudience" required><option value="RESIDENTS">Resident dashboard</option><option value="MAINTENANCE">Maintenance dashboard</option><option value="SECURITY">Security dashboard</option></select></div>
+                <div class="col-12"><label class="form-label fw-semibold" for="societyNoticeTitleInput">Notice title *</label><input class="form-control" id="societyNoticeTitleInput" maxlength="120" placeholder="e.g. Water supply maintenance" required></div>
+                <div class="col-12"><label class="form-label fw-semibold" for="societyNoticeMessage">Message *</label><textarea class="form-control" id="societyNoticeMessage" rows="5" maxlength="3000" placeholder="Write the notice details clearly…" required></textarea></div>
+                <div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" id="societyNoticeUrgent"><span class="form-check-label">Mark as urgent</span></label></div>
+                <div class="col-12 d-flex justify-content-end gap-2 pt-2"><button type="button" class="btn btn-light" id="societyNoticeCancel">Cancel</button><button type="submit" class="btn btn-primary" id="societyNoticeSend"><i class="fa-solid fa-paper-plane me-2"></i>Send notice</button></div>
+            </form>
+        </div>
+    </div>
 
     <div id="societySyncModal" class="society-sync-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="societySyncTitle" aria-hidden="true">
         <div class="modal-card compact-modal">
@@ -925,5 +1100,32 @@
     <div th:replace="~{fragments/layout :: scripts}"></div>
     <!-- Advanced scripts for Admin -->
     <script th:src="@{/smartapartment/js/advanced-dashboard.js}"></script>
+    <script>
+        function syncAdminTickets() {
+            try {
+                const stored = localStorage.getItem("smartapartment-tickets-v1");
+                if (!stored) return;
+                const tickets = JSON.parse(stored);
+                const table = document.querySelector('[data-table="complaints"]');
+                if (!table) return;
+                
+                tickets.forEach(t => {
+                    const row = [...table.querySelectorAll('tr')].find(tr => tr.cells[0]?.textContent?.trim().includes(t.id) || tr.cells[1]?.textContent?.trim().includes(t.summary));
+                    if (row && row.cells.length >= 4) {
+                        const statusCell = row.cells[3];
+                        if (t.stage === "Started") {
+                            statusCell.innerHTML = `<span class="badge bg-info text-white"><i class="fa-solid fa-play me-1"></i>Started</span>`;
+                        } else if (t.stage === "Processing") {
+                            statusCell.innerHTML = `<span class="badge bg-primary text-white"><i class="fa-solid fa-gear fa-spin me-1"></i>Processing (ETA: ${t.eta || '2 Hours'})</span>`;
+                        } else if (t.stage === "Completed") {
+                            statusCell.innerHTML = `<span class="badge bg-success text-white"><i class="fa-solid fa-circle-check me-1"></i>Completed</span>`;
+                        }
+                    }
+                });
+            } catch (_) {}
+        }
+        window.addEventListener("storage", syncAdminTickets);
+        document.addEventListener("DOMContentLoaded", syncAdminTickets);
+    </script>
 </body>
 </html>

@@ -44,7 +44,10 @@ public class SecurityConfig {
                                 "/api/auth/**"
                         ).permitAll()
                         .requestMatchers("/api/mail/report-apartment").permitAll()
+                        .requestMatchers("/api/properties/public").permitAll()
+                        .requestMatchers("/api/admin/properties/**").permitAll()
                         .requestMatchers("/api/property/**").permitAll()
+                        .requestMatchers("/api/workflows/**").permitAll()
                         .requestMatchers("/api/billing/**").hasAnyRole("SOCIETY_ADMIN", "ACCOUNTANT")
                         .requestMatchers("/api/society/**").authenticated()
                         .requestMatchers("/admin/**").hasAnyRole("SUPER_ADMIN", "SOCIETY_ADMIN")
@@ -53,11 +56,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("/login")
+                        .loginPage("/")
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/?loggedOut=true").permitAll())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

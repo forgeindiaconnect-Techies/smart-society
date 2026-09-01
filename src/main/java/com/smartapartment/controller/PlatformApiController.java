@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -107,6 +108,7 @@ public class PlatformApiController {
         Tenant tenant = tenants.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Society was not found"));
         updateTenantFields(tenant, request);
+        updateTenantAdministrator(tenant, request);
         return tenants.save(tenant);
     }
 
@@ -121,10 +123,10 @@ public class PlatformApiController {
 
     @GetMapping("/plans")
     public List<SubscriptionPlan> plans() {
-        List<String> catalogue = List.of("Free", "Standard", "Premium");
         return plans.findAll().stream()
-                .filter(plan -> catalogue.contains(plan.getName()))
-                .sorted(java.util.Comparator.comparingInt(plan -> catalogue.indexOf(plan.getName())))
+                .filter(plan -> "platform".equalsIgnoreCase(plan.getTenantId()))
+                .filter(plan -> plan.getPlanCode() != null && !plan.getPlanCode().isBlank())
+                .sorted(java.util.Comparator.comparing(SubscriptionPlan::getId))
                 .toList();
     }
 
@@ -153,9 +155,7 @@ public class PlatformApiController {
                 .orElseThrow(() -> new IllegalArgumentException("Society was not found"));
         SubscriptionPlan plan = plans.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("Plan was not found"));
-        if (!List.of("Free", "Standard", "Premium").contains(plan.getName())) {
-            throw new IllegalArgumentException("Only an active catalogue plan can be assigned");
-        }
+        if (Boolean.FALSE.equals(plan.getActive())) throw new IllegalArgumentException("Only an active catalogue plan can be assigned");
         tenant.setSubscriptionPlanId(plan.getId());
         tenant.setSubscriptionStartedOn(java.time.LocalDate.now());
         tenant.setSubscriptionRenewsOn(java.time.LocalDate.now().plusMonths(1));
@@ -167,15 +167,30 @@ public class PlatformApiController {
     public List<Map<String, Object>> users() {
         return users.findAll().stream()
                 .filter(user -> !"green-heights".equalsIgnoreCase(user.getTenantId()))
-                .map(user -> Map.<String, Object>of(
-                        "id", user.getId(),
-                        "name", user.getFullName(),
-                        "email", user.getEmail(),
-                        "role", user.getRole(),
-                        "tenantId", user.getTenantId(),
-                        "locked", user.isAccountLocked()
-                ))
+                .map(this::platformUserView)
                 .toList();
+    }
+
+    private Map<String, Object> platformUserView(AppUser user) {
+        Map<String, Object> view = new LinkedHashMap<>();
+        view.put("id", user.getId());
+        view.put("name", user.getFullName());
+        view.put("email", user.getEmail());
+        view.put("phone", user.getPhone());
+        view.put("designation", user.getDesignation());
+        view.put("employeeId", user.getEmployeeId());
+        view.put("joiningDate", user.getJoiningDate());
+        view.put("workShift", user.getWorkShift());
+        view.put("address", user.getAddress());
+        view.put("emergencyContactName", user.getEmergencyContactName());
+        view.put("emergencyContactPhone", user.getEmergencyContactPhone());
+        view.put("profileNotes", user.getProfileNotes());
+        view.put("mfaEnabled", user.isMfaEnabled());
+        view.put("mobileAppAuthorized", user.isMobileAppAuthorized());
+        view.put("role", user.getRole());
+        view.put("tenantId", user.getTenantId());
+        view.put("locked", user.isAccountLocked());
+        return view;
     }
 
     private boolean isRealTenant(Tenant tenant) {
@@ -191,6 +206,24 @@ public class PlatformApiController {
         user.setFullName(request.fullName().trim());
         user.setRole(request.role());
         user.setAccountLocked(request.locked());
+        if (request.email() != null && !request.email().isBlank()) {
+            String email = request.email().trim().toLowerCase(java.util.Locale.ROOT);
+            if (users.findByEmail(email).filter(existing -> !existing.getId().equals(user.getId())).isPresent()) {
+                throw new IllegalArgumentException("Another account already uses this email address");
+            }
+            user.setEmail(email);
+        }
+        user.setPhone(text(request.phone(), user.getPhone()));
+        user.setDesignation(text(request.designation(), user.getDesignation()));
+        user.setEmployeeId(text(request.employeeId(), user.getEmployeeId()));
+        user.setJoiningDate(request.joiningDate() == null ? user.getJoiningDate() : request.joiningDate());
+        user.setWorkShift(text(request.workShift(), user.getWorkShift()));
+        user.setAddress(text(request.address(), user.getAddress()));
+        user.setEmergencyContactName(text(request.emergencyContactName(), user.getEmergencyContactName()));
+        user.setEmergencyContactPhone(text(request.emergencyContactPhone(), user.getEmergencyContactPhone()));
+        user.setProfileNotes(text(request.profileNotes(), user.getProfileNotes()));
+        user.setMfaEnabled(request.mfaEnabled());
+        user.setMobileAppAuthorized(request.mobileAppAuthorized());
         AppUser saved = users.save(user);
         return Map.of("id", saved.getId(), "name", saved.getFullName(), "role", saved.getRole(),
                 "locked", saved.isAccountLocked());
@@ -258,14 +291,44 @@ public class PlatformApiController {
         if (request.subscriptionPlanId() != null) {
             SubscriptionPlan plan = plans.findById(request.subscriptionPlanId())
                     .orElseThrow(() -> new IllegalArgumentException("Subscription plan was not found"));
-            if (!List.of("Free", "Standard", "Premium").contains(plan.getName())) {
-                throw new IllegalArgumentException("Select a plan from the active catalogue");
-            }
+            if (Boolean.FALSE.equals(plan.getActive())) throw new IllegalArgumentException("Select an active catalogue plan");
             tenant.setSubscriptionPlanId(plan.getId());
             tenant.setSubscriptionStartedOn(java.time.LocalDate.now());
             tenant.setSubscriptionRenewsOn(java.time.LocalDate.now().plusMonths(1));
             tenant.setSubscriptionStatus("ACTIVE");
         }
+    }
+
+    private void updateTenantAdministrator(Tenant tenant, TenantRequest request) {
+        AppUser administrator = users.findByTenantId(tenant.getTenantId()).stream()
+                .filter(user -> user.getRole() == UserRole.SOCIETY_ADMIN || user.getRole() == UserRole.FACILITY_MANAGER)
+                .findFirst()
+                .orElse(null);
+        if (administrator == null) return;
+
+        if (request.adminName() != null && !request.adminName().isBlank()) {
+            administrator.setFullName(request.adminName().trim());
+        }
+        if (request.adminDesignation() != null && !request.adminDesignation().isBlank()) {
+            administrator.setDesignation(request.adminDesignation().trim());
+        }
+        if (request.adminPhone() != null && !request.adminPhone().isBlank()) {
+            administrator.setPhone(request.adminPhone().trim());
+        }
+        if (request.adminEmail() != null && !request.adminEmail().isBlank()) {
+            String email = request.adminEmail().trim().toLowerCase(java.util.Locale.ROOT);
+            if (users.findByEmail(email).filter(existing -> !existing.getId().equals(administrator.getId())).isPresent()) {
+                throw new IllegalArgumentException("An account with this administrator email already exists");
+            }
+            administrator.setEmail(email);
+        }
+        if (request.adminPassword() != null && !request.adminPassword().isBlank()) {
+            if (!request.adminPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,72}$")) {
+                throw new IllegalArgumentException("Administrator password must include uppercase, lowercase, number and symbol");
+            }
+            administrator.setPasswordHash(passwordEncoder.encode(request.adminPassword()));
+        }
+        users.save(administrator);
     }
 
     private String nextTenantCode(String societyName) {
@@ -336,9 +399,9 @@ public class PlatformApiController {
             @Size(min = 8, max = 72) String adminPassword
     ) {}
 
-    public record UserRequest(
-            @NotBlank String fullName,
-            @NotNull UserRole role,
-            boolean locked
-    ) {}
+    public record UserRequest(@NotBlank String fullName, @Email String email, String phone, String designation,
+                              String employeeId, java.time.LocalDate joiningDate, String workShift, String address,
+                              String emergencyContactName, String emergencyContactPhone, String profileNotes,
+                              @NotNull UserRole role, boolean locked, boolean mfaEnabled,
+                              boolean mobileAppAuthorized) {}
 }

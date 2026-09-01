@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -17,4 +18,11 @@ public class SubscriptionBillingRule extends BaseEntity {
     private BigDecimal amount;
     private String billingCycle;
     private Integer graceDays;
+    private LocalDate effectiveFrom;
+    private String invoicePrefix;
+    private BigDecimal taxRate;
+    private BigDecimal lateFee;
+    private Boolean autoRenew = false;
+    private Boolean proratedBilling = false;
+    private String notes;
 }

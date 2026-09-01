@@ -3,11 +3,14 @@ package com.smartapartment.controller.superadmin;
 import com.smartapartment.entity.Announcement;
 import com.smartapartment.entity.AppUser;
 import com.smartapartment.entity.Notification;
+import com.smartapartment.entity.PlatformNoticeHistory;
 import com.smartapartment.entity.Tenant;
 import com.smartapartment.repository.AnnouncementRepository;
 import com.smartapartment.repository.AppUserRepository;
 import com.smartapartment.repository.NotificationRepository;
+import com.smartapartment.repository.PlatformNoticeHistoryRepository;
 import com.smartapartment.repository.TenantRepository;
+import com.smartapartment.service.CurrentUserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +29,18 @@ class SuperAdminPlatformNoticeController {
     private final TenantRepository tenants;
     private final AppUserRepository users;
     private final NotificationRepository notifications;
+    private final PlatformNoticeHistoryRepository noticeHistory;
+    private final CurrentUserService currentUser;
 
     public SuperAdminPlatformNoticeController(AnnouncementRepository announcements, TenantRepository tenants,
-                                    AppUserRepository users, NotificationRepository notifications) {
+                                    AppUserRepository users, NotificationRepository notifications,
+                                    PlatformNoticeHistoryRepository noticeHistory, CurrentUserService currentUser) {
         this.announcements = announcements;
         this.tenants = tenants;
         this.users = users;
         this.notifications = notifications;
+        this.noticeHistory = noticeHistory;
+        this.currentUser = currentUser;
     }
 
     @PostMapping
@@ -100,19 +108,73 @@ class SuperAdminPlatformNoticeController {
                 notifiedUsers++;
             }
         }
+
+        AppUser sender = currentUser.requireUser();
+        String targetLabel = allSocieties ? "All registered societies" : recipients.getFirst().getSocietyName();
+        PlatformNoticeHistory history = new PlatformNoticeHistory();
+        history.setTenantId("platform");
+        history.setTitle(title);
+        history.setMessage(request.message().trim());
+        history.setSenderName(sender.getFullName());
+        history.setSenderEmail(sender.getEmail());
+        history.setTargetLabel(targetLabel);
+        history.setCategory(request.category() == null ? "GENERAL" : request.category().trim());
+        history.setPriority(request.priority() == null ? "NORMAL" : request.priority().trim().toUpperCase());
+        history.setEmergency(isUrgent);
+        history.setValidDays(validDays);
+        history.setSocietyCount(recipients.size());
+        history.setNotifiedUsers(notifiedUsers);
+        noticeHistory.save(history);
         
         return ResponseEntity.ok(Map.of(
             "status", "SUCCESS",
             "message", "Platform notice successfully broadcasted!",
-            "target", allSocieties ? "All registered societies" : recipients.getFirst().getSocietyName(),
+            "target", targetLabel,
             "societyCount", recipients.size(),
             "notifiedUsers", notifiedUsers
         ));
     }
 
     @GetMapping
-    public ResponseEntity<List<Announcement>> getNotices(HttpSession session) {
-        return ResponseEntity.ok(announcements.findAll());
+    public ResponseEntity<List<PlatformNoticeHistory>> getNotices(HttpSession session) {
+        return ResponseEntity.ok(noticeHistory.findTop100ByOrderByCreatedAtDesc());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getNotice(@PathVariable Long id) {
+        return noticeHistory.findById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> updateNotice(@PathVariable Long id, @RequestBody NoticeUpdateRequest request,
+                                          HttpSession session) {
+        boolean isSuperAdminSession = Boolean.TRUE.equals(session.getAttribute("dashboard:smartapartment:superadmin"));
+        boolean isSuperAdminRole = SecurityContextHolder.getContext().getAuthentication() != null
+                && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN"));
+        if (!isSuperAdminSession && !isSuperAdminRole) {
+            return ResponseEntity.status(403).body(Map.of("message", "SuperAdmin authentication required"));
+        }
+        PlatformNoticeHistory notice = noticeHistory.findById(id).orElse(null);
+        if (notice == null) return ResponseEntity.notFound().build();
+        if (request.title() == null || request.title().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Notice title is required"));
+        }
+        if (request.message() == null || request.message().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Notice message content is required"));
+        }
+        notice.setTitle(request.title().trim());
+        notice.setMessage(request.message().trim());
+        notice.setCategory(request.category() == null || request.category().isBlank() ? "GENERAL" : request.category().trim());
+        String priority = request.priority() == null || request.priority().isBlank()
+                ? "NORMAL" : request.priority().trim().toUpperCase();
+        notice.setPriority(priority);
+        notice.setEmergency("URGENT".equals(priority) || Boolean.TRUE.equals(request.emergency()));
+        if (request.validDays() != null && request.validDays() > 0) notice.setValidDays(request.validDays());
+        return ResponseEntity.ok(noticeHistory.save(notice));
     }
 
     public record NoticeRequest(
@@ -125,4 +187,7 @@ class SuperAdminPlatformNoticeController {
         Boolean emergency,
         Integer validDays
     ) {}
+
+    public record NoticeUpdateRequest(String title, String message, String category, String priority,
+                                      Boolean emergency, Integer validDays) {}
 }

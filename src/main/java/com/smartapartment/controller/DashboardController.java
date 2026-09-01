@@ -5,18 +5,29 @@ import com.smartapartment.service.DashboardService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import com.smartapartment.repository.TenantRepository;
+import com.smartapartment.repository.VisitorRepository;
+import com.smartapartment.service.CurrentUserService;
+import com.smartapartment.entity.AppUser;
+import com.smartapartment.entity.Visitor;
+import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DashboardController {
 
     private final DashboardService dashboardService;
     private final TenantRepository tenantRepository;
+    private final CurrentUserService currentUser;
+    private final VisitorRepository visitors;
 
-    public DashboardController(DashboardService dashboardService, TenantRepository tenantRepository) {
+    public DashboardController(DashboardService dashboardService, TenantRepository tenantRepository,
+                               CurrentUserService currentUser, VisitorRepository visitors) {
         this.dashboardService = dashboardService;
         this.tenantRepository = tenantRepository;
+        this.currentUser = currentUser;
+        this.visitors = visitors;
     }
 
     @GetMapping("/")
@@ -31,7 +42,13 @@ public class DashboardController {
 
     @GetMapping("/login")
     public String login() {
-        return "auth/login";
+        return "redirect:/";
+    }
+
+    @GetMapping("/dashboards/logout")
+    public String logout(HttpSession session, @RequestParam(defaultValue = "smartapartment") String platform) {
+        session.invalidate();
+        return "propertydirect".equalsIgnoreCase(platform) ? "redirect:/propertydirect" : "redirect:/?loggedOut=true";
     }
 
     @GetMapping("/dashboard")
@@ -60,8 +77,14 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboards/security")
-    public String securityDashboard(HttpSession session) {
+    public String securityDashboard(HttpSession session, Model model, @RequestParam(required = false) String notice) {
         if (!isLoggedIn(session, "smartapartment", "security")) return "redirect:/?loginRequired=true";
+        AppUser user = currentUser.requireUser();
+        List<Visitor> securityVisitors = visitors.findByTenantIdOrderByExpectedAtDesc(user.getTenantId());
+        model.addAttribute("securityVisitors", securityVisitors);
+        model.addAttribute("securityActiveVisitors", securityVisitors.stream()
+                .filter(visitor -> "CHECKED_IN".equals(visitor.getStatus())).toList());
+        model.addAttribute("notice", notice);
         return "dashboards/security";
     }
 

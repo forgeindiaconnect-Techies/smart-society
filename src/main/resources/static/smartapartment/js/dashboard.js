@@ -27,6 +27,17 @@ const titles = {
     assets: "Assets and Preventive Maintenance",
     "audit-logs": "Granular Audit Trail"
 };
+const securityPanelTitles = {
+    overview: "Overview",
+    verify: "Pass / OTP Verification",
+    entries: "Gate Entry Register",
+    visitors: "Active Visitors",
+    deliveries: "Delivery Log",
+    staff: "Daily Staff & Attendance",
+    incidents: "Gate Incidents",
+    announcements: "Announcements",
+    profile: "Profile Settings"
+};
 
 const toast = document.getElementById("toast");
 const dashboardRole = document.body.dataset.dashboardRole || "admin";
@@ -44,6 +55,26 @@ const rolePanelRoutes = {
 let activeAction = null;
 let activePaymentProof = null;
 let latestPlatformAuditStream = [];
+
+async function persistWorkflowAction(action, button, values = []) {
+    const context = getContext(button || document.body);
+    const response = await fetch("/api/workflows", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            workspace: "SmartSociety",
+            dashboardRole,
+            panel: context.panel,
+            actionType: action,
+            targetLabel: context.target,
+            details: { values, button: buttonLabel(button || document.body), recordedAt: new Date().toISOString() }
+        })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || "Action could not be saved to the database");
+    return data;
+}
 
 function setupDashboardSidebarControls() {
     const sidebar = document.getElementById("sidebar") || document.querySelector(".dash-sidebar");
@@ -202,7 +233,7 @@ function setupDetailedProfileSettings() {
                 <label class="profile-select"><span><strong>Language</strong><small>Dashboard display language.</small></span><select name="language"><option value="en">English</option><option value="ta">Tamil</option><option value="hi">Hindi</option></select></label>
                 <label class="profile-select"><span><strong>Time zone</strong><small>Used for activity and report times.</small></span><select name="timezone"><option value="Asia/Calcutta">India Standard Time (IST)</option><option value="UTC">UTC</option></select></label>
             </div>
-            <div class="profile-settings__actions"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save preferences</button></div>
+            <div class="profile-settings__actions"><button type="submit" class="btn btn-primary" data-preferences-save><i class="fa-solid fa-check"></i><span>Save preferences</span></button></div>
         </form>
         <form id="dashboardPasswordForm" class="profile-settings__section">
             <div class="profile-settings__section-title"><i class="fa-solid fa-shield-halved"></i><div><h3>Password & security</h3><p>Use at least 8 characters with a number and symbol.</p></div></div>
@@ -262,7 +293,46 @@ function setupDetailedProfileSettings() {
     const preferenceKey = `smartapartment-profile-preferences:v1:${dashboardRole}`;
     const preferences = profile.querySelector("#dashboardPreferencesForm");
     try { const saved = JSON.parse(localStorage.getItem(preferenceKey) || "{}"); [...preferences.elements].forEach(input => { if (!input.name || saved[input.name] === undefined) return; input.type === "checkbox" ? input.checked = saved[input.name] : input.value = saved[input.name]; }); } catch (_) {}
-    preferences.addEventListener("submit", event => { event.preventDefault(); const values = {}; [...preferences.elements].forEach(input => { if (input.name) values[input.name] = input.type === "checkbox" ? input.checked : input.value; }); localStorage.setItem(preferenceKey, JSON.stringify(values)); state("Preferences saved"); showToast("✓ Notification and display preferences saved."); });
+    preferences.addEventListener("submit", async event => {
+        event.preventDefault();
+        const button = preferences.querySelector("[data-preferences-save]");
+        if (button?.disabled) return;
+        const values = {};
+        [...preferences.elements].forEach(input => { if (input.name) values[input.name] = input.type === "checkbox" ? input.checked : input.value; });
+        if (button) {
+            button.disabled = true;
+            button.classList.remove("btn-success", "animate__pulse");
+            button.classList.add("btn-primary");
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Saving…</span>';
+        }
+        try {
+            await new Promise(resolve => window.setTimeout(resolve, 450));
+            localStorage.setItem(preferenceKey, JSON.stringify(values));
+            state("Preferences saved");
+            showToast("✓ Notification and display preferences saved.");
+            if (button) {
+                button.classList.remove("btn-primary");
+                button.classList.add("btn-success", "animate__animated", "animate__pulse");
+                button.innerHTML = '<i class="fa-solid fa-circle-check animate__animated animate__zoomIn"></i><span>Preferences saved</span>';
+                window.setTimeout(() => {
+                    if (!button.isConnected) return;
+                    button.disabled = false;
+                    button.classList.remove("btn-success", "animate__animated", "animate__pulse");
+                    button.classList.add("btn-primary");
+                    button.innerHTML = '<i class="fa-solid fa-check"></i><span>Save preferences</span>';
+                }, 2200);
+            }
+        } catch (error) {
+            state("Unable to save preferences", true);
+            if (button) {
+                button.disabled = false;
+                button.classList.remove("btn-success");
+                button.classList.add("btn-primary");
+                button.innerHTML = '<i class="fa-solid fa-check"></i><span>Save preferences</span>';
+            }
+            showToast("Preferences could not be saved.");
+        }
+    });
     profile.querySelectorAll("[data-password-toggle]").forEach(button => button.addEventListener("click", () => { const input = button.previousElementSibling; const show = input.type === "password"; input.type = show ? "text" : "password"; button.innerHTML = `<i class="fa-regular fa-eye${show ? "-slash" : ""}"></i>`; }));
     profile.querySelector("#dashboardPasswordForm").addEventListener("submit", async event => {
         event.preventDefault(); const form = event.currentTarget; const currentPassword = form.currentPassword.value; const newPassword = form.newPassword.value;
@@ -354,10 +424,18 @@ function setupDetailedMonitoringExport() {
 
 setupDetailedMonitoringExport();
 
+function subscriptionTierDepth(plan) {
+    const name = String(plan?.name || plan?.planCode || "").toLowerCase();
+    if (name.includes("diamond") || name.includes("premium")) return { key: "diamond", featureLimit: 10, detailLimit: 8, label: "Complete" };
+    if (name.includes("platinum") || name.includes("standard")) return { key: "platinum", featureLimit: 7, detailLimit: 6, label: "Advanced" };
+    return { key: "gold", featureLimit: 4, detailLimit: 4, label: "Essential" };
+}
+
 function renderSubscriptionCatalogue(plans, tenants) {
     const cards = document.getElementById("subscriptionPlanCards");
     const assignmentBody = document.getElementById("societyPlanAssignmentTable");
-    if (!cards || !assignmentBody) return;
+    if (!assignmentBody) return;
+    const cataloguePlans = plans.filter(plan => ["gold", "platinum", "diamond"].some(tier => String(plan.name || plan.planCode || "").toLowerCase().includes(tier)));
     const money = value => `Rs. ${Number(value || 0).toLocaleString("en-IN")}`;
     const featureLabels = plan => [
         plan.complaintManagement && "Complaints", plan.announcementManagement && "Announcements",
@@ -366,24 +444,70 @@ function renderSubscriptionCatalogue(plans, tenants) {
         plan.analytics && "Advanced analytics", plan.paymentGateway && "Online payments",
         plan.apiAccess && "API access", plan.prioritySupport && "Priority support"
     ].filter(Boolean);
-    cards.replaceChildren(...plans.map((plan, index) => {
+    if (cards) cards.replaceChildren(...cataloguePlans.map((plan, index) => {
         const card = document.createElement("article");
-        card.className = `subscription-catalogue-card plan-${String(plan.name || "").toLowerCase()}`;
-        card.innerHTML = `<div class="subscription-catalogue-card__top"><span>${index === 0 ? "STARTER" : index === 1 ? "MOST POPULAR" : "SCALE"}</span><em class="${plan.active === false ? "is-inactive" : ""}">${plan.active === false ? "Inactive" : "Active"}</em></div><h4>${plan.name}</h4><p>${plan.description || "SmartSociety subscription plan"}</p><div class="subscription-price"><strong>${money(plan.monthlyPrice)}</strong><span>/ ${String(plan.billingCycle || "MONTHLY").toLowerCase()}</span></div><dl><div><dt>Flats</dt><dd>${Number(plan.maxApartments || 0).toLocaleString("en-IN")}</dd></div><div><dt>Residents</dt><dd>${Number(plan.maxResidents || 0).toLocaleString("en-IN")}</dd></div><div><dt>Audit history</dt><dd>${plan.auditHistoryDays || 0} days</dd></div></dl><ul>${featureLabels(plan).slice(0, 6).map(feature => `<li><i class="fa-solid fa-check"></i>${feature}</li>`).join("") || "<li>No additional modules enabled</li>"}</ul><button type="button" data-catalogue-plan-edit="${plan.id}"><i class="fa-solid fa-pen-to-square"></i>Edit ${plan.name} plan</button>`;
+        const depth = subscriptionTierDepth(plan);
+        const details = [
+            ["Flats", Number(plan.maxApartments || 0).toLocaleString("en-IN")],
+            ["Residents", Number(plan.maxResidents || 0).toLocaleString("en-IN")],
+            ["Audit history", `${plan.auditHistoryDays || 0} days`],
+            ["Administrators", Number(plan.maxAdmins || 0).toLocaleString("en-IN")],
+            ["Security staff", Number(plan.maxSecurityStaff || 0).toLocaleString("en-IN")],
+            ["Maintenance staff", Number(plan.maxMaintenanceStaff || 0).toLocaleString("en-IN")],
+            ["Storage", `${plan.storageGb || 0} GB`],
+            ["Support", String(plan.supportLevel || "Standard").replaceAll("_", " ")]
+        ].slice(0, depth.detailLimit);
+        card.className = `subscription-catalogue-card plan-${depth.key}${plan.featured ? " featured" : ""}`;
+        card.innerHTML = `<div class="subscription-catalogue-card__top"><span>${plan.featured ? "MOST POPULAR" : depth.label.toUpperCase()}</span><em class="${plan.active === false ? "is-inactive" : ""}">${plan.active === false ? "Inactive" : "Active"}</em></div><h4>${plan.name}</h4><p>${plan.description || "SmartSociety subscription plan"}</p><div class="subscription-price"><strong>${money(plan.monthlyPrice)}</strong><span>/ ${String(plan.billingCycle || "MONTHLY").toLowerCase()}</span></div><dl>${details.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl><ul>${featureLabels(plan).slice(0, depth.featureLimit).map(feature => `<li><i class="fa-solid fa-check"></i>${feature}</li>`).join("") || "<li>No additional modules enabled</li>"}</ul><button type="button" data-catalogue-plan-edit="${plan.id}"><i class="fa-solid fa-pen-to-square"></i>Edit ${plan.name} plan</button>`;
         return card;
     }));
-    document.getElementById("subscriptionPlanCount").textContent = plans.length;
+    const planCount = document.getElementById("subscriptionPlanCount");
+    if (planCount) planCount.textContent = cataloguePlans.length;
     const planById = new Map(plans.map(plan => [String(plan.id), plan]));
     let assigned = 0;
     assignmentBody.replaceChildren(...tenants.map(tenant => {
         const current = planById.get(String(tenant.subscriptionPlanId)); if (current) assigned++;
         const row = document.createElement("tr"); row.dataset.tenantId = tenant.id;
-        const options = plans.map(plan => `<option value="${plan.id}" ${String(plan.id) === String(tenant.subscriptionPlanId) ? "selected" : ""}>${plan.name}</option>`).join("");
+        const options = cataloguePlans.map(plan => `<option value="${plan.id}" ${String(plan.id) === String(tenant.subscriptionPlanId) ? "selected" : ""}>${plan.name}</option>`).join("");
         row.innerHTML = `<td><strong>${tenant.societyName || "Unnamed society"}</strong><small>${tenant.contactEmail || "No contact email"}</small></td><td>${[tenant.city, tenant.state].filter(Boolean).join(", ") || "Not provided"}</td><td><span class="subscription-current-plan ${current ? `plan-${current.name.toLowerCase()}` : "unassigned"}">${current?.name || "Unassigned"}</span></td><td>${tenant.subscriptionStartedOn || "—"}</td><td>${tenant.subscriptionRenewsOn || "—"}</td><td><span class="subscription-assignment-status ${tenant.subscriptionStatus === "ACTIVE" ? "active" : ""}">${tenant.subscriptionStatus || "Not assigned"}</span></td><td><div class="subscription-assignment-control"><select aria-label="Select plan for ${tenant.societyName}"><option value="">Select plan</option>${options}</select><button type="button" data-assign-society-plan>Save</button></div></td>`;
         return row;
     }));
     if (!tenants.length) { const row=document.createElement("tr");row.innerHTML='<td colspan="7" class="text-center text-muted py-5">No registered societies are available for subscription assignment.</td>';assignmentBody.appendChild(row); }
     document.getElementById("assignedSocietyCount").textContent = assigned;
+}
+
+function renderOverviewPlanCards(plans) {
+    const root = document.getElementById("overviewPlanCards");
+    if (!root) return;
+    const cataloguePlans = plans.filter(plan => ["gold", "platinum", "diamond"].some(tier => String(plan.name || plan.planCode || "").toLowerCase().includes(tier)));
+    const safe = value => String(value ?? "").replace(/[&<>"']/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character]);
+    const money = value => `Rs. ${Number(value || 0).toLocaleString("en-IN")}`;
+    const featureLabels = plan => [
+        plan.visitorManagement && "Visitor management", plan.amenityBooking && "Amenity booking",
+        plan.billingManagement && "Maintenance billing", plan.complaintManagement && "Complaint management",
+        plan.announcementManagement && "Announcements", plan.expenseManagement && "Expense approvals",
+        plan.analytics && "Advanced analytics", plan.paymentGateway && "Payment gateway",
+        plan.apiAccess && "API access", plan.prioritySupport && "Priority support"
+    ].filter(Boolean);
+    if (!cataloguePlans.length) {
+        root.innerHTML = '<div class="col-12 text-center text-muted py-4">No subscription plans are available.</div>';
+        return;
+    }
+    root.innerHTML = cataloguePlans.map((plan, index) => {
+        const features = featureLabels(plan);
+        const depth = subscriptionTierDepth(plan);
+        const kicker = plan.featured ? '<i class="fa-solid fa-star me-1"></i> Most used' : depth.label;
+        const details = [
+            `${Number(plan.maxApartments || 0).toLocaleString("en-IN")} flats and ${Number(plan.maxResidents || 0).toLocaleString("en-IN")} residents`,
+            `${Number(plan.maxAdmins || 0)} admin(s) and ${Number(plan.maxSecurityStaff || 0)} security staff`,
+            `${Number(plan.auditHistoryDays || 0)} day audit history`,
+            `${Number(plan.maxMaintenanceStaff || 0)} maintenance staff`,
+            `${Number(plan.storageGb || 0)} GB document storage`,
+            `${safe(plan.supportLevel || "STANDARD")} support`,
+            safe(features.slice(0, depth.featureLimit).join(" · ") || "Core workspace access")
+        ].slice(0, depth.detailLimit);
+        return `<div class="col-md-4"><article class="card h-100 p-4 subscription-plan-card plan-${depth.key} rounded-4 ${plan.featured ? "featured-plan border-0 shadow bg-white" : "border border-primary border-opacity-25 bg-primary bg-opacity-10"}" data-plan-id="${plan.id}"><span class="badge ${plan.featured ? "bg-warning text-dark" : "bg-primary text-white"} mb-3 plan-kicker">${kicker}</span><div class="d-flex justify-content-between align-items-center mb-3 plan-title-row"><h3 class="fw-bold mb-0">${safe(plan.name)}</h3><span class="badge ${plan.active === false ? "bg-secondary" : "bg-success"} status">${plan.active === false ? "Inactive" : "Live"}</span></div><p class="text-muted small">${safe(plan.description || "SmartSociety subscription plan")} <strong>${money(plan.monthlyPrice)} / ${safe(String(plan.billingCycle || "MONTHLY").toLowerCase())}</strong>.</p><ul class="text-muted small mb-4 flex-grow-1">${details.map(detail=>`<li>${detail}</li>`).join("")}</ul><button class="btn ${plan.featured ? "btn-primary" : "btn-outline-primary"} w-100 rounded-pill" type="button" data-catalogue-plan-edit="${plan.id}">Edit Plan</button></article></div>`;
+    }).join("");
 }
 
 document.addEventListener("click", async event => {
@@ -538,11 +662,12 @@ async function loadSocietyBackendData() {
 
     try {
         const optional = path => request(path).catch(() => []);
-        const [overview, apartments, residents, complaints, visitors, bills, amenityItems, bookingItems, noticeItems, me, expenseItems, paymentItems, teamItems] = await Promise.all([
-            request("overview"), optional("apartments"), optional("residents"),
-            optional("complaints"), optional("visitors"), optional("bills"), optional("amenities"), optional("bookings"), optional("announcements"), request("me"), optional("finance/expenses"), optional("finance/payments"), dashboardRole === "admin" ? optional("team-users") : Promise.resolve([])
+        const canReadResidents = ["admin", "accountant", "security", "maintenance"].includes(dashboardRole);
+        const canReadFinance = ["admin", "accountant"].includes(dashboardRole);
+        const [overview, apartments, residents, complaints, visitors, bills, amenityItems, bookingItems, noticeItems, me, expenseItems, paymentItems, teamItems, subscription] = await Promise.all([
+            request("overview"), optional("apartments"), canReadResidents ? optional("residents") : Promise.resolve([]),
+            optional("complaints"), optional("visitors"), optional("bills"), optional("amenities"), optional("bookings"), optional("announcements"), request("me"), canReadFinance ? optional("finance/expenses") : Promise.resolve([]), canReadFinance ? optional("finance/payments") : Promise.resolve([]), dashboardRole === "admin" ? optional("team-users") : Promise.resolve([]), dashboardRole === "admin" ? request("subscription").catch(() => null) : Promise.resolve(null)
         ]);
-        window.platformTenants = tenants;
         const overviewByLabel = {"total flats":overview.totalApartments,"residents":overview.totalResidents,
             "unpaid bills":overview.unpaidBills,"open complaints":overview.pendingComplaints,
             "open requests":overview.pendingComplaints,"inside visitors":overview.visitorCount};
@@ -553,8 +678,41 @@ async function loadSocietyBackendData() {
         fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,a.unitNo);c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="residents"]', [...residents,...teamItems], (x,c,s) => { const r=document.createElement("tr");const team=Boolean(x.role);c(r,x.name);c(r,[x.phone,x.email].filter(Boolean).join(" · ")||"—");c(r,team?(x.employeeId||"—"):(x.unitNo||"—"));c(r,team?x.role.replaceAll("_"," "):x.residentType);c(r,team?([x.designation,x.workShift].filter(Boolean).join(" · ")||"Society team"):(x.vehicleNumber?`Vehicle: ${x.vehicleNumber}`:"Resident access"));s(r,x.accountLocked?"LOCKED":"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="billing"]', bills, (b,c,s) => { const r=document.createElement("tr");r.dataset.recordId=b.id;if(dashboardRole==="resident"){c(r,b.month);c(r,"Maintenance");}else{c(r,b.unitNo);c(r,b.month);}c(r,`Rs. ${b.totalAmount}`);s(r,b.paymentStatus);const td=document.createElement("td");if(b.paymentStatus==="PAID")td.textContent="Paid";else{const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-success";button.dataset.action="pay";button.textContent="Mark Paid";td.appendChild(button);}r.appendChild(td);return r; });
-        fill('table[data-table="complaints"],table[data-table="maintenance-complaints"]', complaints, (x,c,s,table) => { const r=document.createElement("tr");r.dataset.recordId=x.id;c(r,x.title);if(dashboardRole==="resident"){c(r,x.category);s(r,x.status);}else if(dashboardRole==="maintenance"){c(r,x.unitNo);s(r,x.status);}else{c(r,x.unitNo);c(r,x.assignedTo||x.category);s(r,x.status);}const td=document.createElement("td");const closed=["RESOLVED","CLOSED"].includes(x.status);if(dashboardRole==="resident")td.textContent="Admin controlled";else if(closed){const badge=document.createElement("span");badge.className="badge bg-success-subtle text-success-emphasis";badge.textContent="Closed";td.appendChild(badge);}else if(dashboardRole==="maintenance"){const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-primary";b.dataset.backendAction=x.status==="IN_PROGRESS"?"complaint-resolve":"complaint-start";b.textContent=x.status==="IN_PROGRESS"?"Mark Fixed":"Start Work";td.appendChild(b);}else{const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-outline-danger";b.dataset.backendAction="complaint-close";b.textContent="Close Ticket";td.appendChild(b);}r.appendChild(td);return r; });
+        fill('table[data-table="complaints"],table[data-table="maintenance-complaints"]', complaints, (x,c,s,table) => {
+            const r=document.createElement("tr");
+            r.dataset.recordId=x.id;
+            const closed=["RESOLVED","CLOSED"].includes(x.status);
+            if(dashboardRole==="maintenance"){
+                c(r,`T-${String(x.id).padStart(4,"0")}`);
+                const summary=document.createElement("td");
+                const title=document.createElement("strong");title.textContent=x.title;summary.appendChild(title);
+                const detail=document.createElement("small");detail.className="d-block text-muted mt-1";detail.textContent=[x.priority, x.description, x.preferredContactMethod && `Contact: ${x.preferredContactMethod}`, x.reporterPhone].filter(Boolean).join(" · ");summary.appendChild(detail);r.appendChild(summary);
+                c(r,[x.unitNo,x.locationDetails].filter(Boolean).join(" · ")||"—");
+                c(r,[x.category,x.subcategory].filter(Boolean).join(" / ")||"—");
+                const logged=x.incidentAt||x.createdAt;c(r,logged?new Date(logged).toLocaleString("en-IN"):"—");
+            }else{
+                c(r,x.title);
+                if(dashboardRole==="resident"){c(r,x.category);s(r,x.status);}
+                else{c(r,x.unitNo);c(r,x.assignedTo||"Unassigned");s(r,x.status);}
+            }
+            const td=document.createElement("td");
+            if(dashboardRole==="resident")td.textContent="Admin controlled";
+            else if(closed){const badge=document.createElement("span");badge.className="badge bg-success-subtle text-success-emphasis";badge.textContent=x.status;td.appendChild(badge);}
+            else if(dashboardRole==="maintenance"){
+                const assignment=document.createElement("small");assignment.className="d-block mb-2 text-muted";assignment.textContent=x.assignedTo?`Assigned to ${x.assignedTo}`:"Unassigned ticket";td.appendChild(assignment);
+                const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-primary";b.dataset.backendAction=x.status==="IN_PROGRESS"?"complaint-resolve":"complaint-start";b.textContent=x.status==="IN_PROGRESS"?"Mark Fixed":"Claim & Start";td.appendChild(b);
+            }else{
+                if(dashboardRole==="admin"){const assign=document.createElement("button");assign.type="button";assign.className="btn btn-sm btn-primary me-2";assign.dataset.backendAction="complaint-assign";assign.textContent=x.assignedTo?"Reassign":"Assign";td.appendChild(assign);}
+                const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-outline-danger";b.dataset.backendAction="complaint-close";b.textContent="Close Ticket";td.appendChild(b);
+            }
+            r.appendChild(td);return r;
+        });
         fill('table[data-table="visitors"],table[data-table="entries"]', visitors, (v,c,s,table) => { const r=document.createElement("tr");r.dataset.recordId=v.id;c(r,v.name);if(dashboardRole==="admin"){c(r,v.unitNo);c(r,v.purpose);c(r,v.expectedAt);}else{c(r,v.phone);c(r,v.unitNo);if(table.dataset.table==="entries"){c(r,v.purpose);c(r,v.resident);}else{c(r,v.checkInAt||v.expectedAt);}}s(r,v.status);const td=document.createElement("td");if(v.status==="CHECKED_OUT")td.textContent="Checked out";else{const b=document.createElement("button");b.dataset.backendAction=v.status==="CHECKED_IN"?"visitor-checkout":"visitor-checkin";b.textContent=v.status==="CHECKED_IN"?"Check Out":"Check In";td.appendChild(b);}r.appendChild(td);return r; });
+        const visitorCounters = document.querySelectorAll('[data-view="visitors"] .compact-stats strong');
+        const visitorStatus = value => String(value || "").toUpperCase();
+        if (visitorCounters[0]) visitorCounters[0].textContent = visitors.filter(visitor => ["WAITING", "EXPECTED", "PENDING"].includes(visitorStatus(visitor.status))).length;
+        if (visitorCounters[1]) visitorCounters[1].textContent = visitors.filter(visitor => ["INSIDE", "CHECKED_IN"].includes(visitorStatus(visitor.status))).length;
+        if (visitorCounters[2]) visitorCounters[2].textContent = visitors.filter(visitor => visitorStatus(visitor.status) === "CHECKED_OUT").length;
         fill('table[data-table="expenses"]',expenseItems,(x,c,s)=>{const r=document.createElement("tr");r.dataset.recordId=x.id;c(r,`${x.title || x.category}${x.invoiceNumber ? ` · Invoice: ${x.invoiceNumber}` : ""}${x.description ? ` · ${x.description}` : ""}`);c(r,`${x.vendor || "—"}${x.vendorPhone ? ` · ${x.vendorPhone}` : ""}`);c(r,`Rs. ${Number(x.amount || 0).toLocaleString("en-IN")}${Number(x.taxAmount || 0) ? ` + tax Rs. ${Number(x.taxAmount).toLocaleString("en-IN")}` : ""}`);c(r,`Expense: ${x.date || "—"}${x.dueDate ? ` · Due: ${x.dueDate}` : ""}${x.paidDate ? ` · Paid: ${x.paidDate}` : ""}`);s(r,x.approvalStatus);const td=document.createElement("td");if(x.approvalStatus==="PENDING"){[["expense-edit","Edit","btn-outline-primary"],["expense-approve","Approve","btn-primary"],["expense-reject","Reject","btn-outline-danger"],["expense-delete","Remove","btn-outline-secondary"]].forEach(([action,label,style])=>{const b=document.createElement("button");b.type="button";b.className=`btn btn-sm ${style} me-2 mb-1`;b.dataset.backendAction=action;b.textContent=label;if(action==="expense-edit")b.dataset.expense=JSON.stringify(x);td.appendChild(b);});}else if(x.approvalStatus==="APPROVED"){const b=document.createElement("button");b.type="button";b.className="btn btn-sm btn-success";b.dataset.backendAction="expense-pay";b.textContent="Record payment";td.appendChild(b);}else td.textContent=x.approvalStatus==="PAID" ? `${x.paymentMode || "Paid"}${x.paymentReference ? ` · ${x.paymentReference}` : ""}` : (x.approvalNote || "Closed");r.appendChild(td);return r;});
         window.societyPaymentRecords = paymentItems;
         window.societyBillRecords = bills;
@@ -564,17 +722,77 @@ async function loadSocietyBackendData() {
         window.societyApartments = apartments;
         renderAmenityBookingDesk(amenityItems, bookingItems, residents);
         renderAnnouncements(noticeItems);
+        if (subscription) renderSocietySubscription(subscription);
+        const setOverviewQuick = (id, count, label) => { const node = document.getElementById(id); if (node) node.textContent = `${count} ${label}`; };
+        setOverviewQuick("overviewVisitorRecords", visitors.length, `visitor record${visitors.length === 1 ? "" : "s"}`);
+        setOverviewQuick("overviewAmenityBookings", bookingItems.length, `amenity booking${bookingItems.length === 1 ? "" : "s"}`);
+        setOverviewQuick("overviewExpenseRecords", expenseItems.length, `expense record${expenseItems.length === 1 ? "" : "s"}`);
+        const openComplaints = complaints.filter(complaint => !["RESOLVED", "CLOSED"].includes(String(complaint.status || "").toUpperCase())).length;
+        setOverviewQuick("overviewOpenComplaints", openComplaints, `open complaint${openComplaints === 1 ? "" : "s"}`);
+        window.societyCurrentUser = me;
         const nameField=document.querySelector('[data-profile-field="name"]');const emailField=document.querySelector('[data-profile-field="email"]');if(nameField)nameField.value=me.name;if(emailField)emailField.value=me.email;
+        const residentWelcomeName = document.getElementById("residentWelcomeName");
+        if (residentWelcomeName && me?.name) residentWelcomeName.textContent = me.name;
         document.documentElement.dataset.backendConnected = "true";
     } catch (error) {
         console.error("Dashboard backend hydration failed", error);
     }
 }
 
+function renderSocietySubscription(subscription) {
+    const setText = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
+    const localDate = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString("en-IN", {day:"2-digit", month:"short", year:"numeric"}) : "Not scheduled";
+    const money = value => `Rs. ${Number(value || 0).toLocaleString("en-IN", {maximumFractionDigits: 2})}`;
+    const active = String(subscription.status || "INACTIVE").toUpperCase() === "ACTIVE";
+    const planName = subscription.planName || "No plan assigned";
+    const cycle = String(subscription.billingCycle || "Not configured").replaceAll("_", " ").toLowerCase();
+
+    setText("saasHeroPlan", planName);
+    setText("saasHeroDescription", active
+        ? `${subscription.societyName || "This society"} is covered by the ${planName} plan. Capacity, renewal and invoice details are shown below.`
+        : "A platform subscription must be assigned before paid society services can be used.");
+    const heroStatus = document.getElementById("saasHeroStatus");
+    if (heroStatus) {
+        heroStatus.textContent = active ? "Subscription active" : "Subscription inactive";
+        heroStatus.className = `badge border mb-2 ${active ? "bg-success-subtle text-success-emphasis border-success-subtle" : "bg-warning-subtle text-warning-emphasis border-warning-subtle"}`;
+    }
+    setText("saasCurrentPlan", planName);
+    setText("saasPlanCycle", cycle === "not configured" ? "Billing cycle not configured" : `${cycle[0].toUpperCase()}${cycle.slice(1)} billing`);
+    setText("saasPlanStatus", active ? "Active" : String(subscription.status || "Inactive").replaceAll("_", " "));
+    setText("saasPlanStarted", subscription.startedOn ? `Activated ${localDate(subscription.startedOn)}` : "Activation date not recorded");
+    setText("saasFlatCapacity", `${Number(subscription.usedFlats || 0).toLocaleString("en-IN")} / ${Number(subscription.maxFlats || 0).toLocaleString("en-IN")} flats`);
+    setText("saasFlatRemaining", `${Number(subscription.remainingFlats || 0).toLocaleString("en-IN")} flats remaining`);
+    setText("saasNextRenewal", localDate(subscription.renewsOn));
+    setText("saasRenewalAmount", subscription.amount > 0 ? `${money(subscription.amount)} + applicable taxes` : "No renewal charge configured");
+
+    const body = document.querySelector("#saasInvoiceTable tbody");
+    if (!body) return;
+    body.replaceChildren();
+    const invoices = Array.isArray(subscription.invoices) ? subscription.invoices : [];
+    if (!invoices.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7; cell.className = "text-center text-muted py-5";
+        cell.textContent = "No subscription invoices are available for this workspace yet.";
+        row.appendChild(cell); body.appendChild(row); return;
+    }
+    invoices.forEach(invoice => {
+        const row = document.createElement("tr");
+        const values = [invoice.number, invoice.plan, `${localDate(invoice.cycleStart)} – ${localDate(invoice.cycleEnd)}`, money(invoice.amount)];
+        values.forEach(value => { const cell = document.createElement("td"); cell.textContent = value; row.appendChild(cell); });
+        const statusCell = document.createElement("td");
+        const badge = document.createElement("span"); badge.className = "status active"; badge.textContent = invoice.status || "Paid"; statusCell.appendChild(badge); row.appendChild(statusCell);
+        const dateCell = document.createElement("td"); dateCell.textContent = localDate(invoice.invoiceDate); row.appendChild(dateCell);
+        const actionCell = document.createElement("td");
+        const button = document.createElement("button"); button.type = "button"; button.className = "btn btn-sm btn-outline-primary"; button.dataset.subscriptionAction = "invoice"; button.dataset.invoice = invoice.number; button.textContent = "Download"; actionCell.appendChild(button); row.appendChild(actionCell);
+        body.appendChild(row);
+    });
+}
+
 async function loadPlatformBackendData(){
     try{
         const get=async p=>{const r=await fetch(`/api/${p}`,{headers:{Accept:"application/json"}});if(!r.ok)throw new Error("Platform data unavailable");return r.json();};
-        const [overview,tenants,users, plans, roles, privacyReqs, gateways, monitoring, audit, subscriptions, analytics]=await Promise.all([
+        const [overview,tenants,users, plans, roles, privacyReqs, gateways, monitoring, audit, subscriptions, analytics, sentNotices]=await Promise.all([
             get("platform/overview"),get("platform/tenants"),get("platform/users"),get("platform/plans"),
             get("superadmin/roles/list").catch(()=>[]),
             get("superadmin/data/privacy/requests").catch(()=>[]),
@@ -582,7 +800,8 @@ async function loadPlatformBackendData(){
             get("superadmin/monitoring/data").catch(()=>({stats:{}, watchlist:[]})),
             get("superadmin/audit/data").catch(()=>({stats:{}, stream:[]})),
             get("superadmin/subscriptions/data").catch(()=>({mapping:[], admins:[], rules:[]})),
-            get("superadmin/analytics/data").catch(()=>({}))
+            get("superadmin/analytics/data").catch(()=>({})),
+            get("superadmin/notices").catch(()=>[])
         ]);
         const auditSocietyFilter = document.getElementById("auditSocietyFilter");
         if (auditSocietyFilter) {
@@ -601,10 +820,23 @@ async function loadPlatformBackendData(){
         document.querySelectorAll('.stats article').forEach(card=>{const key=card.querySelector("span")?.textContent.trim().toLowerCase();const value=card.querySelector("strong");if(value&&byLabel[key]!==undefined)value.textContent=byLabel[key];});
         const fill=(selector,items,rowBuilder)=>document.querySelectorAll(selector).forEach(table=>{const body=table;if(table.tagName==="TABLE") { const tb=table.tBodies[0]; if(tb) tb.replaceChildren(...items.map(rowBuilder)); } else { table.replaceChildren(...items.map(rowBuilder)); }});
         const td=(row,value)=>{const cell=document.createElement("td");cell.textContent=value??"";row.appendChild(cell);};
+        const escapeHtml=value=>String(value??"").replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character]);
         const planById = new Map(plans.map(plan => [String(plan.id), plan]));
+        window.platformTenants = tenants;
+        window.platformUsers = users;
+        window.platformBillingRules = subscriptions.rules || [];
+        window.platformGateways = gateways || [];
+        const noticeSocietySelect = document.getElementById("specificSociety");
+        if (noticeSocietySelect) {
+            const selectedSociety = noticeSocietySelect.value;
+            noticeSocietySelect.replaceChildren(new Option("-- Select a Society --", "", true, false));
+            tenants.forEach(tenant => noticeSocietySelect.add(new Option(tenant.societyName, tenant.id)));
+            if ([...noticeSocietySelect.options].some(option => option.value === selectedSociety)) noticeSocietySelect.value = selectedSociety;
+        }
         fill('table[data-table="societies"]',tenants,t=>{const r=document.createElement("tr");r.dataset.recordId=t.id;td(r,t.societyName);td(r,[t.city,t.state].filter(Boolean).join(", "));td(r,planById.get(String(t.subscriptionPlanId))?.name||"Unassigned");td(r,t.approved?"Approved":"Pending");const c=document.createElement("td");c.innerHTML=`<button class="btn btn-sm btn-outline-primary me-1" data-backend-action="edit-society">Edit</button><button class="btn btn-sm ${t.approved?'btn-outline-danger':'btn-outline-success'}" data-backend-action="${t.approved?'suspend-society':'approve-society'}">${t.approved?'Suspend':'Approve'}</button>`;r.appendChild(c);return r;});
         fill('table[data-table="users"]',users,u=>{const r=document.createElement("tr");r.dataset.userId=u.id;td(r,u.name);td(r,u.role);td(r,u.tenantId);td(r,u.locked?"Locked":"Active");const c=document.createElement("td");c.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-platform-user-edit>Edit User</button>`;r.appendChild(c);return r;});
         window.platformPlans = plans;
+        renderOverviewPlanCards(plans);
         renderSubscriptionCatalogue(plans, tenants);
         fill('#subscriptionPlansTable', plans, plan=>{const r=document.createElement("tr");r.dataset.planId=plan.id;td(r,plan.name);td(r,`Rs. ${plan.monthlyPrice}`);td(r,plan.maxApartments);td(r,plan.maxResidents);td(r,[plan.visitorManagement&&"Visitors",plan.amenityBooking&&"Amenities",plan.analytics&&"Analytics"].filter(Boolean).join(" · ") || "Core");const c=document.createElement("td");c.innerHTML="<button type='button' class='btn btn-sm btn-outline-primary' data-plan-action='edit'>Edit Plan</button>";r.appendChild(c);return r;});
         
@@ -614,6 +846,42 @@ async function loadPlatformBackendData(){
         fill('#paymentGatewaysTable', gateways, g=>{const r=document.createElement("tr");r.dataset.gatewayId=g.id;td(r,g.providerName);td(r,g.environment || "Sandbox");const status=document.createElement("td");status.innerHTML=`<span class="badge ${g.active?'bg-success':'bg-secondary'}">${g.active?'Active':'Disabled'}</span>`;r.appendChild(status);td(r,g.transactionFee || "—");const c=document.createElement("td");c.innerHTML=`<button type="button" class="btn btn-sm btn-outline-primary" data-gateway-config>Configure</button>`;r.appendChild(c);return r;});
         
         fill('#liveSocietyWatchlistTable', monitoring.watchlist, m=>{const r=document.createElement("tr");td(r,m.society);td(r,m.module);td(r,m.currentSignal);td(r,m.owner);td(r,m.accessRule);return r;});
+        const noticeHistoryCount = document.getElementById("platformNoticeHistoryCount");
+        if (noticeHistoryCount) noticeHistoryCount.textContent = `${sentNotices.length} sent`;
+        window.platformSentNotices = sentNotices;
+        fill('#platformNoticeHistoryTable', sentNotices, notice=>{
+            const r=document.createElement("tr");
+            r.dataset.noticeId=notice.id;
+            const title=document.createElement("td");
+            title.innerHTML=`<strong class="d-block">${escapeHtml(notice.title || "Platform notice")}</strong><small class="text-muted">${escapeHtml(notice.category || "GENERAL")}</small>`;
+            r.appendChild(title);
+            const message=document.createElement("td");
+            message.style.minWidth="260px";
+            message.textContent=notice.message || "";
+            r.appendChild(message);
+            td(r,notice.targetLabel || "—");
+            const priority=document.createElement("td");
+            const priorityLabel=notice.emergency ? "URGENT" : (notice.priority || "NORMAL");
+            priority.innerHTML=`<span class="badge ${notice.emergency?'bg-danger':'bg-primary-subtle text-primary-emphasis'}">${escapeHtml(priorityLabel)}</span>`;
+            r.appendChild(priority);
+            const sender=document.createElement("td");
+            sender.innerHTML=`<strong class="d-block">${escapeHtml(notice.senderName || "Super Admin")}</strong><small class="text-muted">${escapeHtml(notice.senderEmail || "")}</small>`;
+            r.appendChild(sender);
+            const sentAt=document.createElement("td");
+            sentAt.textContent=notice.createdAt ? new Date(notice.createdAt).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+            r.appendChild(sentAt);
+            const delivery=document.createElement("td");
+            delivery.innerHTML=`<strong class="d-block">${Number(notice.notifiedUsers || 0).toLocaleString("en-IN")} users</strong><small class="text-muted">${Number(notice.societyCount || 0).toLocaleString("en-IN")} societ${Number(notice.societyCount || 0)===1?'y':'ies'}</small>`;
+            r.appendChild(delivery);
+            const actions=document.createElement("td");
+            actions.innerHTML=`<div class="d-flex gap-2"><button type="button" class="btn btn-sm btn-outline-primary text-nowrap" data-platform-notice-view="${notice.id}"><i class="fa-regular fa-eye me-1"></i>View details</button><button type="button" class="btn btn-sm btn-primary" data-platform-notice-edit="${notice.id}"><i class="fa-solid fa-pen me-1"></i>Edit</button></div>`;
+            r.appendChild(actions);
+            return r;
+        });
+        if (!sentNotices.length) {
+            const historyBody=document.getElementById("platformNoticeHistoryTable");
+            if (historyBody) historyBody.innerHTML='<tr><td colspan="8" class="text-center text-muted py-4">No platform notices have been sent yet.</td></tr>';
+        }
         if(monitoring.commandWatch) {
             fill('#commandWatchGrid', monitoring.commandWatch, c=>{
                 const r=document.createElement("tr");
@@ -705,6 +973,29 @@ function flatPayload(values = [], row = null) {
     };
 }
 
+function ensureTargetedAnnouncementPanel() {
+    if (!["maintenance", "security"].includes(dashboardRole)) return;
+    const panelId = "roleAnnouncementList";
+    if (document.getElementById(panelId)) return;
+    const nav = document.querySelector("#sidebar .sidebar-nav");
+    const content = document.querySelector(".dashboard-container");
+    if (!nav || !content) return;
+    const link = document.createElement("a");
+    link.href = "#announcements";
+    link.className = "nav-link btn btn-link text-start text-decoration-none";
+    link.dataset.panel = "announcements";
+    link.innerHTML = '<i class="fa-solid fa-bullhorn me-2"></i> Announcements';
+    link.addEventListener("click", () => openPanel("announcements"));
+    nav.appendChild(link);
+    const panel = document.createElement("section");
+    panel.className = "d-none animate__animated animate__fadeIn";
+    panel.dataset.view = "announcements";
+    panel.id = "panel-announcements";
+    panel.tabIndex = -1;
+    panel.innerHTML = `<div class="card shadow-sm border-0 rounded-4"><div class="card-header bg-transparent border-0 pt-4 px-4"><span class="small text-primary fw-bold text-uppercase">Society communication</span><h4 class="fw-bold mb-1 mt-1">Announcements</h4><p class="text-muted mb-0">Updates sent directly to the ${dashboardRole} dashboard.</p></div><div class="card-body px-4 pb-4" id="roleAnnouncementList"><div class="text-center text-muted py-4">Loading society notices…</div></div></div>`;
+    content.appendChild(panel);
+}
+
 function renderAnnouncements(noticeItems = []) {
     if (dashboardRole === "admin") {
         document.querySelectorAll('table[data-table="announcements"] tbody').forEach(body => {
@@ -747,12 +1038,14 @@ function renderAnnouncements(noticeItems = []) {
         updateCount();
         return;
     }
-    const list = document.getElementById("residentAnnouncementList");
+    ensureTargetedAnnouncementPanel();
+    const list = document.getElementById(dashboardRole === "resident" ? "residentAnnouncementList" : "roleAnnouncementList");
     if (!list) return;
     list.replaceChildren();
-    const residentNotices = noticeItems.filter(n => ["ALL","RESIDENTS"].includes(String(n.audience || "ALL").toUpperCase()));
-    if (!residentNotices.length) { list.innerHTML = '<div class="text-center text-muted py-5"><i class="fa-regular fa-bell-slash fs-2 d-block mb-2"></i>No active society notices.</div>'; return; }
-    residentNotices.forEach(notice => {
+    const audiences = dashboardRole === "resident" ? ["ALL", "RESIDENTS"] : dashboardRole === "maintenance" ? ["ALL", "STAFF", "MAINTENANCE"] : ["ALL", "STAFF", "SECURITY"];
+    const roleNotices = noticeItems.filter(n => audiences.includes(String(n.audience || "ALL").toUpperCase()));
+    if (!roleNotices.length) { list.innerHTML = '<div class="text-center text-muted py-5"><i class="fa-regular fa-bell-slash fs-2 d-block mb-2"></i>No active society notices.</div>'; return; }
+    roleNotices.forEach(notice => {
         const article = document.createElement("article");
         article.className = `alert border-start border-4 shadow-sm mb-3 ${notice.emergency ? "alert-danger border-danger" : "alert-info border-primary"}`;
         const badges = [notice.category ? `<span class="badge text-bg-light me-2">${escapeAttribute(notice.category.replaceAll("_"," "))}</span>` : "", notice.actionRequired ? '<span class="badge text-bg-warning">Action required</span>' : ""].join("");
@@ -761,8 +1054,8 @@ function renderAnnouncements(noticeItems = []) {
         list.appendChild(article);
     });
     const noticeNav = document.querySelector('[data-panel="announcements"]');
-    if (noticeNav && !noticeNav.querySelector(".resident-notice-count")) { const badge=document.createElement("span"); badge.className="resident-notice-count badge rounded-pill text-bg-danger ms-auto"; badge.textContent=String(residentNotices.length); noticeNav.appendChild(badge); }
-    const unseen = residentNotices.filter(n => n.inAppNotification && !localStorage.getItem(`smartsociety-notice-seen-${n.id}`));
+    if (noticeNav) { let badge=noticeNav.querySelector(".resident-notice-count"); if (!badge) { badge=document.createElement("span"); badge.className="resident-notice-count badge rounded-pill text-bg-danger ms-auto"; noticeNav.appendChild(badge); } badge.textContent=String(roleNotices.length); }
+    const unseen = roleNotices.filter(n => n.inAppNotification && !localStorage.getItem(`smartsociety-notice-seen-${n.id}`));
     if (unseen.length) { showToast(`${unseen.length} new society notice${unseen.length === 1 ? "" : "s"}. Open Notice Board to read.`); unseen.forEach(n => localStorage.setItem(`smartsociety-notice-seen-${n.id}`,"1")); }
 }
 
@@ -778,7 +1071,7 @@ function renderAmenityBookingDesk(amenityItems = [], bookingItems = [], resident
         body.replaceChildren();
         if (!bookingItems.length) {
             const row = document.createElement("tr");
-            row.innerHTML = '<td colspan="8" class="text-muted text-center py-4">No amenity bookings yet. Use Add Booking to record one.</td>';
+            row.innerHTML = '<td colspan="9" class="text-muted text-center py-4">No amenity bookings yet. Resident requests will appear here automatically.</td>';
             body.appendChild(row);
             return;
         }
@@ -792,6 +1085,13 @@ function renderAmenityBookingDesk(amenityItems = [], bookingItems = [], resident
             add(`${formatDateTime(booking.startTime)} – ${formatDateTime(booking.endTime)}`);
             add(paymentLabel(booking));
             add(`Rs. ${booking.amount ?? 0}`);
+            add([
+                booking.eventPurpose && `Purpose: ${booking.eventPurpose}`,
+                booking.expectedGuests != null && `Guests: ${booking.expectedGuests}`,
+                booking.vehicleCount != null && `Vehicles: ${booking.vehicleCount}`,
+                booking.organizerPhone && `Contact: ${booking.organizerPhone}`,
+                booking.specialInstructions && `Notes: ${booking.specialInstructions}`
+            ].filter(Boolean).join(" · ") || "—");
             const approval = document.createElement("td");
             const badge = document.createElement("span");
             badge.className = `status ${statusClass(booking.approvalStatus)}`;
@@ -888,6 +1188,39 @@ function wireSocietySyncDialog() {
         button.disabled = false;
         button.innerHTML = '<i class="fa-solid fa-rotate me-2"></i>Sync now';
         if (completed) close();
+    });
+}
+
+function wireSocietyNoticeDialog() {
+    const trigger = document.getElementById("societyNoticeButton");
+    const dialog = document.getElementById("societyNoticeDialog");
+    const form = document.getElementById("societyNoticeForm");
+    if (!trigger || !dialog || !form || trigger.dataset.noticeReady) return;
+    trigger.dataset.noticeReady = "true";
+    const close = () => { dialog.classList.add("hidden"); dialog.setAttribute("aria-hidden", "true"); };
+    const open = () => { dialog.classList.remove("hidden"); dialog.setAttribute("aria-hidden", "false"); document.getElementById("societyNoticeTitleInput")?.focus(); };
+    trigger.addEventListener("click", event => { event.preventDefault(); open(); });
+    ["societyNoticeClose", "societyNoticeCancel"].forEach(id => document.getElementById(id)?.addEventListener("click", close));
+    dialog.addEventListener("click", event => { if (event.target === dialog) close(); });
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const send = document.getElementById("societyNoticeSend");
+        const title = document.getElementById("societyNoticeTitleInput")?.value.trim() || "";
+        const message = document.getElementById("societyNoticeMessage")?.value.trim() || "";
+        const audience = document.getElementById("societyNoticeAudience")?.value || "RESIDENTS";
+        if (!title || !message) { showToast("Enter a notice title and message."); return; }
+        if (send) { send.disabled = true; send.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Sending…'; }
+        try {
+            const result = await mutateSociety("society/announcements", "POST", { title, message, audience, emergency: Boolean(document.getElementById("societyNoticeUrgent")?.checked), category: "GENERAL", effectiveFrom: null, validUntil: null, actionRequired: false, contactPerson: "", contactPhone: "", attachmentReference: "", inAppNotification: true, emailNotification: false });
+            form.reset();
+            close();
+            await loadSocietyBackendData();
+            showToast(`✓ Notice sent to ${result.recipientCount || 0} selected dashboard user(s).`);
+        } catch (error) {
+            showToast(error.message || "Notice could not be sent.");
+        } finally {
+            if (send) { send.disabled = false; send.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Send notice'; }
+        }
     });
 }
 
@@ -1033,25 +1366,57 @@ document.addEventListener("click", event => {
 
 document.addEventListener("DOMContentLoaded", loadSocietyBackendData);
 document.addEventListener("DOMContentLoaded", wireSocietySyncDialog);
+document.addEventListener("DOMContentLoaded", wireSocietyNoticeDialog);
 if (document.readyState !== "loading") wireSocietySyncDialog();
+if (document.readyState !== "loading") wireSocietyNoticeDialog();
 document.addEventListener("click", event => {
     const button = event.target.closest("[data-access-audit]");
     if (!button) return;
     const row = button.closest("tr");
     const admin = row?.children[0]?.textContent.trim() || "this administrator";
-    const society = row?.children[1]?.textContent.trim() || "the society";
-    if (!window.confirm(`Complete access audit for ${admin} at ${society}?`)) return;
-    const statusCell = row?.children[5];
-    if (statusCell) statusCell.innerHTML = '<span class="badge bg-success">Audited</span>';
-    if (row?.children[3]) row.children[3].textContent = `Audited ${new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}`;
-    button.textContent = "Audited";
-    button.disabled = true;
-    showToast(`✓ Access audit completed for ${admin}.`);
+    event.preventDefault();
+    if (typeof window.forceOpenPanel === "function") window.forceOpenPanel("users");
+    else document.querySelector('[data-panel="users"]')?.click();
+    showToast(`Reviewing the live account and access status for ${admin}.`);
 });
+function openComplaintAssignmentDialog(button) {
+    if (dashboardRole !== "admin") { showToast("Only the Society Admin can assign complaint tasks."); return; }
+    const row = button.closest("tr");
+    const id = row?.dataset.recordId;
+    if (!id) return;
+    let dialog = document.getElementById("complaintAssignmentDialog");
+    if (!dialog) {
+        dialog = document.createElement("div");
+        dialog.id = "complaintAssignmentDialog";
+        dialog.className = "society-sync-dialog";
+        dialog.innerHTML = `<div class="modal-card p-4" style="max-width:560px"><button type="button" class="btn-close float-end" aria-label="Close"></button><div class="mb-4"><span class="small fw-bold text-primary text-uppercase">Complaint workflow</span><h4 class="fw-bold mb-1">Assign complaint task</h4><p class="text-muted mb-0">Only the Society Admin can choose the team responsible for a resident complaint.</p></div><form class="row g-3"><div class="col-12"><label class="form-label fw-semibold">Assign to</label><select class="form-select" name="team" required><option value="MAINTENANCE">Maintenance dashboard</option><option value="SECURITY">Security dashboard</option></select></div><div class="col-12"><label class="form-label fw-semibold">Assignment note</label><textarea class="form-control" name="note" rows="3" placeholder="Describe the action required for the assigned team"></textarea></div><div class="col-12 d-flex justify-content-end gap-2"><button type="button" class="btn btn-light" data-cancel>Cancel</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-check me-1"></i> Assign task</button></div></form></div>`;
+        document.body.appendChild(dialog);
+        const close = () => dialog.classList.add("hidden");
+        dialog.querySelector(".btn-close").addEventListener("click", close);
+        dialog.querySelector("[data-cancel]").addEventListener("click", close);
+        dialog.addEventListener("click", event => { if (event.target === dialog) close(); });
+        dialog.querySelector("form").addEventListener("submit", async event => {
+            event.preventDefault();
+            const activeId = dialog.dataset.complaintId;
+            const submit = event.currentTarget.querySelector('[type="submit"]');
+            submit.disabled = true; submit.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Assigning…';
+            try {
+                await mutateSociety(`society/complaints/${activeId}/assignment`, "PATCH", { team: event.currentTarget.team.value, assignmentNote: event.currentTarget.note.value.trim() });
+                close(); await loadSocietyBackendData(); showToast("✓ Complaint task assigned successfully.");
+            } catch (error) { showToast(error.message || "Complaint could not be assigned"); }
+            finally { submit.disabled = false; submit.innerHTML = '<i class="fa-solid fa-user-check me-1"></i> Assign task'; }
+        });
+    }
+    dialog.dataset.complaintId = id;
+    dialog.classList.remove("hidden");
+}
+
 document.addEventListener("click",event=>{
     const button=event.target.closest("[data-backend-action]");if(!button)return;
     event.preventDefault();event.stopImmediatePropagation();const row=button.closest("tr");const id=row?.dataset.recordId;
-    const action=button.dataset.backendAction;button.disabled=true;
+    const action=button.dataset.backendAction;
+    if(action === "complaint-assign") { openComplaintAssignmentDialog(button); return; }
+    button.disabled=true;
     const monitoringActions=["trigger-reminder", "audit-gate", "sync-kyc", "escalate-complaints", "review-damages", "audit-expenses", "global-broadcast", "force-reports"];
     if(monitoringActions.includes(action) && "Notification" in window && Notification.permission === "default") Notification.requestPermission();
     let operation;
@@ -1064,11 +1429,18 @@ document.addEventListener("click",event=>{
         operation = mutateSociety("platform/tenants", "POST", {societyName: societyName.trim(), city: city.trim(), contactEmail});
     }
     else if(action === "edit-society") {
-        const societyName = window.prompt("Society name", row?.children[0]?.textContent.trim() || "");
-        if (!societyName?.trim()) { button.disabled = false; return; }
-        const city = window.prompt("City", row?.children[1]?.textContent.trim() || "");
-        if (!city?.trim()) { showToast("Please enter the city for the society."); button.disabled = false; return; }
-        operation = mutateSociety(`platform/tenants/${id}`, "PUT", {societyName: societyName.trim(), city: city.trim()});
+        const society = (window.platformTenants || []).find(item => String(item.id) === String(id));
+        const administrator = (window.platformUsers || []).find(user =>
+            String(user.tenantId) === String(society?.tenantId) && ["SOCIETY_ADMIN", "FACILITY_MANAGER"].includes(String(user.role))
+        );
+        if (!society || typeof window.openSocietyEditor !== "function") {
+            showToast("The complete society profile is still loading. Please try again.");
+            button.disabled = false;
+            return;
+        }
+        window.openSocietyEditor(society, administrator || null);
+        button.disabled = false;
+        return;
     }
     else if(action==="announcement-publish"){
         const panel = button.closest('[data-view="announcements"]');
@@ -1087,8 +1459,14 @@ document.addEventListener("click",event=>{
     else if(action==="amenity-book"){const start=new Date(Date.now()+86400000);start.setMinutes(0,0,0);const end=new Date(start.getTime()+3600000);operation=mutateSociety("society/bookings","POST",{amenityId:Number(button.dataset.amenityId),startTime:start.toISOString().slice(0,19),endTime:end.toISOString().slice(0,19)});}
     else if(action.startsWith("visitor-"))operation=mutateSociety(`society/visitors/${id}/${action.endsWith("checkout")?"checkout":"checkin"}`,"PATCH");
     else if(action==="complaint-close")operation=mutateSociety(`society/complaints/${id}`,"PATCH",{status:"CLOSED",assignedTo:"",resolutionNotes:"Closed from dashboard"});
-    else if(action==="complaint-start")operation=mutateSociety(`society/complaints/${id}`,"PATCH",{status:"IN_PROGRESS",assignedTo:"Maintenance team",resolutionNotes:"Work started",sparePartsUsed:"",repairCost:null});
-    else if(action==="complaint-resolve")operation=mutateSociety(`society/complaints/${id}`,"PATCH",{status:"RESOLVED",assignedTo:"Maintenance team",resolutionNotes:"Repair completed",sparePartsUsed:"",repairCost:null});
+    else if(action==="complaint-start"){
+        const technician=window.societyCurrentUser?.name||"Maintenance technician";
+        operation=mutateSociety(`society/complaints/${id}`,"PATCH",{status:"IN_PROGRESS",assignedTo:technician,resolutionNotes:`Work claimed and started by ${technician}`,sparePartsUsed:"",repairCost:null});
+    }
+    else if(action==="complaint-resolve"){
+        const technician=window.societyCurrentUser?.name||"Maintenance technician";
+        operation=mutateSociety(`society/complaints/${id}`,"PATCH",{status:"RESOLVED",assignedTo:technician,resolutionNotes:`Repair completed by ${technician}`,sparePartsUsed:"",repairCost:null});
+    }
     else if(action==="expense-edit"){editExpense(button);button.disabled=false;return;}
     else if(action==="expense-approve")operation=mutateSociety(`society/finance/expenses/${id}/approve`,"PATCH");
     else if(action==="expense-reject"){const note=window.prompt("Reason for rejecting this expense (optional):","");if(note===null){button.disabled=false;return;}operation=mutateSociety(`society/finance/expenses/${id}/reject?note=${encodeURIComponent(note)}`,"PATCH");}
@@ -1103,7 +1481,7 @@ document.addEventListener("click",event=>{
     else if(monitoringActions.includes(action)) {
         operation = mutateSociety("superadmin/monitoring/action", "POST", {action: action});
     }
-    else operation=Promise.resolve({message:"Success"});
+    else operation=Promise.reject(new Error(`Unsupported dashboard action: ${action}`));
     
     operation.then(result=>{
         if (action === "add-society") showToast(`✓ ${result.societyName || "Society"} added and ready for approval.`);
@@ -1270,9 +1648,17 @@ function openPanel(panel, updateHistory = true) {
         const shouldHide = view !== selectedView;
         view.classList.toggle("hidden", shouldHide);
         view.classList.toggle("d-none", shouldHide);
+        if (shouldHide) {
+            view.style.display = "none";
+        } else {
+            view.style.display = "";
+        }
     });
-    const title = document.getElementById("title");
-    if (title) title.textContent = titles[panel] || "Dashboard";
+    // Security uses its own heading id; keep it synchronized with the panel just like every other dashboard.
+    const title = document.getElementById("title") || document.getElementById("securityTitle");
+    if (title) title.textContent = dashboardRole === "security"
+        ? (securityPanelTitles[panel] || "Security Dashboard")
+        : (titles[panel] || "Dashboard");
     if (updateHistory && location.hash !== `#${panel}`) history.pushState(null, "", `#${panel}`);
     selectedView.focus({ preventScroll: true });
 }
@@ -1444,6 +1830,90 @@ function pushResidentInboxItem(item) {
     localStorage.setItem(residentAdminInboxKey, JSON.stringify(items.slice(0, 25)));
 }
 
+function sharedComplaints() {
+    try {
+        return JSON.parse(localStorage.getItem("smartapartment-shared-complaints:v1") || "[]");
+    } catch {
+        return [];
+    }
+}
+
+function persistSharedComplaint(values) {
+    const title = values[0] || "Resident complaint";
+    const category = values[1] || "Other";
+    const subcategory = values[2] || "";
+    const priority = values[3] || "NORMAL";
+    const incidentAt = values[4] || "";
+    const location = values[5] || "A-101";
+    const contactMethod = values[6] || "IN_APP";
+    const reporterPhone = values[7] || "";
+    const staffEntry = values[8] || "No";
+    const attachment = values[9] || "";
+    const description = values[10] || "No extra details";
+    const nowStr = new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+
+    const newRecord = {
+        id: `complaint-${Date.now()}`,
+        title,
+        category,
+        subcategory,
+        priority,
+        incidentAt,
+        location,
+        contactMethod,
+        reporterPhone,
+        staffEntry,
+        attachment,
+        description,
+        status: "Open",
+        createdAt: nowStr,
+        flat: "A-101",
+        resident: "Kavya N"
+    };
+
+    const items = sharedComplaints();
+    items.unshift(newRecord);
+    localStorage.setItem("smartapartment-shared-complaints:v1", JSON.stringify(items.slice(0, 100)));
+    renderSharedComplaintsToTables();
+}
+
+function renderSharedComplaintsToTables() {
+    const items = sharedComplaints();
+    if (!items.length) return;
+
+    document.querySelectorAll('table[data-table="complaints"]').forEach(table => {
+        const tbody = table.querySelector("tbody");
+        if (!tbody) return;
+
+        items.forEach(item => {
+            if (tbody.querySelector(`tr[data-record-id="${item.id}"]`)) return;
+            const tr = document.createElement("tr");
+            tr.dataset.recordId = item.id;
+
+            if (dashboardRole === "resident") {
+                tr.innerHTML = `<td><strong>${escapeAttribute(item.title)}</strong><br><small class="text-muted">${escapeAttribute(item.category)}</small></td>` +
+                               `<td>${escapeAttribute(item.category)}</td>` +
+                               `<td>${escapeAttribute(item.location)}</td>` +
+                               `<td><span class="badge bg-${item.priority === "URGENT" || item.priority === "HIGH" ? "danger" : "info"}">${escapeAttribute(item.priority)}</span></td>` +
+                               `<td><span class="badge bg-danger status open">${escapeAttribute(item.status)}</span></td>`;
+            } else if (dashboardRole === "maintenance") {
+                tr.innerHTML = `<td><strong>${escapeAttribute(item.title)}</strong><br><small class="text-muted">${escapeAttribute(item.resident)} · ${escapeAttribute(item.flat)}</small></td>` +
+                               `<td>${escapeAttribute(item.location)}</td>` +
+                               `<td><span class="badge bg-${item.priority === "URGENT" || item.priority === "HIGH" ? "danger" : "info"}">${escapeAttribute(item.priority)}</span></td>` +
+                               `<td><span class="badge bg-danger status open">${escapeAttribute(item.status)}</span></td>` +
+                               `<td><button class="btn btn-sm btn-primary" data-action="assign">Taken</button></td>`;
+            } else {
+                tr.innerHTML = `<td><strong>${escapeAttribute(item.title)}</strong><br><small class="text-muted">${escapeAttribute(item.description.substring(0, 45))}${item.description.length > 45 ? "..." : ""}</small></td>` +
+                               `<td>${escapeAttribute(item.flat || item.location)}</td>` +
+                               `<td>${escapeAttribute(item.category)}</td>` +
+                               `<td><span class="badge bg-danger status open">${escapeAttribute(item.status)}</span></td>` +
+                               `<td><button class="btn btn-sm btn-primary" data-action="assign">Assign</button> <button class="btn btn-sm btn-outline-danger" data-action="close">Close Ticket</button></td>`;
+            }
+            tbody.prepend(tr);
+        });
+    });
+}
+
 function residentPaymentProofs() {
     try {
         return JSON.parse(localStorage.getItem(residentPaymentProofsKey) || "[]");
@@ -1487,28 +1957,25 @@ function renderResidentInboxForAdmins() {
     const anchor = document.querySelector('[data-view="overview"] .activity-log')
         || document.querySelector('[data-view="monitoring"] .card')
         || document.querySelector('[data-view="overview"]');
-    if (!anchor || document.getElementById("residentAdminInbox")) return;
+    if (!anchor) return;
+    document.getElementById("residentAdminInbox")?.remove();
     const items = residentInboxItems();
     const card = document.createElement("div");
-    card.className = "card resident-inbox-card";
+    card.className = "card shadow-sm border-0 rounded-4 resident-inbox-card";
     card.id = "residentAdminInbox";
-    // This queue is a dashboard-wide work area, not a narrow grid tile.
-    card.style.cssText = "width:100%;max-width:none;box-sizing:border-box;align-self:stretch;grid-column:1 / -1;";
     card.innerHTML = `
-        <div class="card-head">
-            <h2>Resident Requests & Proofs</h2>
-            <span class="inline-state">${items.length} item${items.length === 1 ? "" : "s"}</span>
+        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div><span class="small text-primary fw-bold text-uppercase">Resident workspace</span><h4 class="fw-bold mb-1 mt-1">Resident Requests & Proofs</h4><p class="text-muted mb-0">New submissions from residents that may need an admin review.</p></div>
+            <span class="badge ${items.length ? "bg-warning-subtle text-warning-emphasis border border-warning-subtle" : "bg-success-subtle text-success-emphasis border border-success-subtle"} rounded-pill px-3 py-2">${items.length} pending</span>
         </div>
-        <table>
-            <thead><tr><th>Type</th><th>Resident</th><th>Details</th><th>Status</th></tr></thead>
-            <tbody>${items.length ? items.map(item => `
+        ${items.length ? `<div class="card-body px-4 pb-4"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Type</th><th>Resident</th><th>Details</th><th>Status</th></tr></thead><tbody>${items.map(item => `
                 <tr>
                     <td>${escapeAttribute(item.type || "Request")}</td>
                     <td>${escapeAttribute(item.resident || "Resident")}<br><small>${escapeAttribute(item.flat || "")}</small></td>
                     <td><strong>${escapeAttribute(item.title || item.method || "Resident update")}</strong><br><small>${escapeAttribute(item.details || item.proof || item.createdAt || "")}</small></td>
                     <td><span class="status pending">${escapeAttribute(item.status || "Pending")}</span></td>
-                </tr>`).join("") : '<tr><td colspan="4">No resident submissions yet</td></tr>'}</tbody>
-        </table>`;
+                </tr>`).join("")}</tbody>
+        </table></div></div>` : `<div class="card-body pt-2 pb-4 px-4"><div class="text-center text-muted py-4"><i class="fa-regular fa-circle-check text-success fs-4 d-block mb-2"></i><strong class="d-block text-dark mb-1">No requests waiting for review</strong><span class="small">Resident submissions and payment proofs will appear here when received.</span></div></div>`}`;
     const panel = anchor.closest("[data-view]");
     if (panel) {
         panel.appendChild(card);
@@ -2473,11 +2940,11 @@ function addResidentComplaint(values) {
 function updateResidentAmenityBooking(button, values) {
     const card = button.closest(".card");
     if (!card) return;
-    const amenity = card.querySelector("h3")?.textContent.trim() || "Amenity";
+    const amenity = button.dataset.amenityName || card.querySelector("h3, h4")?.textContent.trim() || "Amenity";
     const date = values[0] || "Today";
-    const time = values[1] || "Preferred slot";
-    const guests = values[2] || "Resident";
-    const purpose = values[3] || "Personal use";
+    const time = [values[1], values[2]].filter(Boolean).join(" - ") || "Preferred slot";
+    const guests = values[3] ? `${values[3]} guest(s)` : "Resident";
+    const purpose = values[5] || "Personal use";
     let details = card.querySelector(".amenity-booking-details");
     if (!details) {
         details = document.createElement("div");
@@ -2490,6 +2957,54 @@ function updateResidentAmenityBooking(button, values) {
         <p>${escapeAttribute(guests)} | ${escapeAttribute(purpose)}</p>`;
     updateRowAction(button, "Requested", "book", true);
     return { amenity, date, time, guests, purpose };
+}
+
+function residentAmenityForButton(button) {
+    const requested = String(button.dataset.amenityName || "").toLowerCase();
+    const aliases = requested.includes("gym") ? ["gym", "fitness"]
+        : requested.includes("clubhouse") ? ["clubhouse", "party", "hall"]
+        : requested.includes("parking") ? ["parking"] : [requested];
+    return (window.societyAmenities || []).find(item => {
+        const name = String(item.name || "").toLowerCase();
+        return aliases.some(alias => alias && name.includes(alias));
+    });
+}
+
+async function submitResidentAmenityBooking(button, values) {
+    const [date, start, end, guests, vehicles, purpose, contactNumber, specialInstructions] = values;
+    const amenity = residentAmenityForButton(button);
+    if (!amenity) throw new Error("This amenity is not configured by the society admin");
+    if (!date || !start || !end || !purpose || !contactNumber) {
+        throw new Error("Enter the date, start time, end time, purpose and contact number");
+    }
+    const result = await mutateSociety("society/bookings", "POST", {
+        amenityId: Number(amenity.id),
+        startTime: `${date}T${start}`,
+        endTime: `${date}T${end}`,
+        expectedGuests: Number(guests || 0),
+        vehicleCount: Number(vehicles || 0),
+        eventPurpose: purpose,
+        contactNumber,
+        specialInstructions: specialInstructions || ""
+    });
+    const display = updateResidentAmenityBooking(button, values);
+    pushResidentInboxItem({
+        type: "Amenity Request",
+        title: result.amenity || display?.amenity || amenity.name,
+        details: `${display?.date || date} ${display?.time || `${start} - ${end}`} | ${display?.guests || guests} | ${purpose}`
+    });
+    await loadSocietyBackendData();
+    showToast(`✓ ${result.amenity || amenity.name} request sent to admin`);
+    return {
+        title: "Amenity request submitted",
+        lines: [
+            `<strong>Amenity:</strong> ${result.amenity || amenity.name}`,
+            `<strong>Slot:</strong> ${date} ${start} - ${end}`,
+            `<strong>Details:</strong> ${guests || 0} guests · ${vehicles || 0} vehicles · ${purpose}`,
+            `<strong>Contact:</strong> ${contactNumber}`,
+            `<strong>Status:</strong> ${result.approvalStatus || "PENDING"} — visible to Society Admin`
+        ]
+    };
 }
 
 function statusClass(value) {
@@ -2551,16 +3066,16 @@ function actionConfig(action, button) {
         return ["Save Profile", "Confirm and permanently save your resident profile details on this browser.", []];
     }
     if (dashboardRole === "resident" && action === "notify") {
-        return ["Contact Admin", "Send a detailed message to the society admin team.", ["Subject", "Category", "Message", "Preferred callback time"]];
+        return ["Contact Admin", "Send a complete, traceable message to the society admin team.", ["Subject", "Category|select:BILLING,COMPLAINT,AMENITY,VISITOR,PROFILE,SAFETY,OTHER", "Priority|select:NORMAL,HIGH,URGENT", "Related flat / reference", "Preferred contact method|select:IN_APP,PHONE,EMAIL,WHATSAPP", "Contact number|tel", "Preferred callback date & time|datetime-local", "Attachment / screenshot reference", "Detailed message|textarea"]];
     }
     if (dashboardRole === "maintenance" && action === "save" && label.includes("availability")) {
-        return ["Update Availability", "Share your current maintenance availability so admin and security can assign work correctly.", ["Availability status", "Current work zone", "Available until", "Notes"]];
+        return ["Update Availability", "Share complete shift, location, workload and escalation coverage before receiving assignments.", ["Availability status|select:AVAILABLE,BUSY,ON_BREAK,OFF_DUTY,ON_CALL", "Current work zone", "Shift start|datetime-local", "Available until|datetime-local", "Active task count|number", "Skills available", "Emergency response available|select:Yes,No", "Backup teammate", "Supervisor note|textarea"]];
     }
     if (dashboardRole === "maintenance" && action === "rest") {
-        return ["Take Rest", "Set a rest window and backup contact before pausing new maintenance assignments.", ["Rest until", "Backup teammate", "Reason"]];
+        return ["Take Rest", "Set a controlled rest window and hand over active responsibilities before pausing assignments.", ["Rest start|datetime-local", "Rest until|datetime-local", "Current task handover", "Backup teammate", "Backup contact number|tel", "Supervisor informed|select:Yes,No", "Reason and medical/access notes|textarea"]];
     }
     if (dashboardRole === "maintenance" && action === "add" && table === "tasks") {
-        return ["Add Maintenance Task", "Create a detailed task with location, priority, assignee, timing, and work notes.", ["Task details", "Location / flat", "Priority", "Assigned to", "Due time", "Work notes"]];
+        return ["Add Maintenance Task", "Create a complete task with asset, location, safety, material, SLA and assignment information.", ["Task title", "Category|select:PLUMBING,ELECTRICAL,LIFT,CARPENTRY,CLEANING,HVAC,FIRE_SAFETY,COMMON_AREA,OTHER", "Exact location / flat", "Asset / equipment reference", "Priority|select:LOW,NORMAL,HIGH,URGENT,EMERGENCY", "Assigned technician", "Requested by", "Contact phone|tel", "Start date & time|datetime-local", "SLA due date & time|datetime-local", "Safety isolation required|select:No,Yes", "Parts / tools expected", "Access instructions", "Detailed work scope|textarea"]];
     }
     if (dashboardRole === "maintenance" && action === "assign") {
         const row = button.closest("tr");
@@ -2598,11 +3113,11 @@ function actionConfig(action, button) {
         const table = button.closest("table")?.dataset.table || "";
         const editFields = {
             flats: ["Flat number", "Owner name", "Occupancy|select:VACANT,OCCUPIED,UNDER_MAINTENANCE", "Block", "Floor|number", "Unit type|select:1BHK,2BHK,3BHK,4BHK,DUPLEX,PENTHOUSE", "Owner mobile|tel", "Owner email|email", "Built-up area (sq.ft)|number", "Parking slot", "Monthly maintenance (Rs.)|number", "Possession date|date", "Notes|textarea"],
-            residents: ["Name", "Flat", "Role", "Email", "Temporary Password"],
-            billing: ["Flat / Month", "Type", "Amount", "Status"],
-            visitors: ["Visitor", "Flat", "Purpose", "Expected Time", "Status"],
-            complaints: ["Issue", "Flat / Category", "Team", "Status"],
-            expenses: ["Expense", "Vendor", "Amount", "Status"]
+            residents: ["Full name", "Flat / unit", "Resident type|select:OWNER,TENANT,FAMILY_MEMBER", "Email address|email", "Mobile number|tel", "Move-in date|date", "Vehicle number", "Emergency contact name", "Emergency contact phone|tel", "KYC reference", "Account status|select:ACTIVE,LOCKED,PENDING", "Profile notes|textarea"],
+            billing: ["Invoice month", "Flat / unit", "Resident", "Charge type", "Base amount|number", "Additional charges|number", "Tax amount|number", "Late fee|number", "Due date|date", "Payment status|select:UNPAID,PARTIAL,PAID,OVERDUE,WAIVED", "Payment reference", "Billing correction note|textarea"],
+            visitors: ["Visitor full name", "Mobile number|tel", "Email address|email", "Flat / unit", "Entry type|select:GUEST,DELIVERY,SERVICE_STAFF,VENDOR,CAB", "Purpose / organisation", "Persons count|number", "Expected arrival|datetime-local", "Vehicle number", "ID proof type", "ID proof reference", "Access status|select:EXPECTED,APPROVED,CHECKED_IN,CHECKED_OUT,DENIED", "Special instructions|textarea"],
+            complaints: ["Issue title", "Flat / unit", "Category", "Subcategory", "Priority|select:LOW,NORMAL,HIGH,URGENT,EMERGENCY", "Incident date & time|datetime-local", "Exact location", "Assigned team", "Assigned technician", "SLA due time|datetime-local", "Status|select:OPEN,ASSIGNED,IN_PROGRESS,WAITING_FOR_PARTS,RESOLVED,CLOSED", "Resolution / access notes|textarea"],
+            expenses: ["Expense title", "Category", "Expense date|date", "Vendor", "Vendor phone|tel", "Invoice number", "Payment method", "Base amount|number", "Tax amount|number", "Total amount|number", "Status|select:DRAFT,PENDING,APPROVED,PAID,REJECTED", "Receipt reference", "Description / approval note|textarea"]
         };
         return ["Edit Record", `Update details for ${context.target}.`, editFields[table] || ["Name / title", "Details", "Status"]];
     }
@@ -2663,15 +3178,15 @@ function actionConfig(action, button) {
         return ["Create Detailed Complaint", "Create a complete, traceable service ticket with resident, incident, access, contact and assignment information.", ["Issue / complaint title", "Flat / unit", "Category|select:Plumbing,Electrical,Lift / Elevator,Security,Cleaning,Carpentry,Pest Control,Water Supply,Power Supply,Common Area,Parking,Other", "Subcategory / issue type", "Priority|select:LOW,NORMAL,HIGH,URGENT,EMERGENCY", "Incident date & time|datetime-local", "Exact location / room / area", "Preferred contact|select:PHONE,EMAIL,WHATSAPP,IN_APP", "Contact phone|tel", "Allow staff entry|select:No,Yes", "Assign team|select:Unassigned,Plumbing Team,Electrical Team,Security Team,Housekeeping,Facility Team,External Vendor", "Photo / document reference", "Detailed description and access instructions|textarea"]];
     }
     if (action === "add" && table === "expenses") {
-        return ["Add Expense", "Record an expense for approval.", ["Expense title", "Vendor", "Amount"]];
+        return ["Add Detailed Expense", "Record complete vendor, invoice, tax, payment and approval information.", ["Expense title", "Category|select:MAINTENANCE,UTILITIES,SECURITY,HOUSEKEEPING,REPAIRS,AMENITY,ADMINISTRATION,OTHER", "Expense date|date", "Vendor / payee", "Vendor phone|tel", "Vendor tax / GST number", "Invoice number", "Payment method|select:CASH,BANK_TRANSFER,UPI,CHEQUE,CARD", "Base amount (Rs.)|number", "Tax amount (Rs.)|number", "Total amount (Rs.)|number", "Cost centre / block", "Receipt / document reference", "Detailed business purpose|textarea"]];
     }
     if (action === "update-plan") {
         const plan = button.dataset.plan || context.target || "Selected plan";
-        return [`Subscribe to ${plan}`, "Confirm the society and billing details for this subscription.", ["Society name", "Admin email", "Billing cycle", "Start date", "Subscription note"]];
+        return [`Subscribe to ${plan}`, "Confirm complete society, billing, invoice and authorization details for this subscription.", ["Society name", "Registration / tenant ID", "Administrator name", "Administrator email|email", "Administrator phone|tel", "Billing cycle|select:MONTHLY,QUARTERLY,HALF_YEARLY,ANNUALLY", "Subscription start date|date", "Renewal date|date", "Billing contact name", "Billing email|email", "Tax / GST number", "Invoice address|textarea", "Purchase order / approval reference", "Subscription note|textarea"]];
     }
     if (action === "edit-plan") {
         const plan = button.dataset.plan || context.target || "Subscription plan";
-        return [`Edit ${plan}`, "Update the features and pricing for this subscription plan.", ["Plan Name", "Price|number", "Limit Flats|number", "Limit Admins|number"]];
+        return [`Edit ${plan}`, "Update complete catalogue, pricing, capacity, support and publication settings.", ["Plan name", "Plan code", "Description|textarea", "Monthly price (Rs.)|number", "Billing cycle|select:MONTHLY,QUARTERLY,ANNUALLY", "Maximum flats|number", "Maximum residents|number", "Maximum admins|number", "Maximum security staff|number", "Maximum maintenance staff|number", "Storage (GB)|number", "Audit history days|number", "Trial days|number", "Grace days|number", "Support level|select:STANDARD,PRIORITY,DEDICATED", "Active|select:Yes,No", "Featured|select:Yes,No"]];
     }
     if (dashboardRole === "superadmin" && action === "notify" && label.toLowerCase().includes("platform notice")) {
         return ["Send Platform Notice", "Send an official notice to society administrators.", ["Target|select:All Registered Societies,Specific Society", "Message|textarea"]];
@@ -2702,7 +3217,7 @@ function actionConfig(action, button) {
         generate: ["Generate Detailed Monthly Bills", "Create itemized maintenance bills per flat with base rates, water meters, sinking funds, reserve funds, parking fees, and GST tax breakdowns.", ["Billing month", "Base rate (per sq.ft)", "Water sub-meter rate (per unit)", "Common power backup fee", "Sinking fund contribution", "Building repair reserve", "Covered parking fee", "GST tax rate (%)", "Payment due date"]],
         pay: dashboardRole === "admin"
             ? ["Mark Bill Paid", "Record verified payment details so the receipt is exact for this flat and resident.", ["Payment method", "Reference number", "Received date", "Proof / screenshot filename", "Admin note"]]
-            : ["Confirm payment", "Record this payment as completed.", ["Reference number"]],
+            : ["Confirm Payment", "Record complete payer, transaction and receipt details before confirming payment.", ["Payer name", "Flat / invoice reference", "Payment method|select:UPI,CARD,NET_BANKING,BANK_TRANSFER,CHEQUE", "Amount (Rs.)|number", "Transaction reference", "Payment date|date", "Payer mobile|tel", "Payer email|email", "Receipt email required|select:Yes,No", "Payment note|textarea"]],
         book: dashboardRole === "resident"
             ? ["Book Amenity", `Request ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()} with complete scheduling and usage details.`, ["Booking date|date", "Start time|time", "End time|time", "Guests count|number", "Vehicles count|number", "Purpose / event", "Contact number|tel", "Special setup or access notes|textarea"]]
             : ["Confirm Detailed Booking", `Reserve ${button.closest(".card")?.querySelector("h3")?.textContent || button.textContent.trim()}.`, ["Booked for / resident", "Flat / unit", "Booking date|date", "Start time|time", "End time|time", "Guests count|number", "Payment reference", "Booking notes|textarea"]],
@@ -2823,7 +3338,19 @@ function actionInputMarkup(action, field, index, value = "") {
         inputHtml = `<input type="datetime-local" data-action-input="${index}" value="${escapeAttribute(value || defaultTime)}">`;
     }
 
-    return `<label>${labelText}${inputHtml}</label>`;
+    const required = actionFieldIsRequired(action, labelText, index);
+    if (required) {
+        inputHtml = inputHtml.replace(/<(input|select|textarea)\b/, '<$1 required aria-required="true" data-required="true"');
+    }
+    return `<label><span>${labelText}${required ? ' <span class="required-star" aria-hidden="true">*</span>' : ''}</span>${inputHtml}</label>`;
+}
+
+function actionFieldIsRequired(action, labelText, index) {
+    if (dashboardRole === "resident" && action === "book") {
+        return [0, 1, 2, 5, 6].includes(index);
+    }
+    const optional = /optional|notes?|instructions?|reference|attachment|evidence|photo|document|vehicle|parking|secondary|emergency|email|cost|price|deposit|children|guests?|persons?|items carried|parts|materials|follow-up/i;
+    return !optional.test(labelText);
 }
 
 function closeActionModal() {
@@ -3303,7 +3830,7 @@ function performAction(action, button, values = []) {
                 attachmentReference:values[9]||"",description:values[10]||"No additional description provided",residentId:null,assignedTo:""};
             mutateSociety("society/complaints","POST",payload)
                 .then(()=>loadSocietyBackendData()).catch(error=>showToast(error.message));
-            addResidentComplaint([values[0],values[1],values[5],values[3],values[10]]);
+            persistSharedComplaint(values);
             pushResidentInboxItem({
                 type: "Complaint",
                 title: values[0] || "Resident complaint",
@@ -3455,14 +3982,47 @@ function performAction(action, button, values = []) {
     };
 }
 
-function submitActionModal() {
+async function submitActionModal() {
     if (!activeAction) return;
     const modal = ensureActionModal();
+    const fieldScope = modal.querySelector("#dashboardActionFields") || modal;
+    if (window.validateRequiredScope && !window.validateRequiredScope(fieldScope)) return;
     const values = [...modal.querySelectorAll("[data-action-input]")].map(input => input.value.trim());
 
-    const receipt = performAction(activeAction.action, activeAction.button, values);
-    activeAction = null;
-    showActionReceipt(receipt);
+    if (dashboardRole === "resident" && activeAction.action === "book") {
+        const save = modal.querySelector("#dashboardActionSave");
+        save.disabled = true;
+        save.textContent = "Submitting…";
+        try {
+            const receipt = await submitResidentAmenityBooking(activeAction.button, values);
+            const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values);
+            receipt.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
+            activeAction = null;
+            showActionReceipt(receipt);
+        } catch (error) {
+            showToast(error.message || "Amenity request could not be submitted");
+        } finally {
+            save.disabled = false;
+            if (activeAction) save.textContent = "Confirm";
+        }
+        return;
+    }
+
+    const save = modal.querySelector("#dashboardActionSave");
+    save.disabled = true;
+    save.textContent = "Saving…";
+    try {
+        const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values);
+        const receipt = performAction(activeAction.action, activeAction.button, values);
+        receipt.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
+        activeAction = null;
+        showActionReceipt(receipt);
+    } catch (error) {
+        showToast(error.message || "Action could not be saved");
+    } finally {
+        save.disabled = false;
+        if (activeAction) save.textContent = "Confirm";
+    }
 }
 
 function enhanceDashboardCategories() {
@@ -3558,8 +4118,31 @@ syncResidentBillingFromProofs();
 syncApprovedPassesToVisitors();
 renderResidentInboxForAdmins();
 renderPaymentProofReviewForAdmins();
+renderSharedComplaintsToTables();
 enhanceDashboardCategories();
 wireAutosave();
+
+if (dashboardRole === "superadmin") {
+    loadPlatformBackendData();
+} else {
+    loadSocietyBackendData();
+    if (["admin", "maintenance"].includes(dashboardRole) && !window.societyComplaintSyncReady) {
+        window.societyComplaintSyncReady = true;
+        const refreshSharedComplaints = () => {
+            if (document.visibilityState === "visible") loadSocietyBackendData();
+        };
+        window.addEventListener("focus", refreshSharedComplaints);
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") refreshSharedComplaints();
+        });
+        window.setInterval(() => {
+            const complaintPanel = document.querySelector('[data-view="complaints"]');
+            if (complaintPanel && !complaintPanel.classList.contains("d-none") && !complaintPanel.classList.contains("hidden")) {
+                refreshSharedComplaints();
+            }
+        }, 15000);
+    }
+}
 
 document.addEventListener("click", event => {
     const btn = event.target.closest('[data-action="edit-plan-modal"]');
@@ -3630,60 +4213,4 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error("Error fetching overview stats:", err));
     }
 
-    const btnSendPlatformNotice = document.getElementById("btnSendPlatformNotice");
-    if (btnSendPlatformNotice && !btnSendPlatformNotice.dataset.bound) {
-        btnSendPlatformNotice.dataset.bound = "true";
-        btnSendPlatformNotice.addEventListener("click", async () => {
-            const target = document.getElementById("noticeTarget")?.value || "";
-            const specificSocietyId = document.getElementById("specificSociety")?.value || "";
-            const title = document.getElementById("noticeTitle")?.value || "";
-            const category = document.getElementById("noticeCategory")?.value || "General Announcement";
-            const priority = document.getElementById("noticePriority")?.value || "NORMAL";
-            const message = document.getElementById("noticeMessage")?.value || "";
-            
-            if (target === "Specific Society" && !specificSocietyId) {
-                showToast("Please select a specific target society");
-                return;
-            }
-
-            if (!message.trim()) {
-                showToast("Message content is required");
-                return;
-            }
-            
-            try {
-                btnSendPlatformNotice.disabled = true;
-                const response = await fetch('/api/superadmin/notices', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        target, 
-                        specificSocietyId, 
-                        title, 
-                        message, 
-                        category, 
-                        priority 
-                    })
-                });
-                
-                if (!response.ok) throw new Error("Failed to send notice");
-                
-                showToast("Platform notice sent successfully!");
-                const form = document.getElementById("platformNoticeForm");
-                if (form) form.reset();
-                const specDiv = document.getElementById("specificSocietyDiv");
-                if (specDiv) specDiv.classList.add("d-none");
-                
-                const modalEl = document.getElementById('platformNoticeModal');
-                if (modalEl && typeof bootstrap !== "undefined") {
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    if (modal) modal.hide();
-                }
-            } catch (err) {
-                showToast(err.message || "Error sending notice");
-            } finally {
-                btnSendPlatformNotice.disabled = false;
-            }
-        });
-    }
 });

@@ -37,11 +37,22 @@ public class GateIncidentApiController {
         incident.setDescription(request.description().trim());
         incident.setLocation(request.location().trim());
         incident.setVehicleNumber(request.vehicleNumber());
+        incident.setSeverity(request.severity());
+        incident.setPeopleInvolved(request.peopleInvolved());
+        incident.setImmediateAction(request.immediateAction());
+        incident.setEscalatedTo(request.escalatedTo());
+        incident.setEmergencyServices(request.emergencyServices());
+        incident.setEvidenceReference(request.evidenceReference());
+        incident.setWitnessDetails(request.witnessDetails());
+        incident.setResolutionStatus(request.resolutionStatus() == null || request.resolutionStatus().isBlank() ? "OPEN" : request.resolutionStatus());
         incident.setReportedBy(currentUser.requireUser().getFullName());
         incident.setOccurredAt(request.occurredAt());
         return incidents.save(incident);
     }
 
     public record IncidentRequest(@NotBlank String incidentType, @NotBlank String description, @NotBlank String location,
-                                  String vehicleNumber, @NotNull LocalDateTime occurredAt) { }
+                                  String vehicleNumber, @NotBlank String severity, String peopleInvolved,
+                                  @NotBlank String immediateAction, String escalatedTo, String emergencyServices,
+                                  String evidenceReference, String witnessDetails, String resolutionStatus,
+                                  @NotNull LocalDateTime occurredAt) { }
 }

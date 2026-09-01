@@ -108,6 +108,7 @@ const roleSearchPanels = {
 
 let activeRole = "Admin";
 let pendingDashboardLogin = null;
+let dashboardLoginSubmitting = false;
 
 const roleAuth = {
     Admin: "admin",
@@ -260,7 +261,12 @@ function openDashboardLogin({ platform, role, target }) {
 }
 
 async function submitDashboardCredentials() {
-    if (!pendingDashboardLogin) return;
+    if (!pendingDashboardLogin || dashboardLoginSubmitting) return;
+    dashboardLoginSubmitting = true;
+    if (submitDashboardLogin) {
+        submitDashboardLogin.disabled = true;
+        submitDashboardLogin.setAttribute("aria-busy", "true");
+    }
     try {
         const response = await fetch("/api/auth/dashboard-login", {
             method: "POST",
@@ -284,6 +290,12 @@ async function submitDashboardCredentials() {
         window.location.href = data.redirect;
     } catch (error) {
         showToast("Login failed. Please try again.");
+    } finally {
+        dashboardLoginSubmitting = false;
+        if (submitDashboardLogin) {
+            submitDashboardLogin.disabled = false;
+            submitDashboardLogin.removeAttribute("aria-busy");
+        }
     }
 }
 

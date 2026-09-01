@@ -96,3 +96,11 @@ body.app-dashboard .dash-main .dash-panel tbody tr {
         border: 1px solid #e2e7f0 !important;
     }
 }
+
+/* Product-wide heading hierarchy: section and page titles share one royal-blue
+   accent, while labels, values, tables and status colors retain their meaning. */
+body.dashboard-body .main-content :is(h1, h2, h3, h4, h5, h6),
+body.app-dashboard .dash-main :is(h1, h2, h3, h4, h5, h6),
+body.app-dashboard .dashboard-main :is(h1, h2, h3, h4, h5, h6) {
+    color: #2563eb !important;
+}

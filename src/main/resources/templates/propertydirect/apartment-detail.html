@@ -5,14 +5,423 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Apartment Details - PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/shared/css/theme.css?v=20260818-readable-type-v1">
-    <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260818-propertydirect-premium-v1">
+    <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260831-blue-headings-v1">
+    <style>
+        header.topbar, header.topbar.compact, .topbar, .topbar.compact {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 12px 28px !important;
+            background: #ffffff !important;
+            border-bottom: 2px solid #cbd5e1 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+        }
+        header.topbar .brand, .topbar .brand {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            font-family: 'Manrope', 'Outfit', sans-serif !important;
+            font-size: 1.25rem !important;
+            font-weight: 800 !important;
+            color: #000000 !important;
+            text-decoration: none !important;
+        }
+        header.topbar .brand .brand-mark, .topbar .brand .brand-mark {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            background: #0f3460 !important;
+            border: 1px solid #0f3460 !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            font-size: 0.85rem !important;
+            font-weight: 800 !important;
+        }
+        header.topbar .brand span, .topbar .brand span {
+            color: #000000 !important;
+            font-weight: 800 !important;
+        }
+        header.topbar .brand span span, .topbar .brand span span {
+            color: #0f3460 !important;
+            font-weight: 800 !important;
+        }
+        header.topbar .nav, .topbar .nav {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+        header.topbar .nav a, .topbar .nav a {
+            color: #000000 !important;
+            font-family: 'Manrope', 'Outfit', sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 0.88rem !important;
+            text-decoration: none !important;
+            opacity: 1 !important;
+        }
+        header.topbar .nav a:hover, .topbar .nav a:hover {
+            color: #0f3460 !important;
+            text-decoration: underline !important;
+        }
+        header.topbar .nav a.smartsociety-btn, .topbar .nav a.smartsociety-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            padding: 6px 14px !important;
+            background: #f1f5f9 !important;
+            color: #000000 !important;
+            font-weight: 800 !important;
+            font-size: 0.82rem !important;
+            border-radius: 8px !important;
+            border: 1px solid #94a3b8 !important;
+            text-decoration: none !important;
+        }
+        header.topbar .nav a.smartsociety-btn:hover, .topbar .nav a.smartsociety-btn:hover {
+            background: #0f3460 !important;
+            color: #ffffff !important;
+            border-color: #0f3460 !important;
+        }
+        .pd-time-slot {
+            padding: 9px 16px !important;
+            border-radius: 10px !important;
+            border: 2px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-size: 0.88rem !important;
+            font-weight: 800 !important;
+            cursor: pointer !important;
+        }
+        .pd-time-slot:hover {
+            border-color: #0f3460 !important;
+            background: #f1f5f9 !important;
+            color: #0f3460 !important;
+        }
+        .pd-time-slot.selected {
+            background: #0f3460 !important;
+            color: #ffffff !important;
+            border-color: #0f3460 !important;
+            box-shadow: 0 4px 14px rgba(15, 52, 96, 0.3) !important;
+        }
+        .detail-page {
+            max-width: 1080px !important;
+            margin: 0 auto !important;
+            padding: 16px 20px !important;
+        }
+        .detail-hero {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-end !important;
+            padding: 16px 22px !important;
+            margin-bottom: 18px !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 14px !important;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
+        }
+        .detail-hero p.breadcrumb {
+            font-size: 0.76rem !important;
+            color: #64748b !important;
+            margin: 0 0 2px 0 !important;
+            font-weight: 500 !important;
+        }
+        .detail-hero h1 {
+            font-size: 1.32rem !important;
+            line-height: 1.3 !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            margin: 2px 0 4px 0 !important;
+            max-width: 680px !important;
+        }
+        .detail-hero p:not(.breadcrumb) {
+            font-size: 0.82rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+            font-weight: 500 !important;
+        }
+        .detail-price {
+            text-align: right !important;
+            white-space: nowrap !important;
+        }
+        .detail-price strong {
+            display: block !important;
+            font-size: 1.35rem !important;
+            font-weight: 800 !important;
+            color: #4361ee !important;
+            line-height: 1.1 !important;
+        }
+        .detail-price span {
+            font-size: 0.76rem !important;
+            color: #64748b !important;
+            font-weight: 500 !important;
+        }
+        .detail-layout {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 320px !important;
+            gap: 22px !important;
+            align-items: start !important;
+        }
+        .photo-grid {
+            display: grid !important;
+            grid-template-columns: 1.4fr 1fr 1fr !important;
+            grid-template-rows: 145px 145px !important;
+            height: 300px !important;
+            max-height: 300px !important;
+            gap: 10px !important;
+            margin-bottom: 20px !important;
+            position: relative !important;
+            width: 100% !important;
+            clear: both !important;
+            border-radius: 14px !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+        /* Interactive Image Slider / Carousel */
+        .slider-container {
+            position: relative !important;
+            width: 100% !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+            background: #0f172a !important;
+            margin-bottom: 14px !important;
+        }
+        .slider-viewport {
+            position: relative !important;
+            width: 100% !important;
+            height: 380px !important;
+            overflow: hidden !important;
+        }
+        .slider-track {
+            display: flex !important;
+            height: 100% !important;
+            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+        .slide-item {
+            min-width: 100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            position: relative !important;
+            flex-shrink: 0 !important;
+        }
+        .slide-item img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+        }
+        .slider-nav-btn {
+            position: absolute !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 10 !important;
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 50% !important;
+            background: rgba(15, 23, 42, 0.65) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            font-size: 1.4rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            backdrop-filter: blur(8px) !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+            outline: none !important;
+        }
+        .slider-nav-btn:hover {
+            background: rgba(67, 97, 238, 0.9) !important;
+            border-color: #4361ee !important;
+            transform: translateY(-50%) scale(1.1) !important;
+        }
+        .slider-nav-btn.prev { left: 16px !important; }
+        .slider-nav-btn.next { right: 16px !important; }
+        
+        .slider-counter-badge {
+            position: absolute !important;
+            top: 14px !important;
+            right: 14px !important;
+            z-index: 10 !important;
+            background: rgba(15, 23, 42, 0.75) !important;
+            backdrop-filter: blur(8px) !important;
+            color: #ffffff !important;
+            padding: 4px 12px !important;
+            border-radius: 999px !important;
+            font-size: 0.78rem !important;
+            font-weight: 700 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        .slider-label-badge {
+            position: absolute !important;
+            bottom: 14px !important;
+            left: 14px !important;
+            z-index: 10 !important;
+            background: rgba(15, 23, 42, 0.75) !important;
+            backdrop-filter: blur(8px) !important;
+            color: #ffffff !important;
+            padding: 6px 14px !important;
+            border-radius: 8px !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        /* Slide Thumbnail Bar */
+        .slider-thumb-bar {
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 20px !important;
+        }
+        .slider-thumb-item {
+            position: relative !important;
+            height: 75px !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+            cursor: pointer !important;
+            border: 2px solid transparent !important;
+            opacity: 0.7 !important;
+            transition: all 0.2s ease !important;
+        }
+        .slider-thumb-item:hover, .slider-thumb-item.active {
+            opacity: 1 !important;
+            border-color: #4361ee !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3) !important;
+        }
+        .slider-thumb-item img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        .slider-thumb-item span {
+            position: absolute !important;
+            bottom: 4px !important;
+            left: 4px !important;
+            background: rgba(15, 23, 42, 0.8) !important;
+            color: #fff !important;
+            font-size: 0.68rem !important;
+            font-weight: 700 !important;
+            padding: 1px 6px !important;
+            border-radius: 4px !important;
+        }
+        .detail-actions {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin-top: 0 !important;
+            margin-bottom: 22px !important;
+            position: relative !important;
+            z-index: 5 !important;
+            clear: both !important;
+            width: 100% !important;
+        }
+        .detail-actions button {
+            padding: 9px 18px !important;
+            border-radius: 10px !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            white-space: nowrap !important;
+        }
+        .detail-actions button.primary {
+            background: #4361ee !important;
+            border: 1px solid #4361ee !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.22) !important;
+        }
+        .detail-actions button.ghost {
+            background: #f1f5f9 !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        .detail-actions button.ghost:hover {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        .detail-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 14px !important;
+            padding: 20px 22px !important;
+            margin-bottom: 18px !important;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
+            position: relative !important;
+            clear: both !important;
+        }
+        .detail-card h2, .detail-card h3 {
+            margin-top: 0 !important;
+            margin-bottom: 14px !important;
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+        }
+        .overview-grid article {
+            padding: 10px 14px !important;
+        }
+        .pd-tour-modal-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(15, 23, 42, 0.65) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 99999 !important;
+        }
+        .pd-tour-modal-overlay.active {
+            display: flex !important;
+        }
+        .pd-tour-modal-card {
+            background: #ffffff !important;
+            border-radius: 16px !important;
+            padding: 24px !important;
+            max-width: 480px !important;
+            width: 90% !important;
+            position: relative !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25) !important;
+            margin: auto !important;
+        }
+        .pd-modal-close-btn {
+            position: absolute !important;
+            top: 14px !important;
+            right: 14px !important;
+            background: #f1f5f9 !important;
+            border: 1px solid #cbd5e1 !important;
+            font-size: 1.2rem !important;
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+    </style>
+<link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 </head>
 <body>
 <header class="topbar compact">
-    <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> PropertyDirect</a>
+    <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> <span>Property</span>Direct</a>
     <nav class="nav">
-        <a href="/" class="smartsociety-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(29, 55, 108, 0.08); color: #1d376c !important; font-weight: 700; font-size: 0.82rem; border-radius: 8px; border: 1px solid rgba(29, 55, 108, 0.2); text-decoration: none; transition: all 0.2s ease;">
+        <a href="/" class="smartsociety-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
             SmartSociety
         </a>
@@ -36,9 +445,53 @@
 
     <section class="detail-layout">
         <div>
-            <div class="photo-grid">
-                <div class="main-photo">Apartment Photo</div>
-                <div>Living</div><div>Bedroom</div><div>Kitchen</div><div>Balcony</div>
+            <div class="slider-container" id="propertySlider">
+                <div class="slider-viewport">
+                    <div class="slider-track" id="sliderTrack">
+                        <div class="slide-item" data-slide-index="0" data-label="Exterior View">
+                            <img id="mainDetailImage" src="/propertydirect/images/orchid_enclave.jpg" alt="Exterior View">
+                        </div>
+                        <div class="slide-item" data-slide-index="1" data-label="Living Room">
+                            <img src="/shared/images/apartment-living-1.webp" alt="Living Room">
+                        </div>
+                        <div class="slide-item" data-slide-index="2" data-label="Master Bedroom">
+                            <img src="/shared/images/apartment-bedroom-1.webp" alt="Master Bedroom">
+                        </div>
+                        <div class="slide-item" data-slide-index="3" data-label="Modern Kitchen">
+                            <img src="/shared/images/apartment-kitchen-1.jpg" alt="Modern Kitchen">
+                        </div>
+                        <div class="slide-item" data-slide-index="4" data-label="Scenic Balcony">
+                            <img src="/shared/images/propertydirect-cinematic-1.webp" alt="Scenic Balcony">
+                        </div>
+                    </div>
+                    <button class="slider-nav-btn prev" id="sliderPrev" aria-label="Previous slide">‹</button>
+                    <button class="slider-nav-btn next" id="sliderNext" aria-label="Next slide">›</button>
+                    <div class="slider-counter-badge" id="sliderCounter">1 / 5</div>
+                    <div class="slider-label-badge" id="sliderLabel">Exterior View</div>
+                </div>
+            </div>
+
+            <div class="slider-thumb-bar" id="sliderThumbBar">
+                <div class="slider-thumb-item active" data-slide-target="0">
+                    <img id="thumb0" src="/propertydirect/images/orchid_enclave.jpg" alt="Exterior View">
+                    <span>Exterior</span>
+                </div>
+                <div class="slider-thumb-item" data-slide-target="1">
+                    <img src="/shared/images/apartment-living-1.webp" alt="Living Room">
+                    <span>Living</span>
+                </div>
+                <div class="slider-thumb-item" data-slide-target="2">
+                    <img src="/shared/images/apartment-bedroom-1.webp" alt="Master Bedroom">
+                    <span>Bedroom</span>
+                </div>
+                <div class="slider-thumb-item" data-slide-target="3">
+                    <img src="/shared/images/apartment-kitchen-1.jpg" alt="Modern Kitchen">
+                    <span>Kitchen</span>
+                </div>
+                <div class="slider-thumb-item" data-slide-target="4">
+                    <img src="/shared/images/propertydirect-cinematic-1.webp" alt="Scenic Balcony">
+                    <span>Balcony</span>
+                </div>
             </div>
             <div class="detail-actions">
                 <button class="primary" data-detail-action="contact">Contact Verified Owner</button>
@@ -90,6 +543,662 @@
     </section>
 </main>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const params = new URLSearchParams(window.location.search);
+    let data = null;
+
+    const title = params.get("title");
+    const price = params.get("price");
+    const location = params.get("location");
+    const bhk = params.get("bhk");
+    const baths = params.get("baths");
+    const sqft = params.get("sqft");
+    const image = params.get("image");
+    const deposit = params.get("deposit");
+
+    if (title || price) {
+        data = {
+            title: title || "Apartment",
+            price: price || "Price on Request",
+            location: location || "Bangalore",
+            bhk: bhk || "2 BHK",
+            baths: baths || "2 Baths",
+            sqft: sqft || "1200 sqft",
+            image: image || "/propertydirect/images/orchid_enclave.jpg",
+            deposit: deposit || ""
+        };
+    } else {
+        try {
+            const stored = localStorage.getItem("propertydirect-selected-apartment");
+            if (stored) data = JSON.parse(stored);
+        } catch(e) {}
+    }
+
+    if (data) {
+        document.title = `${data.title || "Apartment Details"} - PropertyDirect`;
+
+        const breadcrumbEl = document.querySelector(".breadcrumb");
+        if (breadcrumbEl && data.location) {
+            breadcrumbEl.textContent = `Home / Apartments / ${data.location}`;
+        }
+
+        const h1El = document.querySelector(".detail-hero h1");
+        if (h1El && data.title) {
+            const locStr = data.location ? ` in ${data.location}` : '';
+            const typeStr = data.bhk ? `${data.bhk} Apartment` : 'Apartment';
+            h1El.textContent = data.title.includes("Apartment") || data.title.includes("BHK")
+                ? `${data.title}${locStr}`
+                : `${typeStr} in ${data.title}${locStr}`;
+        }
+
+        const locEl = document.querySelector(".detail-hero p:not(.breadcrumb)");
+        if (locEl && data.location) {
+            locEl.textContent = data.location;
+        }
+
+        const priceEl = document.querySelector(".detail-price strong");
+        if (priceEl && data.price) {
+            priceEl.textContent = data.price;
+        }
+
+        const maintEl = document.querySelector(".detail-price span");
+        if (maintEl) {
+            maintEl.textContent = data.deposit ? `Deposit: ${data.deposit}` : (data.maintenance ? `+ ${data.maintenance}` : "Verified Direct Owner Listing");
+        }
+
+        if (data.image) {
+            const mainImg = document.getElementById("mainDetailImage");
+            if (mainImg) {
+                mainImg.src = data.image;
+                if (data.title) mainImg.alt = data.title;
+            }
+            const thumb0 = document.getElementById("thumb0");
+            if (thumb0) thumb0.src = data.image;
+        }
+
+        const overviewGrid = document.querySelector(".overview-grid");
+        if (overviewGrid) {
+            overviewGrid.innerHTML = `
+                <article><span>Bedrooms / BHK</span><strong>${data.bhk || '2 BHK'}</strong></article>
+                <article><span>Property Type</span><strong>Apartment</strong></article>
+                <article><span>Bathrooms</span><strong>${data.baths || '2 Baths'}</strong></article>
+                <article><span>Built-up Area</span><strong>${data.sqft || '1200 sqft'}</strong></article>
+                <article><span>Tenant Preferred</span><strong>Family / Bachelor</strong></article>
+                <article><span>Parking</span><strong>Bike + Car</strong></article>
+                <article><span>Location</span><strong>${data.location || 'Bangalore'}</strong></article>
+            `;
+        }
+
+        // Image Slider / Carousel Logic
+        let currentSlide = 0;
+        const totalSlides = 5;
+        const sliderTrack = document.getElementById("sliderTrack");
+        const sliderCounter = document.getElementById("sliderCounter");
+        const sliderLabel = document.getElementById("sliderLabel");
+        const thumbItems = document.querySelectorAll(".slider-thumb-item");
+
+        function goToSlide(index) {
+            currentSlide = (index + totalSlides) % totalSlides;
+            if (sliderTrack) {
+                sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            if (sliderCounter) {
+                sliderCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            }
+            const activeSlide = document.querySelector(`.slide-item[data-slide-index="${currentSlide}"]`);
+            if (activeSlide && sliderLabel) {
+                sliderLabel.textContent = activeSlide.dataset.label || "Property View";
+            }
+            thumbItems.forEach((thumb, i) => {
+                thumb.classList.toggle("active", i === currentSlide);
+            });
+        }
+
+        document.getElementById("sliderPrev")?.addEventListener("click", () => goToSlide(currentSlide - 1));
+        document.getElementById("sliderNext")?.addEventListener("click", () => goToSlide(currentSlide + 1));
+
+        thumbItems.forEach((thumb) => {
+            thumb.addEventListener("click", () => {
+                const idx = parseInt(thumb.dataset.slideTarget, 10);
+                goToSlide(idx);
+            });
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft") goToSlide(currentSlide - 1);
+            if (e.key === "ArrowRight") goToSlide(currentSlide + 1);
+        });
+    }
+});
+</script>
+
+<div id="tourModalOverlay" class="pd-tour-modal-overlay">
+    <div class="pd-tour-modal-card">
+        <button type="button" id="closeTourModal" class="pd-modal-close-btn" aria-label="Close modal">&times;</button>
+        <h2 style="font-size:1.2rem; font-weight:800; color:#0f3460; margin:0 0 2px 0;">Schedule a Property Tour</h2>
+        <p style="font-size:0.78rem; color:#64748b; margin:0 0 10px 0;">Select your visit mode, date, contact details and preferred time slot.</p>
+        
+        <div class="pd-tour-type-grid">
+            <div class="pd-tour-type-option selected" data-tour-type="In-person">
+                <span class="pd-tour-icon">🏡</span>
+                <strong style="display:block; font-size:0.82rem; color:#0f3460;">In-Person Visit</strong>
+                <small style="color:#64748b; font-size:0.72rem;">Physical property walkthrough</small>
+            </div>
+            <div class="pd-tour-type-option" data-tour-type="Video tour">
+                <span class="pd-tour-icon">📹</span>
+                <strong style="display:block; font-size:0.82rem; color:#0f3460;">Virtual Video Tour</strong>
+                <small style="color:#64748b; font-size:0.72rem;">Guided video call tour</small>
+            </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Your Full Name *</label>
+            <input type="text" id="pdVisitorName" placeholder="e.g. Rahul Sharma" required style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box;">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+            <div>
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Phone Number *</label>
+                <input type="tel" id="pdVisitorPhone" placeholder="+91 98765 43210" required style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Email Address *</label>
+                <input type="email" id="pdVisitorEmail" placeholder="name@example.com" required style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box;">
+            </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Tour Date *</label>
+            <input type="date" id="pdTourDate" style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:4px;">Time Slot *</label>
+            <div class="pd-time-slots" id="pdTimeSlots">
+                <button type="button" class="pd-time-slot selected">10:00 AM</button>
+                <button type="button" class="pd-time-slot">12:30 PM</button>
+                <button type="button" class="pd-time-slot">03:00 PM</button>
+                <button type="button" class="pd-time-slot">05:30 PM</button>
+            </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Notes / Special Instructions</label>
+            <textarea id="pdTourNotes" placeholder="Parking request, accessibility, or specific questions..." style="width:100%; height:48px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.8rem; resize:none; box-sizing:border-box;"></textarea>
+        </div>
+
+        <button type="button" id="submitTourBtn" style="width:100%; padding:10px; background:#0f3460; color:#ffffff; border:none; border-radius:10px; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 4px 14px rgba(15,52,96,0.25);">Confirm & Book Tour</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const overlay = document.getElementById("tourModalOverlay");
+    const closeBtn = document.getElementById("closeTourModal");
+    let selectedTourType = "In-person";
+    let selectedTimeSlot = "10:00 AM";
+
+    const openTourModal = () => {
+        overlay?.classList.add("active");
+        document.body.style.overflow = "hidden";
+    };
+
+    const closeTourModal = () => {
+        overlay?.classList.remove("active");
+        document.body.style.overflow = "";
+    };
+
+    document.querySelectorAll("[data-detail-action='visit']").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            openTourModal();
+        });
+    });
+
+    closeBtn?.addEventListener("click", closeTourModal);
+    overlay?.addEventListener("click", e => {
+        if (e.target === overlay) closeTourModal();
+    });
+
+    document.querySelectorAll(".pd-tour-type-option").forEach(opt => {
+        opt.addEventListener("click", () => {
+            document.querySelectorAll(".pd-tour-type-option").forEach(o => o.classList.remove("selected"));
+            opt.classList.add("selected");
+            selectedTourType = opt.dataset.tourType;
+        });
+    });
+
+    document.querySelectorAll(".pd-time-slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+            document.querySelectorAll(".pd-time-slot").forEach(s => s.classList.remove("selected"));
+            slot.classList.add("selected");
+            selectedTimeSlot = slot.textContent.trim();
+        });
+    });
+
+    document.getElementById("submitTourBtn")?.addEventListener("click", () => {
+        const nameVal = document.getElementById("pdVisitorName")?.value || "Rahul Sharma";
+        const phoneVal = document.getElementById("pdVisitorPhone")?.value || "+91 98765 43210";
+        const emailVal = document.getElementById("pdVisitorEmail")?.value || "rahul.sharma@example.com";
+        const dateVal = document.getElementById("pdTourDate")?.value || new Date().toISOString().split("T")[0];
+        const notesVal = document.getElementById("pdTourNotes")?.value || "";
+        const titleVal = document.querySelector(".detail-hero h1")?.textContent || "Apartment Visit";
+
+        const visit = {
+            id: Date.now(),
+            apartment: titleVal,
+            visitorName: nameVal,
+            visitorPhone: phoneVal,
+            visitorEmail: emailVal,
+            visitMode: selectedTourType,
+            date: `${dateVal} at ${selectedTimeSlot}`,
+            status: "REQUESTED",
+            instructions: notesVal,
+            createdAt: new Date().toLocaleString()
+        };
+
+        // Save to scheduled visits
+        let visits = [];
+        try { visits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]"); } catch(e){}
+        visits.unshift(visit);
+        localStorage.setItem("propertydirect-scheduled-visits", JSON.stringify(visits));
+
+        let adminTours = [];
+        try { adminTours = JSON.parse(localStorage.getItem("propertydirect-admin-tours") || "[]"); } catch(e){}
+        adminTours.unshift(visit);
+        localStorage.setItem("propertydirect-admin-tours", JSON.stringify(adminTours));
+
+        closeTourModal();
+        showToastNotification("Tour booked! Details sent to Admin Dashboard for approval.");
+    });
+});
+</script>
+
+<div id="reportModalOverlay" class="pd-tour-modal-overlay">
+    <div class="pd-tour-modal-card">
+        <button type="button" id="closeReportModal" class="pd-modal-close-btn" aria-label="Close modal">&times;</button>
+        <h2 style="font-size:1.2rem; font-weight:800; color:#0f3460; margin:0 0 2px 0;">Report Incorrect Listing Info</h2>
+        <p style="font-size:0.78rem; color:#64748b; margin:0 0 12px 0;">Help us keep PropertyDirect safe and accurate by reporting wrong details.</p>
+
+        <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:4px;">Reason for Report *</label>
+            <select id="pdReportReason" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box; background:#ffffff;">
+                <option value="Incorrect Pricing">Incorrect Pricing / Rent Amount</option>
+                <option value="Mismatched Photos">Mismatched or Misleading Photos</option>
+                <option value="Wrong Location">Wrong Location / Address</option>
+                <option value="Unresponsive Owner">Owner Unresponsive / Incorrect Contact</option>
+                <option value="Already Occupied">Property Already Rented or Sold</option>
+                <option value="Spam / Fraud">Suspicious Listing or Fraud Signal</option>
+                <option value="Other">Other Information Issue</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Your Email / Contact (Optional)</label>
+            <input type="email" id="pdReportEmail" placeholder="yourname@example.com" style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.82rem; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; color:#475569; margin-bottom:3px;">Describe the Issue *</label>
+            <textarea id="pdReportNotes" placeholder="Please provide specific details about the incorrect information..." required style="width:100%; height:60px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px; font-family:inherit; font-size:0.8rem; resize:none; box-sizing:border-box;"></textarea>
+        </div>
+
+        <button type="button" id="submitReportBtn" style="width:100%; padding:10px; background:#dc2626; color:#ffffff; border:none; border-radius:10px; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 4px 14px rgba(220,38,38,0.25);">Submit Report</button>
+    </div>
+</div>
+
+<div id="contactModalOverlay" class="pd-tour-modal-overlay">
+    <div class="pd-tour-modal-card" style="text-align:center;">
+        <button type="button" id="closeContactModal" class="pd-modal-close-btn" aria-label="Close modal">&times;</button>
+        <div style="font-size:2.2rem; margin-bottom:4px;">👤</div>
+        <h2 style="font-size:1.2rem; font-weight:800; color:#0f3460; margin:0 0 2px 0;">Contact Verified Owner</h2>
+        <p style="font-size:0.78rem; color:#64748b; margin:0 0 14px 0;">Direct owner contact — Zero Brokerage Guaranteed.</p>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:14px; text-align:left;">
+            <div style="font-size:0.95rem; font-weight:800; color:#0f172a; margin-bottom:4px;" id="pdOwnerName">Rohan Mehta</div>
+            <div style="font-size:0.78rem; color:#166534; font-weight:700; margin-bottom:8px;">✓ Phone Verified · KYC Verified Owner</div>
+            <div style="font-size:0.85rem; color:#334155; margin-bottom:4px;">📞 Phone: <strong style="color:#0f3460;" id="pdOwnerPhone">+91 98765 43210</strong></div>
+            <div style="font-size:0.85rem; color:#334155;">✉️ Email: <strong style="color:#0f3460;" id="pdOwnerEmail">rohan.mehta@propertydirect.test</strong></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <a id="pdCallOwnerLink" href="tel:+919876543210" style="display:block; text-decoration:none; padding:10px; background:#0f3460; color:#ffffff; border-radius:10px; font-weight:700; font-size:0.85rem;">📞 Call Owner</a>
+            <a id="pdWhatsappOwnerLink" href="https://wa.me/919876543210" target="_blank" style="display:block; text-decoration:none; padding:10px; background:#16a34a; color:#ffffff; border-radius:10px; font-weight:700; font-size:0.85rem;">💬 WhatsApp</a>
+        </div>
+    </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Tour Modal Handlers
+    const overlay = document.getElementById("tourModalOverlay");
+    const closeBtn = document.getElementById("closeTourModal");
+    let selectedTourType = "In-person";
+    let selectedTimeSlot = "10:00 AM";
+
+    const openTourModal = () => {
+        overlay?.classList.add("active");
+        document.body.style.overflow = "hidden";
+    };
+
+    const closeTourModal = () => {
+        overlay?.classList.remove("active");
+        document.body.style.overflow = "";
+    };
+
+    document.querySelectorAll("[data-detail-action='visit']").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openTourModal();
+        });
+    });
+
+    closeBtn?.addEventListener("click", closeTourModal);
+    overlay?.addEventListener("click", e => {
+        if (e.target === overlay) closeTourModal();
+    });
+
+    document.querySelectorAll(".pd-tour-type-option").forEach(opt => {
+        opt.addEventListener("click", () => {
+            document.querySelectorAll(".pd-tour-type-option").forEach(o => o.classList.remove("selected"));
+            opt.classList.add("selected");
+            selectedTourType = opt.dataset.tourType;
+        });
+    });
+
+    document.querySelectorAll(".pd-time-slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+            document.querySelectorAll(".pd-time-slot").forEach(s => s.classList.remove("selected"));
+            slot.classList.add("selected");
+            selectedTimeSlot = slot.textContent.trim();
+        });
+    });
+
+    document.getElementById("submitTourBtn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        const nameVal = document.getElementById("pdVisitorName")?.value || "Rahul Sharma";
+        const phoneVal = document.getElementById("pdVisitorPhone")?.value || "+91 98765 43210";
+        const emailVal = document.getElementById("pdVisitorEmail")?.value || "rahul.sharma@example.com";
+        const dateVal = document.getElementById("pdTourDate")?.value || new Date().toISOString().split("T")[0];
+        const notesVal = document.getElementById("pdTourNotes")?.value || "";
+        const titleVal = document.querySelector(".detail-hero h1")?.textContent || "Apartment Visit";
+
+        const visit = {
+            id: Date.now(),
+            apartment: titleVal,
+            visitorName: nameVal,
+            visitorPhone: phoneVal,
+            visitorEmail: emailVal,
+            visitMode: selectedTourType,
+            date: `${dateVal} at ${selectedTimeSlot}`,
+            status: "REQUESTED",
+            instructions: notesVal,
+            createdAt: new Date().toLocaleString()
+        };
+
+        let visits = [];
+        try { visits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]"); } catch(e){}
+        visits.unshift(visit);
+        localStorage.setItem("propertydirect-scheduled-visits", JSON.stringify(visits));
+
+        let adminTours = [];
+        try { adminTours = JSON.parse(localStorage.getItem("propertydirect-admin-tours") || "[]"); } catch(e){}
+        adminTours.unshift(visit);
+        localStorage.setItem("propertydirect-admin-tours", JSON.stringify(adminTours));
+
+        closeTourModal();
+        showToastNotification("Tour booked! Details sent to Admin Dashboard for approval.");
+    });
+
+    // Shortlist Button Functionality
+    const shortlistBtns = document.querySelectorAll("[data-detail-action='shortlist']");
+    const getPropertyData = () => {
+        const titleVal = document.querySelector(".detail-hero h1")?.textContent.trim() || "Orchid Enclave";
+        const priceVal = document.querySelector(".detail-price .amount")?.textContent.trim() || "₹2.2 Cr";
+        const locVal = document.querySelector(".detail-hero .location")?.textContent.trim() || "HSR Layout, Bangalore";
+        const imageVal = document.getElementById("mainDetailImage")?.src || "/propertydirect/images/orchid_enclave.jpg";
+        return {
+            title: titleVal,
+            price: priceVal,
+            rent: priceVal,
+            locality: locVal.split(",")[0] || "HSR Layout",
+            city: locVal.split(",")[1]?.trim() || "Bangalore",
+            bhk: "3 BHK",
+            image: imageVal
+        };
+    };
+
+    const updateShortlistButtonState = () => {
+        const currentProp = getPropertyData();
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]"); } catch(e){}
+        const isShortlisted = saved.some(item => item.title === currentProp.title);
+
+        shortlistBtns.forEach(btn => {
+            if (isShortlisted) {
+                btn.innerHTML = "❤️ Shortlisted";
+                btn.style.background = "#fee2e2";
+                btn.style.color = "#dc2626";
+                btn.style.borderColor = "#fca5a5";
+                btn.classList.add("active");
+            } else {
+                btn.innerHTML = "🤍 Shortlist";
+                btn.style.background = "";
+                btn.style.color = "";
+                btn.style.borderColor = "";
+                btn.classList.remove("active");
+            }
+        });
+    };
+
+    shortlistBtns.forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            const prop = getPropertyData();
+            let saved = [];
+            try { saved = JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]"); } catch(e){}
+            const index = saved.findIndex(item => item.title === prop.title);
+            let msg = "";
+
+            if (index >= 0) {
+                saved.splice(index, 1);
+                msg = "Removed from shortlisted properties";
+            } else {
+                saved.unshift(prop);
+                msg = "Added to shortlisted properties! View in Customer Dashboard.";
+            }
+
+            localStorage.setItem("propertydirect-saved-listings", JSON.stringify(saved));
+            updateShortlistButtonState();
+            showToastNotification(msg);
+        });
+    });
+
+    updateShortlistButtonState();
+
+    // Report Wrong Info Modal Handlers
+    const reportOverlay = document.getElementById("reportModalOverlay");
+    const closeReportBtn = document.getElementById("closeReportModal");
+    const openReportModal = () => {
+        reportOverlay?.classList.add("active");
+        document.body.style.overflow = "hidden";
+    };
+    const closeReportModal = () => {
+        reportOverlay?.classList.remove("active");
+        document.body.style.overflow = "";
+    };
+
+    document.querySelectorAll("[data-detail-action='report']").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openReportModal();
+        });
+    });
+
+    closeReportBtn?.addEventListener("click", closeReportModal);
+    reportOverlay?.addEventListener("click", e => {
+        if (e.target === reportOverlay) closeReportModal();
+    });
+
+    document.getElementById("submitReportBtn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        const reasonVal = document.getElementById("pdReportReason")?.value || "Other";
+        const emailVal = document.getElementById("pdReportEmail")?.value || "anonymous@propertydirect.test";
+        const notesVal = document.getElementById("pdReportNotes")?.value || "";
+        const titleVal = document.querySelector(".detail-hero h1")?.textContent || "Apartment Listing";
+
+        if (!notesVal.trim()) {
+            alert("Please describe the issue before submitting.");
+            return;
+        }
+
+        const report = {
+            id: Date.now(),
+            apartment: titleVal.trim(),
+            reason: reasonVal,
+            reporterEmail: emailVal,
+            notes: notesVal,
+            status: "PENDING_APPROVAL",
+            createdAt: new Date().toLocaleString()
+        };
+
+        let reports = [];
+        try { reports = JSON.parse(localStorage.getItem("propertydirect-reported-listings") || "[]"); } catch(e){}
+        reports.unshift(report);
+        localStorage.setItem("propertydirect-reported-listings", JSON.stringify(reports));
+
+        closeReportModal();
+        showToastNotification("Report submitted to SuperAdmin for approval! Apartment review pending.");
+    });
+
+    // Check if property is suspended by SuperAdmin
+    const checkSuspendedStatus = () => {
+        const propName = getPropertyData().title;
+        let suspended = [];
+        try { suspended = JSON.parse(localStorage.getItem("propertydirect-suspended-apartments") || "[]"); } catch(e){}
+        if (suspended.some(name => name.toLowerCase().trim() === propName.toLowerCase().trim())) {
+            const hero = document.querySelector(".detail-hero");
+            if (hero && !document.getElementById("suspendedNoticeBanner")) {
+                const banner = document.createElement("div");
+                banner.id = "suspendedNoticeBanner";
+                banner.style.cssText = "background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; padding:14px 20px; border-radius:12px; font-size:0.88rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;";
+                banner.innerHTML = "🚫 <span><strong>Listing Suspended:</strong> This apartment has been suspended by SuperAdmin following a report and is currently hidden from public discovery.</span>";
+                hero.parentNode.insertBefore(banner, hero);
+            }
+        }
+    };
+    checkSuspendedStatus();
+
+    // Contact Owner Modal Handlers
+    const contactOverlay = document.getElementById("contactModalOverlay");
+    const closeContactBtn = document.getElementById("closeContactModal");
+    const openContactModal = () => {
+        contactOverlay?.classList.add("active");
+        document.body.style.overflow = "hidden";
+    };
+    const closeContactModal = () => {
+        contactOverlay?.classList.remove("active");
+        document.body.style.overflow = "";
+    };
+
+    document.querySelectorAll("[data-detail-action='contact']").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openContactModal();
+        });
+    });
+
+    closeContactBtn?.addEventListener("click", closeContactModal);
+    contactOverlay?.addEventListener("click", e => {
+        if (e.target === contactOverlay) closeContactModal();
+    });
+
+    function showToastNotification(msg) {
+        const toast = document.getElementById("toast");
+        if (toast) {
+            toast.textContent = msg;
+            toast.classList.remove("hidden");
+            setTimeout(() => toast.classList.add("hidden"), 3200);
+        } else {
+            alert(msg);
+        }
+    }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const listingId = new URLSearchParams(window.location.search).get("id");
+    if (!listingId) return;
+
+    const safeText = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch]);
+    const currency = value => value == null ? "Price on request" : `₹${Number(value).toLocaleString("en-IN")}`;
+
+    try {
+        const response = await fetch(`/api/property/listings/${encodeURIComponent(listingId)}`, {headers:{Accept:"application/json"}});
+        if (!response.ok) throw new Error("Approved apartment was not found");
+        const item = await response.json();
+        const location = [item.locality, item.city, item.pincode].filter(Boolean).join(", ");
+        const title = item.title || `${item.bhk || "Apartment"} in ${item.locality || item.city || "your city"}`;
+
+        document.title = `${title} - PropertyDirect`;
+        const breadcrumb = document.querySelector(".breadcrumb");
+        if (breadcrumb) breadcrumb.textContent = `Home / Apartments / ${item.city || "Property"} / ${title}`;
+        const heading = document.querySelector(".detail-hero h1");
+        if (heading) heading.textContent = title;
+        const locationNode = document.querySelector(".detail-hero p:not(.breadcrumb)");
+        if (locationNode) locationNode.textContent = location || "Verified location";
+        const priceNode = document.querySelector(".detail-price strong");
+        if (priceNode) priceNode.textContent = `${currency(item.price)}${String(item.listingType || "").toUpperCase() === "RENT" ? " / month" : ""}`;
+        const priceMeta = document.querySelector(".detail-price span");
+        if (priceMeta) priceMeta.textContent = item.deposit ? `Security deposit: ${currency(item.deposit)}` : "Verified direct-owner listing";
+
+        const overview = document.querySelector(".overview-grid");
+        if (overview) overview.innerHTML = `
+            <article><span>Bedrooms / BHK</span><strong>${safeText(item.bhk || "On request")}</strong></article>
+            <article><span>Property Type</span><strong>${safeText(item.propertyType || "Apartment")}</strong></article>
+            <article><span>Bathrooms</span><strong>${safeText(item.bathrooms || "On request")}</strong></article>
+            <article><span>Built-up Area</span><strong>${item.areaSqft ? `${Number(item.areaSqft).toLocaleString("en-IN")} sqft` : "On request"}</strong></article>
+            <article><span>Furnishing</span><strong>${safeText(item.furnishing || "Not specified")}</strong></article>
+            <article><span>Parking</span><strong>${safeText(item.parking || "Confirm with owner")}</strong></article>
+            <article><span>Available From</span><strong>${item.availableFrom ? new Date(item.availableFrom).toLocaleDateString("en-IN") : "Ready to move"}</strong></article>
+            <article><span>Address</span><strong>${safeText(item.address || location || "Shared after contact verification")}</strong></article>
+        `;
+
+        const urls = String(item.imageUrls || "").split(/\r?\n/).filter(Boolean);
+        if (item.imageUrl && !urls.includes(item.imageUrl)) urls.unshift(item.imageUrl);
+        if (urls.length) {
+            const slideImages = [...document.querySelectorAll(".slide-item img")];
+            const thumbImages = [...document.querySelectorAll(".slider-thumb-item img")];
+            slideImages.forEach((img, index) => { img.src = urls[index % urls.length]; img.alt = `${title} photo ${index + 1}`; });
+            thumbImages.forEach((img, index) => { img.src = urls[index % urls.length]; img.alt = `${title} thumbnail ${index + 1}`; });
+        }
+
+        window.localStorage.setItem("propertydirect-selected-apartment", JSON.stringify({
+            id:item.id,title,price:currency(item.price),location,bhk:item.bhk,baths:item.bathrooms,
+            sqft:item.areaSqft ? `${item.areaSqft} sqft` : "",image:item.imageUrl,deposit:currency(item.deposit)
+        }));
+    } catch (error) {
+        const toast = document.getElementById("toast");
+        if (toast) { toast.textContent = error.message; toast.classList.remove("hidden"); }
+    }
+});
+</script>
+<script src="/shared/js/required-fields.js?v=20260826-v2"></script>
 <script src="/propertydirect/js/apartments.js?v=20260721-apartments"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
     --pd-primary: #0f3460;
@@ -14,30 +14,113 @@
 
 /* PropertyDirect Global Overrides */
 body, .apartment-page, .detail-page {
-    font-family: 'Outfit', sans-serif !important;
+    font-family: 'Manrope', 'Outfit', sans-serif !important;
     background-color: var(--pd-bg) !important;
     color: var(--pd-text-dark) !important;
 }
 
 h1, h2, h3, h4, h5, h6, strong, b {
-    font-family: 'Outfit', sans-serif !important;
+    font-family: 'Manrope', 'Outfit', sans-serif !important;
     color: var(--pd-text-dark) !important;
+}
+
+/* Keep section and page headings consistent with the SmartApartment workspace. */
+h1, h2, h3, h4, h5, h6 {
+    color: #2563eb !important;
 }
 
 h1 { font-weight: 700 !important; letter-spacing: -0.5px !important; }
 h2 { font-weight: 600 !important; letter-spacing: -0.5px !important; }
 
-/* Topbar / Header overrides */
-.topbar {
-    background-color: var(--pd-primary) !important;
-    padding: 16px 24px !important;
-    border-bottom: none !important;
+/* --- Global Topbar & Navigation Overrides --- */
+.topbar, .topbar.compact {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 28px !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 .topbar .brand {
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 700 !important;
-    color: white !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-family: 'Manrope', 'Outfit', sans-serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    text-decoration: none !important;
+    letter-spacing: -0.03em !important;
+}
+
+.topbar .brand .brand-mark {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: #0f3460 !important;
+    border: 1px solid #0f3460 !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-size: 0.85rem !important;
+    font-weight: 800 !important;
+}
+
+.topbar .brand span {
+    color: #000000 !important;
+    font-weight: 800 !important;
+}
+
+.topbar .brand span span {
+    color: #0f3460 !important;
+    font-weight: 800 !important;
+}
+
+.topbar .nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+}
+
+.topbar .nav a {
+    color: #000000 !important;
+    font-family: 'Manrope', 'Outfit', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 0.88rem !important;
+    text-decoration: none !important;
+    opacity: 1 !important;
+}
+
+.topbar .nav a:hover {
+    color: #0f3460 !important;
+    text-decoration: underline !important;
+}
+
+.topbar .nav a.smartsociety-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 14px !important;
+    background: #f1f5f9 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    font-size: 0.82rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #94a3b8 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.topbar .nav a.smartsociety-btn:hover {
+    background: #0f3460 !important;
+    color: #ffffff !important;
+    border-color: #0f3460 !important;
 }
 
 .topbar .nav a {
@@ -259,47 +342,55 @@ body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button:hover {
 }
 body.app-dashboard[data-platform="propertydirect"] .logout:hover { background: rgba(167,243,203,.16) !important; }
 
+/* Dashboard visual parity with SmartApartment */
 body.app-dashboard[data-platform="propertydirect"] .dash-header {
-    background: rgba(255, 254, 253, .88) !important;
-    border: 1px solid rgba(25,49,95,.09) !important;
-    box-shadow: 0 12px 30px rgba(18, 39, 84, .07) !important;
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-header::before { background: linear-gradient(#a7f3cb, #315ab0) !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #1d376c !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-header h1 { color: #17223b !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header::before { display: none !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #2563eb !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header h1 { color: #0f172a !important; }
 
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
 body.app-dashboard[data-platform="propertydirect"] .dash-card,
 body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll {
-    background: rgba(255, 254, 253, .88) !important;
-    border-color: rgba(25,49,95,.11) !important;
-    box-shadow: 0 14px 30px rgba(18,39,84,.065) !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article:hover,
 body.app-dashboard[data-platform="propertydirect"] .dash-card:hover {
-    border-color: rgba(29,55,108,.25) !important;
-    box-shadow: 0 18px 34px rgba(18,39,84,.10) !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::before { background: rgba(167,243,203,.34) !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::after { color: #1d376c !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #17223b !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-card::before { background: linear-gradient(90deg, #a7f3cb, #315ab0) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::before,
+body.app-dashboard[data-platform="propertydirect"] .dash-card::before { display: none !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #2563eb !important; }
 
 body.app-dashboard[data-platform="propertydirect"] button.primary,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle),
 body.app-dashboard[data-platform="propertydirect"] .dash-card button.primary {
-    background: linear-gradient(135deg, #1d376c, #315ab0) !important;
-    border-color: transparent !important;
-    box-shadow: 0 9px 18px rgba(29,55,108,.20) !important;
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary),
 body.app-dashboard[data-platform="propertydirect"] table button {
-    color: #1d376c !important;
-    border-color: rgba(29,55,108,.20) !important;
-    background: #fffefd !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    border-radius: 10px !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .pill-row span {
-    color: #1d376c !important;
+    color: #334155 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+}
     border-color: rgba(29,55,108,.12) !important;
     background: rgba(167,243,203,.24) !important;
 }
@@ -558,3 +649,275 @@ body.app-dashboard[data-platform="propertydirect"] .pd-modal-actions .primary { 
     body.app-dashboard[data-platform="propertydirect"] .pd-modal-actions { flex-direction: column-reverse !important; }
     body.app-dashboard[data-platform="propertydirect"] .pd-modal-actions button { width: 100% !important; }
 }
+
+/* --- Advanced Filter Bar & Controls --- */
+.pd-filter-bar {
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    padding: 18px 24px !important;
+    box-shadow: 0 8px 30px rgba(15, 52, 96, 0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 24px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    align-items: center !important;
+}
+
+.pd-filter-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.pd-filter-group label {
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+}
+
+.pd-mode-tabs {
+    display: inline-flex !important;
+    background: #f1f5f9 !important;
+    padding: 4px !important;
+    border-radius: 12px !important;
+    gap: 4px !important;
+}
+
+.pd-mode-tab {
+    padding: 8px 18px !important;
+    border-radius: 9px !important;
+    border: none !important;
+    background: transparent !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.pd-mode-tab.active {
+    background: #0f3460 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(15, 52, 96, 0.25) !important;
+}
+
+.pd-bhk-pills {
+    display: flex !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+}
+
+.pd-bhk-pill {
+    padding: 6px 14px !important;
+    border-radius: 999px !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.pd-bhk-pill.active, .pd-bhk-pill:hover {
+    background: #1e3a8a !important;
+    color: #ffffff !important;
+    border-color: #1e3a8a !important;
+}
+
+.pd-price-slider-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.pd-price-slider {
+    accent-color: #0f3460 !important;
+    cursor: pointer !important;
+    width: 140px !important;
+}
+
+.pd-price-val {
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    color: #0f3460 !important;
+    min-width: 80px !important;
+}
+
+/* Heart Bookmark Button on Property Cards */
+.pd-bookmark-btn {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    z-index: 10 !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(8px) !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #94a3b8 !important;
+    font-size: 1.15rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.pd-bookmark-btn:hover, .pd-bookmark-btn.saved {
+    background: #ffffff !important;
+    color: #ef4444 !important;
+    transform: scale(1.12) !important;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Schedule Tour Modal */
+.pd-tour-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(11, 24, 54, 0.65) !important;
+    backdrop-filter: blur(6px) !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease !important;
+}
+
+.pd-tour-modal-overlay.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.pd-tour-modal-card {
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    max-width: 420px !important;
+    width: 100% !important;
+    padding: 20px 22px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 16px 40px rgba(11, 24, 54, 0.28) !important;
+    position: relative !important;
+    transform: translateY(16px) scale(0.96);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.pd-tour-modal-overlay.active .pd-tour-modal-card {
+    transform: translateY(0) scale(1) !important;
+}
+
+.pd-modal-close-btn {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    padding: 0 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 50% !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    font-size: 1.15rem !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.pd-modal-close-btn:hover {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border-color: #fca5a5 !important;
+}
+
+.pd-tour-type-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin: 12px 0 !important;
+}
+
+.pd-tour-type-option {
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 10px 12px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    background: #f8fafc !important;
+    transition: all 0.2s ease !important;
+}
+
+.pd-tour-type-option.selected, .pd-tour-type-option:hover {
+    border-color: #0f3460 !important;
+    background: rgba(15, 52, 96, 0.04) !important;
+}
+
+.pd-tour-type-option .pd-tour-icon {
+    font-size: 1.3rem !important;
+    display: block !important;
+    margin-bottom: 3px !important;
+}
+
+.pd-time-slots {
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin-top: 8px !important;
+}
+
+.pd-time-slot {
+    padding: 9px 16px !important;
+    border-radius: 10px !important;
+    border: 2px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.pd-time-slot:hover {
+    border-color: #0f3460 !important;
+    background: #f1f5f9 !important;
+    color: #0f3460 !important;
+}
+
+.pd-time-slot.selected {
+    background: #0f3460 !important;
+    color: #ffffff !important;
+    border-color: #0f3460 !important;
+    box-shadow: 0 4px 14px rgba(15, 52, 96, 0.3) !important;
+}
+
+/* Tour & Booking Status Badges */
+.pd-tour-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+}
+
+.pd-tour-badge.requested { background: #fef3c7 !important; color: #92400e !important; }
+.pd-tour-badge.confirmed { background: #dcfce7 !important; color: #166534 !important; }
+.pd-tour-badge.completed { background: #e0f2fe !important; color: #075985 !important; }

@@ -7,7 +7,8 @@
     <title>SmartApartment - Society Management, Simplified</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260818-readable-type-v1">
-    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260824-static-showcase-v1">
+    <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260826-static-footer-v2">
+<link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 </head>
 <body class="recording-landing">
 <div class="announcement-bar">
@@ -64,42 +65,16 @@
                 </div>
             </div>
 
-            <div class="hero-visual" aria-label="SmartApartment administrator dashboard preview">
-                <div class="hero-pill hero-pill-one"><i></i><span aria-hidden="true">₹</span> Online Payment</div>
-                <div class="hero-pill hero-pill-two"><i></i><span aria-hidden="true">▤</span> Receipts</div>
-                <div class="hero-pill hero-pill-three"><i></i><span aria-hidden="true">▰</span> Maintenance Bills</div>
-                <div class="dashboard-mockup">
-                    <aside class="mock-sidebar">
-                        <div class="mock-brand"><span>SA</span> SmartApartment</div>
-                        <b>Dashboard</b>
-                        <span>Residents & Flats</span>
-                        <span>Billing & Payments</span>
-                        <span>Gate Operations</span>
-                        <span>Complaints</span>
-                        <span>Amenities</span>
-                        <span>Expenses</span>
-                        <span>Reports</span>
-                    </aside>
-                    <div class="mock-main">
-                        <div class="mock-title-row">
-                            <div><strong>Green Heights Society</strong><span>Operations overview</span></div>
-                            <small>FY 2026-27 · Hi, Admin</small>
-                        </div>
-                        <div class="mock-metrics">
-                            <article><i class="metric-purple">▦</i><span>Total flats</span><strong>128</strong></article>
-                            <article><i class="metric-orange">↗</i><span>Visitors today</span><strong>24</strong></article>
-                            <article><i class="metric-blue">●</i><span>Open complaints</span><strong>7</strong></article>
-                            <article><i class="metric-green">✓</i><span>Pending approvals</span><strong>5</strong></article>
-                        </div>
-                        <div class="mock-finance">
-                            <article><span>Regular bills</span><strong>₹3.84L</strong><i style="--progress:84%"></i></article>
-                            <article><span>Receipts</span><strong>₹3.21L</strong><i style="--progress:72%"></i></article>
-                            <article><span>Expenses</span><strong>₹86K</strong><i style="--progress:42%"></i></article>
-                            <article><span>Collection</span><strong>91%</strong><i style="--progress:91%"></i></article>
-                        </div>
-                        <strong class="mock-quick-label">Quick links</strong>
-                        <div class="mock-quick-links"><span>Generate bills</span><span>Gate log</span><span>Complaints</span><span>Member ledger</span><span>Notices</span><span>Expenses</span><span>Analytics</span><span>Settings</span></div>
+            <div class="hero-visual community-hero" aria-label="Residents enjoying the landscaped SmartApartment community courtyard">
+                <div class="community-scene" role="img" aria-label="Modern apartment courtyard with residents walking and children playing">
+                    <div class="community-scene-shade" aria-hidden="true"></div>
+                    <div class="community-scene-caption">
+                        <span><i></i> Life at Green Heights</span>
+                        <strong>A connected community,<br>alive every day.</strong>
+                        <small>Residents · Amenities · Security · Services</small>
                     </div>
+                    <div class="community-live-badge"><i></i> Community live</div>
+                    <div class="community-scene-progress" aria-hidden="true"><span></span></div>
                 </div>
             </div>
         </div>
@@ -204,9 +179,18 @@
             <div class="section-heading landing-reveal"><span class="section-kicker">Tutorials</span><h2>Learn SmartApartment in Minutes</h2><p>Open focused, step-by-step workflows for the platform's most important operations.</p></div>
             <div class="tutorial-tabs landing-reveal" role="tablist" aria-label="Tutorial categories"><button class="active" type="button" role="tab" aria-selected="true" data-tutorial-filter="all">All</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="operations">Operations</button><button type="button" role="tab" aria-selected="false" data-tutorial-filter="finance">Finance</button></div>
             <div class="tutorial-grid landing-reveal" id="tutorialGrid">
-                <a class="tutorial-card" data-category="operations" href="/terms/onboarding#society-onboarding"><div><span>ONBOARDING · 5 MIN</span></div><h3>Set up a society and its residents</h3><p>Tenant, plan, blocks, flats and access</p></a>
-                <a class="tutorial-card" data-category="operations" href="/terms/daily-operations#visitor-approvals"><div><span>OPERATIONS · 7 MIN</span></div><h3>Run visitor and gate approvals</h3><p>Expected entries, check-in and checkout</p></a>
-                <a class="tutorial-card" data-category="finance" href="/terms/finance-reports#online-payments"><div><span>FINANCE · 6 MIN</span></div><h3>Generate bills and collect dues</h3><p>Billing cycles, payments and receipts</p></a>
+                <button class="tutorial-card" data-category="operations" data-tutorial="onboarding" type="button">
+                    <span class="tutorial-preview tutorial-preview-onboarding"><i class="tutorial-number">01</i><span class="tutorial-screen"><b></b><b></b><b></b><em></em></span><span class="tutorial-play" aria-hidden="true">▶</span><small>ONBOARDING · 15 SEC</small></span>
+                    <span class="tutorial-copy"><strong>Create your society workspace</strong><span>Society, administrator and secure setup details</span><em>Play product preview →</em></span>
+                </button>
+                <button class="tutorial-card" data-category="operations" data-tutorial="operations" type="button">
+                    <span class="tutorial-preview tutorial-preview-operations"><i class="tutorial-number">02</i><span class="tutorial-screen"><b></b><b></b><b></b><em></em></span><span class="tutorial-play" aria-hidden="true">▶</span><small>OPERATIONS · 13 SEC</small></span>
+                    <span class="tutorial-copy"><strong>Run visitor and gate approvals</strong><span>Expected entries, verification, check-in and checkout</span><em>Start guided walkthrough →</em></span>
+                </button>
+                <button class="tutorial-card" data-category="finance" data-tutorial="finance" type="button">
+                    <span class="tutorial-preview tutorial-preview-finance"><i class="tutorial-number">03</i><span class="tutorial-screen"><b></b><b></b><b></b><em></em></span><span class="tutorial-play" aria-hidden="true">▶</span><small>FINANCE · 18 SEC</small></span>
+                    <span class="tutorial-copy"><strong>Generate bills and collect dues</strong><span>Billing cycles, online payments and receipts</span><em>Start guided walkthrough →</em></span>
+                </button>
             </div>
         </div>
     </section>
@@ -224,6 +208,7 @@
             </div>
         </div>
     </section>
+
 
     <section class="contact-section" id="contact">
         <div class="landing-container contact-grid">
@@ -248,7 +233,7 @@
                     <label data-professional-field hidden>Your Designation<span>Your responsibility in the organization</span><select name="designation"><option value="">Select designation</option><option>Founder / Owner</option><option>Property Manager</option><option>Facility Manager</option><option>Community Manager</option><option>Operations Manager</option><option>Consultant</option></select></label>
                     <label data-professional-field hidden>Societies Managed<span>Current community portfolio size</span><select name="portfolioSize"><option value="">Select portfolio size</option><option>Setting up my first society</option><option>1–5 societies</option><option>6–20 societies</option><option>More than 20 societies</option></select></label>
                     <label>Your Name<span>Primary workspace administrator</span><input name="name" placeholder="Enter your full name" minlength="2" maxlength="100" autocomplete="name" required></label>
-                    <label>Phone Number<span>Used for onboarding updates</span><input name="phone" type="tel" placeholder="+91 98765 43210" pattern="[+0-9 ()-]{10,18}" autocomplete="tel" required></label>
+                    <label>Phone Number<span>Used for onboarding updates</span><input name="phone" type="tel" placeholder="+91 98765 43210" pattern="[+0-9 ]{10,18}" autocomplete="tel" required></label>
                     <label>Email Address<span>Your administrator login email</span><input name="email" type="email" placeholder="you@example.com" maxlength="160" autocomplete="email" required></label>
                     <label>City<span>Primary society location</span><select name="city" autocomplete="address-level2" required><option value="">Select city</option><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option><option>Other</option></select></label>
                 </div>
@@ -260,7 +245,42 @@
 </main>
 
 <footer class="landing-footer">
-    <div class="landing-container footer-inner"><a class="landing-logo" href="#home"><span class="logo-mark">SA</span><span>SmartApartment</span></a><span>Apartment community management for modern teams.</span><nav aria-label="Footer navigation"><a href="/terms/onboarding">Onboarding</a><a href="/terms/daily-operations">Operations</a><a href="/terms/finance-reports">Reports</a><a href="/propertydirect">PropertyDirect</a></nav></div>
+    <div class="landing-container footer-cta">
+        <div><span>SMARTER COMMUNITY OPERATIONS</span><h2>Ready to bring your entire society into one workspace?</h2><p>Start with a secure setup for residents, administrators, security and maintenance teams.</p></div>
+        <div class="footer-cta-actions"><a class="footer-primary-action" href="#contact">Create Your Society</a></div>
+    </div>
+    <div class="landing-container footer-grid">
+        <section class="footer-brand" aria-label="About SmartApartment">
+            <a class="landing-logo" href="#home"><span class="logo-mark">SA</span><span>Smart<span>Society</span></span></a>
+            <p>One connected workspace for apartment billing, residents, gate operations, complaints, amenities and community administration.</p>
+            <div class="footer-badges"><span>Secure access</span><span>Role controlled</span><span>Tenant isolated</span></div>
+        </section>
+        <nav class="footer-column" aria-label="Platform links">
+            <strong>Platform</strong>
+            <span>About SmartApartment</span>
+            <span>Products &amp; features</span>
+            <span>Society onboarding</span>
+            <span>Billing &amp; reports</span>
+        </nav>
+        <nav class="footer-column" aria-label="Workspace links">
+            <strong>Workspaces</strong>
+            <span>Resident dashboard</span>
+            <span>Society admin</span>
+            <span>Security &amp; maintenance</span>
+            <span>PropertyDirect marketplace</span>
+        </nav>
+        <section class="footer-column footer-contact" aria-label="Support information">
+            <strong>Support</strong>
+            <span>Create your society</span>
+            <span>Tutorials &amp; guides</span>
+            <a href="mailto:support@smartapartment.in" aria-label="Email SmartApartment support">support@smartapartment.in</a>
+            <a href="tel:+9118001232026" aria-label="Call SmartApartment support at +91 1800 123 2026">+91 1800 123 2026</a>
+        </section>
+    </div>
+    <div class="landing-container footer-bottom">
+        <span>© 2026 SmartApartment. All rights reserved.</span>
+        <div class="footer-legal"><span>Terms</span><span>Privacy</span><span>Community guidelines</span></div>
+    </div>
 </footer>
 
 <div class="modal hidden" id="registerModal" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
@@ -297,7 +317,7 @@
                 <label>Admin Name<input id="societyAdminName" minlength="2" maxlength="100" autocomplete="name" required></label>
                 <label>Designation<select id="societyAdminDesignation" required><option value="">Select designation</option><option>President</option><option>Secretary</option><option>Treasurer</option><option>Committee Member</option><option>Society Manager</option><option>Facility Manager</option><option>Authorized Representative</option></select></label>
                 <label>Admin Email<input id="societyAdminEmail" type="email" maxlength="160" autocomplete="email" required></label>
-                <label>Phone Number<input id="societyPhone" type="tel" pattern="[+0-9 ()-]{10,18}" autocomplete="tel" required></label>
+                <label>Phone Number<input id="societyPhone" type="tel" pattern="[+0-9 ]{10,18}" autocomplete="tel" required></label>
                 <label class="registration-wide">Password<div class="password-field"><input id="societyPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Minimum 8 characters" required><button id="toggleSocietyPassword" type="button" aria-label="Show password">Show</button></div><span class="password-guidance" id="passwordGuidance">Use 8+ characters with a number and symbol.</span></label>
             </div>
         </fieldset>
@@ -312,19 +332,38 @@
 </div>
 
 <div class="modal hidden" id="dashboardLoginModal" role="dialog" aria-modal="true" aria-labelledby="dashboardLoginTitle">
-    <div class="modal-card compact-modal">
+    <div class="modal-card compact-modal" data-required-scope data-no-required-star="true">
         <button class="close" id="closeDashboardLoginModal" type="button" aria-label="Close login">×</button>
         <h2 id="dashboardLoginTitle">Login</h2>
         <p id="dashboardLoginHelp">Enter your credentials to open your workspace.</p>
-        <label>Email ID<input id="dashboardUsername" type="email" autocomplete="username" placeholder="name@example.com"></label>
-        <label>Password<div class="password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="password"><button id="toggleDashboardPassword" type="button" aria-label="Show password">Show</button></div></label>
-        <button class="button-primary full" type="button" id="submitDashboardLogin">Login & Open Dashboard</button>
+        <label>Email ID<input id="dashboardUsername" type="email" autocomplete="username" placeholder="name@example.com" required></label>
+        <label>Password<div class="password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="password" required><button id="toggleDashboardPassword" type="button" aria-label="Show password">Show</button></div></label>
+        <button class="button-primary full" type="button" id="submitDashboardLogin" data-required-submit>Login & Open Dashboard</button>
+    </div>
+</div>
+
+<div class="tutorial-modal hidden" id="tutorialModal" role="dialog" aria-modal="true" aria-labelledby="tutorialPlayerTitle">
+    <div class="tutorial-player">
+        <button class="tutorial-player-close" id="closeTutorialPlayer" type="button" aria-label="Close tutorial">×</button>
+        <div class="tutorial-video-shell">
+            <div class="tutorial-video-topline"><span id="tutorialPlayerCategory">ONBOARDING WALKTHROUGH</span><span id="tutorialPlayerTime">5 MIN</span></div>
+            <video id="tutorialVideo" controls playsinline preload="metadata" aria-label="SmartApartment tutorial video"></video>
+            <div class="tutorial-video-status"><span><i></i> RECORDED IN SMARTAPARTMENT</span><span>HD · 1280 × 720</span></div>
+        </div>
+        <div class="tutorial-player-content">
+            <span class="tutorial-player-kicker">SMARTAPARTMENT ACADEMY</span>
+            <h2 id="tutorialPlayerTitle">Set up a society and its residents</h2>
+            <p id="tutorialPlayerSummary">Watch a recorded product walkthrough with the actual SmartApartment interface.</p>
+            <ol class="tutorial-step-list" id="tutorialStepList"></ol>
+            <div class="tutorial-player-note"><i>✓</i><span><strong>Real product walkthrough</strong><small>Use the player controls for playback, timeline navigation and fullscreen.</small></span></div>
+        </div>
     </div>
 </div>
 
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <script src="/shared/js/theme.js?v=20260824-header-v1"></script>
-<script src="/smartapartment/js/landing.js?v=20260824-static-testimonials-v1"></script>
-<script src="/smartapartment/js/app.js?v=20260824-login-password-v1"></script>
+<script src="/smartapartment/js/landing.js?v=20260828-community-hero-v1"></script>
+<script src="/shared/js/required-fields.js?v=20260826-no-login-star-v5"></script>
+<script src="/smartapartment/js/app.js?v=20260827-login-guard-v2"></script>
 </body>
 </html>

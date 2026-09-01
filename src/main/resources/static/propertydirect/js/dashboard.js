@@ -935,6 +935,26 @@ function getContext(target) {
     return { panel, panelTitle, target: text || panelTitle, detail: panelTitle };
 }
 
+async function persistWorkflowAction(action, target, values = []) {
+    const context = getContext(target || document.body);
+    const response = await fetch("/api/workflows", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            workspace: "PropertyDirect",
+            dashboardRole,
+            panel: context.panel,
+            actionType: action,
+            targetLabel: context.target,
+            details: { values, context: context.detail, button: target?.textContent?.trim() || action }
+        })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || "Action could not be saved to the database");
+    return data;
+}
+
 function showActionReceipt({ title = "Action completed", lines = [] }) {
     persistDashboardState();
     ensureModal();
@@ -977,7 +997,14 @@ function openPanel(panel, updateHistory = true) {
         button.setAttribute("aria-selected", String(active));
     });
     document.querySelectorAll("[data-view]").forEach((view) => {
-        view.classList.toggle("hidden", view !== selectedView);
+        const shouldHide = view !== selectedView;
+        view.classList.toggle("hidden", shouldHide);
+        view.classList.toggle("d-none", shouldHide);
+        if (shouldHide) {
+            view.style.display = "none";
+        } else {
+            view.style.display = "";
+        }
     });
     const title = document.getElementById("panelTitle");
     if (title) title.textContent = panelTitles[panel] || "Dashboard";
@@ -1918,14 +1945,26 @@ function openModal(action, target = null) {
     modalText.textContent = config.text;
     modalFields.innerHTML = detailedModalFields(action, config, target);
     modalSave.textContent = action === "approve" ? "Confirm decision" : action === "edit-row" ? "Save changes" : "Save changes";
-    modalSave.onclick = () => {
+    modalSave.onclick = async () => {
         if (![...modalFields.querySelectorAll("input, select, textarea")].every(input => input.reportValidity())) return;
         const values = [...modalFields.querySelectorAll("[data-modal-input]")].map(input => input.value.trim());
-        const result = config.save(values);
-        if (result?.lines) {
-            showActionReceipt(result);
-        } else {
-            closeModal();
+        modalSave.disabled = true;
+        modalSave.textContent = "Saving…";
+        try {
+            const saved = await persistWorkflowAction(action, target, values);
+            const result = config.save(values);
+            if (result?.lines) {
+                result.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
+                showActionReceipt(result);
+            } else {
+                closeModal();
+                showToast(`✓ Saved to database as WF-${saved.id}`);
+            }
+        } catch (error) {
+            showToast(error.message || "Action could not be saved");
+        } finally {
+            modalSave.disabled = false;
+            modalSave.textContent = "Save changes";
         }
     };
     modal.classList.remove("hidden");
@@ -2351,7 +2390,48 @@ function handleSimpleAction(action, target) {
     }
 }
 
-document.addEventListener("click", (event) => {
+function enhanceDashboardCategories() {
+    document.querySelectorAll("[data-panel]").forEach(button => {
+        button.setAttribute("aria-controls", `panel-${button.dataset.panel}`);
+        button.setAttribute("aria-selected", String(button.classList.contains("active")));
+    });
+    document.querySelectorAll("[data-view]").forEach(view => {
+        view.id = `panel-${view.dataset.view}`;
+        view.tabIndex = -1;
+    });
+
+    const routes = rolePanelRoutes[dashboardRole] || [];
+    document.querySelectorAll('[data-view="overview"] .stats article').forEach((tile, index) => {
+        const target = routes[index];
+        if (!target || !document.querySelector(`[data-view="${target}"]`)) return;
+        tile.dataset.categoryPanel = target;
+        tile.tabIndex = 0;
+        tile.setAttribute("role", "button");
+        tile.setAttribute("aria-label", `Open ${panelTitles[target] || target}`);
+    });
+
+    document.querySelectorAll(".pill-row span").forEach(chip => {
+        chip.dataset.categoryAction = dashboardRole === "customer" ? "search" : "inspect";
+        chip.tabIndex = 0;
+        chip.setAttribute("role", "button");
+        chip.setAttribute("aria-label", `Open action for ${chip.textContent.trim()}`);
+    });
+
+    document.querySelectorAll('[data-view="overview"] .grid .dash-card, [data-view="overview"] .grid .card').forEach(card => {
+        card.dataset.categoryAction = "inspect";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Review ${card.querySelector("h3")?.textContent.trim() || "overview card"}`);
+    });
+
+    document.querySelectorAll('[data-view]:not([data-view="overview"]) .stats article').forEach(tile => {
+        tile.dataset.categoryAction = "inspect";
+        tile.tabIndex = 0;
+        tile.setAttribute("role", "button");
+    });
+}
+
+document.addEventListener("click", async (event) => {
     const profileAction = event.target.closest("[data-profile-action]");
     if (profileAction) { event.preventDefault(); if (profileAction.dataset.profileAction === "edit") setPropertyProfileEditing(true); if (profileAction.dataset.profileAction === "cancel") { ensureRoleProfileSection(); showToast("Profile changes cancelled"); } if (profileAction.dataset.profileAction === "save") savePropertyProfile(); return; }
     const navigationItem = event.target.closest(".sidebar-nav [data-panel]");
@@ -2390,7 +2470,13 @@ document.addEventListener("click", (event) => {
 
     event.preventDefault();
     if (openModal(action, button)) return;
-    handleSimpleAction(action, button);
+    try {
+        const saved = await persistWorkflowAction(action, button);
+        handleSimpleAction(action, button);
+        showToast(`✓ Saved to database as WF-${saved.id}`);
+    } catch (error) {
+        showToast(error.message || "Action could not be saved");
+    }
 });
 
 document.addEventListener("keydown", event => {
@@ -2431,6 +2517,165 @@ function setupPropertyDirectSidebar(){
     }
 }
 
+function syncSavedPropertiesAndVisits() {
+    const savedList = document.getElementById("savedPropertiesList");
+    const savedStat = document.querySelector('[data-property-stat="saved"]');
+    const visitsBody = document.getElementById("propertyVisitsBody");
+    const visitsStat = document.querySelector('[data-property-stat="visits"]');
+
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]"); } catch(e){}
+    if (savedStat) savedStat.textContent = String(saved.length);
+
+    if (savedList) {
+        if (!saved.length) {
+            savedList.innerHTML = `<li style="padding: 24px; text-align: center; color: #64748b;">No shortlisted properties yet. Explore <a href="/propertydirect/apartments" style="color: #0f3460; font-weight: 700;">Apartments</a> to add properties to your shortlist.</li>`;
+        } else {
+            savedList.innerHTML = saved.map(item => `
+                <li style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #e2e8f0; background: #ffffff; border-radius: 12px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <img src="${item.image || '/propertydirect/images/orchid_enclave.jpg'}" style="width: 70px; height: 60px; object-fit: cover; border-radius: 8px;" alt="${item.title}">
+                        <div>
+                            <strong style="display: block; font-size: 0.95rem; color: #0f172a;"><a href="/propertydirect/apartment-detail?title=${encodeURIComponent(item.title)}&price=${encodeURIComponent(item.rent || '')}&location=${encodeURIComponent((item.locality || '') + ', ' + (item.city || ''))}" style="color: inherit; text-decoration: none;">${item.title}</a></strong>
+                            <span style="font-size: 0.8rem; color: #64748b;">${item.society || ''}, ${item.locality || ''}, ${item.city || ''} · ${item.bhk || ''}</span>
+                            <div style="font-size: 0.9rem; font-weight: 800; color: #0f3460; margin-top: 2px;">${item.rent || item.price || ''}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-saved-btn" data-saved-title="${item.title}" style="padding: 6px 14px; border-radius: 8px; border: 1px solid #fca5a5; background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 0.78rem; cursor: pointer;">Remove</button>
+                </li>
+            `).join("");
+        }
+    }
+
+    let visits = [];
+    try { visits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]"); } catch(e){}
+    if (visitsStat) visitsStat.textContent = String(visits.length);
+
+    if (visitsBody) {
+        if (!visits.length) {
+            visitsBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 24px; color: #64748b;">No scheduled property visits yet.</td></tr>`;
+        } else {
+            visitsBody.innerHTML = visits.map(v => `
+                <tr>
+                    <td><strong>${v.apartment || 'Property Visit'}</strong><br><small style="color:#64748b;">${v.city || 'Bangalore'}</small></td>
+                    <td>${v.date || 'Upcoming'} ${v.time || ''}<br><span style="font-size: 0.76rem; color: #64748b;">${v.visitMode || 'In-person'}</span></td>
+                    <td><span class="pd-tour-badge ${String(v.status || 'REQUESTED').toLowerCase()}">${v.status || 'REQUESTED'}</span></td>
+                    <td>${v.instructions || v.notes || 'Tour request submitted'}</td>
+                </tr>
+            `).join("");
+        }
+    }
+}
+
+function syncAdminTours() {
+    const adminBody = document.getElementById("adminToursBody");
+    const superAdminBody = document.getElementById("superAdminToursBody");
+    if (!adminBody && !superAdminBody) return;
+
+    let visits = [];
+    try {
+        const customerVisits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]");
+        const adminTours = JSON.parse(localStorage.getItem("propertydirect-admin-tours") || "[]");
+        const map = new Map();
+        [...adminTours, ...customerVisits].forEach(item => {
+            if (item && item.id && !map.has(item.id)) map.set(item.id, item);
+        });
+        visits = Array.from(map.values());
+    } catch(e){}
+
+    const renderRows = (list) => {
+        if (!list.length) {
+            return `<tr><td colspan="7" style="text-align: center; padding: 24px; color: #64748b;">No scheduled tour bookings found yet. Book a tour from any apartment detail page!</td></tr>`;
+        }
+        return list.map(v => `
+            <tr>
+                <td><strong style="color:#0f172a; display:block;">${v.apartment || 'Apartment Visit'}</strong><small style="color:#64748b;">${v.createdAt || 'Recent'}</small></td>
+                <td><strong style="color:#0f3460; font-size:0.9rem;">${v.visitorName || v.name || 'Rahul Sharma'}</strong></td>
+                <td>
+                    <div style="font-weight:700; color:#1e293b;">📞 ${v.visitorPhone || v.phone || '+91 98765 43210'}</div>
+                    <div style="font-size:0.78rem; color:#64748b;">✉️ ${v.visitorEmail || v.email || 'visitor@example.com'}</div>
+                </td>
+                <td>
+                    <span style="display:inline-block; padding:2px 8px; border-radius:6px; background:#f1f5f9; font-weight:700; font-size:0.78rem; color:#0f3460;">${v.visitMode || 'In-person'}</span>
+                    <div style="font-weight:600; font-size:0.82rem; margin-top:3px; color:#1e293b;">🗓️ ${v.date || 'Scheduled'}</div>
+                </td>
+                <td style="max-width:180px; font-size:0.8rem; color:#475569;">${v.instructions || v.notes || 'No special requests'}</td>
+                <td><span class="pd-tour-badge ${String(v.status || 'REQUESTED').toLowerCase()}">${v.status || 'REQUESTED'}</span></td>
+                <td>
+                    <button type="button" class="admin-tour-action" data-tour-id="${v.id}" data-tour-action="CONFIRMED" style="padding:5px 12px; border-radius:8px; border:1px solid #8cf0bd; background:#dcfce7; color:#166534; font-weight:700; font-size:0.75rem; cursor:pointer; margin-right:4px;">Approve</button>
+                    <button type="button" class="admin-tour-action" data-tour-id="${v.id}" data-tour-action="COMPLETED" style="padding:5px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a; font-weight:700; font-size:0.75rem; cursor:pointer; margin-right:4px;">Complete</button>
+                    <button type="button" class="admin-tour-action" data-tour-id="${v.id}" data-tour-action="CANCELLED" style="padding:5px 12px; border-radius:8px; border:1px solid #fca5a5; background:#fef2f2; color:#dc2626; font-weight:700; font-size:0.75rem; cursor:pointer;">Cancel</button>
+                </td>
+            </tr>
+        `).join("");
+    };
+
+    if (adminBody) adminBody.innerHTML = renderRows(visits);
+    if (superAdminBody) superAdminBody.innerHTML = renderRows(visits);
+}
+
+document.addEventListener("click", event => {
+    const removeBtn = event.target.closest(".remove-saved-btn");
+    if (removeBtn) {
+        const title = removeBtn.dataset.savedTitle;
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]"); } catch(e){}
+        saved = saved.filter(item => item.title !== title);
+        localStorage.setItem("propertydirect-saved-listings", JSON.stringify(saved));
+        syncSavedPropertiesAndVisits();
+        showToast("Removed from shortlisted properties");
+    }
+
+    const actionBtn = event.target.closest(".admin-tour-action");
+    if (actionBtn) {
+        const id = Number(actionBtn.dataset.tourId);
+        const newStatus = actionBtn.dataset.tourAction;
+        
+        let visits = [];
+        try { visits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]"); } catch(e){}
+        visits = visits.map(v => v.id === id ? { ...v, status: newStatus } : v);
+        localStorage.setItem("propertydirect-scheduled-visits", JSON.stringify(visits));
+
+        let adminTours = [];
+        try { adminTours = JSON.parse(localStorage.getItem("propertydirect-admin-tours") || "[]"); } catch(e){}
+        adminTours = adminTours.map(v => v.id === id ? { ...v, status: newStatus } : v);
+        localStorage.setItem("propertydirect-admin-tours", JSON.stringify(adminTours));
+
+        syncAdminTours();
+        syncSavedPropertiesAndVisits();
+        showToast(`Tour status updated to ${newStatus}`);
+    }
+
+    if (event.target.id === "refreshAdminTours" || event.target.id === "refreshSuperAdminTours") {
+        syncAdminTours();
+        showToast("Tour bookings refreshed");
+    }
+});
+
+document.getElementById("propertyVisitForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const visit = {
+        id: Date.now(),
+        apartment: `Listing #${formData.get("listingId") || "1"}`,
+        visitorName: formData.get("visitorName"),
+        phone: formData.get("contactPhone"),
+        visitMode: formData.get("visitMode"),
+        date: formData.get("scheduledAt"),
+        status: "REQUESTED",
+        notes: formData.get("notes") || ""
+    };
+    let visits = [];
+    try { visits = JSON.parse(localStorage.getItem("propertydirect-scheduled-visits") || "[]"); } catch(e){}
+    visits.unshift(visit);
+    localStorage.setItem("propertydirect-scheduled-visits", JSON.stringify(visits));
+    form.reset();
+    syncSavedPropertiesAndVisits();
+    syncAdminTours();
+    showToast("Visit request submitted successfully");
+});
+
 restoreDashboardState();
 ensureRoleProfileSection();
 setupPropertyDirectSidebar();
@@ -2442,6 +2687,8 @@ ensureOwnerPlanTabs();
 ensureSuperadminPaymentTabs();
 enhanceDashboardCategories();
 wireAutosave();
+syncSavedPropertiesAndVisits();
+syncAdminTours();
 const initialPanel = location.hash.replace("#", "");
 openPanel(document.querySelector(`[data-view="${initialPanel}"]`) ? initialPanel : "overview", false);
 animateStats();

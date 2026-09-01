@@ -46,8 +46,8 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
             <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
-                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
-                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+                <span class="sidebar-home-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
                 <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
@@ -60,8 +60,8 @@
                 <a href="#profile" class="nav-link btn btn-link text-start text-decoration-none" data-panel="profile"><i class="fa-solid fa-user me-2"></i> My Profile</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
-                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
-                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
                 </a>
             </div>
         </aside>
@@ -74,7 +74,9 @@
                     <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
                 </div>
                 <div class="d-flex align-items-center gap-3 header-actions">
-                    <button class="btn btn-primary rounded-pill shadow-sm px-4" data-action="notify"><i class="fa-solid fa-walkie-talkie me-2"></i>Contact Gate Guard</button>
+                    <a class="btn btn-primary rounded-pill shadow-sm px-4" href="tel:+919844022010" aria-label="Call gate guard at +91 98440 22010">
+                        <i class="fa-solid fa-phone me-2"></i>Call Gate Guard <span class="ms-1">+91 98440 22010</span>
+                    </a>
                 </div>
             </header>
 
@@ -108,7 +110,7 @@
                         </div>
                     </div>
                     <div class="card p-4 shadow-sm border-0 rounded-4 mb-4">
-                        <h4 class="fw-bold mb-3"><i class="fa-solid fa-hand-sparkles text-primary me-2"></i>Welcome Home, Kavya!</h4>
+                        <h4 class="fw-bold mb-3"><i class="fa-solid fa-hand-sparkles text-primary me-2"></i>Welcome Home, <span id="residentWelcomeName">Resident</span>!</h4>
                         <p class="text-muted">Manage your apartment dues, pre-approve guests for seamless security entry, track maintenance tickets, and book community amenities directly from your resident hub.</p>
                         <div class="d-flex gap-3 mt-3 flex-wrap">
                             <span class="badge badge-soft-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-credit-card me-1"></i> Pay Dues Online</span>
@@ -121,7 +123,12 @@
 
                 <!-- Maintenance Dues Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="billing">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Current payable</span><strong class="fs-5 text-danger">Rs. 3,600</strong><span class="small text-muted d-block">Due 15 Aug 2026</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Last payment</span><strong class="fs-5 text-success">Rs. 2,500</strong><span class="small text-muted d-block">Paid 05 Jul 2026</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Late fee rule</span><strong class="fs-5 text-warning">12% p.a.</strong><span class="small text-muted d-block">After the 15th</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Payment channel</span><strong class="fs-5 text-primary">Online / UPI</strong><span class="small text-muted d-block">Instant receipt</span></div></div></div></div>
+                    <div class="row g-4 mb-4 stats billing-overview-stats">
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Current payable</span><strong class="fs-2 fw-bold text-danger mt-2 d-block">Rs. 3,600</strong><span class="small text-muted d-block mt-1">Due 15 Aug 2026</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Last payment</span><strong class="fs-2 fw-bold text-success mt-2 d-block">Rs. 2,500</strong><span class="small text-muted d-block mt-1">Paid 05 Jul 2026</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Late fee rule</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">12% p.a.</strong><span class="small text-muted d-block mt-1">After the 15th</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Payment channel</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">Online / UPI</strong><span class="small text-muted d-block mt-1">Instant receipt</span></article></div>
+                    </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">My Maintenance Bills & Dues</h4>
@@ -163,7 +170,6 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">What your monthly bill includes</h5><div class="row g-3 small text-muted"><div class="col-md-6"><strong class="d-block text-dark">Core maintenance</strong>Security, housekeeping, lift, common-area upkeep and administration.</div><div class="col-md-6"><strong class="d-block text-dark">Usage-based charges</strong>Water sub-meter readings, power backup and any applicable common utilities.</div><div class="col-md-6"><strong class="d-block text-dark">Reserves & funds</strong>Sinking fund and repair reserve contributions as approved by society policy.</div><div class="col-md-6"><strong class="d-block text-dark">Tax invoice</strong>Open any invoice to review the line-item and GST calculation before payment.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Payment support</h5><p class="small text-muted mb-2">Pay only through the official payment option. Keep the generated receipt for your records.</p><ul class="small text-muted ps-3 mb-0"><li>Check the invoice month before payment.</li><li>Use the receipt download for paid invoices.</li><li>Raise a helpdesk ticket for billing corrections.</li></ul></div></div></div></div>
                 </section>
 
                 <!-- Resident Tax Invoice Modal -->
@@ -290,6 +296,14 @@
                                         <label for="visitPurpose">Visit Purpose</label>
                                     </div>
                                 </div>
+                                <div class="col-md-6"><div class="form-floating"><input type="email" class="form-control shadow-none border-light-subtle" id="guestEmail" placeholder="guest@example.com"><label for="guestEmail">Guest Email (optional)</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" id="guestEntryType" required><option value="GUEST">Guest</option><option value="DELIVERY">Delivery</option><option value="SERVICE_STAFF">Service Staff</option><option value="VENDOR">Vendor</option><option value="CAB">Cab</option></select><label for="guestEntryType">Entry Type</label></div></div>
+                                <div class="col-md-4"><div class="form-floating"><input type="number" class="form-control shadow-none border-light-subtle" id="guestPersons" value="1" min="1" max="50" required><label for="guestPersons">Persons Count</label></div></div>
+                                <div class="col-md-4"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestVehicle" maxlength="20" placeholder="TN 01 AB 1234"><label for="guestVehicle">Vehicle Number</label></div></div>
+                                <div class="col-md-4"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" id="guestIdType"><option value="">No ID recorded</option><option>Aadhaar</option><option>Driving Licence</option><option>Passport</option><option>Voter ID</option><option>Company ID</option></select><label for="guestIdType">ID Proof Type</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestIdReference" maxlength="80" placeholder="Last four digits / reference"><label for="guestIdReference">ID Proof Reference</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestPhotoReference" maxlength="255" placeholder="Photo or document filename"><label for="guestPhotoReference">Photo / Document Reference</label></div></div>
+                                <div class="col-12"><div class="form-floating"><textarea class="form-control shadow-none border-light-subtle" id="guestInstructions" maxlength="1000" style="height:100px" placeholder="Gate and access instructions"></textarea><label for="guestInstructions">Gate Instructions, Access Notes and Expected Duration</label></div></div>
                                 <div class="col-12 mt-4">
                                     <button class="btn btn-primary rounded-pill px-4 shadow-sm" type="submit"><i class="fa-solid fa-plus me-2"></i>Generate QR Visitor Pass</button>
                                 </div>
@@ -321,12 +335,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Guest pass best practice</h5><div class="row g-3 small text-muted"><div class="col-md-6"><strong class="text-dark d-block">Use the guest’s real details</strong>The name and mobile number must match the person arriving at the gate.</div><div class="col-md-6"><strong class="text-dark d-block">Set a realistic arrival time</strong>Choose the expected date and time so the guard can validate the visit window.</div><div class="col-md-6"><strong class="text-dark d-block">Share securely</strong>Send the pass only to the named guest; do not reuse an expired pass.</div><div class="col-md-6"><strong class="text-dark d-block">For service teams</strong>Select the right purpose and keep any work order details ready if the guard asks.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">At the gate</h5><p class="small text-muted mb-0">Your guest should show the pass code or QR code, confirm Flat A-101 and carry identity proof if requested. Security may call you if the entry details do not match.</p></div></div></div></div>
                 </section>
 
                 <!-- Complaints Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="complaints">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Open tickets</span><strong class="fs-5 text-warning">01</strong><span class="small text-muted">Technician assigned</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">In progress</span><strong class="fs-5 text-primary">01</strong><span class="small text-muted">Plumbing repair</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Resolved this month</span><strong class="fs-5 text-success">03</strong><span class="small text-muted">Closed with your confirmation</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Target response</span><strong class="fs-5 text-danger">24 hrs</strong><span class="small text-muted">For standard issues</span></div></div></div></div>
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Open tickets</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">01</strong><span class="small text-muted d-block mt-1">Technician assigned</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">In progress</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">01</strong><span class="small text-muted d-block mt-1">Plumbing repair</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Resolved this month</span><strong class="fs-2 fw-bold text-success mt-2 d-block">03</strong><span class="small text-muted d-block mt-1">Closed with your confirmation</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Target response</span><strong class="fs-2 fw-bold text-danger mt-2 d-block">24 hrs</strong><span class="small text-muted d-block mt-1">For standard issues</span></article></div>
+                    </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">Helpdesk & Repair Tickets</h4>
@@ -360,16 +378,15 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Raise a useful repair ticket</h5><div class="row g-3 small text-muted"><div class="col-md-6"><strong class="d-block text-dark">Describe the issue clearly</strong>Include the exact room, equipment and when the problem started.</div><div class="col-md-6"><strong class="d-block text-dark">Choose the right category</strong>Plumbing, electrical, cleaning, security or common-area maintenance.</div><div class="col-md-6"><strong class="d-block text-dark">Keep access ready</strong>Tell the team whether someone will be home and the preferred visit time.</div><div class="col-md-6"><strong class="d-block text-dark">Confirm completion</strong>Mark a ticket resolved only after the repair is satisfactory.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Urgent safety issue?</h5><p class="small text-muted mb-0">For water flooding, electrical sparks, gas smell or immediate safety risk, contact the gate guard or society office first, then create a ticket so the incident is recorded.</p></div></div></div></div>
                 </section>
 
                 <!-- Amenities Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="amenities">
-                    <div class="row g-3 mb-4 amenity-summary-grid">
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success"><div class="amenity-summary-icon"><i class="fa-solid fa-calendar-check"></i></div><div><span>My upcoming booking</span><strong class="text-success">Clubhouse</strong><small>Tomorrow, 5:00 PM</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary"><div class="amenity-summary-icon"><i class="fa-solid fa-clock"></i></div><div><span>Available today</span><strong class="text-primary">Gym</strong><small>6:00 AM - 10:00 PM</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success"><div class="amenity-summary-icon"><i class="fa-solid fa-square-parking"></i></div><div><span>Guest parking</span><strong class="text-success">04 slots</strong><small>Currently free</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-warning"><div class="amenity-summary-icon"><i class="fa-solid fa-credit-card"></i></div><div><span>Booking payment</span><strong class="text-warning">Online</strong><small>Required where applicable</small></div></article></div>
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">My upcoming booking</span><strong class="fs-2 fw-bold text-success mt-2 d-block">Clubhouse</strong><span class="small text-muted d-block mt-1">Tomorrow, 5:00 PM</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Available today</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">Gym</strong><span class="small text-muted d-block mt-1">6:00 AM - 10:00 PM</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Guest parking</span><strong class="fs-2 fw-bold text-success mt-2 d-block">04 slots</strong><span class="small text-muted d-block mt-1">Currently free</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Booking payment</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">Online</strong><span class="small text-muted d-block mt-1">Required where applicable</span></article></div>
                     </div>
                     <div class="row g-4 grid">
                         <div class="col-md-4">
@@ -377,7 +394,7 @@
                                 <h4 class="fw-bold"><i class="fa-solid fa-dumbbell text-primary me-2"></i>Fitness Center / Gym</h4>
                                 <p class="text-muted mb-2"><i class="fa-regular fa-clock me-1"></i> Timing: 6:00 AM - 10:00 PM<br><i class="fa-solid fa-users me-1"></i> Capacity: Max 15 people</p>
                                 <p class="mb-4"><strong>Status: <span class="text-success">Open</span></strong></p>
-                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book">Book Slot</button>
+                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book" data-amenity-name="Gym">Book Slot</button>
                             </article>
                         </div>
                         <div class="col-md-4">
@@ -385,7 +402,7 @@
                                 <h4 class="fw-bold"><i class="fa-solid fa-champagne-glasses text-primary me-2"></i>Party Hall / Clubhouse</h4>
                                 <p class="text-muted mb-2"><i class="fa-regular fa-clock me-1"></i> Timing: 10:00 AM - 11:00 PM<br><i class="fa-solid fa-indian-rupee-sign me-1"></i> Booking Fee: Rs. 2,500/day</p>
                                 <p class="mb-4"><strong>Status: <span class="text-info">Available Tomorrow</span></strong></p>
-                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book">Reserve Hall</button>
+                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book" data-amenity-name="Clubhouse">Reserve Hall</button>
                             </article>
                         </div>
                         <div class="col-md-4">
@@ -393,20 +410,19 @@
                                 <h4 class="fw-bold"><i class="fa-solid fa-square-parking text-primary me-2"></i>Visitor Parking Slot</h4>
                                 <p class="text-muted mb-2"><i class="fa-solid fa-car me-1"></i> Covered Guest Parking<br><i class="fa-solid fa-location-dot me-1"></i> Slot B-04</p>
                                 <p class="mb-4"><strong>Status: <span class="text-success">4 Slots Free</span></strong></p>
-                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book">Reserve Parking</button>
+                                <button class="btn btn-primary rounded-pill w-100 mt-auto" data-action="book" data-amenity-name="Parking">Reserve Parking</button>
                             </article>
                         </div>
                     </div>
-                    <div class="card border-0 shadow-sm rounded-4 mt-4"><div class="card-body p-4"><div class="row g-3"><div class="col-lg-4"><h5 class="fw-bold mb-1">Before booking</h5><p class="small text-muted mb-0">Review availability, capacity, timing and any fee before you reserve.</p></div><div class="col-lg-4"><h5 class="fw-bold mb-1">Resident responsibility</h5><p class="small text-muted mb-0">Follow amenity rules, keep the area clean and cancel unused slots promptly.</p></div><div class="col-lg-4"><h5 class="fw-bold mb-1">Booking support</h5><p class="small text-muted mb-0">Use Helpdesk for a booking correction, refund query or facility issue.</p></div></div></div></div>
                 </section>
 
                 <!-- Announcements Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="announcements">
-                    <div class="row g-3 mb-4 notice-summary-grid">
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-bullhorn"></i></div><div><span>Active notices</span><strong class="text-primary">02</strong><small>Read latest updates</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-warning notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><span>Important service update</span><strong class="text-warning">Tomorrow</strong><small>Water interruption</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-success notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-people-group"></i></div><div><span>Community event</span><strong class="text-success">Sunday</strong><small>Clubhouse meeting</small></div></article></div>
-                        <div class="col-sm-6 col-xl-3"><article class="amenity-summary-card amenity-summary-primary notice-summary-card"><div class="amenity-summary-icon"><i class="fa-solid fa-bell"></i></div><div><span>Notice preferences</span><strong class="text-primary">Enabled</strong><small>App notifications on</small></div></article></div>
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Active notices</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">02</strong><span class="small text-muted d-block mt-1">Read latest updates</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Important service update</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">Tomorrow</strong><span class="small text-muted d-block mt-1">Water interruption</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Community event</span><strong class="fs-2 fw-bold text-success mt-2 d-block">Sunday</strong><span class="small text-muted d-block mt-1">Clubhouse meeting</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Notice preferences</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">Enabled</strong><span class="small text-muted d-block mt-1">App notifications on</span></article></div>
                     </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 card-head">
@@ -414,12 +430,16 @@
                         </div>
                         <div class="card-body px-4 pb-4" id="residentAnnouncementList"><div class="text-center text-muted py-4">Loading society notices…</div></div>
                     </div>
-                    <div class="card border-0 shadow-sm rounded-4 mt-4"><div class="card-body p-4"><h5 class="fw-bold mb-1">Notice board guidance</h5><p class="small text-muted mb-0">Check this page before contacting the office about planned maintenance, water supply, events or community rules. Important notices remain available here for reference even after a notification is dismissed.</p></div></div>
                 </section>
 
                 <!-- Deliveries Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="deliveries">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Waiting at gate</span><strong class="fs-5 text-warning">01</strong><span class="small text-muted">Amazon parcel</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Collected today</span><strong class="fs-5 text-success">02</strong><span class="small text-muted">Confirmed handover</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Delivery address</span><strong class="fs-5 text-primary">A-101</strong><span class="small text-muted">Share with provider</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Collection rule</span><strong class="fs-5 text-danger">ID check</strong><span class="small text-muted">For stored parcels</span></div></div></div></div>
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Waiting at gate</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">01</strong><span class="small text-muted d-block mt-1">Amazon parcel</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Collected today</span><strong class="fs-2 fw-bold text-success mt-2 d-block">02</strong><span class="small text-muted d-block mt-1">Confirmed handover</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Delivery address</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">A-101</strong><span class="small text-muted d-block mt-1">Share with provider</span></article></div>
+                        <div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Collection rule</span><strong class="fs-2 fw-bold text-danger mt-2 d-block">ID check</strong><span class="small text-muted d-block mt-1">For stored parcels</span></article></div>
+                    </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">Gate Deliveries & Parcels</h4>
@@ -451,7 +471,6 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Parcel collection checklist</h5><div class="row g-3 small text-muted"><div class="col-md-6"><strong class="d-block text-dark">Check provider and package</strong>Match the delivery status and provider before going to the gate.</div><div class="col-md-6"><strong class="d-block text-dark">Use your flat details</strong>Give your flat number and identification if security requests it.</div><div class="col-md-6"><strong class="d-block text-dark">COD deliveries</strong>Pay the delivery agent directly unless society policy says otherwise.</div><div class="col-md-6"><strong class="d-block text-dark">Missing parcel</strong>Contact security first and submit a helpdesk request with the provider details.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Delivery notifications</h5><p class="small text-muted mb-0">The status updates when security records arrival or collection. Keep your registered mobile number current so you do not miss parcel notifications.</p></div></div></div></div>
                 </section>
 
                 <!-- Profile Section -->
@@ -506,7 +525,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row g-4 mt-1"><div class="col-lg-7"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Keep your resident record accurate</h5><div class="row g-3 small text-muted"><div class="col-md-6"><strong class="d-block text-dark">Contact details</strong>Update your phone and email so the society can reach you for billing, visitors and emergencies.</div><div class="col-md-6"><strong class="d-block text-dark">Emergency contact</strong>Use a person who can respond promptly if the resident cannot be reached.</div><div class="col-md-6"><strong class="d-block text-dark">Flat details</strong>Unit and occupancy information are locked because they are maintained by the society office.</div><div class="col-md-6"><strong class="d-block text-dark">Ownership changes</strong>Contact the society office with supporting documents for tenant, owner or occupancy updates.</div></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold">Privacy reminder</h5><p class="small text-muted mb-0">Your contact information is used for resident services, security verification and urgent notifications. Avoid sharing guest codes, invoices or profile details through unofficial channels.</p></div></div></div></div>
                 </section>
 
             </div>
@@ -524,7 +542,6 @@
         };
         
         window.forceOpenPanel = function(panel) {
-            console.log("Switching to panel: " + panel);
             document.querySelectorAll("[data-view]").forEach(view => {
                 view.classList.add("hidden", "d-none");
                 view.style.display = "none";
@@ -565,14 +582,42 @@
             }
             document.getElementById("visitorPassForm")?.addEventListener("submit", async event => {
                 event.preventDefault();
-                const response = await fetch("/api/society/visitors", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({name: document.getElementById("guestName").value, phone: document.getElementById("guestMobile").value, purpose: document.getElementById("visitPurpose").value, expectedAt: document.getElementById("visitDateTime").value})});
+                if (!event.currentTarget.reportValidity()) return;
+                const response = await fetch("/api/society/visitors", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({name: document.getElementById("guestName").value, phone: document.getElementById("guestMobile").value, email: document.getElementById("guestEmail").value, purpose: document.getElementById("visitPurpose").value, expectedAt: document.getElementById("visitDateTime").value, entryType: document.getElementById("guestEntryType").value, personsCount: Number(document.getElementById("guestPersons").value), vehicleNumber: document.getElementById("guestVehicle").value, idProofType: document.getElementById("guestIdType").value, idProofNumber: document.getElementById("guestIdReference").value, photoReference: document.getElementById("guestPhotoReference").value, specialInstructions: document.getElementById("guestInstructions").value})});
                 const pass = await response.json().catch(() => ({}));
                 if (!response.ok) return showToast(pass.message || "Unable to create the visitor pass");
                 const body = document.getElementById("passesBody"); const row = document.createElement("tr");
                 const qrCell = document.createElement("td"); const code = document.createElement("strong"); code.textContent = pass.qrCode; const image = document.createElement("img"); image.src = `/api/society/visitors/${pass.id}/qr`; image.alt = "Visitor QR code"; image.width = 52; image.height = 52; image.className = "ms-2"; qrCell.append(code, image); row.appendChild(qrCell);
-                [pass.name, pass.phone, pass.expectedAt, pass.purpose, "Valid & Pre-Approved"].forEach(value => { const cell = document.createElement("td"); cell.textContent = value; row.appendChild(cell); }); body.prepend(row);
                 event.currentTarget.reset(); showToast(`QR visitor pass created. Share code: ${pass.qrCode}`);
             });
+
+            function syncResidentTickets() {
+                try {
+                    const stored = localStorage.getItem("smartapartment-tickets-v1");
+                    if (!stored) return;
+                    const tickets = JSON.parse(stored);
+                    const table = document.querySelector('[data-table="complaints"]');
+                    if (!table) return;
+                    
+                    tickets.forEach(t => {
+                        const row = [...table.querySelectorAll('tr')].find(tr => tr.cells[0]?.textContent?.trim().includes(t.id));
+                        if (row && row.cells.length >= 6) {
+                            const statusCell = row.cells[5];
+                            if (t.stage === "Started") {
+                                statusCell.innerHTML = `<span class="badge bg-info text-dark"><i class="fa-solid fa-play me-1"></i>Started</span>`;
+                            } else if (t.stage === "Processing") {
+                                statusCell.innerHTML = `<span class="badge bg-warning text-dark"><i class="fa-solid fa-spinner fa-spin me-1"></i>Processing (ETA: ${t.eta || '2 Hours'})</span>`;
+                            } else if (t.stage === "Completed") {
+                                statusCell.innerHTML = `<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Completed</span>`;
+                                const actBtn = row.cells[6]?.querySelector('button');
+                                if (actBtn) actBtn.replaceWith(Object.assign(document.createElement('span'), {className: 'text-success fw-bold small', innerHTML: '<i class="fa-solid fa-check-double me-1"></i>Closed'}));
+                            }
+                        }
+                    });
+                } catch (_) {}
+            }
+            window.addEventListener("storage", syncResidentTickets);
+            syncResidentTickets();
         });
     </script>
 </body>

@@ -1,6 +1,7 @@
 package com.smartapartment.security;
 
 import com.smartapartment.entity.AppUser;
+import com.smartapartment.entity.PropertyCustomer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -36,6 +37,22 @@ public class JwtService {
                         "userId", user.getId(),
                         "tenantId", user.getTenantId(),
                         "role", user.getRole().name()
+                ))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(expirationMinutes * 60)))
+                .signWith(key)
+                .compact();
+    }
+
+    public String generatePropertyDirectToken(PropertyCustomer user) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claims(Map.of(
+                        "userId", user.getId(),
+                        "tenantId", "propertydirect",
+                        "platform", "propertydirect",
+                        "role", user.getRole()
                 ))
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expirationMinutes * 60)))

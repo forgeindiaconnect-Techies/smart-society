@@ -26,4 +26,12 @@ public class PaymentGatewayConfig extends BaseEntity {
     private boolean isActive;
     
     private boolean digitalInvoicingEnabled;
+
+    private String webhookUrl;
+    private String settlementCurrency = "INR";
+    private Integer settlementDays = 2;
+    private String supportedMethods;
+    private Boolean refundsEnabled = false;
+    private String reconciliationEmail;
+    private String configurationNotes;
 }

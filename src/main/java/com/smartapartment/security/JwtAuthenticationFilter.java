@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import com.smartapartment.entity.AppUser;
 import com.smartapartment.repository.AppUserRepository;
+import com.smartapartment.entity.PropertyCustomer;
+import com.smartapartment.repository.PropertyCustomerRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -21,10 +23,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final AppUserRepository users;
+    private final PropertyCustomerRepository propertyUsers;
 
-    public JwtAuthenticationFilter(JwtService jwtService, AppUserRepository users) {
+    public JwtAuthenticationFilter(JwtService jwtService, AppUserRepository users, PropertyCustomerRepository propertyUsers) {
         this.jwtService = jwtService;
         this.users = users;
+        this.propertyUsers = propertyUsers;
     }
 
     @Override
@@ -43,6 +47,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                     );
                     SecurityContextHolder.getContext().setAuthentication(auth);
+                } else if ("propertydirect".equals(claims.get("platform", String.class))) {
+                    PropertyCustomer propertyUser = propertyUsers.findByEmailIgnoreCase(claims.getSubject()).orElse(null);
+                    if (propertyUser != null && propertyUser.isActive() && "ACTIVE".equalsIgnoreCase(propertyUser.getStatus())) {
+                        TenantContext.setTenantId("propertydirect");
+                        var auth = new UsernamePasswordAuthenticationToken(
+                                propertyUser.getEmail(),
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_" + propertyUser.getRole()))
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
                 }
             }
             filterChain.doFilter(request, response);

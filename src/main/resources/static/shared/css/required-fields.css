@@ -1,0 +1,40 @@
+.required-star {
+    color: #dc3545;
+    font-weight: 800;
+    margin-left: 0.22rem;
+    display: inline !important;
+    font-size: inherit;
+}
+
+form[id*="login"] .required-star,
+.modal[id*="login"] .required-star,
+[data-no-required-star="true"] .required-star,
+.compact-modal .required-star,
+.login-card .required-star {
+    display: none !important;
+}
+
+.required-field-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.18rem rgba(220, 53, 69, 0.14) !important;
+}
+
+.required-field-error {
+    display: block;
+    width: 100%;
+    color: #c82333;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
+}
+
+.required-form-alert {
+    color: #b42332;
+    background: #fff2f3;
+    border: 1px solid #f4b8be;
+    border-radius: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    margin: 0 0 1rem;
+    font-size: 0.86rem;
+    font-weight: 650;
+}

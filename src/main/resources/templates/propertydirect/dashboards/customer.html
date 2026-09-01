@@ -308,12 +308,15 @@
         }
 
         .dash-brand {
+            height: 72px !important;
+            min-height: 72px !important;
+            max-height: 72px !important;
             display: flex !important;
             align-items: center !important;
             gap: 10px !important;
             text-decoration: none !important;
-            padding: 2px 8px 12px !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            padding: 0 14px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
             margin-bottom: 10px !important;
             flex-shrink: 0 !important;
             box-sizing: border-box !important;
@@ -508,15 +511,20 @@
 
         /* Top Header Bar */
         .dash-header {
+            height: 72px !important;
+            min-height: 72px !important;
+            max-height: 72px !important;
             background: #ffffff !important;
-            border: 1px solid var(--pd-card-border) !important;
-            border-radius: 20px !important;
-            padding: 22px 32px !important;
-            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
-            margin-bottom: 28px !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            border-radius: 0 !important;
+            padding: 0 32px !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02) !important;
+            margin: 0 0 28px 0 !important;
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
+            box-sizing: border-box !important;
         }
 
         .dash-header .eyebrow {
@@ -755,14 +763,15 @@
             color: #ffffff !important;
         }
     </style>
-    <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260824-v3">
-    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260825-14">
+    <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
+    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260831-blue-headings-v1">
+<link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 </head>
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
 <aside class="dash-sidebar">
-    <a class="dash-brand" href="/propertydirect">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8cf0bd" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span><span>Property</span>Direct</span>
+    <a class="dash-brand text-decoration-none" href="/propertydirect">
+        <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26" fill="#3b82f6"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
+        <h4 class="mb-0 fw-bold text-white fs-5">Property<span style="color: #3b82f6 !important;">Direct</span></h4>
     </a>
     <nav class="sidebar-nav" aria-label="Dashboard sections">
         <button class="active" data-panel="overview">Overview</button>
@@ -780,22 +789,17 @@
         <button data-panel="support">Support</button>
     </nav>
     <div class="sidebar-user-card">
-        <div class="user-info">
-            <div class="user-avatar">CU</div>
-            <div class="user-details">
-                <h4>Customer Account</h4>
-                <p>Verified Member</p>
-            </div>
-        </div>
-        <a class="logout" href="/propertydirect" title="Logout">
+        <a class="logout" href="/dashboards/logout?platform=propertydirect" title="Logout">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Logout</span>
         </a>
     </div>
 </aside>
 <main class="dash-main">
     <header class="dash-header">
         <div>
-            <h1 id="panelTitle">Customer Overview</h1>
+            <p class="propertydirect-section-eyebrow">PROPERTYDIRECT CUSTOMER WORKSPACE</p>
+            <h1 id="panelTitle">Overview</h1>
         </div>
         <div class="header-actions">
             <button class="primary" data-panel="search">Search Property</button>
@@ -836,9 +840,9 @@
 
     <section class="dash-panel hidden" data-view="shortlist"><div class="dash-card"><div class="card-head"><h3>Shortlisted Properties</h3><span class="inline-state">Available on every signed-in session</span></div><ul class="task-list actionable-list" id="savedPropertiesList"><li>Loading your shortlist…</li></ul></div></section>
 
-    <section class="dash-panel hidden" data-view="contacts"><div class="dash-card"><div class="card-head"><h3>Contact Property Owner</h3><span class="inline-state" id="ownerContactState">Choose a listing from search or shortlist</span></div><form class="form-grid" id="ownerContactForm"><label>Listing ID<input name="listingId" type="number" min="1" required></label><label>Your name<input name="name" required></label><label>Phone<input name="phone" required></label><label>Email<input name="email" type="email" required></label><label>Request type<select name="type"><option>OWNER_CONTACT</option><option>PRICE_DISCUSSION</option><option>DOCUMENT_QUERY</option></select></label><label>Message<textarea name="message" placeholder="I am interested in this property"></textarea></label><button class="primary" data-property-api-action="contact-owner" type="submit">Send Enquiry</button></form></div></section>
+    <section class="dash-panel hidden" data-view="contacts"><div class="dash-card"><div class="card-head"><div><h3>Contact Property Owner</h3><p>Share complete contact, budget and move-in requirements so the owner can respond accurately.</p></div><span class="inline-state" id="ownerContactState">Choose a listing from search or shortlist</span></div><form class="form-grid detailed-property-form" id="ownerContactForm"><div class="property-form-section"><strong>Property and requester</strong><small>Required identity and listing information.</small></div><label>Listing ID *<input name="listingId" type="number" min="1" required></label><label>Your full name *<input name="name" maxlength="100" required></label><label>Phone number *<input name="phone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label>Email address *<input name="email" type="email" required></label><div class="property-form-section"><strong>Requirement</strong><small>Purpose, affordability and preferred response.</small></div><label>Request type *<select name="type" required><option value="OWNER_CONTACT">Owner contact</option><option value="PRICE_DISCUSSION">Price discussion</option><option value="DOCUMENT_QUERY">Document query</option><option value="AVAILABILITY_QUERY">Availability query</option></select></label><label>Expected move-in / purchase date<input name="moveInDate" type="date"></label><label>Budget range<input name="budget" placeholder="e.g. Rs. 25,000–30,000 per month"></label><label>Preferred contact method<select name="contactMethod"><option>Phone call</option><option>WhatsApp</option><option>Email</option><option>In-app response</option></select></label><label>Preferred callback time<input name="callbackAt" type="datetime-local"></label><label>Occupants / family size<input name="occupants" type="number" min="1" max="50"></label><label class="profile-wide">Detailed message *<textarea name="message" minlength="10" maxlength="1500" required placeholder="Describe your requirement, questions and any conditions"></textarea></label><label class="profile-wide"><input name="contactConsent" type="checkbox" required> I consent to sharing these contact details with the verified property owner. *</label><button class="primary profile-wide" data-property-api-action="contact-owner" type="submit">Send Detailed Enquiry</button></form></div></section>
 
-    <section class="dash-panel hidden" data-view="visits"><div class="dash-card"><div class="card-head"><h3>Site Visits</h3><span class="inline-state">Requests remain traceable</span></div><form class="form-grid" id="propertyVisitForm"><label>Listing ID<input name="listingId" type="number" min="1" required></label><label>Preferred date and time<input name="scheduledAt" type="datetime-local" required></label><label>Notes<input name="notes" placeholder="Please confirm availability"></label><button class="primary" data-property-api-action="schedule-visit" type="submit">Request Visit</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Property</th><th>Scheduled</th><th>Status</th><th>Notes</th></tr></thead><tbody id="propertyVisitsBody"></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="visits"><div class="dash-card"><div class="card-head"><div><h3>Site Visits</h3><p>Request a physical visit or virtual tour with complete attendee and access details.</p></div><span class="inline-state">Requests remain traceable</span></div><form class="form-grid detailed-property-form" id="propertyVisitForm"><div class="property-form-section"><strong>Visit identity</strong><small>Property and visitor contact information.</small></div><label>Listing ID *<input name="listingId" type="number" min="1" required></label><label>Visitor full name *<input name="visitorName" maxlength="100" required></label><label>Contact phone *<input name="contactPhone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label>Attendees *<input name="attendees" type="number" min="1" max="20" value="1" required></label><div class="property-form-section"><strong>Schedule and access</strong><small>Select the preferred format, time and meeting instructions.</small></div><label>Visit mode *<select name="visitMode" required><option>Physical property visit</option><option>Live video tour</option><option>Owner callback and walkthrough</option></select></label><label>Preferred date and time *<input name="scheduledAt" type="datetime-local" required></label><label>Alternate date and time<input name="alternateAt" type="datetime-local"></label><label>Meeting point / landmark<input name="meetingPoint" maxlength="200"></label><label>Vehicle number<input name="vehicleNumber" maxlength="20"></label><label>Broker involved?<select name="brokerInvolved"><option>No</option><option>Yes</option></select></label><label class="profile-wide">Questions and visit notes<textarea name="notes" maxlength="1500" placeholder="Availability confirmation, rooms to inspect, documents to carry and accessibility needs"></textarea></label><button class="primary profile-wide" data-property-api-action="schedule-visit" type="submit">Request Detailed Visit</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Property</th><th>Scheduled</th><th>Status</th><th>Notes</th></tr></thead><tbody id="propertyVisitsBody"></tbody></table></div></div></section>
 
     <section class="dash-panel hidden" data-view="listings"><div class="dash-card"><div class="card-head"><div><h3>My property listings</h3><p>Create and manage your sale or rental inventory.</p></div><button class="primary small" data-panel="post-listing">Create listing</button></div><div class="dashboard-table-scroll"><table data-table="listings"><thead><tr><th>Property</th><th>Type</th><th>Price</th><th>Verification</th><th>Views</th><th>Actions</th></tr></thead><tbody id="ownerListingsBody"></tbody></table></div></div></section>
 
@@ -848,13 +852,13 @@
 
     <section class="dash-panel hidden" data-view="reviews"><div class="dash-card"><div class="card-head"><div><h3>Reviews, ratings & fraud reports</h3><p>Leave a verified review after a completed deal or flag a listing.</p></div><button class="primary small" data-action="add-row">Write review</button></div><div class="form-grid"><label>Listing or agent reference<input placeholder="Property ID or agent name"></label><label>Rating<select><option>5 - Excellent</option><option>4 - Good</option><option>3 - Average</option><option>2 - Poor</option><option>1 - Poor</option></select></label><label>Report type<select><option>Review only</option><option>Suspected fraud</option><option>Misleading details</option><option>Spam communication</option></select></label><label>Details<textarea placeholder="Share your review or explain the report"></textarea></label></div><button class="primary" data-action="save">Submit review or report</button></div></section>
 
-    <section class="dash-panel hidden" data-view="services"><div class="dash-card"><h3>Home Services</h3><div class="pill-row"><span>Packers</span><span>Legal</span><span>Cleaning</span><span>Painting</span><span>Electrical</span><span>Plumbing</span></div><form class="form-grid" id="propertyServiceForm"><label>Listing ID (optional)<input name="listingId" type="number" min="1"></label><label>Service<select name="serviceType"><option>PACKERS_AND_MOVERS</option><option>LEGAL_DOCUMENTATION</option><option>PAINTING</option><option>CLEANING</option><option>ELECTRICIAN</option><option>PLUMBING</option></select></label><label>Preferred date and time<input name="preferredAt" type="datetime-local" required></label><label>Details<input name="details" placeholder="Describe what you need"></label><button class="primary" data-property-api-action="request-service" type="submit">Request Service</button></form><h3>Service Requests</h3><div class="dashboard-table-scroll"><table><thead><tr><th>Service</th><th>Preferred</th><th>Status</th><th>Details</th></tr></thead><tbody id="propertyServicesBody"></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="services"><div class="dash-card"><div class="card-head"><div><h3>Home Services</h3><p>Provide location, scope, schedule and contact details for an accurate service response.</p></div><span class="inline-state">Verified service request</span></div><div class="pill-row"><span>Packers</span><span>Legal</span><span>Cleaning</span><span>Painting</span><span>Electrical</span><span>Plumbing</span></div><form class="form-grid detailed-property-form" id="propertyServiceForm"><div class="property-form-section"><strong>Service and contact</strong><small>Identify the property, requester and service category.</small></div><label>Listing ID (optional)<input name="listingId" type="number" min="1"></label><label>Service *<select name="serviceType" required><option value="">Select service</option><option>PACKERS_AND_MOVERS</option><option>LEGAL_DOCUMENTATION</option><option>PAINTING</option><option>CLEANING</option><option>ELECTRICIAN</option><option>PLUMBING</option></select></label><label>Contact person *<input name="contactName" required maxlength="100"></label><label>Contact phone *<input name="contactPhone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label class="profile-wide">Service address *<textarea name="serviceAddress" required maxlength="500"></textarea></label><div class="property-form-section"><strong>Schedule and work scope</strong><small>Timing, urgency, budget and access information.</small></div><label>Preferred date and time *<input name="preferredAt" type="datetime-local" required></label><label>Alternate date and time<input name="alternateAt" type="datetime-local"></label><label>Urgency *<select name="urgency" required><option>Normal</option><option>Priority</option><option>Emergency</option></select></label><label>Estimated budget (Rs.)<input name="budget" type="number" min="0"></label><label>Property access<select name="accessType"><option>Customer will be present</option><option>Security will provide access</option><option>Call before arrival</option></select></label><label>Preferred contact method<select name="contactMethod"><option>Phone</option><option>WhatsApp</option><option>Email</option></select></label><label class="profile-wide">Detailed work requirement *<textarea name="details" required minlength="10" maxlength="2000" placeholder="Describe rooms, dimensions, existing condition, materials and expected outcome"></textarea></label><button class="primary profile-wide" data-property-api-action="request-service" type="submit">Submit Detailed Service Request</button></form><h3>Service Requests</h3><div class="dashboard-table-scroll"><table><thead><tr><th>Service</th><th>Preferred</th><th>Status</th><th>Details</th></tr></thead><tbody id="propertyServicesBody"></tbody></table></div></div></section>
 
     <section class="dash-panel hidden" data-view="rentpay"><div class="dash-card"><div class="card-head"><h3>Rent Pay</h3><span class="inline-state" id="rentPayState">Demo payment workflow</span></div><p>A production payment requires a configured payment gateway and webhooks.</p><button class="primary" data-action="pay">Start Demo Payment</button><h3>Payment History</h3><ul class="task-list" id="rentPaymentHistory"><li>No verified gateway payment yet</li></ul></div></section>
 
     <section class="dash-panel hidden" data-view="plans"><div class="dash-card"><h3>Buyer / Tenant Plans</h3><div class="dash-grid three"><article><span>Basic</span><strong>Rs. 999</strong><button data-action="select-plan">Select Plan</button></article><article><span>Relax</span><strong>Rs. 1,999</strong><button data-action="current-plan">Current Plan</button></article><article><span>Assisted</span><strong>Rs. 4,999</strong><button data-action="select-plan">Select Plan</button></article></div></div></section>
 
-    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><h3>Support</h3><span class="inline-state" id="supportState">Ready</span></div><form class="form-grid"><label style="grid-column: 1 / -1;">Issue<input placeholder="Describe your issue"></label><button class="primary" data-action="support" type="button">Raise Ticket</button></form><h3 style="margin-top: 24px;">Tickets</h3><ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul></div></section>
+    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><div><h3>Support</h3><p>Raise a traceable PropertyDirect support request with complete context.</p></div><span class="inline-state" id="supportState">Ready</span></div><form class="form-grid detailed-property-form" id="propertySupportForm"><label>Issue title *<input name="title" required maxlength="140" placeholder="Short summary"></label><label>Category *<select name="category" required><option>ACCOUNT_ACCESS</option><option>LISTING_APPROVAL</option><option>PAYMENT_OR_PLAN</option><option>OWNER_CONTACT</option><option>VISIT_OR_SERVICE</option><option>PRIVACY_OR_SAFETY</option><option>TECHNICAL_ISSUE</option></select></label><label>Priority *<select name="priority" required><option>NORMAL</option><option>HIGH</option><option>URGENT</option></select></label><label>Related listing / transaction ID<input name="reference"></label><label>Preferred contact method<select name="contactMethod"><option>In-app update</option><option>Phone</option><option>Email</option></select></label><label>Available callback time<input name="callbackAt" type="datetime-local"></label><label class="profile-wide">Detailed issue *<textarea name="details" required minlength="15" maxlength="2000" placeholder="Explain what happened, expected result, error message and steps already tried"></textarea></label><label class="profile-wide">Screenshot / document reference<input name="attachmentReference" placeholder="Filename or secure reference"></label><button class="primary profile-wide" data-action="support" type="button">Raise Detailed Ticket</button></form><h3 style="margin-top: 24px;">Tickets</h3><ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul></div></section>
 </main>
 <div class="toast hidden" id="toast"></div>
 
@@ -911,7 +915,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-<script src="/propertydirect/js/dashboard.js?v=20260825-sidebar-v26"></script>
+<script src="/shared/js/required-fields.js?v=20260826-v2"></script>
+<script src="/propertydirect/js/dashboard.js?v=20260831-sidebar-v99"></script>
 <script src="/propertydirect/js/market-workflows.js?v=20260825-approval-v2"></script>
 <script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
 

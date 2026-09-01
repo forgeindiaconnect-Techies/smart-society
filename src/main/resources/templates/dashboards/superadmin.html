@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/layout :: head('Super Admin Dashboard')}"></head>
 <body class="dashboard-body bg-light" data-platform="smartapartment" data-dashboard-role="superadmin">
     <style>
-        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
+        /* Force sidebar to the front */
         #sidebar {
             position: relative !important;
             z-index: 9999 !important;
@@ -15,52 +15,111 @@
             pointer-events: auto !important;
             cursor: pointer !important;
         }
-        /* Super-admin workspace layout */
-        #sidebar { width: 236px !important; min-width: 236px; background: #20252a !important; box-shadow: none !important; }
-        #sidebar .sidebar-header { padding: 1.35rem 1.45rem !important; gap: .65rem !important; }
-        #sidebar .sidebar-header h4 { font-size: 1.32rem; letter-spacing: -.02em; }
-        #sidebar .sidebar-header i { font-size: 1.55rem !important; }
-        #sidebar .sidebar-nav { padding-block: .85rem !important; }
-        #sidebar .nav-link { width: calc(100% - 1.25rem) !important; margin: .12rem .625rem !important; padding: .72rem .85rem !important; gap: .72rem !important; font-size: .91rem; border-radius: 10px; }
-        #sidebar .nav-link i { width: 20px; text-align: center; }
-        #sidebar .sidebar-footer { padding: .9rem !important; }
-        .main-content { background: #f7f8fb; }
-        .main-content .topbar { min-height: 88px; padding: 1rem 1.25rem !important; border-bottom: 0 !important; background: #f7f8fb; box-shadow: none; }
-        .main-content .topbar:not(.overview-context) { min-height: 78px; padding-block: .85rem !important; }
-        body.dashboard-sidebar-closed .main-content .topbar { padding-left: 6rem !important; }
-        .main-content .topbar h2 { font-size: clamp(1.5rem, 2vw, 1.85rem); letter-spacing: -.035em; }
-        .main-content .dashboard-container { max-width: 1280px; width: 100%; margin: 0 auto; padding: 1.15rem 1.25rem 2rem !important; }
-        section[data-view="monitoring"] .stats { display: grid !important; grid-template-columns: repeat(4, minmax(170px, 1fr)); justify-content: start; gap: .8rem; margin: 0 0 1rem !important; }
-        section[data-view="monitoring"] .stats > div { width: auto !important; max-width: none !important; padding: 0 !important; }
-        section[data-view="monitoring"] .stats article { min-height: 82px !important; height: auto !important; padding: .75rem .9rem !important; display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left !important; border: 1px solid #dfe6f1 !important; border-radius: 12px !important; background: #fff; box-shadow: 0 5px 16px rgba(29,42,72,.04) !important; }
-        section[data-view="monitoring"] .stats article:hover { transform: none !important; }
-        section[data-view="monitoring"] .stats article span { margin-bottom: .25rem; color: #68758b !important; font-size: .65rem !important; letter-spacing: .04em; }
-        section[data-view="monitoring"] .stats article strong { margin: 0 !important; font-size: 1.3rem !important; line-height: 1; }
-        section[data-view="monitoring"] .monitoring-card { border: 1px solid #dfe6f1 !important; border-radius: 14px !important; box-shadow: 0 7px 22px rgba(29,42,72,.045) !important; }
-        section[data-view="monitoring"] .monitoring-card .card-header { padding: .9rem 1rem .55rem !important; }
-        section[data-view="monitoring"] .monitoring-card .card-body { padding: .55rem 1rem 1rem !important; }
-        section[data-view="monitoring"] .table { margin-bottom: 0; }
-        section[data-view="monitoring"] .resident-inbox-card { width: 100% !important; max-width: none !important; margin-top: 1rem !important; padding: 1rem !important; border: 1px solid #dfe6f1 !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 7px 22px rgba(29,42,72,.045) !important; }
-        section[data-view="monitoring"] .resident-inbox-card .card-head { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: .75rem; margin: 0 0 .75rem !important; }
-        section[data-view="monitoring"] .resident-inbox-card .card-head h2 { margin: 0 !important; font-size: 1.1rem !important; font-weight: 750; }
-        section[data-view="monitoring"] .resident-inbox-card .inline-state { flex: 0 0 auto; }
-        section[data-view="monitoring"] .resident-inbox-card table { width: 100% !important; table-layout: fixed; margin: 0; }
-        section[data-view="monitoring"] .resident-inbox-card th, section[data-view="monitoring"] .resident-inbox-card td { padding: .8rem .65rem !important; vertical-align: middle; }
-        section[data-view="monitoring"] .resident-inbox-card th:nth-child(1) { width: 18%; }
-        section[data-view="monitoring"] .resident-inbox-card th:nth-child(2) { width: 28%; }
-        section[data-view="monitoring"] .resident-inbox-card th:nth-child(3) { width: 28%; }
-        section[data-view="monitoring"] .resident-inbox-card th:nth-child(4) { width: 26%; }
-        @media (max-width: 1100px) { section[data-view="monitoring"] .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 820px) { #sidebar { width: 74px !important; min-width: 74px; } #sidebar .sidebar-header h4, #sidebar .nav-link:not(.active) { font-size: 0; } #sidebar .nav-link { justify-content: center; padding-inline: .4rem !important; } #sidebar .nav-link i { font-size: 1rem; } .main-content .topbar { padding: .85rem 1rem !important; } .main-content .dashboard-container { padding: .85rem !important; } }
-        @media (max-width: 560px) { section[data-view="monitoring"] .stats { grid-template-columns: 1fr; } section[data-view="monitoring"] .resident-inbox-card { overflow-x: auto; padding: 1.1rem !important; } section[data-view="monitoring"] .resident-inbox-card .card-head { align-items: flex-start !important; flex-direction: column !important; } section[data-view="monitoring"] .resident-inbox-card table { min-width: 620px; } .header-actions { gap: .45rem !important; } }
+        .main-content {
+            background: #f8fafc !important;
+        }
+        .main-content .topbar {
+            height: 72px !important;
+            min-height: 72px !important;
+            max-height: 72px !important;
+            padding: 0 32px !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            box-sizing: border-box !important;
+        }
+        .dashboard-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 24px 32px 40px !important;
+            box-sizing: border-box !important;
+        }
+        .stats article {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 14px !important;
+            padding: 18px 20px !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+            transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+        }
+        .stats article:hover {
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+            transform: translateY(-1px) !important;
+        }
+        section[data-view="monitoring"] .stats {
+            display: flex !important;
+            width: 100% !important;
+            gap: 1rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        section[data-view="monitoring"] .stats > div {
+            flex: 1 1 0px !important;
+            min-width: 0 !important;
+        }
+        section[data-view="monitoring"] .monitoring-card,
+        section[data-view="monitoring"] .card {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+            background: #ffffff !important;
+        }
+        section[data-view="monitoring"] .card-header {
+            padding: 1.25rem 1.5rem !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            background: #ffffff !important;
+        }
+        section[data-view="monitoring"] .card-body {
+            padding: 1.25rem 1.5rem !important;
+        }
+        section[data-view="monitoring"] .table th,
+        section[data-view="monitoring"] .table td {
+            padding: 12px 16px !important;
+            vertical-align: middle !important;
+        }
+        section[data-view="monitoring"] .resident-inbox-card {
+            width: 100% !important;
+            max-width: none !important;
+            margin-top: 1.5rem !important;
+            padding: 0 !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+            overflow: hidden !important;
+        }
+        section[data-view="monitoring"] .resident-inbox-card .card-head {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 1.25rem 1.5rem !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            margin: 0 !important;
+        }
+        section[data-view="monitoring"] .resident-inbox-card .card-head h2 {
+            margin: 0 !important;
+            font-size: 1.15rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+        }
+        @media (max-width: 820px) {
+            #sidebar { width: 74px !important; min-width: 74px; }
+            #sidebar .sidebar-header h4, #sidebar .nav-link:not(.active) { font-size: 0; }
+            #sidebar .nav-link { justify-content: center; padding-inline: .4rem !important; }
+            .main-content .topbar { padding: 0 16px !important; }
+            .dashboard-container { padding: 16px !important; }
+        }
     </style>
     <div class="dashboard-layout">
         
         <!-- Sidebar Navigation -->
         <aside class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
             <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
-                <i class="fa-solid fa-building-shield fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
-                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+                <span class="sidebar-home-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
+                <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
                 <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
@@ -76,8 +135,8 @@
                 <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
-                <a class="btn btn-outline-light w-100 rounded-pill" href="/">
-                    <i class="fa-solid fa-sign-out-alt me-2"></i> Back to Home
+                <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
+                    <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
                 </a>
             </div>
         </aside>
@@ -101,86 +160,85 @@
                 
                 <!-- Overview Panel -->
                 <section data-view="overview" class="animate__animated animate__fadeIn">
-                    <div class="row g-4 mb-4 stats">
-                        <div class="col-4 col-md-2">
-                            <article class="card p-1 text-center h-100 shadow-sm border-0">
-                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Active Societies</span>
-                                <strong class="fs-5 fw-bold text-primary mt-1 d-block" id="overviewActiveSocieties">...</strong>
+                    <div class="row g-3 mb-4 stats">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Active Societies</span>
+                                <strong class="fs-4 fw-bold text-primary d-block" id="overviewActiveSocieties">...</strong>
                             </article>
                         </div>
-                        <div class="col-4 col-md-2">
-                            <article class="card p-1 text-center h-100 shadow-sm border-0">
-                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Monthly Revenue</span>
-                                <strong class="fs-5 fw-bold text-success mt-1 d-block" id="overviewMonthlyRevenue">...</strong>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Monthly Revenue</span>
+                                <strong class="fs-4 fw-bold text-success d-block" id="overviewMonthlyRevenue">...</strong>
                             </article>
                         </div>
-                        <div class="col-4 col-md-2">
-                            <article class="card p-1 text-center h-100 shadow-sm border-0">
-                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Trial Accounts</span>
-                                <strong class="fs-5 fw-bold text-warning mt-1 d-block" id="overviewTrialAccounts">...</strong>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Trial Accounts</span>
+                                <strong class="fs-4 fw-bold text-warning d-block" id="overviewTrialAccounts">...</strong>
                             </article>
                         </div>
-                        <div class="col-4 col-md-2">
-                            <article class="card p-1 text-center h-100 shadow-sm border-0">
-                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Open Tickets</span>
-                                <strong class="fs-5 fw-bold text-danger mt-1 d-block" id="overviewOpenTickets">...</strong>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Open Tickets</span>
+                                <strong class="fs-4 fw-bold text-danger d-block" id="overviewOpenTickets">...</strong>
                             </article>
                         </div>
                     </div>
-                    <!-- Subscription Plans (Visual Only for now, keeping structure) -->
-                    <div class="card p-4 shadow-sm border-0 rounded-4 overview-plans">
-                        <div class="d-flex justify-content-between align-items-end mb-4 overview-section-heading">
-                            <div><p class="text-primary fw-bold mb-1 small eyebrow">Subscription Plans</p><h4 class="fw-bold mb-0">Choose the right plan for your society</h4></div>
-                            <button type="button" class="btn btn-outline-primary" data-panel="subscriptions">View controls</button>
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div><h4 class="fw-bold mb-1"><i class="fa-solid fa-paper-plane text-primary me-2"></i>Sent Platform Notices</h4><p class="text-muted small mb-0">Complete broadcast history with sender, recipients, delivery and timing.</p></div>
+                            <span class="badge badge-soft-primary inline-state" id="platformNoticeHistoryCount">0 sent</span>
                         </div>
-                        <div class="row g-4 subscription-grid">
-                            <!-- Free Plan -->
-                            <div class="col-md-4">
-                                <article class="card h-100 p-4 border border-primary border-opacity-25 subscription-plan-card bg-primary bg-opacity-10 rounded-4" data-plan="Free">
-                                    <span class="badge bg-primary text-white w-25 mb-3 plan-kicker">Starter</span>
-                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
-                                        <h3 class="fw-bold mb-0">Free</h3><span class="badge bg-success status active">Trial</span>
-                                    </div>
-                                    <p class="text-muted small">1 block, 50 flats, complaints, notices. Rs. 0 / month.</p>
-                                    <ul class="text-muted small mb-4 flex-grow-1"><li>1 admin, 1 security</li><li>Complaints & announcements</li><li>7 day history</li></ul>
-                                    <button class="btn btn-primary w-100 rounded-pill" data-action="edit-plan" data-plan="Free">Edit Plan</button>
-                                </article>
-                            </div>
-                            <!-- Standard Plan -->
-                            <div class="col-md-4">
-                                <article class="card h-100 p-4 border-0 shadow subscription-plan-card featured-plan bg-white rounded-4" data-plan="Standard">
-                                    <span class="badge bg-warning text-dark w-50 mb-3 plan-kicker"><i class="fa-solid fa-star me-1"></i> Most used</span>
-                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
-                                        <h3 class="fw-bold mb-0">Standard</h3><span class="badge bg-primary status approved">Live</span>
-                                    </div>
-                                    <p class="text-muted small">5 blocks, 500 flats, billing, visitors, amenities. Rs. 4,999 / month.</p>
-                                    <ul class="text-muted small mb-4 flex-grow-1"><li>Full workflows</li><li>Billing & amenities</li><li>90 day audit history</li></ul>
-                                    <button class="btn btn-primary w-100 rounded-pill" data-action="edit-plan" data-plan="Standard">Edit Plan</button>
-                                </article>
-                            </div>
-                            <!-- Premium Plan -->
-                            <div class="col-md-4">
-                                <article class="card h-100 p-4 border border-dark border-opacity-10 subscription-plan-card rounded-4 bg-light" data-plan="Premium">
-                                    <span class="badge bg-dark text-white w-25 mb-3 plan-kicker">Scale</span>
-                                    <div class="d-flex justify-content-between align-items-center mb-3 plan-title-row">
-                                        <h3 class="fw-bold mb-0">Premium</h3><span class="badge bg-secondary status pending">Upgradeable</span>
-                                    </div>
-                                    <p class="text-muted small">Unlimited flats, analytics, expenses. Rs. 9,999 / month.</p>
-                                    <ul class="text-muted small mb-4 flex-grow-1"><li>Advanced analytics</li><li>Expense approvals</li><li>365 day audit history</li></ul>
-                                    <button class="btn btn-dark w-100 rounded-pill" data-action="edit-plan" data-plan="Premium">Edit Plan</button>
-                                </article>
-                            </div>
+                        <div class="card-body px-4 pb-4 table-responsive dashboard-table-scroll">
+                            <table class="table table-hover align-middle" aria-label="Sent platform notice history">
+                                <thead class="table-light"><tr><th>Notice</th><th>Message</th><th>Target</th><th>Priority</th><th>Sent by</th><th>Sent at</th><th>Delivery</th><th>Actions</th></tr></thead>
+                                <tbody id="platformNoticeHistoryTable"><tr><td colspan="8" class="text-center text-muted py-4">No platform notices have been sent yet.</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-4 mt-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-eye text-danger me-2"></i>Live Society Watchlist</h4>
+                            <span class="badge badge-soft-danger inline-state">Super Admin visibility only</span>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light"><tr><th>Society</th><th>Module</th><th>Current Signal</th><th>Owner</th><th>Access Rule</th></tr></thead>
+                                <tbody id="liveSocietyWatchlistTable"></tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
 
                 <!-- Monitoring Panel -->
                 <section class="d-none" data-view="monitoring">
-                    <div class="row g-4 mb-4 stats">
-                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Gate Entries Today</span><strong class="fs-5 fw-bold text-primary mt-1 d-block">...</strong></article></div>
-                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Bills Pending</span><strong class="fs-5 fw-bold text-warning mt-1 d-block">...</strong></article></div>
-                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Admin Approvals</span><strong class="fs-5 fw-bold text-info mt-1 d-block">...</strong></article></div>
-                        <div class="col-4 col-md-2"><article class="card p-1 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">Open Risks</span><strong class="fs-5 fw-bold text-danger mt-1 d-block">...</strong></article></div>
+                    <div class="row g-3 mb-4 stats">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Gate Entries Today</span>
+                                <strong class="fs-4 fw-bold text-primary d-block">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Bills Pending</span>
+                                <strong class="fs-4 fw-bold text-warning d-block">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Admin Approvals</span>
+                                <strong class="fs-4 fw-bold text-info d-block">...</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Open Risks</span>
+                                <strong class="fs-4 fw-bold text-danger d-block">...</strong>
+                            </article>
+                        </div>
                     </div>
                     <div class="card shadow-sm border-0 rounded-4 mb-4 monitoring-card">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
@@ -195,18 +253,6 @@
                                     <tbody id="commandWatchGrid"></tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0"><i class="fa-solid fa-eye text-danger me-2"></i>Live Society Watchlist</h4>
-                            <span class="badge badge-soft-danger inline-state">Super Admin visibility only</span>
-                        </div>
-                        <div class="card-body px-4 pb-4 table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light"><tr><th>Society</th><th>Module</th><th>Current Signal</th><th>Owner</th><th>Access Rule</th></tr></thead>
-                                <tbody id="liveSocietyWatchlistTable"></tbody>
-                            </table>
                         </div>
                     </div>
                 </section>
@@ -258,7 +304,7 @@
 
                 <!-- Subscriptions -->
                 <section class="d-none subscriptions-panel" data-view="subscriptions">
-                    <div class="subscription-simple-heading"><div><span>PLAN CATALOGUE</span><h3>Three SmartSociety subscriptions</h3><p>Manage the three plans available to every registered society.</p></div><div class="subscription-catalogue-count"><strong id="subscriptionPlanCount">3</strong><small>available plans</small></div></div>
+                    <div class="subscription-simple-heading"><div><span>PLAN CATALOGUE</span><h3>Gold, Platinum and Diamond plans</h3><p>Manage the three current SmartSociety subscription tiers.</p></div><div class="subscription-catalogue-count"><strong id="subscriptionPlanCount">3</strong><small>available plans</small></div></div>
                     <div class="subscription-plan-catalogue" id="subscriptionPlanCards"></div>
                     <div class="subscription-mapping-section">
                         <div class="subscription-simple-heading"><div><span>SOCIETY SUBSCRIPTIONS</span><h3>Society-to-plan details</h3><p>Review each registered society’s current plan and change the assignment when required.</p></div><div class="subscription-mapping-summary"><strong id="assignedSocietyCount">0</strong><small>societies assigned</small></div></div>
@@ -286,45 +332,45 @@
                         <div class="card-body p-4 bg-light bg-opacity-50">
                             <div class="row g-4 form-grid">
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control shadow-none border-light-subtle" id="supportEmail" value="support@smartapartment.local">
+                                    <div class="settings-field">
                                         <label for="supportEmail">Support Email Address</label>
+                                        <input type="email" class="form-control shadow-none border-light-subtle" id="supportEmail" value="support@smartapartment.local">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                    <div class="settings-field">
+                                        <label for="approvalRule">Approval Rule</label>
                                         <select class="form-select shadow-none border-light-subtle" id="approvalRule">
                                             <option>Auto approve paid tenants</option>
                                             <option>Manual review</option>
                                         </select>
-                                        <label for="approvalRule">Approval Rule</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                    <div class="settings-field">
+                                        <label for="maintenanceMode">Platform Maintenance Mode</label>
                                         <select class="form-select shadow-none border-light-subtle" id="maintenanceMode">
                                             <option>Disabled</option>
                                             <option>Enabled - Show Maintenance Page</option>
                                         </select>
-                                        <label for="maintenanceMode">Platform Maintenance Mode</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control shadow-none border-light-subtle" id="smtpHost" value="smtp.mailgun.org">
+                                    <div class="settings-field">
                                         <label for="smtpHost">SMTP Host</label>
+                                        <input type="text" class="form-control shadow-none border-light-subtle" id="smtpHost" value="smtp.mailgun.org">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control shadow-none border-light-subtle" id="sessionLimit" value="5">
+                                    <div class="settings-field">
                                         <label for="sessionLimit">Global User Session Limit</label>
+                                        <input type="number" class="form-control shadow-none border-light-subtle" id="sessionLimit" value="5">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control shadow-none border-light-subtle" id="retentionPolicy" value="36">
+                                    <div class="settings-field">
                                         <label for="retentionPolicy">Data Retention Policy (Months)</label>
+                                        <input type="number" class="form-control shadow-none border-light-subtle" id="retentionPolicy" value="36">
                                     </div>
                                 </div>
                             </div>
@@ -494,7 +540,9 @@
         #rolePolicyModal .policy-option strong { display:block; color:#2b3850; font-size:.76rem; }
         #rolePolicyModal .policy-option small { display:block; margin-top:.08rem; color:#7b889d; font-size:.65rem; line-height:1.25; }
         #rolePolicyModal .policy-switch-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem .8rem; }
-        #rolePolicyModal .policy-switch { padding:.65rem .75rem; border:1px solid #e0e6f1; border-radius:10px; background:#fbfcff; }
+        #rolePolicyModal .policy-switch { min-height:58px; margin:0; padding:.65rem .8rem; display:flex; align-items:center; gap:.75rem; border:1px solid #e0e6f1; border-radius:10px; background:#fbfcff; }
+        #rolePolicyModal .policy-switch .form-check-input { flex:0 0 auto; width:2.4rem; height:1.25rem; margin:0 !important; float:none; cursor:pointer; }
+        #rolePolicyModal .policy-switch .form-check-label { flex:1 1 auto; min-width:0; margin:0; color:#273349; font-size:.79rem !important; line-height:1.3; cursor:pointer; }
         #rolePolicyModalStatus { flex:1; min-height:1.1rem; color:#c62828; font-size:.76rem; font-weight:700; }
         @media(max-width:700px){#rolePolicyModal .modal-dialog{width:calc(100vw - 1rem);height:calc(100dvh - 1rem);margin:.5rem auto}#rolePolicyModal .policy-option-grid,#rolePolicyModal .policy-switch-grid{grid-template-columns:1fr}}
         section[data-view="finance-setup"] { color:#1d2738; }
@@ -541,6 +589,7 @@
                 </div>
                 <div class="modal-body p-4 p-md-5">
                     <form id="platformNoticeForm">
+                        <input type="hidden" id="editPlatformNoticeId">
                         <div class="notice-intro mb-4" role="note">
                             <i class="fa-solid fa-bell"></i><div><strong class="d-block mb-1">Delivery included</strong><small>Every selected recipient gets an in-app notification and sees this notice on their society notice board.</small></div>
                         </div>
@@ -585,6 +634,11 @@
                             </select>
                         </div>
 
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6"><label for="noticeValidDays" class="notice-label">Visible for (days)</label><input class="form-control py-2" id="noticeValidDays" type="number" min="1" max="365" value="7" required></div>
+                            <div class="col-md-6 d-flex align-items-end"><div class="form-check form-switch border rounded-3 p-3 ps-5 w-100"><input class="form-check-input" id="noticeEmergency" type="checkbox"><label class="form-check-label fw-bold" for="noticeEmergency">Emergency escalation</label><small class="d-block text-muted">Highlight this notice across recipient dashboards.</small></div></div>
+                        </div>
+
                         <div>
                             <label for="noticeMessage" class="notice-label">3. Message</label>
                             <textarea class="form-control py-3" id="noticeMessage" rows="5" placeholder="Write a clear message with key dates, times, and the action residents should take." required></textarea>
@@ -600,6 +654,16 @@
         </div>
     </div>
 
+    <div class="modal fade" id="platformNoticeDetailsModal" tabindex="-1" aria-labelledby="platformNoticeDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 px-4 pt-4"><div><small class="text-primary fw-bold text-uppercase">Platform notice record</small><h5 class="modal-title fw-bold mt-1" id="platformNoticeDetailsLabel">Notice details</h5></div><button type="button" class="btn-close" data-notice-details-close aria-label="Close"></button></div>
+                <div class="modal-body px-4 pb-4"><div class="row g-3" id="platformNoticeDetailsBody"></div></div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0"><button type="button" class="btn btn-light rounded-pill px-4" data-notice-details-close>Close</button><button type="button" class="btn btn-primary rounded-pill px-4" id="btnEditNoticeFromDetails"><i class="fa-solid fa-pen me-2"></i>Edit notice</button></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Society Modal -->
     <div class="modal fade" id="addSocietyModal" tabindex="-1" aria-labelledby="addSocietyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -609,6 +673,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-add-society-close aria-label="Close"></button>
                 </div>
                 <form id="addSocietyForm">
+                    <input type="hidden" id="editSocietyId">
                     <div class="modal-body p-4 p-md-5" id="addSocietyScrollableBody" tabindex="0" aria-label="Society onboarding form fields">
                         <div class="society-form-intro mb-4"><i class="fa-solid fa-building-circle-check"></i><div><strong class="d-block mb-1">Complete the onboarding record</strong><small>Capture the society, location, capacity, administrator contact and plan details. A unique workspace code is generated automatically.</small></div></div>
 
@@ -628,7 +693,7 @@
                                 <div class="col-12"><label class="form-label" for="newSocietyAddress">Complete address *</label><textarea class="form-control" id="newSocietyAddress" required maxlength="500" placeholder="Building, street and locality"></textarea></div>
                                 <div class="col-md-4"><label class="form-label" for="newSocietyCity">City *</label><input class="form-control" id="newSocietyCity" required maxlength="80" placeholder="e.g. Chennai"></div>
                                 <div class="col-md-4"><label class="form-label" for="newSocietyState">State *</label><input class="form-control" id="newSocietyState" required maxlength="80" placeholder="e.g. Tamil Nadu"></div>
-                                <div class="col-md-4"><label class="form-label" for="newSocietyPostalCode">Postal code *</label><input class="form-control" id="newSocietyPostalCode" required maxlength="12" pattern="[A-Za-z0-9 -]{4,12}" placeholder="e.g. 600001"></div>
+                                <div class="col-md-4"><label class="form-label" for="newSocietyPostalCode">Postal code *</label><input class="form-control" id="newSocietyPostalCode" required maxlength="12" pattern="[A-Za-z0-9 \-]{4,12}" placeholder="e.g. 600001"></div>
                                 <div class="col-md-4"><label class="form-label" for="newSocietyCountry">Country *</label><select class="form-select" id="newSocietyCountry" required><option value="India" selected>India</option><option>United Arab Emirates</option><option>Singapore</option><option>Other</option></select></div>
                                 <div class="col-md-4"><label class="form-label" for="newSocietyWings">Blocks / wings *</label><input type="number" class="form-control" id="newSocietyWings" required min="1" max="500" placeholder="e.g. 5"></div>
                                 <div class="col-md-4"><label class="form-label" for="newSocietyUnits">Total flats / units *</label><input type="number" class="form-control" id="newSocietyUnits" required min="1" max="100000" placeholder="e.g. 250"></div>
@@ -641,7 +706,7 @@
                                 <div class="col-md-6"><label class="form-label" for="newSocietyAdminName">Administrator name *</label><input class="form-control" id="newSocietyAdminName" required maxlength="100" autocomplete="name" placeholder="Full name"></div>
                                 <div class="col-md-6"><label class="form-label" for="newSocietyAdminDesignation">Designation *</label><input class="form-control" id="newSocietyAdminDesignation" required maxlength="100" placeholder="e.g. Society Secretary"></div>
                                 <div class="col-md-6"><label class="form-label" for="newSocietyAdminEmail">Administrator email address *</label><input type="email" class="form-control" id="newSocietyAdminEmail" required maxlength="160" autocomplete="username" placeholder="admin@society.com"><div class="field-help">This becomes the administrator's login username.</div></div>
-                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminPhone">Administrator phone number *</label><input type="tel" class="form-control" id="newSocietyAdminPhone" required maxlength="20" pattern="[0-9+() -]{7,20}" autocomplete="tel" placeholder="+91 98765 43210"></div>
+                                <div class="col-md-6"><label class="form-label" for="newSocietyAdminPhone">Administrator phone number *</label><input type="tel" class="form-control" id="newSocietyAdminPhone" required maxlength="20" pattern="[0-9+ ]{7,20}" autocomplete="tel" placeholder="+91 98765 43210"></div>
                                 <div class="col-md-6"><label class="form-label" for="newSocietyAdminPassword">Create password *</label><div class="password-field"><input type="password" class="form-control" id="newSocietyAdminPassword" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Minimum 8 characters"><button type="button" data-toggle-society-password aria-label="Show administrator passwords">Show</button></div></div>
                                 <div class="col-md-6"><label class="form-label" for="newSocietyAdminPasswordConfirm">Confirm password *</label><input type="password" class="form-control" id="newSocietyAdminPasswordConfirm" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Enter the password again"></div>
                                 <div class="col-12"><div class="password-requirements"><span>At least 8 characters</span><span>One uppercase letter</span><span>One lowercase letter</span><span>One number</span><span>One symbol</span></div></div>
@@ -706,7 +771,7 @@
 
     <div class="modal fade" id="billingRuleModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Global billing configuration</div><h5 class="modal-title fw-bold mb-0">Edit billing rule</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-billing-rule-close aria-label="Close"></button></div><form id="billingRuleForm"><input type="hidden" id="billingRuleId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small">Rule name</label><input class="form-control" id="billingRuleName" required></div><div class="row g-3"><div class="col-6"><label class="form-label fw-bold small">Plan</label><input class="form-control" id="billingRulePlan" required></div><div class="col-6"><label class="form-label fw-bold small">Amount (Rs.)</label><input class="form-control" id="billingRuleAmount" type="number" min="0" required></div><div class="col-6"><label class="form-label fw-bold small">Billing cycle</label><input class="form-control" id="billingRuleCycle" required></div><div class="col-6"><label class="form-label fw-bold small">Grace days</label><input class="form-control" id="billingRuleGrace" type="number" min="0" required></div></div><div class="mt-3"><label class="form-label fw-bold small">Status</label><select class="form-select" id="billingRuleStatus"><option>Active</option><option>Live</option><option>Review</option></select></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-billing-rule-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Rule</button></div></form></div></div></div>
 
-    <div class="modal fade" id="platformUserModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform access</div><h5 class="modal-title fw-bold mb-0">Edit user</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-platform-user-close aria-label="Close"></button></div><form id="platformUserForm"><input type="hidden" id="platformUserId"><div class="modal-body p-4"><div class="mb-3"><label class="form-label fw-bold small" for="platformUserName">Full name</label><input class="form-control" id="platformUserName" required></div><div class="row g-3"><div class="col-md-7"><label class="form-label fw-bold small" for="platformUserRole">Role</label><select class="form-select" id="platformUserRole" required><option value="SUPER_ADMIN">Super Admin</option><option value="SOCIETY_ADMIN">Society Admin</option><option value="RESIDENT">Resident</option><option value="SECURITY_STAFF">Security Staff</option><option value="MAINTENANCE_STAFF">Maintenance Staff</option><option value="ACCOUNTANT">Accountant</option></select></div><div class="col-md-5"><label class="form-label fw-bold small" for="platformUserStatus">Account status</label><select class="form-select" id="platformUserStatus"><option value="active">Active</option><option value="locked">Locked</option></select></div><div class="col-12"><label class="form-label fw-bold small">Society</label><input class="form-control" id="platformUserSociety" disabled></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-platform-user-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save User</button></div></form></div></div></div>
+    <div class="modal fade" id="platformUserModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Platform identity and access</div><h5 class="modal-title fw-bold mb-0">Edit complete user profile</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-platform-user-close aria-label="Close"></button></div><form id="platformUserForm"><input type="hidden" id="platformUserId"><div class="modal-body p-4"><div class="row g-3"><div class="col-12"><h6 class="fw-bold border-bottom pb-2">Identity and contact</h6></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserName">Full name *</label><input class="form-control" id="platformUserName" maxlength="100" required></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserEmail">Email address *</label><input class="form-control" id="platformUserEmail" type="email" maxlength="160" required></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserPhone">Phone number</label><input class="form-control" id="platformUserPhone" type="tel" pattern="[0-9+ ]{7,20}"></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserDesignation">Designation</label><input class="form-control" id="platformUserDesignation" maxlength="100"></div><div class="col-md-4"><label class="form-label fw-bold small" for="platformUserEmployeeId">Employee ID</label><input class="form-control" id="platformUserEmployeeId" maxlength="80"></div><div class="col-md-4"><label class="form-label fw-bold small" for="platformUserJoiningDate">Joining date</label><input class="form-control" id="platformUserJoiningDate" type="date"></div><div class="col-md-4"><label class="form-label fw-bold small" for="platformUserShift">Work shift</label><input class="form-control" id="platformUserShift" maxlength="80"></div><div class="col-12"><label class="form-label fw-bold small" for="platformUserAddress">Address</label><textarea class="form-control" id="platformUserAddress" rows="2" maxlength="500"></textarea></div><div class="col-12"><h6 class="fw-bold border-bottom pb-2 mt-2">Role and security</h6></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserRole">Role *</label><select class="form-select" id="platformUserRole" required><option value="SUPER_ADMIN">Super Admin</option><option value="SOCIETY_ADMIN">Society Admin</option><option value="RESIDENT">Resident</option><option value="SECURITY_STAFF">Security Staff</option><option value="MAINTENANCE_STAFF">Maintenance Staff</option><option value="ACCOUNTANT">Accountant</option></select></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserStatus">Account status *</label><select class="form-select" id="platformUserStatus" required><option value="active">Active</option><option value="locked">Locked</option></select></div><div class="col-12"><label class="form-label fw-bold small">Society</label><input class="form-control" id="platformUserSociety" disabled></div><div class="col-md-6 form-check form-switch ms-2"><input class="form-check-input" id="platformUserMfa" type="checkbox"><label class="form-check-label" for="platformUserMfa">Require multi-factor authentication</label></div><div class="col-md-5 form-check form-switch"><input class="form-check-input" id="platformUserMobile" type="checkbox"><label class="form-check-label" for="platformUserMobile">Authorize mobile application</label></div><div class="col-12"><h6 class="fw-bold border-bottom pb-2 mt-2">Emergency and administrative details</h6></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserEmergencyName">Emergency contact name</label><input class="form-control" id="platformUserEmergencyName" maxlength="100"></div><div class="col-md-6"><label class="form-label fw-bold small" for="platformUserEmergencyPhone">Emergency contact phone</label><input class="form-control" id="platformUserEmergencyPhone" type="tel" pattern="[0-9+ ]{7,20}"></div><div class="col-12"><label class="form-label fw-bold small" for="platformUserNotes">Profile and access notes</label><textarea class="form-control" id="platformUserNotes" rows="3" maxlength="1000"></textarea></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-platform-user-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4"><i class="fa-solid fa-floppy-disk me-2"></i>Save Complete User Profile</button></div></form></div></div></div>
 
     <div class="modal fade" id="rolePolicyModal" tabindex="-1" aria-labelledby="rolePolicyModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
@@ -773,7 +838,7 @@
         </div></div>
     </div>
 
-    <div class="modal fade" id="privacyReviewModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Privacy decision</div><h5 class="modal-title fw-bold mb-0">Review data request</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-privacy-close aria-label="Close"></button></div><form id="privacyReviewForm"><input type="hidden" id="privacyRequestId"><div class="modal-body p-4"><div class="alert alert-warning small"><i class="fa-solid fa-triangle-exclamation me-2"></i>Approving records the deletion/anonymization decision. Confirm the request before proceeding.</div><div class="mb-3"><label class="form-label fw-bold small">Request</label><input class="form-control" id="privacyRequestSummary" disabled></div><div class="mb-3"><label class="form-label fw-bold small">Decision</label><select class="form-select" id="privacyDecision"><option value="approve">Approve and process request</option><option value="reject">Reject request</option></select></div><div class="mb-0"><label class="form-label fw-bold small">Review note</label><textarea class="form-control" id="privacyDecisionNote" rows="3" required placeholder="Reason for approval or rejection"></textarea></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-privacy-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Decision</button></div></form></div></div></div>
+    <div class="modal fade" id="privacyReviewModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Privacy and compliance decision</div><h5 class="modal-title fw-bold mb-0">Complete data-request review</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-privacy-close aria-label="Close"></button></div><form id="privacyReviewForm"><input type="hidden" id="privacyRequestId"><div class="modal-body p-4"><div class="alert alert-warning small"><i class="fa-solid fa-triangle-exclamation me-2"></i>Record the identity check, legal basis, processing method and evidence before completing this request.</div><div class="row g-3"><div class="col-12"><label class="form-label fw-bold small">Request</label><input class="form-control" id="privacyRequestSummary" disabled></div><div class="col-md-6"><label class="form-label fw-bold small">Decision *</label><select class="form-select" id="privacyDecision" required><option value="approve">Approve and process request</option><option value="reject">Reject request</option><option value="hold">Place on compliance hold</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Reviewer name *</label><input class="form-control" id="privacyReviewer" required maxlength="100"></div><div class="col-md-6"><label class="form-label fw-bold small">Identity verification *</label><select class="form-select" id="privacyIdentityCheck" required><option>Verified against account and registered contact</option><option>Government ID verified</option><option>Society administrator confirmation</option><option>Verification pending</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Processing method *</label><select class="form-select" id="privacyProcessingMethod" required><option>Permanent deletion</option><option>Anonymization</option><option>Data export</option><option>Restriction of processing</option><option>No processing - rejected</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Legal basis / policy *</label><input class="form-control" id="privacyLegalBasis" required maxlength="180" placeholder="Consent withdrawal, retention policy, statutory hold"></div><div class="col-md-6"><label class="form-label fw-bold small">Effective date and time *</label><input class="form-control" id="privacyEffectiveAt" type="datetime-local" required></div><div class="col-md-6"><label class="form-label fw-bold small">Evidence / ticket reference</label><input class="form-control" id="privacyEvidence" maxlength="180"></div><div class="col-md-6"><label class="form-label fw-bold small">Retention action</label><select class="form-select" id="privacyRetentionAction"><option>Delete eligible records and preserve mandatory audit data</option><option>Anonymize all non-statutory records</option><option>Preserve under legal hold</option></select></div><div class="col-12"><label class="form-label fw-bold small">Detailed review note *</label><textarea class="form-control" id="privacyDecisionNote" rows="4" required minlength="15" maxlength="2000" placeholder="Reason, verification performed, affected data, exceptions and follow-up owner"></textarea></div></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" data-privacy-close>Cancel</button><button type="submit" class="btn btn-primary px-4">Save Complete Decision</button></div></form></div></div></div>
 
     <div class="modal fade" id="gatewayConfigModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header text-white border-0" style="background:linear-gradient(135deg,#2856e8,#503ee7)"><div><div class="small text-white-50 text-uppercase fw-bold">Finance configuration</div><h5 class="modal-title fw-bold mb-0">Configure payment gateway</h5></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-gateway-close aria-label="Close"></button></div><form id="gatewayConfigForm"><input type="hidden" id="gatewayConfigId"><div class="modal-body p-4"><div class="row g-3"><div class="col-md-6"><label class="form-label fw-bold small">Gateway</label><input class="form-control" id="gatewayProvider" required></div><div class="col-md-6"><label class="form-label fw-bold small">Environment</label><select class="form-select" id="gatewayEnvironment"><option>Sandbox</option><option>Production</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Merchant ID</label><input class="form-control" id="gatewayMerchantId" required></div><div class="col-md-6"><label class="form-label fw-bold small">Transaction fee</label><input class="form-control" id="gatewayFee" placeholder="e.g. 2.0%"></div><div class="col-12"><label class="form-label fw-bold small">API key <span class="text-muted fw-normal">(only enter to change)</span></label><input class="form-control" id="gatewayApiKey" type="password"></div></div><div class="form-check form-switch mt-4"><input class="form-check-input" id="gatewayInvoicing" type="checkbox"><label class="form-check-label" for="gatewayInvoicing">Enable digital invoicing</label></div><div class="form-check form-switch mt-2"><input class="form-check-input" id="gatewayActive" type="checkbox"><label class="form-check-label" for="gatewayActive">Activate this gateway</label></div></div><div class="modal-footer border-0 px-4 pb-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" data-gateway-close>Cancel</button><button type="submit" class="btn btn-primary rounded-pill px-4">Save Gateway</button></div></form></div></div></div>
 
@@ -865,11 +930,25 @@
             // Add Society: detailed platform onboarding form.
             const addSocietyModal = document.getElementById("addSocietyModal");
             const addSocietyForm = document.getElementById("addSocietyForm");
-            const openAddSocietyModal = () => {
+            const setSocietyValue = (id, value) => {
+                const field = document.getElementById(id);
+                if (!field) return;
+                if (field.type === "checkbox") field.checked = Boolean(value);
+                else field.value = value ?? "";
+            };
+            const openAddSocietyModal = (society = null, administrator = null) => {
                 if (!addSocietyModal) return;
+                addSocietyForm?.reset();
+                const editing = Boolean(society?.id);
+                setSocietyValue("editSocietyId", editing ? society.id : "");
+                document.getElementById("addSocietyModalLabel").textContent = editing ? "Edit complete society profile" : "Create a complete society profile";
+                const submitButton = document.getElementById("btnCreateSociety");
+                if (submitButton) submitButton.innerHTML = editing
+                    ? '<i class="fa-solid fa-floppy-disk me-2"></i>Save Society Changes'
+                    : '<i class="fa-solid fa-building-circle-check me-2"></i>Create Society';
                 const planSelect = document.getElementById("newSocietyPlan");
                 if (planSelect) {
-                    const selected = planSelect.value;
+                    const selected = editing ? String(society.subscriptionPlanId || "") : "";
                     planSelect.replaceChildren(new Option("No plan — assign later", ""));
                     (window.platformPlans || []).filter(plan => plan.active !== false).forEach(plan => {
                         const price = Number(plan.monthlyPrice || 0).toLocaleString("en-IN");
@@ -877,6 +956,34 @@
                     });
                     planSelect.value = [...planSelect.options].some(option => option.value === selected) ? selected : "";
                 }
+                if (editing) {
+                    setSocietyValue("newSocietyName", society.societyName);
+                    setSocietyValue("newSocietyType", society.societyType);
+                    setSocietyValue("newSocietyRegistration", society.registrationNumber);
+                    setSocietyValue("newSocietyWebsite", society.website);
+                    setSocietyValue("newSocietyAddress", society.address);
+                    setSocietyValue("newSocietyCity", society.city);
+                    setSocietyValue("newSocietyState", society.state);
+                    setSocietyValue("newSocietyPostalCode", society.postalCode);
+                    setSocietyValue("newSocietyCountry", society.country || "India");
+                    setSocietyValue("newSocietyWings", society.totalWings);
+                    setSocietyValue("newSocietyUnits", society.totalUnits);
+                    setSocietyValue("newSocietyAdminName", administrator?.name || society.contactName);
+                    setSocietyValue("newSocietyAdminDesignation", administrator?.designation || "Society Administrator");
+                    setSocietyValue("newSocietyAdminEmail", administrator?.email || society.contactEmail);
+                    setSocietyValue("newSocietyAdminPhone", administrator?.phone || society.phone);
+                    setSocietyValue("newSocietyApproved", society.approved);
+                    setSocietyValue("newSocietyNotes", society.onboardingNotes);
+                } else {
+                    setSocietyValue("newSocietyCountry", "India");
+                }
+                ["newSocietyAdminPassword", "newSocietyAdminPasswordConfirm"].forEach(id => {
+                    const field = document.getElementById(id);
+                    if (!field) return;
+                    field.required = !editing;
+                    field.value = "";
+                    field.placeholder = editing ? "Leave blank to keep current password" : (id.endsWith("Confirm") ? "Enter the password again" : "Minimum 8 characters");
+                });
                 if (typeof bootstrap !== "undefined") return bootstrap.Modal.getOrCreateInstance(addSocietyModal).show();
                 addSocietyModal.style.display = "block";
                 addSocietyModal.classList.add("show");
@@ -887,7 +994,8 @@
                 addSocietyModal.style.display = "none";
                 addSocietyModal.classList.remove("show");
             };
-            document.getElementById("btnOpenAddSocietyModal")?.addEventListener("click", openAddSocietyModal);
+            document.getElementById("btnOpenAddSocietyModal")?.addEventListener("click", () => openAddSocietyModal());
+            window.openSocietyEditor = (society, administrator) => openAddSocietyModal(society, administrator);
             document.querySelectorAll("[data-add-society-close]").forEach(button => button.addEventListener("click", closeAddSocietyModal));
             addSocietyModal?.addEventListener("click", event => { if (event.target === addSocietyModal) closeAddSocietyModal(); });
             document.querySelector("[data-toggle-society-password]")?.addEventListener("click", event => {
@@ -905,17 +1013,19 @@
                 }
                 const value = id => document.getElementById(id)?.value.trim() || "";
                 const name = value("newSocietyName");
+                const editId = value("editSocietyId");
+                const editing = Boolean(editId);
                 const selectedPlan = value("newSocietyPlan");
                 const adminPassword = value("newSocietyAdminPassword");
                 const passwordConfirmation = value("newSocietyAdminPasswordConfirm");
                 const securePassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
-                if (!securePassword.test(adminPassword)) {
+                if ((!editing || adminPassword) && !securePassword.test(adminPassword)) {
                     document.getElementById("newSocietyAdminPassword")?.setCustomValidity("Use at least 8 characters with uppercase, lowercase, a number and a symbol.");
                     addSocietyForm.reportValidity();
                     document.getElementById("newSocietyAdminPassword")?.setCustomValidity("");
                     return;
                 }
-                if (adminPassword !== passwordConfirmation) {
+                if (adminPassword && adminPassword !== passwordConfirmation) {
                     document.getElementById("newSocietyAdminPasswordConfirm")?.setCustomValidity("Passwords do not match.");
                     addSocietyForm.reportValidity();
                     document.getElementById("newSocietyAdminPasswordConfirm")?.setCustomValidity("");
@@ -940,7 +1050,7 @@
                     adminDesignation: value("newSocietyAdminDesignation"),
                     adminEmail: value("newSocietyAdminEmail"),
                     adminPhone: value("newSocietyAdminPhone"),
-                    adminPassword,
+                    adminPassword: adminPassword || null,
                     subscriptionPlanId: selectedPlan ? Number(selectedPlan) : null,
                     approved: Boolean(document.getElementById("newSocietyApproved")?.checked),
                     onboardingNotes: value("newSocietyNotes")
@@ -948,17 +1058,19 @@
                 const submitButton = document.getElementById("btnCreateSociety");
                 submitButton.disabled = true;
                 const originalLabel = submitButton.innerHTML;
-                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Creating workspace…';
+                submitButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>${editing ? "Saving changes…" : "Creating workspace…"}`;
                 try {
-                    const response = await fetch("/api/platform/tenants", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
+                    const response = await fetch(editing ? `/api/platform/tenants/${editId}` : "/api/platform/tenants", { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
                     const created = await response.json().catch(() => ({}));
-                    if (!response.ok) throw new Error(created.message || "Unable to create society");
+                    if (!response.ok) throw new Error(created.message || `Unable to ${editing ? "update" : "create"} society`);
                     closeAddSocietyModal();
                     addSocietyForm.reset();
-                    showToast(`✓ ${created.societyName || name} created ${created.approved ? "and approved" : "with pending approval"}.`);
+                    showToast(editing
+                        ? `✓ ${created.societyName || name} profile updated.`
+                        : `✓ ${created.societyName || name} created ${created.approved ? "and approved" : "with pending approval"}.`);
                     loadPlatformBackendData();
                 } catch (error) {
-                    showToast(error.message || "Unable to create society");
+                    showToast(error.message || `Unable to ${editing ? "update" : "create"} society`);
                 } finally {
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalLabel;
@@ -1027,6 +1139,7 @@
 
             const billingRuleModal = document.getElementById("billingRuleModal");
             const billingRuleForm = document.getElementById("billingRuleForm");
+            billingRuleForm?.querySelector(".modal-body")?.insertAdjacentHTML("beforeend", `<div class="row g-3 mt-1"><div class="col-md-6"><label class="form-label fw-bold small">Effective from</label><input class="form-control" id="billingRuleEffectiveFrom" type="date"></div><div class="col-md-6"><label class="form-label fw-bold small">Invoice prefix</label><input class="form-control" id="billingRuleInvoicePrefix" maxlength="20" placeholder="INV"></div><div class="col-md-6"><label class="form-label fw-bold small">Tax rate (%)</label><input class="form-control" id="billingRuleTaxRate" type="number" min="0" step="0.01"></div><div class="col-md-6"><label class="form-label fw-bold small">Late fee (Rs.)</label><input class="form-control" id="billingRuleLateFee" type="number" min="0" step="0.01"></div><div class="col-md-6 form-check form-switch ms-2"><input class="form-check-input" id="billingRuleAutoRenew" type="checkbox"><label class="form-check-label" for="billingRuleAutoRenew">Auto-renew subscriptions</label></div><div class="col-md-5 form-check form-switch"><input class="form-check-input" id="billingRuleProrated" type="checkbox"><label class="form-check-label" for="billingRuleProrated">Prorated billing</label></div><div class="col-12"><label class="form-label fw-bold small">Billing notes</label><textarea class="form-control" id="billingRuleNotes" rows="3" maxlength="1000" placeholder="Tax treatment, exceptions, renewal or collection instructions"></textarea></div></div>`);
             const closeBillingRuleModal = () => {
                 if (!billingRuleModal) return;
                 if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(billingRuleModal)?.hide();
@@ -1034,8 +1147,8 @@
             };
             document.querySelectorAll("[data-billing-rule-close]").forEach(button => button.addEventListener("click", closeBillingRuleModal));
             billingRuleModal?.addEventListener("click", event => { if (event.target === billingRuleModal) closeBillingRuleModal(); });
-            document.addEventListener("click", event => { const button = event.target.closest("[data-billing-rule-edit]"); if (!button) return; const row = button.closest("tr"); document.getElementById("billingRuleId").value = row.dataset.ruleId; document.getElementById("billingRuleName").value = row.children[0].textContent.trim(); document.getElementById("billingRulePlan").value = row.children[1].textContent.trim(); document.getElementById("billingRuleAmount").value = row.children[2].textContent.replace(/[^0-9.]/g, ""); document.getElementById("billingRuleCycle").value = row.children[3].textContent.trim(); document.getElementById("billingRuleGrace").value = row.children[4].textContent.replace(/[^0-9]/g, ""); document.getElementById("billingRuleStatus").value = row.children[5].textContent.trim(); if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(billingRuleModal).show(); else { billingRuleModal.style.display="block"; billingRuleModal.classList.add("show"); } });
-            billingRuleForm?.addEventListener("submit", async event => { event.preventDefault(); const id=document.getElementById("billingRuleId").value; const payload={ruleName:document.getElementById("billingRuleName").value.trim(),planName:document.getElementById("billingRulePlan").value.trim(),amount:Number(document.getElementById("billingRuleAmount").value),billingCycle:document.getElementById("billingRuleCycle").value.trim(),graceDays:Number(document.getElementById("billingRuleGrace").value),status:document.getElementById("billingRuleStatus").value}; try { const response=await fetch(`/api/superadmin/subscriptions/rules/${id}`,{method:"PUT",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)}); const result=await response.json().catch(()=>({})); if(!response.ok)throw new Error(result.message||"Unable to update billing rule"); if(typeof bootstrap!=="undefined")bootstrap.Modal.getInstance(billingRuleModal)?.hide(); else billingRuleModal.style.display="none"; showToast(`✓ ${result.ruleName||payload.ruleName} updated globally.`); loadPlatformBackendData(); } catch(error){showToast(error.message||"Unable to update billing rule");} });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-billing-rule-edit]"); if (!button) return; const row = button.closest("tr"); const rule=(window.platformBillingRules||[]).find(item=>String(item.id)===String(row.dataset.ruleId))||{}; document.getElementById("billingRuleId").value = row.dataset.ruleId; document.getElementById("billingRuleName").value = rule.rule||row.children[0].textContent.trim(); document.getElementById("billingRulePlan").value = rule.plan||row.children[1].textContent.trim(); document.getElementById("billingRuleAmount").value = String(rule.amount||row.children[2].textContent).replace(/[^0-9.]/g, ""); document.getElementById("billingRuleCycle").value = rule.cycle||row.children[3].textContent.trim(); document.getElementById("billingRuleGrace").value = String(rule.grace||row.children[4].textContent).replace(/[^0-9]/g, ""); document.getElementById("billingRuleStatus").value = rule.status||row.children[5].textContent.trim(); document.getElementById("billingRuleEffectiveFrom").value=rule.effectiveFrom||""; document.getElementById("billingRuleInvoicePrefix").value=rule.invoicePrefix||""; document.getElementById("billingRuleTaxRate").value=rule.taxRate??""; document.getElementById("billingRuleLateFee").value=rule.lateFee??""; document.getElementById("billingRuleAutoRenew").checked=Boolean(rule.autoRenew); document.getElementById("billingRuleProrated").checked=Boolean(rule.proratedBilling); document.getElementById("billingRuleNotes").value=rule.notes||""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(billingRuleModal).show(); else { billingRuleModal.style.display="block"; billingRuleModal.classList.add("show"); } });
+            billingRuleForm?.addEventListener("submit", async event => { event.preventDefault(); if(!billingRuleForm.checkValidity()){billingRuleForm.reportValidity();return;} const id=document.getElementById("billingRuleId").value; const payload={ruleName:document.getElementById("billingRuleName").value.trim(),planName:document.getElementById("billingRulePlan").value.trim(),amount:Number(document.getElementById("billingRuleAmount").value),billingCycle:document.getElementById("billingRuleCycle").value.trim(),graceDays:Number(document.getElementById("billingRuleGrace").value),status:document.getElementById("billingRuleStatus").value,effectiveFrom:document.getElementById("billingRuleEffectiveFrom").value||null,invoicePrefix:document.getElementById("billingRuleInvoicePrefix").value.trim(),taxRate:Number(document.getElementById("billingRuleTaxRate").value||0),lateFee:Number(document.getElementById("billingRuleLateFee").value||0),autoRenew:document.getElementById("billingRuleAutoRenew").checked,proratedBilling:document.getElementById("billingRuleProrated").checked,notes:document.getElementById("billingRuleNotes").value.trim()}; try { const response=await fetch(`/api/superadmin/subscriptions/rules/${id}`,{method:"PUT",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)}); const result=await response.json().catch(()=>({})); if(!response.ok)throw new Error(result.message||"Unable to update billing rule"); if(typeof bootstrap!=="undefined")bootstrap.Modal.getInstance(billingRuleModal)?.hide(); else billingRuleModal.style.display="none"; showToast(`✓ ${result.ruleName||payload.ruleName} updated globally.`); loadPlatformBackendData(); } catch(error){showToast(error.message||"Unable to update billing rule");} });
 
             const platformUserModal = document.getElementById("platformUserModal");
             const closePlatformUserModal = () => {
@@ -1048,18 +1161,25 @@
                 const button = event.target.closest("[data-platform-user-edit]");
                 if (!button) return;
                 const row = button.closest("tr");
-                document.getElementById("platformUserId").value = row.dataset.userId;
-                document.getElementById("platformUserName").value = row.children[0].textContent.trim();
-                document.getElementById("platformUserRole").value = row.children[1].textContent.trim();
-                document.getElementById("platformUserSociety").value = row.children[2].textContent.trim();
-                document.getElementById("platformUserStatus").value = row.children[3].textContent.trim() === "Locked" ? "locked" : "active";
+                const user = (window.platformUsers || []).find(item => String(item.id) === String(row.dataset.userId));
+                if (!user) return showToast("The complete user profile is still loading. Please try again.");
+                const setValue = (id, value) => { const field = document.getElementById(id); if (field) field.value = value ?? ""; };
+                setValue("platformUserId", user.id); setValue("platformUserName", user.name); setValue("platformUserEmail", user.email);
+                setValue("platformUserPhone", user.phone); setValue("platformUserDesignation", user.designation); setValue("platformUserEmployeeId", user.employeeId);
+                setValue("platformUserJoiningDate", user.joiningDate); setValue("platformUserShift", user.workShift); setValue("platformUserAddress", user.address);
+                setValue("platformUserRole", user.role); setValue("platformUserSociety", user.tenantId); setValue("platformUserStatus", user.locked ? "locked" : "active");
+                setValue("platformUserEmergencyName", user.emergencyContactName); setValue("platformUserEmergencyPhone", user.emergencyContactPhone); setValue("platformUserNotes", user.profileNotes);
+                document.getElementById("platformUserMfa").checked = Boolean(user.mfaEnabled);
+                document.getElementById("platformUserMobile").checked = Boolean(user.mobileAppAuthorized);
                 if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(platformUserModal).show();
                 else { platformUserModal.style.display = "block"; platformUserModal.classList.add("show"); }
             });
             document.getElementById("platformUserForm")?.addEventListener("submit", async event => {
                 event.preventDefault();
+                if (!event.currentTarget.reportValidity()) return;
                 const id = document.getElementById("platformUserId").value;
-                const payload = { fullName: document.getElementById("platformUserName").value.trim(), role: document.getElementById("platformUserRole").value, locked: document.getElementById("platformUserStatus").value === "locked" };
+                const value = fieldId => document.getElementById(fieldId).value.trim();
+                const payload = { fullName:value("platformUserName"), email:value("platformUserEmail"), phone:value("platformUserPhone"), designation:value("platformUserDesignation"), employeeId:value("platformUserEmployeeId"), joiningDate:value("platformUserJoiningDate") || null, workShift:value("platformUserShift"), address:value("platformUserAddress"), emergencyContactName:value("platformUserEmergencyName"), emergencyContactPhone:value("platformUserEmergencyPhone"), profileNotes:value("platformUserNotes"), role:value("platformUserRole"), locked:value("platformUserStatus") === "locked", mfaEnabled:document.getElementById("platformUserMfa").checked, mobileAppAuthorized:document.getElementById("platformUserMobile").checked };
                 try {
                     const response = await fetch(`/api/platform/users/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
                     const result = await response.json().catch(() => ({}));
@@ -1079,8 +1199,40 @@
             // Explicit Open Modal Handler for Send Platform Notice button
             const btnOpenNoticeModal = document.getElementById("btnOpenPlatformNoticeModal");
             const noticeModal = document.getElementById("platformNoticeModal");
-            const openNoticeModal = () => {
+            const setNoticeField = (id, value) => { const field = document.getElementById(id); if (field) field.value = value ?? ""; };
+            const openNoticeModal = (notice = null) => {
                 if (!noticeModal) return;
+                const editing = Boolean(notice?.id);
+                setNoticeField("editPlatformNoticeId", editing ? notice.id : "");
+                setNoticeField("noticeTitle", editing ? notice.title : "");
+                setNoticeField("noticeMessage", editing ? notice.message : "");
+                setNoticeField("noticeCategory", editing ? notice.category : "General Announcement");
+                setNoticeField("noticePriority", editing ? (notice.emergency ? "URGENT" : notice.priority) : "NORMAL");
+                setNoticeField("noticeValidDays", editing ? (notice.validDays || 7) : 7);
+                document.getElementById("noticeEmergency").checked = editing ? Boolean(notice.emergency) : false;
+                const target = document.getElementById("noticeTarget");
+                const specific = document.getElementById("specificSociety");
+                if (target) { target.value = editing ? (notice.targetLabel === "All registered societies" ? "ALL_REGISTERED_SOCIETIES" : "SPECIFIC_SOCIETY") : "ALL_REGISTERED_SOCIETIES"; target.disabled = editing; }
+                if (specific) {
+                    if (editing && notice.targetLabel !== "All registered societies") {
+                        const normalizeTarget = value => String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+                        const historicalName = normalizeTarget(notice.targetLabel);
+                        let option = [...specific.options].find(item => {
+                            const currentName = normalizeTarget(item.textContent);
+                            return currentName === historicalName || currentName.includes(historicalName) || historicalName.includes(currentName);
+                        });
+                        if (!option) {
+                            option = new Option(`${notice.targetLabel} (original recipient)`, "history-target", true, true);
+                            specific.add(option);
+                        }
+                        specific.value = option.value;
+                    } else specific.value = "";
+                    specific.disabled = editing;
+                }
+                window.toggleNoticeTargetOptions(target?.value || "ALL_REGISTERED_SOCIETIES");
+                document.getElementById("platformNoticeModalLabel").textContent = editing ? "Edit platform notice" : "Send a platform notice";
+                const submit = document.getElementById("btnSendPlatformNotice");
+                if (submit) submit.innerHTML = editing ? '<i class="fa-solid fa-floppy-disk me-2"></i>Save changes' : '<i class="fa-solid fa-paper-plane me-2"></i>Send &amp; notify';
                 if (typeof bootstrap !== "undefined") {
                     bootstrap.Modal.getOrCreateInstance(noticeModal).show();
                     return;
@@ -1104,11 +1256,51 @@
             if (btnOpenNoticeModal) {
                 btnOpenNoticeModal.addEventListener("click", (e) => {
                     e.preventDefault();
-                    openNoticeModal();
+                    document.getElementById("platformNoticeForm")?.reset();
+                    openNoticeModal(null);
                 });
             }
             document.querySelectorAll("[data-notice-modal-close]").forEach(button => button.addEventListener("click", closeNoticeModal));
             noticeModal?.addEventListener("click", event => { if (event.target === noticeModal) closeNoticeModal(); });
+
+            const noticeDetailsModal = document.getElementById("platformNoticeDetailsModal");
+            const closeNoticeDetails = () => {
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(noticeDetailsModal)?.hide();
+                else if (noticeDetailsModal) { noticeDetailsModal.style.display = "none"; noticeDetailsModal.classList.remove("show"); }
+            };
+            const detailItem = (label, value, wide = false) => {
+                const wrap = document.createElement("div"); wrap.className = wide ? "col-12" : "col-md-6";
+                const caption = document.createElement("small"); caption.className = "d-block text-uppercase fw-bold text-muted mb-1"; caption.textContent = label;
+                const content = document.createElement("div"); content.className = "p-3 bg-light rounded-3 h-100"; content.textContent = value || "—";
+                wrap.append(caption, content); return wrap;
+            };
+            let selectedPlatformNotice = null;
+            const showNoticeDetails = notice => {
+                selectedPlatformNotice = notice;
+                const body = document.getElementById("platformNoticeDetailsBody");
+                if (!body) return;
+                const sentAt = notice.createdAt ? new Date(notice.createdAt).toLocaleString("en-IN", {dateStyle:"medium", timeStyle:"short"}) : "—";
+                body.replaceChildren(
+                    detailItem("Title", notice.title), detailItem("Category", notice.category),
+                    detailItem("Message", notice.message, true), detailItem("Target", notice.targetLabel),
+                    detailItem("Priority", notice.emergency ? "URGENT" : notice.priority),
+                    detailItem("Sent by", `${notice.senderName || "Super Admin"} · ${notice.senderEmail || ""}`),
+                    detailItem("Sent at", sentAt), detailItem("Delivery", `${notice.notifiedUsers || 0} users across ${notice.societyCount || 0} societies`)
+                );
+                if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(noticeDetailsModal).show();
+                else { noticeDetailsModal.style.display = "block"; noticeDetailsModal.classList.add("show"); }
+            };
+            document.querySelectorAll("[data-notice-details-close]").forEach(button => button.addEventListener("click", closeNoticeDetails));
+            document.getElementById("btnEditNoticeFromDetails")?.addEventListener("click", () => { if (!selectedPlatformNotice) return; closeNoticeDetails(); openNoticeModal(selectedPlatformNotice); });
+            document.addEventListener("click", event => {
+                const view = event.target.closest("[data-platform-notice-view]");
+                const edit = event.target.closest("[data-platform-notice-edit]");
+                const trigger = view || edit;
+                if (!trigger) return;
+                const notice = (window.platformSentNotices || []).find(item => String(item.id) === String(view?.dataset.platformNoticeView || edit?.dataset.platformNoticeEdit));
+                if (!notice) return showToast("Notice details are still loading. Please try again.");
+                if (view) showNoticeDetails(notice); else openNoticeModal(notice);
+            });
 
             // Send Platform Notice Submission Logic
             const btnSendNotice = document.getElementById("btnSendPlatformNotice");
@@ -1121,8 +1313,12 @@
                     const category = document.getElementById("noticeCategory")?.value || "General Announcement";
                     const priority = document.getElementById("noticePriority")?.value || "NORMAL";
                     const message = document.getElementById("noticeMessage")?.value || "";
+                    const validDays = Number(document.getElementById("noticeValidDays")?.value || 7);
+                    const emergency = Boolean(document.getElementById("noticeEmergency")?.checked);
+                    const editId = document.getElementById("editPlatformNoticeId")?.value || "";
+                    const editing = Boolean(editId);
                     
-                    if (target === "SPECIFIC_SOCIETY" && !specificSocietyId) {
+                    if (!editing && target === "SPECIFIC_SOCIETY" && !specificSocietyId) {
                         if (typeof showToast === "function") showToast("⚠️ Please select a specific target society");
                         return;
                     }
@@ -1134,10 +1330,10 @@
                     
                     try {
                         btnSendNotice.disabled = true;
-                        btnSendNotice.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Sending Notice...';
+                        btnSendNotice.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>${editing ? "Saving changes..." : "Sending Notice..."}`;
                         
-                        const response = await fetch("/api/superadmin/notices", {
-                            method: "POST",
+                        const response = await fetch(editing ? `/api/superadmin/notices/${editId}` : "/api/superadmin/notices", {
+                            method: editing ? "PUT" : "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ 
                                 target, 
@@ -1145,7 +1341,9 @@
                                 title, 
                                 message, 
                                 category, 
-                                priority 
+                                priority,
+                                validDays,
+                                emergency
                             })
                         });
                         
@@ -1161,12 +1359,13 @@
                         if (form) form.reset();
                         window.toggleNoticeTargetOptions("");
                         
-                        const msgText = `✓ Notice sent to ${result.societyCount || 0} society${result.societyCount === 1 ? '' : 'ies'} and ${result.notifiedUsers || 0} users.`;
+                        const msgText = editing ? "✓ Platform notice updated successfully." : `✓ Notice sent to ${result.societyCount || 0} society${result.societyCount === 1 ? '' : 'ies'} and ${result.notifiedUsers || 0} users.`;
                         if (typeof showToast === "function") {
                             showToast(msgText);
                         } else {
                             alert(msgText);
                         }
+                        await loadPlatformBackendData();
                     } catch (err) {
                         console.error(err);
                         if (typeof showToast === "function") {
@@ -1256,14 +1455,6 @@
                 });
             });
 
-            // Export Actions
-            document.querySelectorAll('[data-action="notify"], button:has(.fa-download)').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showToast("✓ Report generated and downloaded as CSV.");
-                });
-            });
-
             const rolePolicyModal = document.getElementById("rolePolicyModal");
             const rolePolicyChecks = (containerId, csv) => {
                 const selected = new Set(String(csv || "").split(",").map(value => value.trim()).filter(Boolean));
@@ -1340,61 +1531,19 @@
             const closePrivacyModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(privacyReviewModal)?.hide(); else if (privacyReviewModal) { privacyReviewModal.style.display = "none"; privacyReviewModal.classList.remove("show"); } };
             document.querySelectorAll("[data-privacy-close]").forEach(button => button.addEventListener("click", closePrivacyModal));
             privacyReviewModal?.addEventListener("click", event => { if (event.target === privacyReviewModal) closePrivacyModal(); });
-            document.addEventListener("click", event => { const button = event.target.closest("[data-privacy-review]"); if (!button) return; const row = button.closest("tr"); document.getElementById("privacyRequestId").value = row.dataset.privacyRequestId; document.getElementById("privacyRequestSummary").value = `${row.children[0].textContent.trim()} — ${row.children[2].textContent.trim()}`; document.getElementById("privacyDecisionNote").value = ""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(privacyReviewModal).show(); else { privacyReviewModal.style.display = "block"; privacyReviewModal.classList.add("show"); } });
-            document.getElementById("privacyReviewForm")?.addEventListener("submit", async event => { event.preventDefault(); const id = document.getElementById("privacyRequestId").value; const approved = document.getElementById("privacyDecision").value === "approve"; const payload = { approved, note: document.getElementById("privacyDecisionNote").value.trim() }; try { const response = await fetch(`/api/superadmin/data/privacy/process-deletion?requestId=${id}`, { method:"POST", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save privacy decision"); closePrivacyModal(); showToast(`✓ Privacy request ${result.status?.toLowerCase() || "updated"}.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save privacy decision"); } });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-privacy-review]"); if (!button) return; const row = button.closest("tr"); document.getElementById("privacyRequestId").value = row.dataset.privacyRequestId; document.getElementById("privacyRequestSummary").value = `${row.children[0].textContent.trim()} — ${row.children[2].textContent.trim()}`; document.getElementById("privacyDecisionNote").value = ""; const effective=new Date(); effective.setMinutes(effective.getMinutes()-effective.getTimezoneOffset()); document.getElementById("privacyEffectiveAt").value=effective.toISOString().slice(0,16); if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(privacyReviewModal).show(); else { privacyReviewModal.style.display = "block"; privacyReviewModal.classList.add("show"); } });
+            document.getElementById("privacyReviewForm")?.addEventListener("submit", async event => { event.preventDefault(); const form=event.currentTarget; if(!form.checkValidity()){form.reportValidity();return;} const id = document.getElementById("privacyRequestId").value; const decision=document.getElementById("privacyDecision").value; const approved = decision === "approve"; const auditContext=[`Decision: ${decision}`,`Reviewer: ${document.getElementById("privacyReviewer").value.trim()}`,`Identity check: ${document.getElementById("privacyIdentityCheck").value}`,`Processing method: ${document.getElementById("privacyProcessingMethod").value}`,`Legal basis: ${document.getElementById("privacyLegalBasis").value.trim()}`,`Effective at: ${document.getElementById("privacyEffectiveAt").value}`,`Evidence: ${document.getElementById("privacyEvidence").value.trim()||"None supplied"}`,`Retention action: ${document.getElementById("privacyRetentionAction").value}`,`Review: ${document.getElementById("privacyDecisionNote").value.trim()}`].join("\n"); const payload = { approved, note: auditContext }; try { const response = await fetch(`/api/superadmin/data/privacy/process-deletion?requestId=${id}`, { method:"POST", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save privacy decision"); closePrivacyModal(); showToast(`✓ Privacy request ${result.status?.toLowerCase() || "updated"}.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save privacy decision"); } });
 
             const gatewayConfigModal = document.getElementById("gatewayConfigModal");
+            const gatewayConfigForm = document.getElementById("gatewayConfigForm");
+            gatewayConfigModal?.querySelector(".modal-dialog")?.classList.add("modal-lg");
+            gatewayConfigForm?.querySelector(".modal-body .row")?.insertAdjacentHTML("beforeend", `<div class="col-md-6"><label class="form-label fw-bold small">API secret <span class="text-muted fw-normal">(only enter to change)</span></label><input class="form-control" id="gatewayApiSecret" type="password"></div><div class="col-md-6"><label class="form-label fw-bold small">Settlement currency</label><select class="form-select" id="gatewayCurrency"><option>INR</option><option>USD</option><option>EUR</option></select></div><div class="col-md-6"><label class="form-label fw-bold small">Settlement days</label><input class="form-control" id="gatewaySettlementDays" type="number" min="0" max="30" value="2"></div><div class="col-md-6"><label class="form-label fw-bold small">Reconciliation email</label><input class="form-control" id="gatewayReconciliationEmail" type="email"></div><div class="col-12"><label class="form-label fw-bold small">Webhook URL</label><input class="form-control" id="gatewayWebhookUrl" type="url" placeholder="https://your-domain.example/payments/webhook"></div><div class="col-12"><label class="form-label fw-bold small">Supported payment methods</label><input class="form-control" id="gatewayMethods" placeholder="UPI, cards, net banking, wallets"></div><div class="col-12"><label class="form-label fw-bold small">Configuration and reconciliation notes</label><textarea class="form-control" id="gatewayNotes" rows="3" maxlength="1000"></textarea></div><div class="col-12 form-check form-switch ms-2"><input class="form-check-input" id="gatewayRefunds" type="checkbox"><label class="form-check-label" for="gatewayRefunds">Enable refunds through the platform</label></div>`);
             const closeGatewayModal = () => { if (typeof bootstrap !== "undefined") bootstrap.Modal.getInstance(gatewayConfigModal)?.hide(); else if (gatewayConfigModal) { gatewayConfigModal.style.display = "none"; gatewayConfigModal.classList.remove("show"); } };
             document.querySelectorAll("[data-gateway-close]").forEach(button => button.addEventListener("click", closeGatewayModal));
             gatewayConfigModal?.addEventListener("click", event => { if (event.target === gatewayConfigModal) closeGatewayModal(); });
-            document.addEventListener("click", event => { const button = event.target.closest("[data-gateway-config]"); if (!button) return; const row = button.closest("tr"); document.getElementById("gatewayConfigId").value = row.dataset.gatewayId; document.getElementById("gatewayProvider").value = row.children[0].textContent.trim(); document.getElementById("gatewayEnvironment").value = row.children[1].textContent.trim(); document.getElementById("gatewayFee").value = row.children[3].textContent.trim(); document.getElementById("gatewayActive").checked = row.children[2].textContent.trim() === "Active"; document.getElementById("gatewayInvoicing").checked = false; document.getElementById("gatewayMerchantId").value = ""; document.getElementById("gatewayApiKey").value = ""; if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(gatewayConfigModal).show(); else { gatewayConfigModal.style.display = "block"; gatewayConfigModal.classList.add("show"); } });
-            document.getElementById("gatewayConfigForm")?.addEventListener("submit", async event => { event.preventDefault(); const id = document.getElementById("gatewayConfigId").value; const payload = { providerName: document.getElementById("gatewayProvider").value.trim(), environment: document.getElementById("gatewayEnvironment").value, merchantId: document.getElementById("gatewayMerchantId").value.trim(), transactionFee: document.getElementById("gatewayFee").value.trim(), apiKey: document.getElementById("gatewayApiKey").value.trim(), digitalInvoicingEnabled: document.getElementById("gatewayInvoicing").checked, active: document.getElementById("gatewayActive").checked }; try { const response = await fetch(`/api/superadmin/finance/payment-gateways/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save gateway"); closeGatewayModal(); showToast(`✓ ${result.providerName || payload.providerName} gateway saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save gateway"); } });
+            document.addEventListener("click", event => { const button = event.target.closest("[data-gateway-config]"); if (!button) return; const row = button.closest("tr"); const gateway=(window.platformGateways||[]).find(item=>String(item.id)===String(row.dataset.gatewayId))||{}; document.getElementById("gatewayConfigId").value = row.dataset.gatewayId; document.getElementById("gatewayProvider").value = gateway.providerName||row.children[0].textContent.trim(); document.getElementById("gatewayEnvironment").value = gateway.environment||row.children[1].textContent.trim(); document.getElementById("gatewayFee").value = gateway.transactionFee||row.children[3].textContent.trim(); document.getElementById("gatewayActive").checked = Boolean(gateway.active); document.getElementById("gatewayInvoicing").checked = Boolean(gateway.digitalInvoicingEnabled); document.getElementById("gatewayMerchantId").value = gateway.merchantId||""; document.getElementById("gatewayApiKey").value = ""; document.getElementById("gatewayApiSecret").value=""; document.getElementById("gatewayCurrency").value=gateway.settlementCurrency||"INR"; document.getElementById("gatewaySettlementDays").value=gateway.settlementDays??2; document.getElementById("gatewayReconciliationEmail").value=gateway.reconciliationEmail||""; document.getElementById("gatewayWebhookUrl").value=gateway.webhookUrl||""; document.getElementById("gatewayMethods").value=gateway.supportedMethods||""; document.getElementById("gatewayNotes").value=gateway.configurationNotes||""; document.getElementById("gatewayRefunds").checked=Boolean(gateway.refundsEnabled); if (typeof bootstrap !== "undefined") bootstrap.Modal.getOrCreateInstance(gatewayConfigModal).show(); else { gatewayConfigModal.style.display = "block"; gatewayConfigModal.classList.add("show"); } });
+            gatewayConfigForm?.addEventListener("submit", async event => { event.preventDefault(); if(!gatewayConfigForm.checkValidity()){gatewayConfigForm.reportValidity();return;} const id = document.getElementById("gatewayConfigId").value; const payload = { providerName: document.getElementById("gatewayProvider").value.trim(), environment: document.getElementById("gatewayEnvironment").value, merchantId: document.getElementById("gatewayMerchantId").value.trim(), transactionFee: document.getElementById("gatewayFee").value.trim(), apiKey: document.getElementById("gatewayApiKey").value.trim(), apiSecret:document.getElementById("gatewayApiSecret").value.trim(), webhookUrl:document.getElementById("gatewayWebhookUrl").value.trim(), settlementCurrency:document.getElementById("gatewayCurrency").value, settlementDays:Number(document.getElementById("gatewaySettlementDays").value||0), supportedMethods:document.getElementById("gatewayMethods").value.trim(), refundsEnabled:document.getElementById("gatewayRefunds").checked, reconciliationEmail:document.getElementById("gatewayReconciliationEmail").value.trim(), configurationNotes:document.getElementById("gatewayNotes").value.trim(), digitalInvoicingEnabled: document.getElementById("gatewayInvoicing").checked, active: document.getElementById("gatewayActive").checked }; try { const response = await fetch(`/api/superadmin/finance/payment-gateways/${id}`, { method:"PUT", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify(payload) }); const result = await response.json().catch(() => ({})); if (!response.ok) throw new Error(result.message || "Unable to save gateway"); closeGatewayModal(); showToast(`✓ ${result.providerName || payload.providerName} gateway saved.`); loadPlatformBackendData(); } catch (error) { showToast(error.message || "Unable to save gateway"); } });
 
-            // Delegated click handler for all dynamic table action buttons & general buttons
-            document.addEventListener('click', (e) => {
-                const btn = e.target.closest('button, .btn');
-                if (!btn) return;
-
-                // Ignore sidebar panel switches and BS toggles
-                if (btn.hasAttribute('data-panel') || btn.hasAttribute('data-bs-toggle') || btn.id === 'btnSendPlatformNotice') return;
-
-                const text = btn.textContent.trim().toLowerCase();
-
-                if (text.includes('suspend')) {
-                    e.preventDefault();
-                    const badge = btn.closest('tr')?.querySelector('.badge');
-                    if (badge) { badge.className = 'badge bg-warning text-dark'; badge.textContent = 'SUSPENDED'; }
-                    btn.textContent = 'Activate';
-                    btn.className = 'btn btn-sm btn-outline-success';
-                    showToast('✓ Society status updated to SUSPENDED');
-                } else if (text.includes('activate')) {
-                    e.preventDefault();
-                    const badge = btn.closest('tr')?.querySelector('.badge');
-                    if (badge) { badge.className = 'badge bg-success'; badge.textContent = 'ACTIVE'; }
-                    btn.textContent = 'Suspend';
-                    btn.className = 'btn btn-sm btn-outline-danger';
-                    showToast('✓ Society status updated to ACTIVE');
-                } else if (text.includes('process')) {
-                    e.preventDefault();
-                    const badge = btn.closest('tr')?.querySelector('.badge');
-                    if (badge) { badge.className = 'badge bg-success'; badge.textContent = 'Processed'; }
-                    btn.textContent = 'Completed';
-                    btn.disabled = true;
-                    showToast('✓ Privacy request processed successfully!');
-                } else if (text.includes('configure') || text.includes('settings')) {
-                    e.preventDefault();
-                    showToast(`✓ Opened configuration settings for ${btn.closest('tr')?.children[0]?.textContent.trim() || 'item'}`);
-                } else if (text.includes('edit')) {
-                    e.preventDefault();
-                    showToast(`✓ Editing item details`);
-                } else if (text.includes('view stats')) {
-                    e.preventDefault();
-                    showToast('✓ Campaign Delivery Stats: 100% delivered across 42k users');
-                } else if (text.includes('view controls')) {
-                    e.preventDefault();
-                    forceOpenPanel('subscriptions');
-                }
-            });
         });
     </script>
 </body>

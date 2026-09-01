@@ -8,6 +8,7 @@ import com.smartapartment.entity.UserRole;
 import com.smartapartment.entity.PropertyCustomer;
 import com.smartapartment.repository.PropertyCustomerRepository;
 import com.smartapartment.service.AuthService;
+import com.smartapartment.security.JwtService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -33,12 +34,14 @@ public class AuthController {
     private final Map<String, DashboardCredential> dashboardCredentials;
     private final PropertyCustomerRepository propertyDirectCustomers;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.authService = authService;
         this.dashboardCredentials = DashboardCredential.load(environment);
         this.propertyDirectCustomers = propertyDirectCustomers;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register-tenant")
@@ -49,7 +52,43 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+        try {
+            return authService.login(request);
+        } catch (IllegalArgumentException smartApartmentFailure) {
+            PropertyCustomer user = propertyDirectCustomers.findByEmailIgnoreCase(safe(request.email()))
+                    .orElseThrow(() -> smartApartmentFailure);
+            if (!user.isActive() || !"ACTIVE".equalsIgnoreCase(user.getStatus())
+                    || !passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+                throw smartApartmentFailure;
+            }
+            return new AuthResponse(jwtService.generatePropertyDirectToken(user), user.getRole(), "propertydirect", user.getName());
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerPropertyDirect(@Valid @RequestBody PropertyDirectRegisterRequest request) {
+        String email = safe(request.email()).toLowerCase();
+        if (propertyDirectCustomers.findByEmailIgnoreCase(email).isPresent()) {
+            return ResponseEntity.status(409).body(Map.of("message", "An account with this email already exists"));
+        }
+        PropertyCustomer user = new PropertyCustomer();
+        user.setTenantId("propertydirect");
+        user.setName(safe(request.name()));
+        user.setEmail(email);
+        user.setUsername(email);
+        user.setPhone(safe(request.phone()));
+        user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setRole("CUSTOMER");
+        user.setActive(true);
+        user.setStatus("ACTIVE");
+        user = propertyDirectCustomers.save(user);
+        return ResponseEntity.status(201).body(Map.of(
+                "id", user.getId(),
+                "name", user.getName(),
+                "email", user.getEmail(),
+                "role", user.getRole(),
+                "token", jwtService.generatePropertyDirectToken(user)
+        ));
     }
 
     @PostMapping("/dashboard-login")
@@ -232,6 +271,13 @@ public class AuthController {
     }
 
     public record PropertyDirectCustomerRegisterRequest(String name, String phone, String email, String username, String password) {
+    }
+
+    public record PropertyDirectRegisterRequest(
+            @jakarta.validation.constraints.NotBlank String name,
+            @jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank String email,
+            String phone,
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Size(min = 8, max = 100) String password) {
     }
 
     private record DashboardCredential(String platform, String role, String username, String password, String redirect) {

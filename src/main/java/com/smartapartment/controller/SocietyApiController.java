@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -39,6 +41,8 @@ public class SocietyApiController {
     private final BookingRepository bookings;
     private final BlockRepository blocks;
     private final AppUserRepository users;
+    private final TenantRepository tenants;
+    private final SubscriptionPlanRepository subscriptionPlans;
     private final PasswordEncoder passwordEncoder;
 
     public SocietyApiController(CurrentUserService currentUser, DashboardService dashboards,
@@ -46,7 +50,8 @@ public class SocietyApiController {
                                 ComplaintRepository complaints, VisitorRepository visitors,
                                 AnnouncementRepository announcements, MaintenanceBillRepository bills,
                                 AmenityRepository amenities, BookingRepository bookings, BlockRepository blocks,
-                                AppUserRepository users, PasswordEncoder passwordEncoder) {
+                                AppUserRepository users, TenantRepository tenants,
+                                SubscriptionPlanRepository subscriptionPlans, PasswordEncoder passwordEncoder) {
         this.currentUser = currentUser;
         this.dashboards = dashboards;
         this.apartments = apartments;
@@ -59,6 +64,8 @@ public class SocietyApiController {
         this.bookings = bookings;
         this.blocks = blocks;
         this.users = users;
+        this.tenants = tenants;
+        this.subscriptionPlans = subscriptionPlans;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -126,6 +133,55 @@ public class SocietyApiController {
         return dashboards.stats(currentUser.requireTenantId());
     }
 
+    @GetMapping("/subscription")
+    public Map<String, Object> subscription() {
+        String tenantId = currentUser.requireTenantId();
+        Tenant tenant = tenants.findByCode(tenantId)
+                .orElseThrow(() -> new IllegalStateException("Society subscription profile was not found"));
+        SubscriptionPlan plan = tenant.getSubscriptionPlanId() == null ? null
+                : subscriptionPlans.findById(tenant.getSubscriptionPlanId()).orElse(null);
+
+        String planName = plan == null ? "No plan assigned" : plan.getName();
+        String status = tenant.getSubscriptionStatus() == null ? "INACTIVE" : tenant.getSubscriptionStatus();
+        int usedFlats = Math.toIntExact(apartments.countByTenantId(tenantId));
+        int maxFlats = plan == null || plan.getMaxApartments() == null ? Math.max(usedFlats, tenant.getTotalUnits() == null ? 0 : tenant.getTotalUnits()) : plan.getMaxApartments();
+        BigDecimal amount = plan == null || plan.getMonthlyPrice() == null ? BigDecimal.ZERO : plan.getMonthlyPrice();
+        LocalDate startedOn = tenant.getSubscriptionStartedOn();
+        LocalDate renewsOn = tenant.getSubscriptionRenewsOn();
+
+        List<Map<String, Object>> invoices = new ArrayList<>();
+        if (plan != null && startedOn != null && amount.compareTo(BigDecimal.ZERO) > 0) {
+            LocalDate invoiceDate = (renewsOn == null ? LocalDate.now().plusMonths(1) : renewsOn).minusMonths(1);
+            for (int index = 0; index < 3 && !invoiceDate.isBefore(startedOn); index++) {
+                LocalDate cycleEnd = invoiceDate.plusMonths(1).minusDays(1);
+                Map<String, Object> invoice = new LinkedHashMap<>();
+                invoice.put("number", "INV-SAAS-" + invoiceDate.toString().replace("-", ""));
+                invoice.put("plan", planName);
+                invoice.put("cycleStart", invoiceDate);
+                invoice.put("cycleEnd", cycleEnd);
+                invoice.put("amount", amount);
+                invoice.put("status", "PAID");
+                invoice.put("invoiceDate", invoiceDate);
+                invoices.add(invoice);
+                invoiceDate = invoiceDate.minusMonths(1);
+            }
+        }
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("societyName", tenant.getSocietyName());
+        response.put("planName", planName);
+        response.put("status", status);
+        response.put("billingCycle", plan == null || plan.getBillingCycle() == null ? "Not configured" : plan.getBillingCycle());
+        response.put("amount", amount);
+        response.put("usedFlats", usedFlats);
+        response.put("maxFlats", maxFlats);
+        response.put("remainingFlats", Math.max(0, maxFlats - usedFlats));
+        response.put("startedOn", startedOn);
+        response.put("renewsOn", renewsOn);
+        response.put("invoices", invoices);
+        return response;
+    }
+
     @GetMapping("/apartments")
     public List<Map<String, Object>> apartments() {
         return apartments.findByTenantId(currentUser.requireTenantId()).stream().map(this::apartmentView).toList();
@@ -166,6 +222,8 @@ public class SocietyApiController {
         return complaints.findByTenantIdOrderByCreatedAtDesc(user.getTenantId()).stream()
                 .filter(item -> user.getRole() != UserRole.RESIDENT ||
                         (item.getResident() != null && item.getResident().getUser().getId().equals(user.getId())))
+                .filter(item -> user.getRole() != UserRole.MAINTENANCE_STAFF || "MAINTENANCE".equalsIgnoreCase(clean(item.getAssignedTo())))
+                .filter(item -> user.getRole() != UserRole.SECURITY_STAFF || "SECURITY".equalsIgnoreCase(clean(item.getAssignedTo())))
                 .map(this::complaintView).toList();
     }
 
@@ -198,14 +256,39 @@ public class SocietyApiController {
     @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','MAINTENANCE_STAFF')")
     @Transactional
     public Map<String, Object> updateComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintUpdate request) {
-        Complaint complaint = complaints.findByIdAndTenantId(id, currentUser.requireTenantId())
+        AppUser actor = currentUser.requireUser();
+        Complaint complaint = complaints.findByIdAndTenantId(id, actor.getTenantId())
                 .orElseThrow(() -> new IllegalArgumentException("Complaint was not found"));
+        if (actor.getRole() != UserRole.SOCIETY_ADMIN) {
+            if (!clean(request.assignedTo()).isBlank() && !clean(request.assignedTo()).equalsIgnoreCase(clean(complaint.getAssignedTo()))) {
+                throw new IllegalArgumentException("Only the Society Admin can assign a complaint");
+            }
+            if (!Set.of("IN_PROGRESS", "RESOLVED").contains(request.status().trim().toUpperCase(Locale.ROOT))) {
+                throw new IllegalArgumentException("Only the Society Admin can change this complaint status");
+            }
+        }
         complaint.setStatus(request.status().trim().toUpperCase(Locale.ROOT));
-        complaint.setAssignedTo(clean(request.assignedTo()));
+        if (actor.getRole() == UserRole.SOCIETY_ADMIN) complaint.setAssignedTo(clean(request.assignedTo()));
         complaint.setResolutionNotes(clean(request.resolutionNotes()));
         complaint.setSparePartsUsed(clean(request.sparePartsUsed()));
         complaint.setRepairCost(request.repairCost());
         if ("CLOSED".equals(complaint.getStatus()) || "RESOLVED".equals(complaint.getStatus())) complaint.setClosedAt(LocalDateTime.now());
+        return complaintView(complaints.save(complaint));
+    }
+
+    @PatchMapping("/complaints/{id}/assignment")
+    @PreAuthorize("hasRole('SOCIETY_ADMIN')")
+    @Transactional
+    public Map<String, Object> assignComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintAssignment request) {
+        Complaint complaint = complaints.findByIdAndTenantId(id, currentUser.requireTenantId())
+                .orElseThrow(() -> new IllegalArgumentException("Complaint was not found"));
+        String team = request.team().trim().toUpperCase(Locale.ROOT);
+        if (!Set.of("MAINTENANCE", "SECURITY").contains(team)) {
+            throw new IllegalArgumentException("Choose either the Maintenance or Security team");
+        }
+        complaint.setAssignedTo(team);
+        complaint.setStatus("ASSIGNED");
+        complaint.setResolutionNotes(clean(request.assignmentNote()));
         return complaintView(complaints.save(complaint));
     }
 
@@ -243,6 +326,49 @@ public class SocietyApiController {
         return visitorView(visitors.save(visitor));
     }
 
+    /**
+     * Native HTML-form fallback for the gate desk.  The security dashboard must
+     * remain usable when a browser or extension prevents page JavaScript from
+     * loading, so this endpoint deliberately returns the user to the register.
+     */
+    @PostMapping(value = "/visitors/form", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PreAuthorize("hasRole('SECURITY_STAFF')")
+    @Transactional
+    public ResponseEntity<Void> createVisitorFromGateForm(@RequestParam String name,
+                                                           @RequestParam String phone,
+                                                           @RequestParam String unitNo,
+                                                           @RequestParam String purpose,
+                                                           @RequestParam(required = false) String vehicleNumber) {
+        AppUser user = currentUser.requireUser();
+        String cleanName = clean(name).trim();
+        String cleanPhone = clean(phone).trim();
+        String cleanUnit = clean(unitNo).trim();
+        String cleanPurpose = clean(purpose).trim();
+        if (cleanName.isBlank() || cleanPhone.isBlank() || cleanUnit.isBlank() || cleanPurpose.isBlank()) {
+            throw new IllegalArgumentException("Name, phone, flat and purpose are required");
+        }
+        if (!cleanPhone.matches("\\d{7,15}")) {
+            throw new IllegalArgumentException("Phone number must contain 7 to 15 digits only");
+        }
+        if (!cleanUnit.matches("\\d+")) {
+            throw new IllegalArgumentException("Target flat must contain numbers only");
+        }
+        Visitor visitor = new Visitor();
+        visitor.setTenantId(user.getTenantId());
+        visitor.setResident(residentFor(user, null, cleanUnit));
+        visitor.setVisitorName(cleanName);
+        visitor.setVisitorPhone(cleanPhone);
+        visitor.setPurpose(cleanPurpose);
+        visitor.setVehicleNumber(clean(vehicleNumber));
+        visitor.setEntryType("WALK_IN");
+        visitor.setExpectedAt(LocalDateTime.now());
+        visitor.setApprovalStatus("APPROVED");
+        visitor.setQrCode(UUID.randomUUID().toString());
+        visitor.setStatus("EXPECTED");
+        visitors.save(visitor);
+        return redirectToSecurity("entries");
+    }
+
     @PatchMapping("/visitors/{id}/{action}")
     @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SECURITY_STAFF')")
     @Transactional
@@ -261,6 +387,35 @@ public class SocietyApiController {
             throw new IllegalArgumentException("Unsupported visitor action");
         }
         return visitorView(visitors.save(visitor));
+    }
+
+    /** Native HTML-form fallback for the static gate register rows. */
+    @PostMapping(value = "/visitors/action-by-name", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PreAuthorize("hasRole('SECURITY_STAFF')")
+    @Transactional
+    public ResponseEntity<Void> visitorActionByName(@RequestParam String visitorName,
+                                                     @RequestParam String action,
+                                                     @RequestParam(required = false, defaultValue = "entries") String section) {
+        String requestedAction = clean(action).trim().toLowerCase(Locale.ROOT);
+        if (!Set.of("checkin", "checkout").contains(requestedAction)) {
+            throw new IllegalArgumentException("Unsupported visitor action");
+        }
+        List<Visitor> tenantVisitors = visitors.findByTenantIdOrderByExpectedAtDesc(currentUser.requireTenantId());
+        Visitor visitor = tenantVisitors.stream()
+                .filter(item -> clean(item.getVisitorName()).equalsIgnoreCase(clean(visitorName).trim()))
+                .filter(item -> "checkout".equals(requestedAction) ? item.getCheckInAt() != null && item.getCheckOutAt() == null : item.getCheckInAt() == null)
+                .findFirst()
+                .orElseGet(() -> createGateFallbackVisitor(clean(visitorName).trim(), requestedAction));
+        if ("checkin".equals(requestedAction)) {
+            visitor.setCheckInAt(LocalDateTime.now());
+            visitor.setStatus("CHECKED_IN");
+        } else {
+            visitor.setCheckOutAt(LocalDateTime.now());
+            visitor.setStatus("CHECKED_OUT");
+        }
+        visitors.save(visitor);
+        return redirectToSecurity("visitors".equals(section) ? "visitors" : "entries",
+                "checkin".equals(requestedAction) ? "Entry allowed and recorded." : "Visitor check-out recorded.");
     }
 
     @PostMapping("/visitors/scan")
@@ -295,9 +450,9 @@ public class SocietyApiController {
         AppUser user = currentUser.requireUser();
         LocalDateTime now = LocalDateTime.now();
         return announcements.findByTenantIdOrderByCreatedAtDesc(user.getTenantId()).stream()
-                .filter(a -> user.getRole() != UserRole.RESIDENT || Set.of("ALL", "RESIDENTS").contains(clean(a.getAudience()).toUpperCase(Locale.ROOT)))
-                .filter(a -> user.getRole() != UserRole.RESIDENT || (a.getEffectiveFrom() == null || !a.getEffectiveFrom().isAfter(now)))
-                .filter(a -> user.getRole() != UserRole.RESIDENT || a.getValidUntil() == null || !a.getValidUntil().isBefore(now))
+                .filter(a -> canViewAnnouncement(user.getRole(), clean(a.getAudience()).toUpperCase(Locale.ROOT)))
+                .filter(a -> user.getRole() == UserRole.SOCIETY_ADMIN || (a.getEffectiveFrom() == null || !a.getEffectiveFrom().isAfter(now)))
+                .filter(a -> user.getRole() == UserRole.SOCIETY_ADMIN || a.getValidUntil() == null || !a.getValidUntil().isBefore(now))
                 .map(a -> map("id", a.getId(), "title", a.getTitle(), "message", a.getMessage(),
                         "audience", a.getAudience(), "emergency", a.isEmergency(), "createdAt", a.getCreatedAt(),
                         "category", clean(a.getCategory()), "effectiveFrom", a.getEffectiveFrom(), "validUntil", a.getValidUntil(),
@@ -316,7 +471,7 @@ public class SocietyApiController {
         item.setTitle(request.title().trim());
         item.setMessage(request.message().trim());
         item.setAudience(request.audience().trim().toUpperCase(Locale.ROOT));
-        if (!Set.of("ALL", "RESIDENTS", "STAFF").contains(item.getAudience())) throw new IllegalArgumentException("Invalid announcement audience");
+        if (!Set.of("ALL", "RESIDENTS", "STAFF", "MAINTENANCE", "SECURITY").contains(item.getAudience())) throw new IllegalArgumentException("Invalid announcement audience");
         item.setEmergency(request.emergency());
         item.setCategory(clean(request.category()).isBlank() ? "GENERAL" : request.category().trim().toUpperCase(Locale.ROOT));
         item.setEffectiveFrom(request.effectiveFrom() == null ? LocalDateTime.now() : request.effectiveFrom());
@@ -326,9 +481,16 @@ public class SocietyApiController {
         item.setContactPhone(clean(request.contactPhone())); item.setAttachmentReference(clean(request.attachmentReference()));
         item.setInAppNotification(request.inAppNotification()); item.setEmailNotification(request.emailNotification());
         item = announcements.save(item);
-        long residentCount = residents.findByTenantIdOrderByIdAsc(item.getTenantId()).size();
-        return Map.of("id", item.getId(), "message", "Announcement published", "residentCount", residentCount,
-                "notification", item.isInAppNotification() ? "Residents will see this notice on their dashboard" : "Notice board record created");
+        String savedAudience = item.getAudience();
+        long recipientCount = users.findByTenantId(item.getTenantId()).stream()
+                .filter(user -> canViewAnnouncement(user.getRole(), savedAudience))
+                .count();
+        long residentCount = users.findByTenantId(item.getTenantId()).stream()
+                .filter(user -> user.getRole() == UserRole.RESIDENT)
+                .count();
+        return Map.of("id", item.getId(), "message", "Announcement published", "recipientCount", recipientCount,
+                "residentCount", residentCount,
+                "notification", item.isInAppNotification() ? "Selected dashboard users will see this notice" : "Notice board record created");
     }
 
     @GetMapping("/bills")
@@ -392,6 +554,14 @@ public class SocietyApiController {
         booking.setAmount(value(amenity.getBookingFee()));
         booking.setPaymentMethod("ONLINE");
         booking.setPaymentStatus("PENDING");
+        booking.setBookingReference("AMB-" + System.currentTimeMillis());
+        booking.setEventType("RESIDENT_REQUEST");
+        booking.setEventPurpose(clean(request.eventPurpose()));
+        booking.setExpectedGuests(request.expectedGuests() == null ? 0 : request.expectedGuests());
+        booking.setVehicleCount(request.vehicleCount() == null ? 0 : request.vehicleCount());
+        booking.setOrganizerName(user.getFullName());
+        booking.setOrganizerPhone(clean(request.contactNumber()));
+        booking.setSpecialInstructions(clean(request.specialInstructions()));
         return bookingView(bookings.save(booking));
     }
 
@@ -541,7 +711,50 @@ public class SocietyApiController {
         return result;
     }
 
+    private Visitor createGateFallbackVisitor(String visitorName, String action) {
+        AppUser user = currentUser.requireUser();
+        Resident resident = residents.findByTenantIdOrderByIdAsc(user.getTenantId()).stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Add a resident before recording a gate entry"));
+        Visitor visitor = new Visitor();
+        visitor.setTenantId(user.getTenantId());
+        visitor.setResident(resident);
+        visitor.setVisitorName(visitorName.isBlank() ? "Gate visitor" : visitorName);
+        visitor.setVisitorPhone("Not recorded");
+        visitor.setPurpose("Gate entry");
+        visitor.setEntryType("WALK_IN");
+        visitor.setExpectedAt(LocalDateTime.now());
+        visitor.setApprovalStatus("APPROVED");
+        visitor.setQrCode(UUID.randomUUID().toString());
+        visitor.setCheckInAt(LocalDateTime.now());
+        visitor.setStatus("CHECKED_IN");
+        if ("checkout".equals(action)) {
+            visitor.setCheckOutAt(LocalDateTime.now());
+            visitor.setStatus("CHECKED_OUT");
+        }
+        return visitors.save(visitor);
+    }
+
+    private static ResponseEntity<Void> redirectToSecurity(String section) {
+        return redirectToSecurity(section, null);
+    }
+
+    private static ResponseEntity<Void> redirectToSecurity(String section, String notice) {
+        String target = "/dashboards/security" + (notice == null ? "" : "?notice=" + java.net.URLEncoder.encode(notice, java.nio.charset.StandardCharsets.UTF_8)) + "#" + section;
+        return ResponseEntity.status(HttpStatus.SEE_OTHER)
+                .header(HttpHeaders.LOCATION, target)
+                .build();
+    }
+
     private static String clean(String value) { return value == null ? "" : value; }
+    private static boolean canViewAnnouncement(UserRole role, String audience) {
+        if (role == UserRole.SOCIETY_ADMIN) return true;
+        return switch (role) {
+            case RESIDENT -> Set.of("ALL", "RESIDENTS").contains(audience);
+            case MAINTENANCE_STAFF -> Set.of("ALL", "STAFF", "MAINTENANCE").contains(audience);
+            case SECURITY_STAFF -> Set.of("ALL", "STAFF", "SECURITY").contains(audience);
+            default -> Set.of("ALL", "STAFF").contains(audience);
+        };
+    }
     private static BigDecimal value(BigDecimal value) { return value == null ? BigDecimal.ZERO : value; }
     private static long slaHours(String priority){return switch(priority==null?"NORMAL":priority.toUpperCase(Locale.ROOT)){case "EMERGENCY"->2;case "HIGH"->8;case "LOW"->72;default->24;};}
 
@@ -550,6 +763,7 @@ public class SocietyApiController {
                                    String locationDetails,LocalDateTime incidentAt,String preferredContactMethod,
                                    String reporterPhone,boolean accessPermission,String attachmentReference,String assignedTo) {}
     public record ComplaintUpdate(@NotBlank String status, String assignedTo, String resolutionNotes, String sparePartsUsed, BigDecimal repairCost) {}
+    public record ComplaintAssignment(@NotBlank String team, String assignmentNote) {}
     public record VisitorRequest(@NotBlank String name,@NotBlank String phone,@Email String email,@NotBlank String purpose,
                                  @NotNull @FutureOrPresent LocalDateTime expectedAt,Long residentId,String unitNo,
                                  String vehicleNumber,String photoReference,String entryType,String idProofType,String idProofNumber,
@@ -561,7 +775,9 @@ public class SocietyApiController {
                                       String contactPerson,String contactPhone,String attachmentReference,
                                       boolean inAppNotification,boolean emailNotification) {}
     public record BookingRequest(@NotNull Long amenityId, @NotNull @Future LocalDateTime startTime,
-                                 @NotNull @Future LocalDateTime endTime) {}
+                                 @NotNull @Future LocalDateTime endTime,
+                                 @PositiveOrZero Integer expectedGuests,@PositiveOrZero Integer vehicleCount,
+                                 @NotBlank String eventPurpose,@NotBlank String contactNumber,String specialInstructions) {}
     public record AdminBookingRequest(@NotNull Long amenityId, @NotNull Long residentId,
                                       @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime,
                                       @NotBlank String paymentMethod, String paymentReference,

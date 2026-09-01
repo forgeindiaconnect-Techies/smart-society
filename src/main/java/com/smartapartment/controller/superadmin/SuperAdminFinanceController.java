@@ -31,7 +31,7 @@ public class SuperAdminFinanceController {
     @GetMapping("/payment-gateways")
     public ResponseEntity<List<Map<String, Object>>> getPaymentGateways() {
         if (gateways.count() == 0) { PaymentGatewayConfig gateway = new PaymentGatewayConfig(); gateway.setProviderName("Stripe"); gateway.setEnvironment("Sandbox"); gateway.setTransactionFee("2.9% + Rs. 30"); gateway.setDigitalInvoicingEnabled(true); gateway.setActive(false); gateways.save(gateway); }
-        return ResponseEntity.ok(gateways.findAllByOrderByCreatedAtAsc().stream().map(gateway -> Map.<String,Object>of("id", gateway.getId(), "providerName", gateway.getProviderName(), "environment", gateway.getEnvironment(), "transactionFee", gateway.getTransactionFee(), "configured", gateway.getMerchantId()!=null&&!gateway.getMerchantId().isBlank(), "digitalInvoicingEnabled", gateway.isDigitalInvoicingEnabled(), "active", gateway.isActive())).toList());
+        return ResponseEntity.ok(gateways.findAllByOrderByCreatedAtAsc().stream().map(this::gatewayView).toList());
     }
 
     @PostMapping("/payment-gateways")
@@ -47,11 +47,27 @@ public class SuperAdminFinanceController {
     public ResponseEntity<Map<String,Object>> updateGateway(@PathVariable Long id, @RequestBody PaymentGatewayConfig request) {
         PaymentGatewayConfig gateway = gateways.findById(id).orElseThrow(() -> new IllegalArgumentException("Gateway was not found"));
         gateway.setProviderName(request.getProviderName()); gateway.setMerchantId(request.getMerchantId()); gateway.setEnvironment(request.getEnvironment()); gateway.setTransactionFee(request.getTransactionFee()); gateway.setDigitalInvoicingEnabled(request.isDigitalInvoicingEnabled()); gateway.setActive(request.isActive());
+        gateway.setWebhookUrl(request.getWebhookUrl()); gateway.setSettlementCurrency(request.getSettlementCurrency());
+        gateway.setSettlementDays(request.getSettlementDays()); gateway.setSupportedMethods(request.getSupportedMethods());
+        gateway.setRefundsEnabled(request.getRefundsEnabled()); gateway.setReconciliationEmail(request.getReconciliationEmail());
+        gateway.setConfigurationNotes(request.getConfigurationNotes());
         if (request.getApiKey() != null && !request.getApiKey().isBlank()) gateway.setApiKey(request.getApiKey());
+        if (request.getApiSecret() != null && !request.getApiSecret().isBlank()) gateway.setApiSecret(request.getApiSecret());
         return ResponseEntity.ok(gatewayView(gateways.save(gateway)));
     }
 
-    private Map<String,Object> gatewayView(PaymentGatewayConfig gateway) { return Map.of("id",gateway.getId(),"providerName",gateway.getProviderName(),"environment",gateway.getEnvironment(),"transactionFee",gateway.getTransactionFee(),"configured",true,"digitalInvoicingEnabled",gateway.isDigitalInvoicingEnabled(),"active",gateway.isActive(),"message","Gateway settings saved securely"); }
+    private Map<String,Object> gatewayView(PaymentGatewayConfig gateway) {
+        Map<String,Object> item = new java.util.LinkedHashMap<>();
+        item.put("id",gateway.getId()); item.put("providerName",gateway.getProviderName()); item.put("environment",gateway.getEnvironment());
+        item.put("transactionFee",gateway.getTransactionFee()); item.put("merchantId",gateway.getMerchantId());
+        item.put("configured",gateway.getMerchantId()!=null&&!gateway.getMerchantId().isBlank());
+        item.put("digitalInvoicingEnabled",gateway.isDigitalInvoicingEnabled()); item.put("active",gateway.isActive());
+        item.put("webhookUrl",gateway.getWebhookUrl()); item.put("settlementCurrency",gateway.getSettlementCurrency());
+        item.put("settlementDays",gateway.getSettlementDays()); item.put("supportedMethods",gateway.getSupportedMethods());
+        item.put("refundsEnabled",Boolean.TRUE.equals(gateway.getRefundsEnabled())); item.put("reconciliationEmail",gateway.getReconciliationEmail());
+        item.put("configurationNotes",gateway.getConfigurationNotes()); item.put("message","Gateway settings saved securely");
+        return item;
+    }
 
     @PostMapping("/late-fees/rules")
     public ResponseEntity<String> setLateFeeRules(@RequestParam Long billingRuleId, 

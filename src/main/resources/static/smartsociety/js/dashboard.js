@@ -186,7 +186,14 @@ function openPanel(panel, updateHistory = true) {
         button.setAttribute("aria-selected", String(active));
     });
     document.querySelectorAll("[data-view]").forEach(view => {
-        view.classList.toggle("hidden", view !== selectedView);
+        const shouldHide = view !== selectedView;
+        view.classList.toggle("hidden", shouldHide);
+        view.classList.toggle("d-none", shouldHide);
+        if (shouldHide) {
+            view.style.display = "none";
+        } else {
+            view.style.display = "";
+        }
     });
     const title = document.getElementById("title");
     if (title) title.textContent = titles[panel] || "Dashboard";

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -75,8 +76,20 @@ public class SuperAdminSubscriptionController {
             "payments", payments,
             "paymentSummary", summary,
             "admins", List.of(),
-            "rules", rules.findAllByOrderByCreatedAtAsc().stream().map(rule -> Map.of("id", rule.getId(), "rule", rule.getRuleName(), "plan", rule.getPlanName(), "amount", "Rs. " + rule.getAmount(), "cycle", rule.getBillingCycle(), "grace", rule.getGraceDays() + " days", "status", rule.getStatus())).toList()
+            "rules", rules.findAllByOrderByCreatedAtAsc().stream().map(this::billingRuleView).toList()
         ));
+    }
+
+    private Map<String, Object> billingRuleView(SubscriptionBillingRule rule) {
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("id", rule.getId()); item.put("rule", rule.getRuleName()); item.put("plan", rule.getPlanName());
+        item.put("amount", "Rs. " + rule.getAmount()); item.put("cycle", rule.getBillingCycle());
+        item.put("grace", rule.getGraceDays() + " days"); item.put("status", rule.getStatus());
+        item.put("effectiveFrom", rule.getEffectiveFrom() == null ? "" : rule.getEffectiveFrom().toString());
+        item.put("invoicePrefix", clean(rule.getInvoicePrefix())); item.put("taxRate", rule.getTaxRate());
+        item.put("lateFee", rule.getLateFee()); item.put("autoRenew", Boolean.TRUE.equals(rule.getAutoRenew()));
+        item.put("proratedBilling", Boolean.TRUE.equals(rule.getProratedBilling())); item.put("notes", clean(rule.getNotes()));
+        return item;
     }
 
     private Map<String, Object> subscriptionPayment(Tenant tenant, SubscriptionPlan plan) {
@@ -111,8 +124,15 @@ public class SuperAdminSubscriptionController {
     public SubscriptionBillingRule updateBillingRule(@PathVariable Long id, @Valid @RequestBody RuleRequest request) {
         SubscriptionBillingRule rule = rules.findById(id).orElseThrow(() -> new IllegalArgumentException("Billing rule was not found"));
         rule.setRuleName(request.ruleName()); rule.setPlanName(request.planName()); rule.setAmount(request.amount()); rule.setBillingCycle(request.billingCycle()); rule.setGraceDays(request.graceDays()); rule.setStatus(request.status());
+        rule.setEffectiveFrom(request.effectiveFrom()); rule.setInvoicePrefix(request.invoicePrefix()); rule.setTaxRate(request.taxRate());
+        rule.setLateFee(request.lateFee()); rule.setAutoRenew(request.autoRenew()); rule.setProratedBilling(request.proratedBilling()); rule.setNotes(request.notes());
         return rules.save(rule);
     }
 
-    public record RuleRequest(@NotBlank String ruleName,@NotBlank String planName,@NotNull @PositiveOrZero BigDecimal amount,@NotBlank String billingCycle,@NotNull @PositiveOrZero Integer graceDays,@NotBlank String status) {}
+    public record RuleRequest(@NotBlank String ruleName, @NotBlank String planName,
+                              @NotNull @PositiveOrZero BigDecimal amount, @NotBlank String billingCycle,
+                              @NotNull @PositiveOrZero Integer graceDays, @NotBlank String status,
+                              LocalDate effectiveFrom, String invoicePrefix,
+                              @PositiveOrZero BigDecimal taxRate, @PositiveOrZero BigDecimal lateFee,
+                              boolean autoRenew, boolean proratedBilling, String notes) {}
 }

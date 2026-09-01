@@ -17,37 +17,39 @@
     <link rel="stylesheet" th:href="@{/shared/css/typography.css(v='20260818-readable-type-v1')}">
     
     <!-- Custom Bootstrap Theme Overrides -->
-    <link rel="stylesheet" th:href="@{/smartapartment/css/theme-bootstrap.css?v=20260824-people-sidebar-v3}">
-    <link rel="stylesheet" th:href="@{/smartapartment/css/ai-helpdesk.css?v=1}">
-    <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260824-v3">
+    <link rel="stylesheet" th:href="@{/smartapartment/css/theme-bootstrap.css(v='20260831-settings-alignment-v1')}">
+    <link rel="stylesheet" th:href="@{/smartapartment/css/ai-helpdesk.css(v='20260826-compact-btn-v3')}">
+    <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
+    <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-no-login-star-v5">
 </head>
 <body>
 
     <!-- Sidebar Fragment -->
     <div th:fragment="sidebar" class="sidebar bg-dark text-white shadow-lg animate__animated animate__fadeInLeft" id="sidebar">
         <div class="sidebar-header p-4 border-bottom border-secondary d-flex align-items-center gap-3">
-            <i class="fa-solid fa-building fa-2x text-primary animate__animated animate__pulse animate__infinite"></i>
-            <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Society</span></h4>
+            <span class="sidebar-home-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
+            <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
         </div>
         <nav class="nav flex-column py-3" id="sidebarNav">
             <!-- Navigation links will be injected here via JS or Thymeleaf, but for now we keep the structure generic -->
         </nav>
         <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
-            <button class="btn btn-outline-light w-100 rounded-pill" onclick="window.location.href='/'">
-                <i class="fa-solid fa-sign-out-alt me-2"></i> Log Out
-            </button>
+            <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
+                <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
+            </a>
         </div>
     </div>
 
     <!-- Scripts Fragment -->
     <div th:fragment="scripts">
+        <script src="/shared/js/required-fields.js?v=20260826-no-login-star-v5"></script>
         <!-- Bootstrap Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIds1K1eN7N6jIeHz" crossorigin="anonymous"></script>
         
         <!-- Application Logic -->
         <!-- Versioned so dashboard button fixes are not hidden by a browser cache. -->
-    <script th:src="@{/smartapartment/js/dashboard.js(v='20260824-people-sidebar-v3')}"></script>
-        <script th:src="@{/smartapartment/js/ai-helpdesk.js?v=1}"></script>
+    <script th:src="@{/smartapartment/js/dashboard.js(v='20260901-security-title-sync-v1')}"></script>
+        <script th:src="@{/smartapartment/js/ai-helpdesk.js(v='20260826-ai-helpdesk-v2')}"></script>
     </div>
 
 </body>

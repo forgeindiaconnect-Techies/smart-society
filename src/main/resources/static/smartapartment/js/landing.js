@@ -98,15 +98,16 @@
         const dotsRoot = document.getElementById("phoneDots");
         if (!root || !dotsRoot || slides.length < 2) return;
         let active = 0;
+        let timer = 0;
         const dots = slides.map((_, index) => {
             const dot = document.createElement("button");
             dot.type = "button";
             dot.setAttribute("aria-label", `Show workspace preview ${index + 1}`);
-            dot.addEventListener("click", () => show(index));
+            dot.addEventListener("click", () => show(index, true));
             dotsRoot.appendChild(dot);
             return dot;
         });
-        function show(index) {
+        function show(index, resetTimer = false) {
             active = (index + slides.length) % slides.length;
             slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === active));
             dots.forEach((dot, dotIndex) => {
@@ -171,6 +172,83 @@
             card.hidden = !visible;
         });
     }));
+
+    const tutorialLibrary = {
+        onboarding: {
+            category: "ONBOARDING", time: "15 SEC", title: "Create your society workspace",
+            summary: "Preview the secure two-step society registration and administrator setup flow.",
+            video: "/smartapartment/tutorials/onboarding-guide.webm?v=20260827-audited-v4",
+            steps: [
+                ["Open secure onboarding", "Start from the SmartApartment landing page."],
+                ["Enter workspace basics", "Provide the society, administrator and contact details."],
+                ["Review the society profile", "Continue to the protected registration review."],
+                ["Submit for approval", "Activation follows administrator review and approval."]
+            ]
+        },
+        operations: {
+            category: "OPERATIONS", time: "13 SEC", title: "Run visitor and gate approvals",
+            summary: "Follow the complete visitor journey from resident approval to a verified checkout.",
+            video: "/smartapartment/tutorials/operations-guide.webm?v=20260827-audited-v4",
+            steps: [
+                ["Create an expected visit", "Residents enter visitor, vehicle, purpose and arrival information."],
+                ["Verify at the gate", "Security validates the QR pass, identity and destination flat."],
+                ["Record check-in", "The gate log stores the arrival time and alerts the resident."],
+                ["Complete checkout", "Security closes the visit with an auditable departure record."]
+            ]
+        },
+        finance: {
+            category: "FINANCE", time: "18 SEC", title: "Generate bills and collect dues",
+            summary: "Configure recurring charges, issue invoices and reconcile resident payments.",
+            video: "/smartapartment/tutorials/finance-guide.webm?v=20260827-audited-v4",
+            steps: [
+                ["Configure billing rules", "Set maintenance charges, due dates, late fees and billing frequency."],
+                ["Generate monthly invoices", "Create tenant-isolated invoices for every eligible flat."],
+                ["Collect online payments", "Residents pay through the configured channel and receive a receipt."],
+                ["Reconcile and report", "Track dues, collections, expenses and downloadable finance reports."]
+            ]
+        }
+    };
+    const tutorialModal = document.getElementById("tutorialModal");
+    const closeTutorialPlayer = document.getElementById("closeTutorialPlayer");
+    const tutorialVideo = document.getElementById("tutorialVideo");
+    let activeTutorial = null;
+    let tutorialPreviouslyFocused = null;
+
+    function renderTutorial() {
+        if (!activeTutorial) return;
+        const steps = activeTutorial.steps;
+        document.getElementById("tutorialPlayerCategory").textContent = `${activeTutorial.category} WALKTHROUGH`;
+        document.getElementById("tutorialPlayerTime").textContent = activeTutorial.time;
+        document.getElementById("tutorialPlayerTitle").textContent = activeTutorial.title;
+        document.getElementById("tutorialPlayerSummary").textContent = activeTutorial.summary;
+        document.getElementById("tutorialStepList").innerHTML = steps.map((item, index) =>
+            `<li>${item[0]}</li>`
+        ).join("");
+        tutorialVideo.src = activeTutorial.video;
+        tutorialVideo.load();
+    }
+    function openTutorial(name, trigger) {
+        activeTutorial = tutorialLibrary[name];
+        if (!activeTutorial || !tutorialModal) return;
+        tutorialPreviouslyFocused = trigger;
+        renderTutorial();
+        tutorialModal.classList.remove("hidden");
+        document.body.classList.add("modal-open");
+        closeTutorialPlayer?.focus();
+        tutorialVideo?.play().catch(() => {});
+    }
+    function closeTutorial() {
+        tutorialModal?.classList.add("hidden");
+        document.body.classList.remove("modal-open");
+        tutorialVideo?.pause();
+        if (tutorialVideo) { tutorialVideo.removeAttribute("src"); tutorialVideo.load(); }
+        activeTutorial = null;
+        tutorialPreviouslyFocused?.focus();
+    }
+    tutorialCards.forEach(card => card.addEventListener("click", () => openTutorial(card.dataset.tutorial, card)));
+    closeTutorialPlayer?.addEventListener("click", closeTutorial);
+    tutorialModal?.addEventListener("click", event => { if (event.target === tutorialModal) closeTutorial(); });
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && activeTutorial) closeTutorial(); });
 
     const demoForm = document.getElementById("landingDemoForm");
     const personaTabs = [...document.querySelectorAll("[data-demo-persona]")];
