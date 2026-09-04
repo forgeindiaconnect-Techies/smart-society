@@ -110,6 +110,18 @@ public class DashboardController {
         return "propertydirect/dashboards/customer";
     }
 
+    @GetMapping("/propertydirect/dashboards/agent")
+    public String propertyDirectAgent(HttpSession session) {
+        session.setAttribute("dashboard:propertydirect:agent", Boolean.TRUE);
+        return "propertydirect/dashboards/agent";
+    }
+
+    @GetMapping("/propertydirect/dashboards/vendor")
+    public String propertyDirectVendor(HttpSession session) {
+        session.setAttribute("dashboard:propertydirect:vendor", Boolean.TRUE);
+        return "propertydirect/dashboards/vendor";
+    }
+
     @GetMapping("/propertydirect/terms/apartment-search")
     public String propertyDirectApartmentSearchTerms() {
         return "propertydirect/terms/apartment-search";

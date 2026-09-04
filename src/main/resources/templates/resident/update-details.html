@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resident Onboarding & Self-Registration — SmartApartment</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-gradient: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+            --primary-soft: #eff6ff;
+            --navy: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-hover: #93c5fd;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --bg-gradient: radial-gradient(circle at 10% 20%, #eff6ff 0%, #f8fafc 60%, #e0e7ff 100%);
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-subtle: 0 10px 30px -10px rgba(37, 99, 235, 0.08);
+            --shadow-elevated: 0 20px 40px -15px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--navy);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 36px 16px 64px 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background glow objects */
+        .ambient-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .blob-1 {
+            width: 350px;
+            height: 350px;
+            background: #60a5fa;
+            top: -100px;
+            left: -100px;
+        }
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: #818cf8;
+            bottom: -150px;
+            right: -150px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header UI */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 28px;
+            animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #bfdbfe;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--navy);
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .brand-logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .brand-header p {
+            color: var(--slate-600);
+            font-size: 0.94rem;
+            font-weight: 500;
+        }
+
+        /* Glassmorphic Form Card */
+        .form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-elevated);
+            padding: 36px 40px;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        /* Step Progress Bar */
+        .progress-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            color: var(--primary);
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: var(--slate-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-num {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        /* Token Badge */
+        .token-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-bottom: 28px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        .token-badge div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0369a1;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .token-badge code {
+            background: #ffffff;
+            border: 1px solid #7dd3fc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #0284c7;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Titles */
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin: 28px 0 18px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .section-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* Inputs & Groups */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--slate-700);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group label span.req {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .form-control,
+        .form-select,
+        textarea.form-control {
+            width: 100%;
+            padding: 13px 16px 13px 40px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: #ffffff;
+            color: var(--navy);
+            font-size: 0.92rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-control.no-icon,
+        .form-select.no-icon,
+        textarea.form-control.no-icon {
+            padding-left: 16px;
+        }
+
+        .form-control:hover,
+        .form-select:hover,
+        textarea.form-control:hover {
+            border-color: var(--border-hover);
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        textarea.form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+            transform: translateY(-1px);
+        }
+
+        .form-control:focus + .input-icon,
+        .input-wrapper:focus-within .input-icon {
+            color: var(--primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 580px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .form-card {
+                padding: 24px 20px;
+            }
+            .progress-step span {
+                display: none;
+            }
+        }
+
+        /* Password Strength & Match UI */
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: #f1f5f9;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--slate-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle-btn:hover {
+            background: #e2e8f0;
+            color: var(--navy);
+        }
+
+        .strength-meter {
+            height: 4px;
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .pass-match-indicator {
+            font-size: 0.76rem;
+            font-weight: 700;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .match-success { color: #10b981; }
+        .match-error { color: #ef4444; }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            background: var(--primary-gradient);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 24px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px -5px rgba(37, 99, 235, 0.5);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Success Card UI */
+        .success-card {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+            animation: zoomIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .success-icon-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 24px auto;
+        }
+
+        .success-icon-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #15803d;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.25);
+        }
+
+        .success-card h2 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .success-card p {
+            color: var(--slate-600);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .summary-box {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            margin: 0 auto 28px auto;
+            text-align: left;
+            max-width: 480px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.88rem;
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        .summary-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .summary-val {
+            color: var(--navy);
+            font-weight: 700;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 28px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Ambient Lighting Blobs -->
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <div class="container">
+        <!-- Brand Header -->
+        <div class="brand-header">
+            <div class="brand-badge">
+                <span class="live-dot"></span>
+                <span>Secure Onboarding Gateway</span>
+            </div>
+            <div>
+                <a href="/" class="brand-logo">
+                    <div class="brand-logo-icon">
+                        <i class="fa-solid fa-building-user"></i>
+                    </div>
+                    <span>SmartApartment</span>
+                </a>
+            </div>
+            <p>Complete your official resident profile & create your login account</p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="form-card" id="mainFormCard">
+            <!-- Step Progress Indicator -->
+            <div class="progress-bar-container">
+                <div class="progress-step active" id="step1">
+                    <span class="step-num">1</span>
+                    <span>Personal</span>
+                </div>
+                <div class="progress-step" id="step2">
+                    <span class="step-num">2</span>
+                    <span>Residency</span>
+                </div>
+                <div class="progress-step" id="step3">
+                    <span class="step-num">3</span>
+                    <span>Identity</span>
+                </div>
+                <div class="progress-step" id="step4">
+                    <span class="step-num">4</span>
+                    <span>Password</span>
+                </div>
+            </div>
+
+            <!-- Single-Person Onboarding Verification Badge -->
+            <div class="token-badge">
+                <div>
+                    <i class="fa-solid fa-user-shield" style="font-size: 1.1rem;"></i>
+                    <span>Verified Single-Person Link</span>
+                </div>
+                <code id="displayToken">TOKEN-AUTOGEN</code>
+            </div>
+
+            <form id="residentSelfUpdateForm" onsubmit="handleResidentFormSubmit(event)">
+                <!-- Section 1: Personal & Contact -->
+                <div class="form-section-title" style="margin-top: 0;">
+                    <div class="section-icon-badge"><i class="fa-solid fa-id-card"></i></div>
+                    <span>Personal &amp; Contact Details</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name <span class="req">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="resFullName" class="form-control" placeholder="e.g. Ananya Sharma" required>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Mobile Number <span class="req">*</span> <small id="resPhoneNotice" style="color: #ef4444; font-size: 0.72rem; display: none; font-weight: 700;">Digits only (0-9)</small></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-phone input-icon"></i>
+                            <input type="tel" id="resPhone" class="form-control" placeholder="e.g. 9876543210" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" oninput="sanitizeNumericInput(this, 'resPhoneNotice')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <span>Email Address <span class="req">*</span></span>
+                            <small id="resEmailNotice" style="display: none; font-size: 0.72rem; font-weight: 700;"></small>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input type="email" id="resEmail" class="form-control" placeholder="e.g. ananya@example.com" required oninput="validateEmailInput(this)" onblur="validateEmailInput(this)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Flat & Residency -->
+                <div class="form-section-title">
+                    <div class="section-icon-badge"><i class="fa-solid fa-house-chimney"></i></div>
+                    <span>Flat &amp; Residency Information</span>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Flat / Unit Number <span class="req">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-door-closed input-icon"></i>
+                            <input type="text" id="resUnit" class="form-control" placeholder="e.g. A-101 or B-302" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Resident Type <span class="req">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user-tag input-icon"></i>
+                            <select id="resType" class="form-select" required>
+                                <option value="OWNER">Owner</option>
+                                <option value="TENANT" selected>Tenant</option>
+                                <option value="FAMILY_MEMBER">Family Member</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Move-in Date</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-calendar-day input-icon"></i>
+                            <input type="date" id="resMoveInDate" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Number(s)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-car input-icon"></i>
+                            <input type="text" id="resVehicle" class="form-control" placeholder="e.g. TN-01-AB-1234">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Emergency & Identity -->
+                <div class="form-section-title">
+                    <div class="section-icon-badge"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span>Emergency Contact &amp; Verification</span>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Emergency Contact Name</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user-ninja input-icon"></i>
+                            <input type="text" id="resEmergName" class="form-control" placeholder="e.g. Rajesh Sharma">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Phone <small id="resEmergPhoneNotice" style="color: #ef4444; font-size: 0.72rem; display: none; font-weight: 700;">Digits only (0-9)</small></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-phone-volume input-icon"></i>
+                            <input type="tel" id="resEmergPhone" class="form-control" placeholder="e.g. 9123456789" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" oninput="sanitizeNumericInput(this, 'resEmergPhoneNotice')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>ID Proof Type</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-passport input-icon"></i>
+                            <select id="resIdType" class="form-select">
+                                <option value="Aadhaar">Aadhaar Card</option>
+                                <option value="Driving Licence">Driving Licence</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Voter ID">Voter ID</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Reference / Notes</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-note-sticky input-icon"></i>
+                            <input type="text" id="resNotes" class="form-control" placeholder="ID number or notes">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Security Credentials -->
+                <div class="form-section-title">
+                    <div class="section-icon-badge"><i class="fa-solid fa-key"></i></div>
+                    <span>Create Your Login Password</span>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Create Password <span class="req">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="resPassword" class="form-control" placeholder="Min 6 characters" required minlength="6" style="padding-right: 65px;" oninput="evalPasswordStrength(this.value)">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('resPassword', this)">Show</button>
+                        </div>
+                        <div class="strength-meter"><div class="strength-bar" id="strengthBar"></div></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password <span class="req">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock-open input-icon"></i>
+                            <input type="password" id="resConfirmPassword" class="form-control" placeholder="Re-enter password" required minlength="6" style="padding-right: 65px;" oninput="checkPasswordMatch()">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('resConfirmPassword', this)">Show</button>
+                        </div>
+                        <div class="pass-match-indicator" id="matchIndicator"></div>
+                    </div>
+                </div>
+
+                <small style="display: flex; align-items: center; gap: 6px; color: var(--slate-600); font-size: 0.8rem; margin-top: 4px; margin-bottom: 20px; font-weight: 500;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i>
+                    <span>You will log in using your email (<strong id="emailPreview">email</strong>) and this password.</span>
+                </small>
+
+                <button type="submit" class="submit-btn" id="btnSubmitForm">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Submit &amp; Activate My Resident Account</span>
+                </button>
+            </form>
+
+            <!-- Success Card State -->
+            <div class="success-card" id="successState">
+                <div class="success-icon-wrapper">
+                    <div class="success-icon-bg">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <h2>Profile &amp; Credentials Saved!</h2>
+                <p>Welcome, <strong id="savedResName" style="color: var(--navy);">Resident</strong>. Your profile for Flat <strong id="savedResUnit" style="color: var(--primary);">Unit</strong> and your login credentials have been created successfully.</p>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label"><i class="fa-regular fa-envelope me-2"></i> Login Email</span>
+                        <span class="summary-val" id="savedResEmail">email@example.com</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-building me-2"></i> Flat Unit</span>
+                        <span class="summary-val" id="savedResUnitSummary">Unit</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-user-shield me-2"></i> Account Status</span>
+                        <span class="summary-val" style="color: #10b981;">Active (Self-Registered)</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" id="btnLoginToResidentDashboard" onclick="loginDirectlyToDashboard()" class="submit-btn" style="max-width: 320px; margin: 0;">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Open My Resident Dashboard</span>
+                    </button>
+                    <a href="/" class="submit-btn" style="text-decoration: none; max-width: 160px; margin: 0; background: var(--navy);">
+                        <span>Return Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            &copy; 2026 SmartApartment Platform. Secure single-person resident onboarding portal.
+        </div>
+    </div>
+
+    <script>
+        // Extract token from URL query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || 'RES_' + Math.random().toString(36).substr(2, 8).toUpperCase();
+        document.getElementById('displayToken').textContent = token;
+
+        let registeredEmail = '';
+        let registeredPassword = '';
+
+        function sanitizeNumericInput(el, noticeId) {
+            const rawVal = el.value;
+            const cleanVal = rawVal.replace(/[^0-9]/g, '');
+            const notice = document.getElementById(noticeId);
+            
+            if (rawVal !== cleanVal) {
+                el.value = cleanVal;
+                if (notice) {
+                    notice.style.display = 'inline';
+                    setTimeout(() => { notice.style.display = 'none'; }, 2500);
+                }
+            } else {
+                if (notice) notice.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if ([46, 8, 9, 27, 13, 35, 36, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode === 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode === 88 && (e.ctrlKey === true || e.metaKey === true))) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                    const noticeId = this.id === 'resPhone' ? 'resPhoneNotice' : 'resEmergPhoneNotice';
+                    const notice = document.getElementById(noticeId);
+                    if (notice) {
+                        notice.style.display = 'inline';
+                        setTimeout(() => { notice.style.display = 'none'; }, 2500);
+                    }
+                }
+            });
+        });
+
+        function isValidEmailFormat(emailStr) {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailPattern.test(emailStr);
+        }
+
+        function validateEmailInput(input) {
+            const val = input.value.trim();
+            const notice = document.getElementById('resEmailNotice');
+            updateEmailPreview(val);
+
+            if (!val) {
+                if (notice) notice.style.display = 'none';
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+                return false;
+            }
+
+            if (isValidEmailFormat(val)) {
+                if (notice) {
+                    notice.style.display = 'inline';
+                    notice.style.color = '#10b981';
+                    notice.innerHTML = '<i class="fa-solid fa-circle-check"></i> Valid email format';
+                }
+                input.style.borderColor = '#10b981';
+                input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+                return true;
+            } else {
+                if (notice) {
+                    notice.style.display = 'inline';
+                    notice.style.color = '#ef4444';
+                    notice.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Enter valid email (name@domain.com)';
+                }
+                input.style.borderColor = '#ef4444';
+                input.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.15)';
+                return false;
+            }
+        }
+
+        function updateEmailPreview(val) {
+            const span = document.getElementById('emailPreview');
+            if (span) span.textContent = val.trim() || 'email';
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function evalPasswordStrength(val) {
+            const bar = document.getElementById('strengthBar');
+            if (!bar) return;
+            if (!val) {
+                bar.style.width = '0%';
+                return;
+            }
+            let score = 0;
+            if (val.length >= 6) score += 30;
+            if (val.length >= 10) score += 20;
+            if (/[A-Z]/.test(val)) score += 20;
+            if (/[0-9]/.test(val)) score += 15;
+            if (/[^A-Za-z0-9]/.test(val)) score += 15;
+
+            bar.style.width = score + '%';
+            if (score < 40) bar.style.backgroundColor = '#ef4444';
+            else if (score < 70) bar.style.backgroundColor = '#f59e0b';
+            else bar.style.backgroundColor = '#10b981';
+            checkPasswordMatch();
+        }
+
+        function checkPasswordMatch() {
+            const p1 = document.getElementById('resPassword').value;
+            const p2 = document.getElementById('resConfirmPassword').value;
+            const ind = document.getElementById('matchIndicator');
+            if (!ind) return;
+            if (!p2) {
+                ind.innerHTML = '';
+                return;
+            }
+            if (p1 === p2) {
+                ind.className = 'pass-match-indicator match-success';
+                ind.innerHTML = '<i class="fa-solid fa-check-circle"></i> Passwords match!';
+            } else {
+                ind.className = 'pass-match-indicator match-error';
+                ind.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Passwords do not match';
+            }
+        }
+
+        // Pre-assigned data from localStorage
+        const pendingLinks = JSON.parse(localStorage.getItem('smartapartment_pending_resident_links') || '{}');
+        if (pendingLinks[token]) {
+            const preData = pendingLinks[token];
+            if (preData.name) document.getElementById('resFullName').value = preData.name;
+            if (preData.unit) document.getElementById('resUnit').value = preData.unit;
+            if (preData.email) {
+                document.getElementById('resEmail').value = preData.email;
+                updateEmailPreview(preData.email);
+            }
+            if (preData.phone) document.getElementById('resPhone').value = preData.phone;
+        }
+
+        // Highlight form progress step on focus
+        document.querySelectorAll('#residentSelfUpdateForm input, #residentSelfUpdateForm select').forEach(el => {
+            el.addEventListener('focus', () => {
+                const section = el.closest('.form-group')?.parentElement;
+                if (!section) return;
+                document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+                if (el.id === 'resPassword' || el.id === 'resConfirmPassword') {
+                    document.getElementById('step4')?.classList.add('active');
+                } else if (el.id === 'resIdType' || el.id === 'resNotes' || el.id.includes('Emerg')) {
+                    document.getElementById('step3')?.classList.add('active');
+                } else if (el.id === 'resUnit' || el.id === 'resType' || el.id === 'resMoveInDate' || el.id === 'resVehicle') {
+                    document.getElementById('step2')?.classList.add('active');
+                } else {
+                    document.getElementById('step1')?.classList.add('active');
+                }
+            });
+        });
+
+        async function handleResidentFormSubmit(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('resFullName').value.trim();
+            const phone = document.getElementById('resPhone').value.trim();
+            const email = document.getElementById('resEmail').value.trim();
+            const unit = document.getElementById('resUnit').value.trim();
+            const type = document.getElementById('resType').value;
+            const moveIn = document.getElementById('resMoveInDate').value;
+            const vehicle = document.getElementById('resVehicle').value.trim();
+            const emergName = document.getElementById('resEmergName').value.trim();
+            const emergPhone = document.getElementById('resEmergPhone').value.trim();
+            const idType = document.getElementById('resIdType').value;
+            const notes = document.getElementById('resNotes').value.trim();
+            const password = document.getElementById('resPassword').value;
+            const confirmPassword = document.getElementById('resConfirmPassword').value;
+
+            if (!isValidEmailFormat(email)) {
+                validateEmailInput(document.getElementById('resEmail'));
+                document.getElementById('resEmail').focus();
+                alert('Please enter a valid email address (e.g. user@example.com) with @ symbol and domain.');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match. Please ensure both password fields match.');
+                return;
+            }
+
+            registeredEmail = email;
+            registeredPassword = password;
+
+            const submitBtn = document.getElementById('btnSubmitForm');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering & Saving Profile...';
+            }
+
+            // Submit credentials to backend API for user authentication
+            try {
+                const response = await fetch('/api/auth/register-resident', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: fullName,
+                        email: email,
+                        phone: phone,
+                        password: password,
+                        unitNo: unit,
+                        type: type,
+                        token: token
+                    })
+                });
+                const resData = await response.json().catch(() => ({}));
+                console.log('Registered resident backend account:', resData);
+            } catch (e) {
+                console.warn('Backend API registration notice:', e);
+            }
+
+            const newResident = {
+                id: 'RES_' + Date.now(),
+                token: token,
+                name: fullName,
+                phone: phone,
+                email: email,
+                unitNo: unit,
+                type: type,
+                moveInDate: moveIn,
+                vehicleNo: vehicle,
+                emergencyName: emergName,
+                emergencyPhone: emergPhone,
+                idProofType: idType,
+                notes: notes,
+                status: 'Active (Self-Registered)',
+                registeredAt: new Date().toISOString()
+            };
+
+            // Store in smartapartment_residents localStorage
+            let existingResidents = JSON.parse(localStorage.getItem('smartapartment_residents') || '[]');
+            existingResidents = existingResidents.filter(r => r.token !== token);
+            existingResidents.unshift(newResident);
+            localStorage.setItem('smartapartment_residents', JSON.stringify(existingResidents));
+
+            // Mark link as completed in pending links
+            pendingLinks[token] = { ...newResident, status: 'COMPLETED' };
+            localStorage.setItem('smartapartment_pending_resident_links', JSON.stringify(pendingLinks));
+
+            // Update UI to success card
+            document.getElementById('residentSelfUpdateForm').style.display = 'none';
+            document.getElementById('savedResName').textContent = fullName;
+            document.getElementById('savedResUnit').textContent = unit;
+            if (document.getElementById('savedResUnitSummary')) document.getElementById('savedResUnitSummary').textContent = unit;
+            document.getElementById('savedResEmail').textContent = email;
+            document.getElementById('successState').style.display = 'block';
+        }
+
+        async function loginDirectlyToDashboard() {
+            const btn = document.getElementById('btnLoginToResidentDashboard');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+            }
+            try {
+                const response = await fetch('/api/auth/dashboard-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        platform: 'smartapartment',
+                        role: 'resident',
+                        username: registeredEmail,
+                        password: registeredPassword
+                    })
+                });
+                const data = await response.json().catch(() => ({}));
+                if (response.ok && data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    window.location.href = '/dashboards/resident';
+                }
+            } catch (err) {
+                window.location.href = '/dashboards/resident';
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -265,6 +265,7 @@
     const passwordGuidance = document.getElementById("passwordGuidance");
     const toggleSocietyPassword = document.getElementById("toggleSocietyPassword");
     const societyCity = document.getElementById("societyCity");
+    const mobileInputs = [demoForm?.elements.phone, document.getElementById("societyPhone")].filter(Boolean);
     let persona = "society";
     let modalPreviouslyFocused = null;
 
@@ -273,6 +274,10 @@
         const element = field(id);
         if (element) element.value = value || "";
     };
+
+    mobileInputs.forEach(input => input.addEventListener("input", () => {
+        input.value = input.value.replace(/\D/g, "").slice(0, 10);
+    }));
 
     function setRegistrationState(message = "", type = "") {
         if (!registrationState) return;

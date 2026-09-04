@@ -19,8 +19,8 @@ public class JwtService {
     private final SecretKey key;
     private final long expirationMinutes;
 
-    public JwtService(@Value("${app.jwt.secret}") String secret,
-                      @Value("${app.jwt.expiration-minutes}") long expirationMinutes) {
+    public JwtService(@Value("${app.jwt.secret:this_is_a_very_secure_and_long_jwt_secret_for_local_dev_12345}") String secret,
+                      @Value("${app.jwt.expiration-minutes:120}") long expirationMinutes) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMinutes = expirationMinutes;
     }

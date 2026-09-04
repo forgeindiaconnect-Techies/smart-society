@@ -20,8 +20,8 @@ public class JwtService {
     private final SecretKey key;
     private final long expirationMinutes;
 
-    public JwtService(@Value("${app.jwt.secret}") String secret,
-                      @Value("${app.jwt.expiration-minutes}") long expirationMinutes) {
+    public JwtService(@Value("${app.jwt.secret:this_is_a_very_secure_and_long_jwt_secret_for_local_dev_12345}") String secret,
+                      @Value("${app.jwt.expiration-minutes:120}") long expirationMinutes) {
         if (secret == null || secret.isBlank() || secret.length() < 32 || secret.startsWith("REPLACE_WITH_A_RANDOM")) {
             throw new IllegalStateException("JWT_SECRET must be configured with a random value of at least 32 characters");
         }

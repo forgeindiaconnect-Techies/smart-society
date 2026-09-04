@@ -305,20 +305,15 @@ body.app-dashboard[data-platform="propertydirect"] .dash-brand::before {
     content: none !important;
     display: none !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-brand::first-letter { color: #9cf0c2; }
+body.app-dashboard[data-platform="propertydirect"] .dash-brand::first-letter { color: #f59e0b; }
 
-/* Keep the navigation close control visible and unmistakable on every screen. */
+/* Navigation & Active Sidebar Controls (Blue, White & Gold theme) */
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close {
     display: grid !important;
     place-items: center !important;
     color: #fff !important;
     background: rgba(255,255,255,.14) !important;
     border-color: rgba(255,255,255,.34) !important;
-}
-body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close::before,
-body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close::after {
-    content: none !important;
-    display: none !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close span {
     display: block !important;
@@ -328,29 +323,29 @@ body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-si
 }
 
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active {
-    color: #173568 !important;
-    background: #a7f3cb !important;
-    border-color: #c8f9dd !important;
-    box-shadow: 0 10px 24px rgba(5, 22, 57, .22) !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    border: 1px solid #f59e0b !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active::before {
     color: #fff;
-    background: #1d376c;
+    background: #d97706;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button:hover {
-    background: rgba(167,243,203,.12) !important;
+    background: rgba(37, 99, 235, 0.16) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .logout:hover { background: rgba(167,243,203,.16) !important; }
+body.app-dashboard[data-platform="propertydirect"] .logout:hover { background: rgba(217, 119, 6, 0.16) !important; }
 
-/* Dashboard visual parity with SmartApartment */
+/* Dashboard Header & Cards System (Blue, White & Gold) */
 body.app-dashboard[data-platform="propertydirect"] .dash-header {
     background: #ffffff !important;
     border: none !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02) !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-header::before { display: none !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #2563eb !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #d97706 !important; font-weight: 800 !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-header h1 { color: #0f172a !important; }
 
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
@@ -358,12 +353,12 @@ body.app-dashboard[data-platform="propertydirect"] .dash-card,
 body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll {
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article:hover,
 body.app-dashboard[data-platform="propertydirect"] .dash-card:hover {
-    border-color: #cbd5e1 !important;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::before,
 body.app-dashboard[data-platform="propertydirect"] .dash-card::before { display: none !important; }
@@ -372,71 +367,78 @@ body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #2
 body.app-dashboard[data-platform="propertydirect"] button.primary,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle),
 body.app-dashboard[data-platform="propertydirect"] .dash-card button.primary {
-    background: #2563eb !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
     border-color: #2563eb !important;
     color: #ffffff !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22) !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+}
+body.app-dashboard[data-platform="propertydirect"] button.primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    border-color: #d97706 !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary),
 body.app-dashboard[data-platform="propertydirect"] table button {
-    color: #0f172a !important;
+    color: #1e3a8a !important;
     border: 1px solid #cbd5e1 !important;
-    background: #f8fafc !important;
+    background: #ffffff !important;
     border-radius: 10px !important;
 }
+body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary):hover,
+body.app-dashboard[data-platform="propertydirect"] table button:hover {
+    background: #eff6ff !important;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+}
 body.app-dashboard[data-platform="propertydirect"] .pill-row span {
-    color: #334155 !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    color: #1e3a8a !important;
+    background: #eff6ff !important;
+    border: 1px solid #dbeafe !important;
     border-radius: 12px !important;
 }
-    border-color: rgba(29,55,108,.12) !important;
-    background: rgba(167,243,203,.24) !important;
-}
 body.app-dashboard[data-platform="propertydirect"] .status.active,
-body.app-dashboard[data-platform="propertydirect"] .status.approved { color: #08756d !important; background: rgba(167,243,203,.31) !important; }
+body.app-dashboard[data-platform="propertydirect"] .status.approved { color: #b45309 !important; background: #fef3c7 !important; border: 1px solid #fde68a !important; }
 body.app-dashboard[data-platform="propertydirect"] input,
 body.app-dashboard[data-platform="propertydirect"] select,
 body.app-dashboard[data-platform="propertydirect"] textarea {
-    background: #fffefd !important;
-    border-color: rgba(29,55,108,.16) !important;
-    color: #17223b !important;
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
 }
 
-/* PropertyDirect premium dashboard system.  Shared across Super Admin, Admin and Customer. */
+/* PropertyDirect unified Blue, White & Gold theme */
 body.app-dashboard[data-platform="propertydirect"] {
-    --role-accent: #b8834d;
-    --role-accent-dark: #8f5f35;
-    --role-soft: #e8f0eb;
-    --ds-ink: #10283d;
-    --ds-copy: #64717d;
-    --ds-bg: #f4f1eb;
-    --ds-card: #fffdf9;
-    --ds-line: #e8e0d5;
+    --role-accent: #d97706;
+    --role-accent-dark: #b45309;
+    --role-soft: #eff6ff;
+    --ds-ink: #0f172a;
+    --ds-copy: #64748b;
+    --ds-bg: #f8fafc;
+    --ds-card: #ffffff;
+    --ds-line: #e2e8f0;
     font-family: "Manrope", Arial, sans-serif !important;
     background:
-        radial-gradient(circle at 94% -8%, rgba(184,131,77,.13), transparent 28rem),
-        radial-gradient(circle at 3% 46%, rgba(121,168,154,.12), transparent 29rem),
-        #f4f1eb !important;
-    color: #10283d !important;
+        radial-gradient(circle at 94% -8%, rgba(217,119,6,.08), transparent 28rem),
+        radial-gradient(circle at 3% 46%, rgba(37,99,235,.07), transparent 29rem),
+        #f8fafc !important;
+    color: #0f172a !important;
 }
 body.app-dashboard[data-platform="propertydirect"] * { letter-spacing: normal; }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar {
     background:
-        radial-gradient(circle at 100% 0%, rgba(184,131,77,.24), transparent 37%),
-        radial-gradient(circle at 0% 100%, rgba(121,168,154,.20), transparent 37%),
-        linear-gradient(160deg, #112d45, #0b2134) !important;
+        radial-gradient(circle at 100% 0%, rgba(217,119,6,.18), transparent 37%),
+        radial-gradient(circle at 0% 100%, rgba(37,99,235,.15), transparent 37%),
+        linear-gradient(160deg, #0f172a, #1e293b) !important;
     border-color: rgba(255,255,255,.09) !important;
-    box-shadow: 16px 0 36px rgba(11,33,52,.15) !important;
+    box-shadow: 16px 0 36px rgba(15,23,42,.2) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-brand {
-    font-family: "DM Serif Display", Georgia, serif !important;
-    color: #fffdf9 !important;
+    font-family: "Manrope", Georgia, serif !important;
+    color: #ffffff !important;
     font-size: 1.5rem !important;
     letter-spacing: -.04em !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-brand::first-letter { color: #c9ecde; }
+body.app-dashboard[data-platform="propertydirect"] .dash-brand::first-letter { color: #f59e0b; }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close {
     width: 34px !important;
     height: 34px !important;
@@ -453,110 +455,116 @@ body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button {
     font-weight: 700 !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active {
-    color: #10283d !important;
-    background: #c9ecde !important;
-    border-color: transparent !important;
-    box-shadow: 0 10px 24px rgba(4,18,31,.22) !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+    border: 1px solid #f59e0b !important;
+    box-shadow: 0 4px 16px rgba(37,99,235,.35) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active::before { background: #b8834d !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button:hover { background: rgba(255,255,255,.10) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active::before { background: #d97706 !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button:hover { background: rgba(37,99,235,.16) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-header {
-    min-height: 106px !important;
-    background: rgba(255,253,249,.88) !important;
-    border-color: rgba(16,40,61,.10) !important;
+    min-height: 96px !important;
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
     border-radius: 18px !important;
-    box-shadow: 0 12px 28px rgba(16,40,61,.07) !important;
+    box-shadow: 0 4px 20px rgba(15,23,42,.03) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-header::before { background: linear-gradient(#b8834d, #79a89a) !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #97673b !important; font-size: .7rem !important; letter-spacing: .14em !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header::before { background: linear-gradient(#2563eb, #f59e0b) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #d97706 !important; font-size: .75rem !important; letter-spacing: .1em !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-header h1 {
-    font-family: "DM Serif Display", Georgia, serif !important;
-    color: #10283d !important;
-    font-size: clamp(2rem, 3vw, 2.65rem) !important;
-    font-weight: 400 !important;
-    letter-spacing: -.045em !important;
+    font-family: "Manrope", sans-serif !important;
+    color: #0f172a !important;
+    font-size: clamp(1.8rem, 2.5vw, 2.4rem) !important;
+    font-weight: 700 !important;
+    letter-spacing: -.03em !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid { gap: 14px !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article {
-    min-height: 118px !important;
-    padding: 18px !important;
-    border: 1px solid #e8e0d5 !important;
-    border-radius: 16px !important;
-    background: rgba(255,253,249,.92) !important;
-    box-shadow: 0 8px 20px rgba(16,40,61,.045) !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 14px 18px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(15,23,42,.03) !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::before { background: rgba(184,131,77,.23) !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::after { color: #97673b !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid small { color: #697586 !important; font-size: .71rem !important; font-weight: 800 !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #10283d !important; font-size: 1.55rem !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::before { background: rgba(37,99,235,.2) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article::after { color: #d97706 !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid small { color: #64748b !important; font-size: .72rem !important; font-weight: 700 !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #2563eb !important; font-size: 1.55rem !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-card,
 body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll {
-    border: 1px solid #e8e0d5 !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 18px !important;
-    background: rgba(255,253,249,.93) !important;
-    box-shadow: 0 12px 28px rgba(16,40,61,.055) !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(15,23,42,.04) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-card { padding: 22px !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-card::before { background: linear-gradient(90deg, #b8834d, #79a89a) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-card::before { background: linear-gradient(90deg, #2563eb, #f59e0b) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-card h2,
-body.app-dashboard[data-platform="propertydirect"] .dash-card h3 { color: #10283d !important; letter-spacing: -.035em !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-card h3 { color: #0f172a !important; letter-spacing: -.02em !important; }
 body.app-dashboard[data-platform="propertydirect"] button,
 body.app-dashboard[data-platform="propertydirect"] .button,
 body.app-dashboard[data-platform="propertydirect"] a.button {
     min-height: 38px !important;
-    padding: 8px 13px !important;
+    padding: 8px 14px !important;
     border-radius: 10px !important;
     font-family: "Manrope", Arial, sans-serif !important;
     font-size: .8rem !important;
-    font-weight: 800 !important;
-    letter-spacing: -.01em !important;
+    font-weight: 700 !important;
 }
 body.app-dashboard[data-platform="propertydirect"] button.primary,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle),
 body.app-dashboard[data-platform="propertydirect"] .dash-card button.primary {
-    background: #15364f !important;
-    color: #fffdf9 !important;
-    border-color: #15364f !important;
-    box-shadow: 0 8px 17px rgba(16,40,61,.17) !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 4px 14px rgba(37,99,235,.28) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] button.primary:hover,
-body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle):hover { background: #b8834d !important; border-color: #b8834d !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle):hover {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+    border-color: #f59e0b !important;
+}
 body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary),
 body.app-dashboard[data-platform="propertydirect"] table button {
-    color: #234864 !important;
-    border-color: #cfb18d !important;
-    background: #fffaf4 !important;
+    color: #1e3a8a !important;
+    border-color: #cbd5e1 !important;
+    background: #ffffff !important;
 }
 body.app-dashboard[data-platform="propertydirect"] table th {
-    color: #536372 !important;
-    font-size: .7rem !important;
-    letter-spacing: .07em !important;
+    color: #475569 !important;
+    font-size: .72rem !important;
+    letter-spacing: .06em !important;
     text-transform: uppercase !important;
+    background: #f8fafc !important;
 }
-body.app-dashboard[data-platform="propertydirect"] table td { border-color: #eee7dd !important; color: #263b4d !important; }
+body.app-dashboard[data-platform="propertydirect"] table td { border-color: #e2e8f0 !important; color: #0f172a !important; }
 body.app-dashboard[data-platform="propertydirect"] input,
 body.app-dashboard[data-platform="propertydirect"] select,
 body.app-dashboard[data-platform="propertydirect"] textarea {
     min-height: 40px !important;
     border-radius: 10px !important;
-    border-color: #ded4c8 !important;
-    background: #fffdf9 !important;
+    border-color: #cbd5e1 !important;
+    background: #ffffff !important;
     font-family: "Manrope", Arial, sans-serif !important;
     font-size: .87rem !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .pill-row span {
-    border-color: rgba(121,168,154,.25) !important;
-    background: #e8f0eb !important;
-    color: #2b5d54 !important;
+    border-color: #dbeafe !important;
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
     font-size: .74rem !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .status.active,
-body.app-dashboard[data-platform="propertydirect"] .status.approved { background: #e1f0e7 !important; color: #22664f !important; }
+body.app-dashboard[data-platform="propertydirect"] .status.approved { background: #fef3c7 !important; color: #b45309 !important; border: 1px solid #fde68a !important; }
 
 @media (max-width: 760px) {
     body.app-dashboard[data-platform="propertydirect"] .dash-header { min-height: 86px !important; border-radius: 0 !important; }
     body.app-dashboard[data-platform="propertydirect"] .dash-card { padding: 17px !important; border-radius: 14px !important; }
-    body.app-dashboard[data-platform="propertydirect"] .dash-grid > article { min-height: 100px !important; padding: 15px !important; }
+    body.app-dashboard[data-platform="propertydirect"] .dash-grid > article { min-height: 0 !important; height: auto !important; padding: 12px 14px !important; }
 }
 
 /* Detailed action forms: the same polished treatment across every dashboard role. */

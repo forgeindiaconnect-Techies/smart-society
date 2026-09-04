@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Apartments for Rent and Sale - PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
     <link rel="stylesheet" href="/propertydirect/css/landing.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="/propertydirect/css/propertydirect-modern.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -967,10 +965,10 @@
 <body class="apartment-page">
 <header class="topbar compact">
     <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> <span>Property</span>Direct</a>
-    <div class="apartment-searchbar">
-        <select id="listingCity"><option>Bangalore</option><option>Chennai</option><option>Mumbai</option><option>Pune</option></select>
-        <input id="listingSearch" placeholder="Add localities, societies or landmarks">
-        <button class="primary small" id="listingSearchButton">Search</button>
+    <div class="apartment-searchbar" style="max-width: 600px;">
+        <select id="listingCity"><option value="Chennai">Chennai</option><option value="Bangalore">Bangalore</option><option value="Mumbai">Mumbai</option><option value="Pune">Pune</option></select>
+        <input id="listingSearch" placeholder=" AI Search: e.g. '3 BHK house in Chennai below 80 lakhs'">
+        <button class="primary small" id="listingSearchButton" style="background: linear-gradient(135deg, #2563eb, #7c3aed); border: none; font-weight: 800;"> AI Search</button>
     </div>
     <nav class="nav">
         <a href="/" class="smartsociety-btn">
@@ -986,40 +984,91 @@
 <main class="listing-shell">
     <aside class="filters">
         <div class="filter-head">
-            <strong>Filters</strong>
-            <button id="clearFilters">Reset</button>
+            <strong>Property Filters</strong>
+            <button id="clearFilters">Reset All</button>
         </div>
-        <label>BHK Type</label>
+
+        <label>Property Purpose</label>
+        <div class="check-grid">
+            <button data-filter-group="mode" data-filter="BUY">Buy</button>
+            <button data-filter-group="mode" data-filter="RENT" class="active">Rent</button>
+            <button data-filter-group="mode" data-filter="LEASE">Lease</button>
+        </div>
+
+        <label>Property Type (Residential)</label>
+        <div class="filter-list" style="margin-bottom: 12px;">
+            <button data-filter-group="propertyType" data-filter="Apartment">Apartment</button>
+            <button data-filter-group="propertyType" data-filter="Villa">Villa</button>
+            <button data-filter-group="propertyType" data-filter="Independent House">Independent House</button>
+            <button data-filter-group="propertyType" data-filter="Builder Floor">Builder Floor</button>
+            <button data-filter-group="propertyType" data-filter="Plot">Plot</button>
+            <button data-filter-group="propertyType" data-filter="Farm House">Farm House</button>
+        </div>
+
+        <label>Property Type (Commercial)</label>
+        <div class="filter-list" style="margin-bottom: 12px;">
+            <button data-filter-group="propertyType" data-filter="Office">Office</button>
+            <button data-filter-group="propertyType" data-filter="Shop">Shop</button>
+            <button data-filter-group="propertyType" data-filter="Showroom">Showroom</button>
+            <button data-filter-group="propertyType" data-filter="Warehouse">Warehouse</button>
+            <button data-filter-group="propertyType" data-filter="Factory">Factory</button>
+            <button data-filter-group="propertyType" data-filter="Commercial Land">Commercial Land</button>
+        </div>
+
+        <label>Property Type (Other)</label>
+        <div class="filter-list">
+            <button data-filter-group="propertyType" data-filter="PG">PG</button>
+            <button data-filter-group="propertyType" data-filter="Hostel">Hostel</button>
+            <button data-filter-group="propertyType" data-filter="Agricultural Land">Agricultural Land</button>
+        </div>
+
+        <label>Bedrooms (BHK)</label>
         <div class="check-grid">
             <button data-filter-group="bhk" data-filter="1 BHK">1 BHK</button>
             <button data-filter-group="bhk" data-filter="2 BHK">2 BHK</button>
-            <button data-filter-group="bhk" data-filter="3 BHK+">3 BHK+</button>
+            <button data-filter-group="bhk" data-filter="3 BHK">3 BHK</button>
+            <button data-filter-group="bhk" data-filter="4 BHK">4 BHK</button>
+            <button data-filter-group="bhk" data-filter="5+ BHK">5+ BHK</button>
         </div>
+
+        <label>Bathrooms</label>
+        <div class="check-grid">
+            <button data-filter-group="bathrooms" data-filter="1">1 Bath</button>
+            <button data-filter-group="bathrooms" data-filter="2">2 Baths</button>
+            <button data-filter-group="bathrooms" data-filter="3">3 Baths</button>
+            <button data-filter-group="bathrooms" data-filter="4+">4+ Baths</button>
+        </div>
+
         <label>Budget Range</label>
-        <input id="minBudgetRange" type="range" min="0" max="150000" value="0" aria-label="Minimum monthly rent">
-        <input id="budgetRange" type="range" min="10000" max="150000" value="150000">
-        <p class="range-copy"><span id="minBudgetValue">₹0</span> to <span id="budgetValue">₹1,50,000</span></p>
-        <label>Availability</label>
+        <input id="minBudgetRange" type="range" min="0" max="150000" value="0" aria-label="Minimum price">
+        <input id="budgetRange" type="range" min="10000" max="250000" value="250000" aria-label="Maximum price">
+        <p class="range-copy"><span id="minBudgetValue">₹0</span> to <span id="budgetValue">₹2,50,000</span></p>
+
+        <label>Furnishing Status</label>
         <div class="filter-list">
-            <button data-filter-group="availability" data-filter="Ready to Move">Immediate</button>
-            <button data-filter-group="availability" data-filter="15 Days">Within 15 Days</button>
-            <button data-filter-group="availability" data-filter="30 Days">Within 30 Days</button>
+            <button data-filter-group="furnishing" data-filter="Fully Furnished">Furnished</button>
+            <button data-filter-group="furnishing" data-filter="Semi Furnished">Semi-furnished</button>
+            <button data-filter-group="furnishing" data-filter="Unfurnished">Unfurnished</button>
         </div>
-        <label>Furnishing</label>
+
+        <label>Construction Status</label>
         <div class="filter-list">
-            <button data-filter-group="furnishing" data-filter="Fully Furnished">Full</button>
-            <button data-filter-group="furnishing" data-filter="Semi Furnished">Semi</button>
-            <button data-filter-group="furnishing" data-filter="Unfurnished">None</button>
+            <button data-filter-group="availability" data-filter="Ready to Move">Ready to Move</button>
+            <button data-filter-group="availability" data-filter="Under Construction">Under Construction</button>
         </div>
-        <label>Parking</label>
+
+        <label>Amenities & Facilities</label>
         <div class="filter-list">
-            <button data-filter-group="parking" data-filter="Bike Parking">2 Wheeler</button>
-            <button data-filter-group="parking" data-filter="Car Parking">4 Wheeler</button>
-        </div>
-        <label>Apartment Type</label>
-        <div class="filter-list">
-            <button data-filter-group="apartmentType" data-filter="Gated Society">Gated Society</button>
-            <button data-filter-group="apartmentType" data-filter="Standalone Apartment">Standalone Apartment</button>
+            <button data-filter-group="amenities" data-filter="Parking">Parking</button>
+            <button data-filter-group="amenities" data-filter="Lift">Lift</button>
+            <button data-filter-group="amenities" data-filter="Swimming Pool">Swimming Pool</button>
+            <button data-filter-group="amenities" data-filter="Gym">Gym</button>
+            <button data-filter-group="amenities" data-filter="Security">Gated Security</button>
+            <button data-filter-group="amenities" data-filter="Balcony">Balcony</button>
+            <button data-filter-group="amenities" data-filter="Garden">Garden</button>
+            <button data-filter-group="amenities" data-filter="Power Backup">Power Backup</button>
+            <button data-filter-group="amenities" data-filter="Gated Community">Gated Community</button>
+            <button data-filter-group="amenities" data-filter="Pet Friendly">Pet Friendly</button>
         </div>
     </aside>
 
@@ -1030,9 +1079,10 @@
                 <h1><span id="resultCount">0</span> verified apartments without brokerage</h1>
                 <p>Owner-listed apartment homes with rent, deposit, furnishing, availability, nearby places and visit options.</p>
                 <div class="pd-mode-tabs" style="margin-top: 10px;">
-                    <button type="button" class="pd-mode-tab active" data-search-mode="">All</button>
-                    <button type="button" class="pd-mode-tab" data-search-mode="rent">Rent</button>
                     <button type="button" class="pd-mode-tab" data-search-mode="buy">Buy</button>
+                    <button type="button" class="pd-mode-tab active" data-search-mode="rent">Rent</button>
+                    <button type="button" class="pd-mode-tab" data-search-mode="lease">Lease</button>
+                    <button type="button" class="pd-mode-tab" data-search-mode="">All Listings</button>
                 </div>
             </div>
             <div class="view-toggle">
@@ -1041,10 +1091,33 @@
             </div>
         </div>
 
-        <div class="society-strip">
-            <strong>Top societies in your search</strong>
-            <div id="societyStrip"></div>
+        <!--  Smart AI Recommendations Banner -->
+        <div id="aiRecommendationBanner" style="background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #ffffff; padding: 18px 24px; border-radius: 16px; margin-top: 16px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(15,23,42,0.25);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.3rem;"></span>
+                    <strong style="font-size: 1.05rem; color: #a7f3d0;">AI Smart Recommendations</strong>
+                    <span style="background: #7c3aed; color: #ffffff; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;">Personalized for You</span>
+                </div>
+                <small style="color: #94a3b8; font-size: 0.78rem;">Based on: Search History · Saved (️) · Viewed · Location · Budget</small>
+            </div>
+            <p style="margin: 0 0 12px 0; font-size: 0.86rem; color: #cbd5e1;">"Recommended 2 & 3 BHK verified apartments in Anna Nagar under ₹85 Lakhs matching your saved preferences."</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="aiPromptChips">
+                <button type="button" onclick="runAiQuery('3 BHK house in Chennai below 80 lakhs')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> 3 BHK house in Chennai below 80 lakhs</button>
+                <button type="button" onclick="runAiQuery('2 BHK apartment near Chennai under 50 lakh with parking')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> 2 BHK apartment near Chennai under 50 lakh with parking</button>
+                <button type="button" onclick="runAiQuery('Luxury Villa with swimming pool and gym')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> Luxury Villa with Pool & Gym</button>
+            </div>
         </div>
+
+        <script>
+        function runAiQuery(queryText) {
+            const input = document.getElementById("listingSearch");
+            if(input) {
+                input.value = queryText;
+                document.getElementById("listingSearchButton")?.click();
+            }
+        }
+        </script>
 
         <div id="apartmentResults" class="apartment-results"></div>
         <div id="mapView" class="map-view hidden">
@@ -1067,6 +1140,54 @@
     </div>
 </div>
 <div class="toast hidden" id="toast"></div>
+<!-- Property Virtual Tour Video Modal -->
+<div id="propertyVideoModal" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 999999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s ease; padding: 20px;">
+  <div style="background: #0f172a; border-radius: 20px; width: 100%; max-width: 800px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5); border: 1px solid #334155; overflow: hidden; transform: scale(0.94); transition: all 0.3s ease; box-sizing: border-box;">
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155;">
+      <h3 id="videoModalTitle" style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #ffffff !important; display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.2rem;">🎬</span>
+        <span style="color: #ffffff !important;">Virtual Property Tour</span>
+      </h3>
+      <button type="button" onclick="closePropertyVideoModal()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #ffffff !important; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;">✕</button>
+    </div>
+    <div style="padding: 0; background: #000000; position: relative; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;">
+      <video id="pdModalVideoPlayer" controls autoplay style="width: 100%; height: 100%; object-fit: contain;"></video>
+    </div>
+    <div style="padding: 14px 24px; background: #0f172a; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1e293b;">
+      <span style="color: #94a3b8; font-size: 0.82rem; font-weight: 600;">Verified PropertyDirect Virtual Tour Video</span>
+      <button type="button" onclick="closePropertyVideoModal()" style="padding: 8px 18px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer;">Close Player</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function playPropertyVideo(videoUrl, title) {
+    var modal = document.getElementById("propertyVideoModal");
+    var player = document.getElementById("pdModalVideoPlayer");
+    var titleEl = document.getElementById("videoModalTitle");
+    if (!modal || !player) return;
+
+    if (titleEl) titleEl.innerHTML = '<span style="font-size: 1.2rem;">🎬</span> <span style="color: #ffffff !important;">' + (title || 'Virtual Property Tour') + '</span>';
+    player.src = videoUrl || "https://www.w3schools.com/html/mov_bbb.mp4";
+    player.play();
+
+    modal.style.opacity = "1";
+    modal.style.pointerEvents = "auto";
+    if (modal.querySelector("div")) modal.querySelector("div").style.transform = "scale(1)";
+  }
+
+  function closePropertyVideoModal() {
+    var modal = document.getElementById("propertyVideoModal");
+    var player = document.getElementById("pdModalVideoPlayer");
+    if (player) player.pause();
+    if (modal) {
+      modal.style.opacity = "0";
+      modal.style.pointerEvents = "none";
+      if (modal.querySelector("div")) modal.querySelector("div").style.transform = "scale(0.94)";
+    }
+  }
+</script>
+
 <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
 <script src="/propertydirect/js/apartments.js?v=20260825-v9999-filter-fix"></script>
 </body>

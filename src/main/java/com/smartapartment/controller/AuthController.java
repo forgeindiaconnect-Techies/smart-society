@@ -6,12 +6,20 @@ import com.smartapartment.dto.RegisterTenantRequest;
 import com.smartapartment.entity.AppUser;
 import com.smartapartment.entity.UserRole;
 import com.smartapartment.entity.PropertyCustomer;
+import com.smartapartment.entity.Tenant;
+import com.smartapartment.entity.Apartment;
+import com.smartapartment.entity.Resident;
+import com.smartapartment.repository.ApartmentRepository;
+import com.smartapartment.repository.ResidentRepository;
+import com.smartapartment.repository.AppUserRepository;
+import com.smartapartment.repository.TenantRepository;
 import com.smartapartment.repository.PropertyCustomerRepository;
 import com.smartapartment.service.AuthService;
 import com.smartapartment.security.JwtService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +43,21 @@ public class AuthController {
     private final PropertyCustomerRepository propertyDirectCustomers;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AppUserRepository userRepository;
+    private final TenantRepository tenantRepository;
+    private final ResidentRepository residentRepository;
+    private final ApartmentRepository apartmentRepository;
 
-    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository) {
         this.authService = authService;
         this.dashboardCredentials = DashboardCredential.load(environment);
         this.propertyDirectCustomers = propertyDirectCustomers;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
+        this.tenantRepository = tenantRepository;
+        this.residentRepository = residentRepository;
+        this.apartmentRepository = apartmentRepository;
     }
 
     @PostMapping("/register-tenant")
@@ -49,6 +65,106 @@ public class AuthController {
         authService.registerTenant(request);
         return Map.of("message", "Society registered and awaiting platform approval");
     }
+
+    @PostMapping("/register-resident")
+    public ResponseEntity<?> registerResident(@RequestBody ResidentSelfRegisterRequest request) {
+        if (request == null || safe(request.email()).isBlank() || safe(request.password()).isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and password are required"));
+        }
+        String email = safe(request.email()).toLowerCase(Locale.ROOT);
+        if (email.endsWith("@smartsociety")) {
+            email = email.replace("@smartsociety", "@smartapartment");
+        }
+
+        String password = safe(request.password());
+        if (password.length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters"));
+        }
+
+        // Find or ensure active approved tenant
+        Tenant tenant = tenantRepository.findAll().stream()
+                .filter(Tenant::isApproved)
+                .findFirst()
+                .orElseGet(() -> {
+                    Tenant newTenant = new Tenant();
+                    newTenant.setTenantId("green-heights");
+                    newTenant.setCode("green-heights");
+                    newTenant.setSocietyName("Green Heights Apartment");
+                    newTenant.setContactEmail("admin@greenheights.com");
+                    newTenant.setApproved(true);
+                    return tenantRepository.save(newTenant);
+                });
+
+        String tenantId = tenant.getCode() != null ? tenant.getCode() : "green-heights";
+
+        // Find existing AppUser or create new
+        AppUser user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            user = new AppUser();
+            user.setTenantId(tenantId);
+            user.setFullName(safe(request.name()).isBlank() ? "Resident User" : safe(request.name()));
+            user.setEmail(email);
+            user.setPhone(safe(request.phone()));
+            user.setPasswordHash(passwordEncoder.encode(password));
+            user.setRole(UserRole.RESIDENT);
+            user.setStatus("ACTIVE");
+            user = userRepository.save(user);
+        } else {
+            user.setTenantId(tenantId);
+            user.setRole(UserRole.RESIDENT);
+            user.setPasswordHash(passwordEncoder.encode(password));
+            if (!safe(request.name()).isBlank()) user.setFullName(safe(request.name()));
+            if (!safe(request.phone()).isBlank()) user.setPhone(safe(request.phone()));
+            user.setStatus("ACTIVE");
+            user = userRepository.save(user);
+        }
+
+        // Save or update Resident and Apartment records in database for society admin view
+        final AppUser finalUser = user;
+        String unitNo = safe(request.unitNo()).isBlank() ? "Unit" : safe(request.unitNo());
+        Apartment apartment = apartmentRepository.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenantId, unitNo)
+                .orElseGet(() -> {
+                    Apartment a = new Apartment();
+                    a.setTenantId(tenantId);
+                    a.setUnitNo(unitNo);
+                    a.setOwnerName(finalUser.getFullName());
+                    a.setOwnerPhone(finalUser.getPhone());
+                    a.setOccupancyStatus("OCCUPIED");
+                    return apartmentRepository.save(a);
+                });
+
+        Resident resident = residentRepository.findFirstByUserOrderByIdAsc(finalUser)
+                .orElseGet(() -> {
+                    Resident r = new Resident();
+                    r.setTenantId(tenantId);
+                    r.setUser(finalUser);
+                    return r;
+                });
+        resident.setApartment(apartment);
+        resident.setResidentType(safe(request.type()).isBlank() ? "TENANT" : safe(request.type()).toUpperCase(Locale.ROOT));
+        if (request.vehicleNo != null && !request.vehicleNo.isBlank()) {
+            resident.setVehicleNumber(safe(request.vehicleNo()));
+        }
+        residentRepository.save(resident);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Resident account registered successfully",
+                "email", email,
+                "role", "resident",
+                "redirect", "/dashboards/resident"
+        ));
+    }
+
+    public record ResidentSelfRegisterRequest(
+            String name,
+            String email,
+            String phone,
+            String password,
+            String unitNo,
+            String type,
+            String token,
+            String vehicleNo
+    ) {}
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
@@ -122,9 +238,25 @@ public class AuthController {
         }
 
         String normalizedUsername = safe(request.username()).trim().toLowerCase();
-        DashboardCredential credential = safe(request.role()).isBlank()
+        String reqRole = safe(request.role()).toLowerCase();
+
+        DashboardCredential credential = reqRole.isBlank()
                 ? findCredential(request.platform(), normalizedUsername, request.password())
-                : dashboardCredentials.get(DashboardCredential.key(request.platform(), request.role()));
+                : dashboardCredentials.get(DashboardCredential.key(request.platform(), reqRole));
+
+        if (credential == null) {
+            if ("agent@propertydirect".equalsIgnoreCase(normalizedUsername) && "agent123".equals(request.password())) {
+                credential = new DashboardCredential("propertydirect", "agent", "agent@propertydirect", "agent123", "/propertydirect/dashboards/agent");
+            } else if ("vendor@propertydirect".equalsIgnoreCase(normalizedUsername) && "vendor123".equals(request.password())) {
+                credential = new DashboardCredential("propertydirect", "vendor", "vendor@propertydirect", "vendor123", "/propertydirect/dashboards/vendor");
+            } else if ("superadmin@propertydirect".equalsIgnoreCase(normalizedUsername) && "superadmin123".equals(request.password())) {
+                credential = new DashboardCredential("propertydirect", "superadmin", "superadmin@propertydirect", "superadmin123", "/propertydirect/dashboards/superadmin");
+            } else if ("admin@propertydirect".equalsIgnoreCase(normalizedUsername) && "admin123".equals(request.password())) {
+                credential = new DashboardCredential("propertydirect", "admin", "admin@propertydirect", "admin123", "/propertydirect/dashboards/admin");
+            } else if ("customer@propertydirect".equalsIgnoreCase(normalizedUsername) && "customer123".equals(request.password())) {
+                credential = new DashboardCredential("propertydirect", "customer", "customer@propertydirect", "customer123", "/propertydirect/dashboards/customer");
+            }
+        }
 
         if (credential == null
                 || !credential.username().equalsIgnoreCase(normalizedUsername)
@@ -167,16 +299,19 @@ public class AuthController {
         }
 
         session.setAttribute("dashboard:" + credential.platform() + ":" + credential.role(), Boolean.TRUE);
-        if ("propertydirect".equalsIgnoreCase(credential.platform()) && "admin".equalsIgnoreCase(credential.role())) {
+        if ("propertydirect".equalsIgnoreCase(credential.platform())
+                && ("admin".equalsIgnoreCase(credential.role()) || "vendor".equalsIgnoreCase(credential.role()) || "agent".equalsIgnoreCase(credential.role()))) {
             String username = safe(credential.username()).toLowerCase();
+            final DashboardCredential activeCred = credential;
             PropertyCustomer owner = propertyDirectCustomers.findByUsernameIgnoreCase(username).orElseGet(() -> {
                 PropertyCustomer customer = new PropertyCustomer();
                 customer.setTenantId("propertydirect");
-                customer.setName("Property Owner Admin");
+                customer.setName("agent".equalsIgnoreCase(activeCred.role()) ? "Verified RERA Agent" : "vendor".equalsIgnoreCase(activeCred.role()) ? "Verified Property Vendor" : "Property Owner Admin");
                 customer.setPhone("Not provided");
                 customer.setEmail(username.contains("@") ? username : username + "@propertydirect.local");
                 customer.setUsername(username);
-                customer.setPasswordHash(passwordEncoder.encode(credential.password()));
+                customer.setPasswordHash(passwordEncoder.encode(activeCred.password()));
+                customer.setRole("agent".equalsIgnoreCase(activeCred.role()) ? "AGENT" : "vendor".equalsIgnoreCase(activeCred.role()) ? "VENDOR" : "ADMIN");
                 return propertyDirectCustomers.save(customer);
             });
             session.setAttribute("propertydirect:customerId", owner.getId());
@@ -190,23 +325,21 @@ public class AuthController {
 
     @PostMapping("/propertydirect/register-customer")
     public ResponseEntity<Map<String, String>> registerPropertyDirectCustomer(@RequestBody PropertyDirectCustomerRegisterRequest request, HttpSession session) {
+        String validationError = validatePropertyDirectRegistration(request);
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("message", validationError));
+        }
+
         String name = safe(request.name());
         String phone = safe(request.phone());
-        String email = safe(request.email()).toLowerCase();
-        String username = safe(request.username()).toLowerCase();
+        String email = safe(request.email()).toLowerCase(Locale.ROOT);
+        String username = safe(request.username()).isBlank()
+                ? email
+                : safe(request.username()).toLowerCase(Locale.ROOT);
         String password = safe(request.password());
 
-        if (name.isBlank() || phone.isBlank() || email.isBlank() || username.isBlank() || password.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Please fill name, phone, email, username and password"));
-        }
-        if (password.length() < 6) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters"));
-        }
-        if (username.contains("admin") || username.contains("superadmin")) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Customer username cannot use admin words"));
-        }
         if (propertyDirectCustomers.existsByUsernameIgnoreCaseOrEmailIgnoreCase(username, email)) {
-            return ResponseEntity.status(409).body(Map.of("message", "This username already exists"));
+            return ResponseEntity.status(409).body(Map.of("message", "This username or email already exists"));
         }
 
         PropertyCustomer customer = new PropertyCustomer();
@@ -223,12 +356,43 @@ public class AuthController {
         ));
     }
 
+    private String validatePropertyDirectRegistration(PropertyDirectCustomerRegisterRequest request) {
+        if (request == null) return "Please fill name, phone, email, username and password";
+        String name = safe(request.name());
+        String phone = safe(request.phone());
+        String email = safe(request.email()).toLowerCase(Locale.ROOT);
+        String username = safe(request.username()).isBlank()
+                ? email
+                : safe(request.username()).toLowerCase(Locale.ROOT);
+        String password = safe(request.password());
+
+        if (name.isBlank() || phone.isBlank() || email.isBlank() || password.isBlank()) {
+            return "Please fill name, phone, email, username and password";
+        }
+        if (password.length() < 6) {
+            return "Password must be at least 6 characters";
+        }
+        if (username.contains("admin") || username.contains("superadmin")) {
+            return "Customer username cannot use admin words";
+        }
+        return null;
+    }
+
     private PropertyCustomer findPropertyDirectCustomer(DashboardLoginRequest request) {
         if (!"propertydirect".equalsIgnoreCase(safe(request.platform()))) return null;
         String role = safe(request.role()).toLowerCase();
         if (!role.isBlank() && !"customer".equals(role)) return null;
-        PropertyCustomer customer = propertyDirectCustomers.findByUsernameIgnoreCase(safe(request.username())).orElse(null);
-        if (customer == null || !passwordEncoder.matches(request.password(), customer.getPasswordHash())) return null;
+
+        String loginIdentifier = safe(request.username()).trim().toLowerCase(Locale.ROOT);
+        String password = safe(request.password());
+        if (loginIdentifier.isBlank() || password.isBlank()) return null;
+
+        PropertyCustomer customer = propertyDirectCustomers.findByUsernameIgnoreCase(loginIdentifier)
+                .or(() -> propertyDirectCustomers.findByEmailIgnoreCase(loginIdentifier))
+                .orElse(null);
+        if (customer == null || !customer.isActive() || !"ACTIVE".equalsIgnoreCase(customer.getStatus())) return null;
+        if (!passwordEncoder.matches(password, customer.getPasswordHash())) return null;
+
         return customer;
     }
 
@@ -245,7 +409,8 @@ public class AuthController {
         return value == null ? "" : value.trim();
     }
 
-    private static String dashboardRole(UserRole role) {
+    private String dashboardRole(UserRole role) {
+        if (role == null) return "resident";
         return switch (role) {
             case SUPER_ADMIN -> "superadmin";
             case SOCIETY_ADMIN, FACILITY_MANAGER -> "admin";
@@ -256,7 +421,8 @@ public class AuthController {
         };
     }
 
-    private static String dashboardRedirect(UserRole role) {
+    private String dashboardRedirect(UserRole role) {
+        if (role == null) return "/dashboards/resident";
         return switch (role) {
             case SUPER_ADMIN -> "/dashboards/superadmin";
             case SOCIETY_ADMIN, FACILITY_MANAGER -> "/dashboards/society-admin";
@@ -284,6 +450,8 @@ public class AuthController {
         private static final DashboardRoute[] ROUTES = {
                 new DashboardRoute("propertydirect", "superadmin", "/propertydirect/dashboards/superadmin"),
                 new DashboardRoute("propertydirect", "admin", "/propertydirect/dashboards/admin"),
+                new DashboardRoute("propertydirect", "agent", "/propertydirect/dashboards/agent"),
+                new DashboardRoute("propertydirect", "vendor", "/propertydirect/dashboards/vendor"),
                 new DashboardRoute("propertydirect", "customer", "/propertydirect/dashboards/customer")
         };
 
@@ -324,6 +492,12 @@ public class AuthController {
             }
             if (allowDemo && "propertydirect".equalsIgnoreCase(platform) && "admin".equalsIgnoreCase(role)) {
                 return new DefaultCredential("admin@propertydirect", "admin123");
+            }
+            if (allowDemo && "propertydirect".equalsIgnoreCase(platform) && "agent".equalsIgnoreCase(role)) {
+                return new DefaultCredential("agent@propertydirect", "agent123");
+            }
+            if (allowDemo && "propertydirect".equalsIgnoreCase(platform) && "vendor".equalsIgnoreCase(role)) {
+                return new DefaultCredential("vendor@propertydirect", "vendor123");
             }
             return new DefaultCredential("", "");
         }

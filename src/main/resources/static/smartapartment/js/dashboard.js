@@ -666,6 +666,7 @@ async function loadSocietyBackendData() {
         });
         fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,a.unitNo);c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="residents"]', [...residents,...teamItems], (x,c,s) => { const r=document.createElement("tr");const team=Boolean(x.role);c(r,x.name);c(r,[x.phone,x.email].filter(Boolean).join(" · ")||"—");c(r,team?(x.employeeId||"—"):(x.unitNo||"—"));c(r,team?x.role.replaceAll("_"," "):x.residentType);c(r,team?([x.designation,x.workShift].filter(Boolean).join(" · ")||"Society team"):(x.vehicleNumber?`Vehicle: ${x.vehicleNumber}`:"Resident access"));s(r,x.accountLocked?"LOCKED":"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
+        if (typeof window.renderSmartApartmentResidents === "function") window.renderSmartApartmentResidents();
         fill('table[data-table="billing"]', bills, (b,c,s) => {
             const r=document.createElement("tr");
             r.dataset.recordId=b.id;
@@ -1660,13 +1661,13 @@ function openPanel(panel, updateHistory = true) {
     });
     document.querySelectorAll("[data-view]").forEach(view => {
         const shouldHide = view !== selectedView;
-        view.classList.toggle("hidden", shouldHide);
-        view.classList.toggle("d-none", shouldHide);
         if (shouldHide) {
-            view.style.display = "none";
+            view.style.setProperty("display", "none", "important");
         } else {
-            view.style.display = "";
+            view.style.setProperty("display", "block", "important");
         }
+        view.classList.toggle("d-none", shouldHide);
+        view.classList.toggle("hidden", shouldHide);
     });
     // Security uses its own heading id; keep it synchronized with the panel just like every other dashboard.
     const title = document.getElementById("title") || document.getElementById("securityTitle");
@@ -3287,7 +3288,45 @@ function openActionModal(action, button) {
     const isResidentComplaintForm = isComplaintForm && dashboardRole === "resident";
     const isDetailedWorkflow = fields.length >= 7;
     modal.querySelector(".dashboard-action-card")?.classList.toggle("flat-detail-card", isFlatForm || isPeopleForm || isComplaintForm || isDetailedWorkflow);
-    modal.querySelector("#dashboardActionFields").innerHTML = fields
+    
+    let linkBanner = "";
+    if (tableName === "residents" && action === "add") {
+        linkBanner = `
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 240px;">
+                        <strong style="display: block; font-size: 0.92rem; color: #1e40af; margin-bottom: 3px;">
+                            <i class="fa-solid fa-link" style="margin-right: 6px; color: #2563eb;"></i> Generate Resident Self-Registration Link
+                        </strong>
+                        <span style="font-size: 0.82rem; color: #475569; line-height: 1.4; display: block;">
+                            Generate a unique single-person link. Send it to the resident so they can update their details by themselves.
+                        </span>
+                    </div>
+                    <button type="button" id="btnGenerateResidentLink" onclick="window.generateResidentSelfLink()" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 0.84rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                        <i class="fa-solid fa-qrcode"></i> Generate Link
+                    </button>
+                </div>
+                <div id="residentSelfLinkOutput" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid #93c5fd;">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: #1e3a8a; display: block; margin-bottom: 6px;">Shareable Single-Person Resident Link:</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="generatedResidentUrlInput" readonly style="flex: 1; background: #ffffff; border: 1px solid #93c5fd; padding: 9px 12px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; color: #0f172a;" value="">
+                        <button type="button" onclick="window.copyGeneratedResidentUrl()" style="background: #0f172a; color: #ffffff; border: none; padding: 9px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            <i class="fa-solid fa-copy"></i> Copy Link
+                        </button>
+                        <a id="previewGeneratedResidentUrl" href="#" target="_blank" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 9px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; white-space: nowrap;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+                        </a>
+                    </div>
+                    <small style="display: block; color: #1e40af; font-size: 0.76rem; margin-top: 6px; font-weight: 600;">
+                        ✓ This link belongs to ONE person only. Submitted details will auto-appear in your Residents table.
+                    </small>
+                </div>
+            </div>
+            <div class="flat-form-section"><strong>Or fill details directly below:</strong><span>Manual Admin Creation</span></div>
+        `;
+    }
+
+    modal.querySelector("#dashboardActionFields").innerHTML = linkBanner + fields
         .map((field, index) => {
             const section = isFlatForm && index === 0 ? '<div class="flat-form-section"><strong>Property details</strong><span>Identify and classify the flat</span></div>'
                 : isFlatForm && index === 6 ? '<div class="flat-form-section"><strong>Owner contact</strong><span>Primary ownership and communication details</span></div>'
@@ -3333,7 +3372,6 @@ function openActionModal(action, button) {
 function actionInputMarkup(action, field, index, value = "") {
     let labelText = field;
     let inputHtml = `<input data-action-input="${index}" placeholder="${field}" value="${escapeAttribute(value)}">`;
-
     if (action === "amenity-booking" && index === 0) {
         const options = (window.societyAmenities || []).map(amenity => `<option value="${escapeAttribute(amenity.id)}">${escapeAttribute(amenity.name)} · Rs. ${escapeAttribute(amenity.bookingFee ?? 0)}</option>`).join("");
         inputHtml = `<select data-action-input="${index}"><option value="">Select amenity</option>${options}</select>`;
@@ -4004,6 +4042,20 @@ function performAction(action, button, values = []) {
             const payload={name:values[0],email:values[1],phone:values[2],unitNo:values[3],residentType:values[4]||"TENANT",moveInDate:values[5]||null,vehicleNumber:values[6]||"",address:values[7]||"",emergencyContactName:values[8]||"",emergencyContactPhone:values[9]||"",notes:values[10]||"",temporaryPassword:values[11]};
             mutateSociety("society/residents","POST",payload).then(()=>{loadSocietyBackendData();showToast("Resident account created");}).catch(e=>showToast(e.message));
             appendDashboardActivity(`Resident added: ${payload.name}`);
+            const newRes = {
+                id: 'RES_' + Date.now(),
+                name: payload.name,
+                phone: payload.phone,
+                email: payload.email,
+                unitNo: payload.unitNo,
+                type: payload.residentType,
+                status: 'Active',
+                registeredAt: new Date().toISOString()
+            };
+            let existingList = JSON.parse(localStorage.getItem('smartapartment_residents') || '[]');
+            existingList.unshift(newRes);
+            localStorage.setItem('smartapartment_residents', JSON.stringify(existingList));
+            if (typeof window.renderSmartApartmentResidents === 'function') window.renderSmartApartmentResidents();
             return {title:"Resident account created",lines:[`<strong>Name:</strong> ${payload.name}`,`<strong>Flat:</strong> ${payload.unitNo}`,`<strong>Type:</strong> ${payload.residentType}`,`<strong>Login:</strong> ${payload.email}`]};
         }
         if (dashboardRole === "admin" && ["security-users","maintenance-users","accountant-users"].includes(table)) {
@@ -4196,6 +4248,12 @@ document.querySelectorAll("[data-panel]").forEach(button => {
 });
 
 document.addEventListener("click", event => {
+    const panelBtn = event.target.closest("[data-panel]");
+    if (panelBtn && panelBtn.dataset.panel) {
+        event.preventDefault();
+        openPanel(panelBtn.dataset.panel);
+        return;
+    }
     const panelTile = event.target.closest("[data-category-panel]");
     if (panelTile) {
         openPanel(panelTile.dataset.categoryPanel);
@@ -4314,6 +4372,73 @@ document.getElementById("savePlanBtn")?.addEventListener("click", async () => {
     }
 });
 
+window.generateResidentSelfLink = function() {
+    const token = "RES_" + Date.now().toString(36).toUpperCase() + "_" + Math.floor(Math.random() * 1000);
+    const fullUrl = `${window.location.origin}/resident/update-details?token=${token}`;
+    const urlInput = document.getElementById("generatedResidentUrlInput");
+    const previewLink = document.getElementById("previewGeneratedResidentUrl");
+    const outputContainer = document.getElementById("residentSelfLinkOutput");
+    
+    if (urlInput) urlInput.value = fullUrl;
+    if (previewLink) previewLink.href = fullUrl;
+    if (outputContainer) outputContainer.style.display = "block";
+};
+
+window.copyGeneratedResidentUrl = function() {
+    const urlInput = document.getElementById("generatedResidentUrlInput");
+    if (!urlInput || !urlInput.value) return;
+    urlInput.select();
+    try {
+        navigator.clipboard.writeText(urlInput.value).then(() => {
+            showToast("✓ Single-person resident link copied to clipboard!");
+        }).catch(() => {
+            document.execCommand("copy");
+            showToast("✓ Link copied to clipboard!");
+        });
+    } catch (e) {
+        document.execCommand("copy");
+        showToast("✓ Link copied to clipboard!");
+    }
+};
+
+window.renderSmartApartmentResidents = function() {
+    const tbody = document.querySelector('[data-table="residents"] tbody');
+    if (!tbody) return;
+    const residents = JSON.parse(localStorage.getItem("smartapartment_residents") || "[]");
+    if (!Array.isArray(residents) || residents.length === 0) return;
+
+    residents.forEach(res => {
+        const tokenAttr = res.token || res.id;
+        const resName = (res.name || 'Resident').trim();
+        const resEmail = (res.email || '').trim().toLowerCase();
+        
+        // Check if already rendered by token or name/email match
+        let existingRow = tbody.querySelector(`tr[data-resident-token="${tokenAttr}"]`);
+        if (!existingRow) {
+            const allRows = [...tbody.querySelectorAll("tr")];
+            const duplicate = allRows.some(row => {
+                const text = row.textContent.toLowerCase();
+                return (resName && text.includes(resName.toLowerCase())) || (resEmail && text.includes(resEmail));
+            });
+            if (duplicate) return;
+
+            const contactStr = [res.phone, res.email].filter(Boolean).join(" · ") || "N/A";
+            const tr = document.createElement("tr");
+            tr.dataset.residentToken = tokenAttr;
+            tr.innerHTML = `
+                <td><strong>${escapeAttribute(resName)}</strong></td>
+                <td>${escapeAttribute(contactStr)}</td>
+                <td><span class="badge bg-light text-dark border">${escapeAttribute(res.unitNo || 'Unit')}</span></td>
+                <td>${escapeAttribute(res.type || 'TENANT')}</td>
+                <td><span class="small text-muted"><i class="fa-solid fa-link text-primary me-1"></i>${res.vehicleNo ? 'Vehicle: ' + escapeAttribute(res.vehicleNo) : 'Self-Registered'}</span></td>
+                <td><span class="badge bg-success status active">ACTIVE</span></td>
+                <td><button class="btn btn-sm btn-outline-primary" data-action="notify">Notify</button></td>
+            `;
+            tbody.insertBefore(tr, tbody.firstChild);
+        }
+    });
+};
+
 const initialPanel = location.hash.replace("#", "");
 openPanel(document.querySelector(`[data-view="${initialPanel}"]`) ? initialPanel : "overview", false);
 animateStats();
@@ -4337,5 +4462,14 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => console.error("Error fetching overview stats:", err));
     }
-
+    window.renderSmartApartmentResidents();
 });
+
+document.addEventListener("input", (e) => {
+    if (!e.target) return;
+    const target = e.target;
+    if (target.type === "tel" || (target.name && /phone|mobile|contact/i.test(target.name)) || (target.id && /phone|mobile|contact/i.test(target.id))) {
+        target.value = target.value.replace(/[^0-9]/g, "");
+    }
+});
+

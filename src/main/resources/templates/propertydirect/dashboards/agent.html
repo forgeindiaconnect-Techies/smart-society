@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent & Broker Portal · PropertyDirect</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
+  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
+  <style>
+    :root {
+      --pd-navy: #0a1834;
+      --pd-navy-light: #172a4d;
+      --pd-blue: #2563eb;
+      --pd-blue-hover: #1d4ed8;
+      --pd-gold: #d97706;
+      --pd-gold-soft: rgba(217, 119, 6, 0.12);
+      --pd-bg: #f8fafc;
+      --pd-card-bg: #ffffff;
+      --pd-border: #e2e8f0;
+      --pd-text-primary: #0f172a;
+      --pd-text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+      background: var(--pd-bg) !important;
+      color: var(--pd-text-primary) !important;
+      overflow-x: hidden !important;
+    }
+
+    .agent-shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR STYLING */
+    .agent-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 260px;
+      padding: 24px 18px 24px;
+      background: linear-gradient(180deg, var(--pd-navy) 0%, var(--pd-navy-light) 100%);
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 1000;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 4px 0 24px rgba(10, 24, 52, 0.15);
+    }
+
+    .agent-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+    }
+
+    .agent-brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    }
+
+    .agent-brand-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .agent-brand-text span {
+      color: #60a5fa;
+    }
+
+    .agent-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 20px;
+      flex: 1;
+    }
+
+    .agent-nav button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .agent-nav button:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .agent-nav button.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .agent-user-badge {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agent-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #3b82f6;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    /* MAIN CONTENT */
+    .agent-main {
+      margin-left: 260px;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+    }
+
+    .dash-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .dash-panel.hidden {
+      display: none !important;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: var(--pd-card-bg);
+      border: 1px solid var(--pd-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+
+    .stat-card .label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--pd-text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-card .val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--pd-text-primary);
+    }
+
+    .dash-card {
+      background: var(--pd-card-bg);
+      border: 1px solid var(--pd-border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th, .data-table td {
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 0.86rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .data-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .status-badge.active { background: #dcfce7; color: #166534; }
+    .status-badge.pending { background: #fef3c7; color: #92400e; }
+    .status-badge.closed { background: #e2e8f0; color: #475569; }
+
+    .btn-primary {
+      padding: 10px 18px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="agent-shell">
+    <!-- Agent Sidebar -->
+    <aside class="agent-sidebar">
+      <div>
+        <a href="/propertydirect" class="agent-brand">
+          <div class="agent-brand-icon">PD</div>
+          <div class="agent-brand-text">Property<span>Direct</span></div>
+        </a>
+
+        <nav class="agent-nav">
+          <button class="active" data-panel="overview" onclick="switchTab('overview')">
+            <span></span> Dashboard Overview
+          </button>
+          <button data-panel="listings" onclick="switchTab('listings')">
+            <span></span> My Property Listings
+          </button>
+          <button data-panel="leads" onclick="switchTab('leads')">
+            <span></span> Client Leads & Inquiries
+          </button>
+          <button data-panel="tours" onclick="switchTab('tours')">
+            <span></span> Scheduled Site Tours
+          </button>
+          <button data-panel="earnings" onclick="switchTab('earnings')">
+            <span></span> Commissions & Earnings
+          </button>
+          <button data-panel="profile" onclick="switchTab('profile')">
+            <span>️</span> Agent Profile & RERA
+          </button>
+        </nav>
+      </div>
+
+      <div class="agent-user-badge">
+        <div class="agent-avatar">AG</div>
+        <div>
+          <strong style="display: block; font-size: 0.88rem; color: #fff; font-weight: 800;">Agent / Broker</strong>
+          <span style="font-size: 0.75rem; color: #94a3b8;">agent@propertydirect.in</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="agent-main">
+      <!-- Top Header -->
+      <header class="agent-header">
+        <div>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Agent & Broker Portal</h1>
+          <p style="font-size: 0.88rem; color: #64748b; margin: 0;">Manage your active property listings, client tour schedules, and commission earnings.</p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span class="status-badge active" style="font-size: 0.8rem; padding: 6px 14px;">● Verified RERA Agent</span>
+          <button class="btn-primary" onclick="alert('Add New Property Listing Form Opened!')">+ Add New Listing</button>
+        </div>
+      </header>
+
+      <!-- Panel 1: Overview -->
+      <section class="dash-panel" data-view="overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">Assigned Listings</div>
+            <div class="val">14 Active</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Client Leads</div>
+            <div class="val">28 Enquiries</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Scheduled Tours</div>
+            <div class="val">6 Visits</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total Commission Earned</div>
+            <div class="val" style="color: #16a34a;">₹1.85 Lakhs</div>
+          </div>
+        </div>
+
+        <!-- Recent Client Enquiries Card -->
+        <div class="dash-card">
+          <div class="card-head">
+            <h3> Active Property Enquiries & Leads</h3>
+            <button style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;" onclick="switchTab('leads')">View All Leads ›</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Lead Ref</th>
+                <th>Client Name & Contact</th>
+                <th>Interested Property</th>
+                <th>Budget Range</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>#LD-9041</strong></td>
+                <td><strong>Rohan Sharma</strong><br><small style="color: #64748b;">+91 98112 34567 · rohan@gmail.com</small></td>
+                <td><strong>Prestige Green Gables (3 BHK)</strong><br><small style="color: #64748b;">Kadubeesanahalli, Bengaluru</small></td>
+                <td>₹1.65 Cr - ₹1.80 Cr</td>
+                <td><span class="status-badge pending">Tour Scheduled</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Contact Client Initiated!')"> Call Lead</button></td>
+              </tr>
+              <tr>
+                <td><strong>#LD-9040</strong></td>
+                <td><strong>Priya Venkatesh</strong><br><small style="color: #64748b;">+91 98450 12345 · priya@tech.io</small></td>
+                <td><strong>Sobha Dream Acres (2 BHK)</strong><br><small style="color: #64748b;">Balagere, Panathur Road</small></td>
+                <td>₹95 Lakhs - ₹1.10 Cr</td>
+                <td><span class="status-badge active">Negotiation</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Contact Client Initiated!')"> Call Lead</button></td>
+              </tr>
+              <tr>
+                <td><strong>#LD-9039</strong></td>
+                <td><strong>Anil Kulkarni</strong><br><small style="color: #64748b;">+91 97312 88990 · anil.k@infra.com</small></td>
+                <td><strong>Brigade Utopia (3 BHK Luxury)</strong><br><small style="color: #64748b;">Varthur Road, Bengaluru</small></td>
+                <td>₹1.90 Cr</td>
+                <td><span class="status-badge closed">Deal Closed</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Commission Invoice Generated!')"> View Invoice</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 2: Listings -->
+      <section class="dash-panel hidden" data-view="listings">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3> Managed Property Listings</h3>
+            <button class="btn-primary" onclick="alert('New Listing Wizard Opened!')">+ Create New Listing</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Property ID</th>
+                <th>Title & Location</th>
+                <th>Type / BHK</th>
+                <th>Asking Price</th>
+                <th>RERA Approval</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PD-PROP-1082</strong></td>
+                <td><strong>Prestige Green Gables</strong><br><small style="color: #64748b;">Kadubeesanahalli, Outer Ring Road</small></td>
+                <td>3 BHK Apartment</td>
+                <td>₹1.72 Cr</td>
+                <td><span style="color: #16a34a; font-weight: 700;"> PRM/KA/RERA/1251</span></td>
+                <td><span class="status-badge active">● Live on Portal</span></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px;" onclick="alert('Edit Listing Details')">️ Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>PD-PROP-1081</strong></td>
+                <td><strong>Sobha Dream Acres</strong><br><small style="color: #64748b;">Balagere, Panathur Road</small></td>
+                <td>2 BHK Luxury</td>
+                <td>₹1.05 Cr</td>
+                <td><span style="color: #16a34a; font-weight: 700;"> PRM/KA/RERA/0922</span></td>
+                <td><span class="status-badge active">● Live on Portal</span></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px;" onclick="alert('Edit Listing Details')">️ Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 3: Leads -->
+      <section class="dash-panel hidden" data-view="leads">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3> All Client Enquiries & Lead Pipeline</h3>
+            <input type="text" placeholder=" Search leads..." style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.84rem;">
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Lead ID</th>
+                <th>Client Name</th>
+                <th>Contact Phone</th>
+                <th>Preference</th>
+                <th>Assigned Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>LD-9041</strong></td>
+                <td>Rohan Sharma</td>
+                <td>+91 98112 34567</td>
+                <td>3 BHK Buy (Kadubeesanahalli)</td>
+                <td>Today, 10:30 AM</td>
+                <td><span class="status-badge pending">Tour Scheduled</span></td>
+              </tr>
+              <tr>
+                <td><strong>LD-9040</strong></td>
+                <td>Priya Venkatesh</td>
+                <td>+91 98450 12345</td>
+                <td>2 BHK Buy (Panathur Road)</td>
+                <td>Yesterday</td>
+                <td><span class="status-badge active">In Followup</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 4: Tours -->
+      <section class="dash-panel hidden" data-view="tours">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3> Scheduled Property Site Tours</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tour ID</th>
+                <th>Property</th>
+                <th>Client Name</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TOUR-4021</strong></td>
+                <td>Prestige Green Gables (3 BHK)</td>
+                <td>Rohan Sharma (+91 98112 34567)</td>
+                <td><strong>Tomorrow, 11:00 AM</strong></td>
+                <td><span class="status-badge pending">Confirmed</span></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px;" onclick="alert('Tour Completed!')"> Mark Done</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 5: Earnings -->
+      <section class="dash-panel hidden" data-view="earnings">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3> Brokerage Commission & Payout History</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Payout Ref</th>
+                <th>Property Transaction</th>
+                <th>Deal Value</th>
+                <th>Commission Rate</th>
+                <th>Earned Amount</th>
+                <th>Payout Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TXN-8821</strong></td>
+                <td>Brigade Utopia (3 BHK Luxury)</td>
+                <td>₹1.90 Cr</td>
+                <td>1.0%</td>
+                <td><strong>₹1,90,000</strong></td>
+                <td><span class="status-badge active">Paid to Bank</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 6: Profile -->
+      <section class="dash-panel hidden" data-view="profile">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3>️ Agent Profile & RERA License Details</h3>
+            <button class="btn-primary" onclick="alert('Agent Profile Saved!')">Save Changes</button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Agent Name</label>
+              <input type="text" value="PropertyDirect Partner Agent" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">RERA License Number</label>
+              <input type="text" value="PRM/KA/RERA/1251/310/AG/2026" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Official Email</label>
+              <input type="email" value="agent@propertydirect.in" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Contact Phone</label>
+              <input type="tel" value="+91 98765 00112" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function switchTab(panelId) {
+      document.querySelectorAll('.dash-panel').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+      document.querySelectorAll('.agent-nav button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const activePanel = document.querySelector(`.dash-panel[data-view="${panelId}"]`);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      const activeBtn = document.querySelector(`.agent-nav button[data-panel="${panelId}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

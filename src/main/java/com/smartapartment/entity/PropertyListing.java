@@ -8,33 +8,61 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter @Entity @Table(name = "property_listings")
+@Getter @Setter @Entity @Table(name = "properties")
 public class PropertyListing extends BaseEntity {
-    private Long customerId;
-    @JsonIgnore @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", foreignKey = @ForeignKey(name = "fk_property_owner"))
-    private PropertyCustomer owner;
+    // 1. Primary Key inherited from BaseEntity: id
+    
+    // 2-3. Title & Description
     private String title;
     @Column(length = 4000) private String description;
-    private String society;
-    private String locality;
+    
+    // 4-5. Categorization
+    @Column(name = "property_type") private String propertyType = "APARTMENT";
+    @Column(name = "listing_type") private String listingType = "RENT";
+    
+    // 6-9. Financials & Core Dimensions
+    private BigDecimal price;
+    private Integer bedrooms = 2;
+    private Integer bathrooms = 2;
+    private Integer area = 1200; // sqft
+    
+    // 10-12. Detailed Area Specs
+    @Column(name = "carpet_area") private Integer carpetArea;
+    @Column(name = "built_up_area") private Integer builtUpArea;
+    @Column(name = "plot_area") private Integer plotArea;
+    
+    // 13-18. Structure & Condition
+    private Integer floor;
+    @Column(name = "total_floors") private Integer totalFloors;
+    private String facing;
+    private String furnishing;
+    @Column(name = "construction_status") private String constructionStatus = "Ready to Move";
+    @Column(name = "property_age") private String propertyAge = "1-3 Years";
+    
+    // 19-24. Location Hierarchy
     @Column(length = 1000) private String address;
     private String city;
+    private String state;
     private String pincode;
-    private String listingType;
-    private String propertyType = "APARTMENT";
-    private BigDecimal price;
-    private BigDecimal deposit;
-    private BigDecimal maintenance;
-    private Integer areaSqft;
-    private String bhk;
-    private Integer bathrooms;
-    private String furnishing;
-    private String parking;
-    private LocalDate availableFrom;
     private Double latitude;
     private Double longitude;
-    private String verificationStatus = "PENDING";
+    
+    // 25-26. Ownership & Agent Links
+    @Column(name = "owner_id") private Long ownerId;
+    @Column(name = "agent_id") private Long agentId;
+    
+    // 27-28. Statuses
+    private String status = "PUBLISHED"; // Pending, Published, Rejected, Suspended, Sold, Rented, Expired
+    @Column(name = "verification_status") private String verificationStatus = "VERIFIED"; // Pending, Verified, Rejected
+    
+    // Additional fields for application rendering
+    private String society;
+    private String locality;
+    private BigDecimal deposit;
+    private BigDecimal maintenance;
+    private String bhk;
+    private String parking;
+    private LocalDate availableFrom;
     private String reviewedBy;
     private LocalDateTime reviewedAt;
     @Column(length = 2000) private String reviewNote;
@@ -42,6 +70,12 @@ public class PropertyListing extends BaseEntity {
     private long viewCount;
     private String imageUrl;
     @Lob @Column(columnDefinition = "CLOB") private String imageUrls;
-    @Column(length = 2000) private String amenities;
-    @Column(length = 2000) private String notes;
+    @Column(length = 2000) String amenities;
+    @Column(length = 2000) String notes;
+
+    public Integer getAreaSqft() { return area; }
+    public void setAreaSqft(Integer areaSqft) { this.area = areaSqft; }
+    public Long getCustomerId() { return ownerId; }
+    public void setCustomerId(Long customerId) { this.ownerId = customerId; }
+    public void setOwner(PropertyCustomer customer) { if (customer != null) this.ownerId = customer.getId(); }
 }

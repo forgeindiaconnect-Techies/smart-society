@@ -36,7 +36,6 @@
                 <a href="#contact">Contact</a>
             </div>
             <a class="propertydirect-pill" href="/propertydirect"><span aria-hidden="true">⌂</span> PropertyDirect</a>
-            <button class="electrical-switch-wrapper header-theme-toggle" id="electricalSwitchFixed" type="button" aria-label="Switch to dark mode" aria-pressed="false"></button>
             <button class="header-login" type="button" data-action="dashboard-login">Login</button>
         </nav>
         <button class="menu-button" id="menuButton" type="button" aria-label="Menu" aria-controls="nav" aria-expanded="false">
@@ -233,7 +232,7 @@
                     <label data-professional-field hidden>Your Designation<span>Your responsibility in the organization</span><select name="designation"><option value="">Select designation</option><option>Founder / Owner</option><option>Property Manager</option><option>Facility Manager</option><option>Community Manager</option><option>Operations Manager</option><option>Consultant</option></select></label>
                     <label data-professional-field hidden>Societies Managed<span>Current community portfolio size</span><select name="portfolioSize"><option value="">Select portfolio size</option><option>Setting up my first society</option><option>1–5 societies</option><option>6–20 societies</option><option>More than 20 societies</option></select></label>
                     <label>Your Name<span>Primary workspace administrator</span><input name="name" placeholder="Enter your full name" minlength="2" maxlength="100" autocomplete="name" required></label>
-                    <label>Phone Number<span>Used for onboarding updates</span><input name="phone" type="tel" placeholder="+91 98765 43210" pattern="[+0-9 ]{10,18}" autocomplete="tel" required></label>
+                    <label>Phone Number<span>Enter exactly 10 digits</span><input name="phone" type="tel" inputmode="numeric" placeholder="9876543210" pattern="[0-9]{10}" minlength="10" maxlength="10" autocomplete="tel-national" required></label>
                     <label>Email Address<span>Your administrator login email</span><input name="email" type="email" placeholder="you@example.com" maxlength="160" autocomplete="email" required></label>
                     <label>City<span>Primary society location</span><select name="city" autocomplete="address-level2" required><option value="">Select city</option><option>Chennai</option><option>Bangalore</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Delhi NCR</option><option>Other</option></select></label>
                 </div>
@@ -317,7 +316,7 @@
                 <label>Admin Name<input id="societyAdminName" minlength="2" maxlength="100" autocomplete="name" required></label>
                 <label>Designation<select id="societyAdminDesignation" required><option value="">Select designation</option><option>President</option><option>Secretary</option><option>Treasurer</option><option>Committee Member</option><option>Society Manager</option><option>Facility Manager</option><option>Authorized Representative</option></select></label>
                 <label>Admin Email<input id="societyAdminEmail" type="email" maxlength="160" autocomplete="email" required></label>
-                <label>Phone Number<input id="societyPhone" type="tel" pattern="[+0-9 ]{10,18}" autocomplete="tel" required></label>
+                <label>Phone Number<input id="societyPhone" type="tel" inputmode="numeric" placeholder="9876543210" pattern="[0-9]{10}" minlength="10" maxlength="10" autocomplete="tel-national" required></label>
                 <label class="registration-wide">Password<div class="password-field"><input id="societyPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Minimum 8 characters" required><button id="toggleSocietyPassword" type="button" aria-label="Show password">Show</button></div><span class="password-guidance" id="passwordGuidance">Use 8+ characters with a number and symbol.</span></label>
             </div>
         </fieldset>
@@ -361,7 +360,6 @@
 </div>
 
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-<script src="/shared/js/theme.js?v=20260824-header-v1"></script>
 <script src="/smartapartment/js/landing.js?v=20260828-community-hero-v1"></script>
 <script src="/shared/js/required-fields.js?v=20260826-no-login-star-v5"></script>
 <script src="/smartapartment/js/app.js?v=20260827-login-guard-v2"></script>

@@ -165,12 +165,47 @@ function titleCasePlace(value) {
 }
 
 function readPublishedListings() {
+    let items = [];
     try {
-        return JSON.parse(localStorage.getItem(publishedListingsStorageKey) || "[]");
+        items = JSON.parse(localStorage.getItem(publishedListingsStorageKey) || "[]");
     } catch {
         localStorage.removeItem(publishedListingsStorageKey);
-        return [];
+        items = [];
     }
+
+    const keys = ["pd_inventory_state", "propertydirect_inventory_states"];
+    keys.forEach(k => {
+        try {
+            const stored = localStorage.getItem(k);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                for (const key in parsed) {
+                    const entry = parsed[key];
+                    if (entry && !entry.deleted && !entry.hidden && !entry.rejected && !entry.sold) {
+                        const existingIdx = items.findIndex(i => String(i.id).toLowerCase() === String(key).toLowerCase() || String(i.title).toLowerCase() === String(entry.title).toLowerCase());
+                        const formatted = {
+                            id: key,
+                            title: entry.title || "Luxury Property",
+                            price: entry.price || "₹1.45 Cr",
+                            locality: entry.address || "Anna Nagar, Chennai",
+                            city: "Chennai",
+                            image: entry.image || "/propertydirect/assets/images/property-1.jpg",
+                            video: entry.video || "https://www.w3schools.com/html/mov_bbb.mp4",
+                            type: entry.tier || "Featured",
+                            rent: Number(String(entry.price || "").replace(/[^\d]/g, "")) || 14500000
+                        };
+                        if (existingIdx >= 0) {
+                            items[existingIdx] = Object.assign({}, items[existingIdx], formatted);
+                        } else {
+                            items.unshift(formatted);
+                        }
+                    }
+                }
+            }
+        } catch(e) {}
+    });
+
+    return items;
 }
 
 function readCityOptions() {
@@ -226,6 +261,7 @@ function publishedApartments() {
         parking: item.parking || "Bike Parking Car Parking",
         apartmentType: item.apartmentType || (item.type === "Premium" ? "Gated Society" : "Owner Listed Apartment"),
         image: safeApartmentImage(item.image || item.imageUrl),
+        video: item.video || item.videoUrl || "",
         imageUrls: Array.isArray(item.imageUrls) ? item.imageUrls : [],
         bathrooms: item.bathrooms,
         address: item.address,
@@ -411,9 +447,13 @@ function renderApartments(items = filteredApartments()) {
         return;
     }
     results.innerHTML = items.map((apt, index) => {
-        const detailUrl = apt.id
-            ? `/propertydirect/apartment-detail?id=${encodeURIComponent(apt.id)}`
-            : `/propertydirect/apartment-detail?title=${encodeURIComponent(apt.title)}&price=${encodeURIComponent(money(apt.rent))}&location=${encodeURIComponent(`${apt.locality}, ${apt.city}`)}&bhk=${encodeURIComponent(apt.type)}&sqft=${encodeURIComponent(apt.sqft)}&image=${encodeURIComponent(apt.image)}&deposit=${encodeURIComponent(apt.deposit || '')}`;
+        const rawSlug = `${apt.type || "2-BHK"}-${apt.apartmentType || "apartment"}-for-${(apt.listingMode || "rent").toLowerCase()}-in-${apt.locality || "central"}-${apt.city || "chennai"}`
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+        const detailUrl = `/propertydirect/property/${rawSlug}?id=${encodeURIComponent(apt.id || (index+1))}&title=${encodeURIComponent(apt.title)}&price=${encodeURIComponent(money(apt.rent))}&location=${encodeURIComponent(`${apt.locality}, ${apt.city}`)}&bhk=${encodeURIComponent(apt.type)}&sqft=${encodeURIComponent(apt.sqft)}&image=${encodeURIComponent(apt.image)}`;
+        const bathroomsText = apt.bathrooms ? `${apt.bathrooms} Baths` : "2 Baths";
+        const ownerAgentLabel = apt.isPublished ? "Owner Listed" : "Verified Agent";
         return `
         <article class="apartment-card"
             data-apartment-title="${safeAttribute(apt.title)}"
@@ -427,36 +467,36 @@ function renderApartments(items = filteredApartments()) {
             data-apartment-furnishing="${safeAttribute(apt.furnishing)}"
             data-apartment-availability="${safeAttribute(apt.available)}"
             data-apartment-mode="${safeAttribute(apt.listingMode || activeSearchMode || "Rent")}">
-            <div class="apt-photo">
+            <div class="apt-photo" style="position: relative;">
                 <img src="${apt.image}" alt="${apt.title} at ${apt.society}">
-                <span>${apt.photo}</span>
+                <span>${apt.apartmentType || "Apartment"} · ${apt.available}</span>
+                <span class="verified-badge" style="position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.95); color: #ffffff; font-weight: 800; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(15,23,42,0.18); backdrop-filter: blur(4px);">✓ Verified Property</span>
+                ${apt.video ? `<button type="button" onclick="event.stopPropagation(); if (typeof playPropertyVideo === 'function') playPropertyVideo('${apt.video}', '${safeAttribute(apt.title)}')" style="position: absolute; bottom: 12px; right: 12px; background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 800; font-size: 0.76rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4); display: inline-flex; align-items: center; gap: 4px; z-index: 3;">▶ Play Video Tour</button>` : ''}
             </div>
             <div class="apt-body">
                 <div class="apt-title-row">
                     <div>
-                        <h2><a href="${detailUrl}">${apt.title} for Rent in ${apt.locality}</a></h2>
-                        <p class="apt-address">${apt.society}, ${apt.locality}, ${apt.city}</p>
+                        <h2><a href="${detailUrl}">${apt.title}</a></h2>
+                        <p class="apt-address">📍 ${apt.society}, ${apt.locality}, ${apt.city}</p>
                     </div>
-                    <button class="icon-action" data-action="shortlist"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>Shortlist</span></button>
+                    <button class="icon-action" data-action="shortlist" title="Save to Favourites"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>Save</span></button>
                 </div>
                 <div class="apt-price-grid">
-                    <article><span>Rent</span><strong>${money(apt.rent)}${apt.maintenance ? ` + ${money(apt.maintenance)}` : ""}</strong>${apt.maintenance ? "<small>maintenance</small>" : ""}</article>
-                    <article><span>Deposit</span><strong>${apt.deposit}</strong></article>
-                    <article><span>Built-up</span><strong>${apt.sqft}</strong></article>
+                    <article><span>Price</span><strong>${money(apt.rent)}</strong></article>
+                    <article><span>Area</span><strong>${apt.sqft}</strong></article>
+                    <article><span>BHK / Baths</span><strong>${apt.type} | ${bathroomsText}</strong></article>
                 </div>
                 <div class="apt-facts">
+                    <article><span>Type</span><strong>${apt.apartmentType || "Apartment"}</strong></article>
                     <article><span>Furnishing</span><strong>${apt.furnishing}</strong></article>
-                    <article><span>BHK Type</span><strong>${apt.type}</strong></article>
-                    <article><span>Preferred Tenant</span><strong>${apt.tenant}</strong></article>
-                    <article><span>Available From</span><strong>${apt.available}</strong></article>
+                    <article><span>Status</span><strong>${apt.available}</strong></article>
+                    <article><span>Listed by</span><strong>${ownerAgentLabel}</strong></article>
                 </div>
-                <p class="apt-nearby">Nearby: ${apt.nearby.join(" | ")}</p>
                 <div class="apt-actions">
                     <a class="primary" href="${detailUrl}">View Details</a>
-                    <button class="primary" data-action="owner">Get Owner Details</button>
+                    <button class="primary" data-action="owner">Get Details</button>
                     <button class="ghost" data-action="visit">Schedule Visit</button>
-                    <button class="ghost" data-action="photos">Request Photos</button>
-                    <button class="ghost" data-action="report">Report</button>
+                    <button class="ghost" data-action="shortlist">♡ Save</button>
                 </div>
             </div>
         </article>
@@ -582,6 +622,17 @@ function renderMapView() {
             leafletMapInstance.fitBounds(bounds, { padding: [40, 40] });
         }
         leafletMapInstance.invalidateSize();
+        
+        // Update nearby properties when user moves or zooms map
+        leafletMapInstance.on("moveend", () => {
+            const center = leafletMapInstance.getCenter();
+            const countEl = document.querySelector(".map-count");
+            if (countEl) {
+                countEl.textContent = `Showing properties near (${center.lat.toFixed(3)}, ${center.lng.toFixed(3)})`;
+            }
+            showToast("Map view updated: Showing nearby properties in viewport");
+        });
+
         setTimeout(() => { if (leafletMapInstance) leafletMapInstance.invalidateSize(); }, 250);
     }, 100);
 

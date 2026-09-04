@@ -122,17 +122,17 @@
                 <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
-                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
-                <a href="#monitoring" class="nav-link btn btn-link text-start text-decoration-none" data-panel="monitoring"><i class="fa-solid fa-chart-line me-2"></i> Apartment Command Watch</a>
-                <a href="#audit-logs" class="nav-link btn btn-link text-start text-decoration-none" data-panel="audit-logs"><i class="fa-solid fa-list-check me-2"></i> Granular Audit Logs</a>
-                <a href="#societies" class="nav-link btn btn-link text-start text-decoration-none" data-panel="societies"><i class="fa-solid fa-city me-2"></i> Societies</a>
-                <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Subscriptions</a>
-                <a href="#users" class="nav-link btn btn-link text-start text-decoration-none" data-panel="users"><i class="fa-solid fa-users me-2"></i> Users</a>
-                <a href="#analytics" class="nav-link btn btn-link text-start text-decoration-none" data-panel="analytics"><i class="fa-solid fa-chart-pie me-2"></i> Analytics</a>
-                <a href="#access-roles" class="nav-link btn btn-link text-start text-decoration-none" data-panel="access-roles"><i class="fa-solid fa-user-shield me-2"></i> Roles & Access</a>
-                <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
-                <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup"><i class="fa-solid fa-receipt me-2"></i> Subscription Payments</a>
-                <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview" onclick="openPanel('overview'); return false;"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#monitoring" class="nav-link btn btn-link text-start text-decoration-none" data-panel="monitoring" onclick="openPanel('monitoring'); return false;"><i class="fa-solid fa-chart-line me-2"></i> Apartment Command Watch</a>
+                <a href="#audit-logs" class="nav-link btn btn-link text-start text-decoration-none" data-panel="audit-logs" onclick="openPanel('audit-logs'); return false;"><i class="fa-solid fa-list-check me-2"></i> Granular Audit Logs</a>
+                <a href="#societies" class="nav-link btn btn-link text-start text-decoration-none" data-panel="societies" onclick="openPanel('societies'); return false;"><i class="fa-solid fa-city me-2"></i> Societies</a>
+                <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions" onclick="openPanel('subscriptions'); return false;"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Subscriptions</a>
+                <a href="#users" class="nav-link btn btn-link text-start text-decoration-none" data-panel="users" onclick="openPanel('users'); return false;"><i class="fa-solid fa-users me-2"></i> Users</a>
+                <a href="#analytics" class="nav-link btn btn-link text-start text-decoration-none" data-panel="analytics" onclick="openPanel('analytics'); return false;"><i class="fa-solid fa-chart-pie me-2"></i> Analytics</a>
+                <a href="#access-roles" class="nav-link btn btn-link text-start text-decoration-none" data-panel="access-roles" onclick="openPanel('access-roles'); return false;"><i class="fa-solid fa-user-shield me-2"></i> Roles & Access</a>
+                <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data" onclick="openPanel('privacy-data'); return false;"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
+                <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup" onclick="openPanel('finance-setup'); return false;"><i class="fa-solid fa-receipt me-2"></i> Subscription Payments</a>
+                <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings" onclick="openPanel('settings'); return false;"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
                 <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">

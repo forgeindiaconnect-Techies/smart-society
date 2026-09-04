@@ -415,12 +415,18 @@ function setDashboardAuthMode(mode) {
 function inferPropertyDirectRole(username) {
     const value = String(username || "").toLowerCase();
     if (value.includes("superadmin")) return "superadmin";
-    if (value.includes("admin")) return "admin";
+    if (value.includes("agent")) return "agent";
+    if (value.includes("vendor")) return "vendor";
+    if (value.startsWith("admin") || value.includes("admin@")) return "admin";
     return pendingDashboardLogin?.role || "customer";
 }
 
 function propertyDirectDashboardTarget(role) {
-    return `/propertydirect/dashboards/${role === "superadmin" ? "superadmin" : role === "admin" ? "admin" : "customer"}`;
+    if (role === "superadmin") return "/propertydirect/dashboards/superadmin";
+    if (role === "admin") return "/propertydirect/dashboards/admin";
+    if (role === "agent") return "/propertydirect/dashboards/agent";
+    if (role === "vendor") return "/propertydirect/dashboards/vendor";
+    return "/propertydirect/dashboards/customer";
 }
 
 async function submitDashboardCredentials() {

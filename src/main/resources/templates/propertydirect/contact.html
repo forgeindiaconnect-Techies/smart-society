@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact PropertyDirect</title>
+  <link rel="stylesheet" href="/shared/css/typography.css">
+  <style>
+    *{box-sizing:border-box} body{margin:0;color:#102a43;background:#f6f9fe;font-family:var(--app-font-family,Arial,sans-serif)}
+    .topbar{height:72px;background:rgba(255,255,255,.96);border-bottom:1px solid #e3eaf5;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,calc((100% - 1180px)/2));position:sticky;top:0;z-index:5}.brand{font-size:1.25rem;font-weight:800;color:#102a43;text-decoration:none}.brand span{color:#2563eb}.back{color:#2563eb;font-weight:700;text-decoration:none}
+    main{width:min(1180px,calc(100% - 40px));margin:0 auto;padding:68px 0}.eyebrow{margin:0 0 10px;color:#2563eb;font-size:.8rem;font-weight:800;letter-spacing:.11em}.hero{max-width:650px}.hero h1{margin:0;color:#102a43;font-size:clamp(2rem,4vw,3.4rem);line-height:1.08}.hero p{color:#58708f;font-size:1.03rem;line-height:1.7}
+    .grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:28px;margin-top:38px}.details,.form-card{background:#fff;border:1px solid #e1eaf5;border-radius:18px;padding:30px;box-shadow:0 16px 42px rgba(31,68,122,.08)}.details h2,.form-card h2{margin:0 0 18px;font-size:1.25rem}.details a{display:flex;gap:12px;padding:16px 0;color:#244260;text-decoration:none;border-bottom:1px solid #edf1f7}.details a:last-child{border:0}.details strong{display:block;color:#102a43}.details span{font-size:.9rem;color:#6b7f99}
+    form{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:grid;gap:7px;color:#263d58;font-size:.84rem;font-weight:700}.field.full{grid-column:1/-1}input,textarea{width:100%;border:1px solid #cdd9ea;border-radius:10px;padding:12px;color:#102a43;font:inherit}textarea{min-height:118px;resize:vertical}input:focus,textarea:focus{outline:2px solid rgba(37,99,235,.18);border-color:#2563eb}.submit{grid-column:1/-1;border:0;border-radius:10px;padding:14px;background:#2563eb;color:#fff;font:700 .96rem inherit;cursor:pointer}.submit:disabled{opacity:.65}.status{grid-column:1/-1;margin:0;min-height:18px;color:#e11d48;font-size:.88rem}.status.success{color:#15803d}@media(max-width:720px){.grid{grid-template-columns:1fr}form{grid-template-columns:1fr}.topbar{padding:0 20px}main{padding-top:42px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/propertydirect">Property<span>Direct</span></a><a class="back" href="/propertydirect">← Back to home</a></header>
+  <main>
+    <section class="hero"><p class="eyebrow">PERSONAL SUPPORT</p><h1>Let’s find your next home.</h1><p>Ask about a listing, arrange a property visit, or get help from the PropertyDirect support team.</p></section>
+    <section class="grid">
+      <aside class="details"><h2>Reach us directly</h2><a href="mailto:support@propertydirect.in"><span>✉</span><span><strong>Email support</strong>support@propertydirect.in</span></a><a href="tel:+9118001232026"><span>☎</span><span><strong>Call support</strong>+91 1800 123 2026</span></a><a href="https://maps.google.com/?q=Bengaluru,India" target="_blank" rel="noopener"><span>⌖</span><span><strong>Service location</strong>Bengaluru, India</span></a></aside>
+      <section class="form-card"><h2>Send a message</h2><form id="contactForm"><label class="field">First name<input name="firstName" required maxlength="60"></label><label class="field">Last name<input name="lastName" required maxlength="60"></label><label class="field">Email address<input name="email" type="email" required maxlength="160"></label><label class="field">Phone number<input name="phone" required pattern="[0-9+() -]{7,20}"></label><label class="field full">Message<textarea name="message" required minlength="10" maxlength="2000" placeholder="Tell us how we can help."></textarea></label><p class="status" id="contactStatus" aria-live="polite"></p><button class="submit" type="submit">Send message</button></form></section>
+    </section>
+  </main>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', async (event) => {
+      event.preventDefault(); const form=event.currentTarget, button=form.querySelector('button'), status=document.getElementById('contactStatus');
+      status.className='status'; status.textContent=''; button.disabled=true; button.textContent='Sending…';
+      try { const response=await fetch('/api/property/contact-messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(form)))}); const result=await response.json(); if(!response.ok) throw new Error(result.message||'Unable to send your message.'); form.reset(); status.classList.add('success'); status.textContent=result.message||'Your message has been sent.'; } catch(error) { status.textContent=error.message||'Unable to send your message.'; } finally { button.disabled=false; button.textContent='Send message'; }
+    });
+  </script>
+</body>
+</html>

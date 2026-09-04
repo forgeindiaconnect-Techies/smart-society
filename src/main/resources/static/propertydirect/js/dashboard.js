@@ -55,6 +55,17 @@ const rolePanelRoutes = {
     customer: ["search", "shortlist", "visits", "listings"]
 };
 
+// PropertyDirect uses one light dashboard theme. This also removes any old
+// floating theme control that may remain in a browser tab from a cached page.
+function enforcePropertyDirectLightCanvas() {
+    document.documentElement.dataset.theme = "light";
+    document.documentElement.style.backgroundColor = "#ffffff";
+    document.body.style.backgroundColor = "#ffffff";
+    document.querySelectorAll(".fixed-electrical-switch, .electrical-switch-wrapper, .modern-theme-switch, [data-theme-toggle]")
+        .forEach(control => control.remove());
+}
+enforcePropertyDirectLightCanvas();
+
 function dashboardContentRoot() {
     return document.querySelector(".dash-main");
 }
@@ -2499,8 +2510,8 @@ function setupPropertyDirectSidebar(){
     const header=document.querySelector(".dash-header");
     if(!sidebar||!header||sidebar.dataset.parityReady)return;
     sidebar.dataset.parityReady="true";
-    const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close navigation");close.innerHTML="×";sidebar.appendChild(close);
-    const menu=document.createElement("button");menu.type="button";menu.className="dashboard-menu-toggle pd-sidebar-menu";menu.setAttribute("aria-label","Open navigation");menu.setAttribute("title","Open sidebar");menu.innerHTML="<span></span><span></span><span></span>";document.body.appendChild(menu);
+    const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close sidebar");close.textContent="×";sidebar.appendChild(close);
+    const menu=document.createElement("button");menu.type="button";menu.className="pd-sidebar-menu";menu.setAttribute("aria-label","Open sidebar");menu.setAttribute("title","Open sidebar");menu.textContent="☰ Menu";document.body.appendChild(menu);
     const closeSidebar=()=>{if(innerWidth<=900)document.body.classList.remove("sidebar-open");else document.body.classList.add("sidebar-collapsed")};
     const openSidebar=()=>{document.body.classList.remove("sidebar-collapsed");document.body.classList.add("sidebar-open")};
     close.addEventListener("click",closeSidebar);menu.addEventListener("click",openSidebar);

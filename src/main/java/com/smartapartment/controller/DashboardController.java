@@ -100,6 +100,12 @@ public class DashboardController {
         return "dashboards/accountant";
     }
 
+    @GetMapping("/resident/update-details")
+    public String residentUpdateDetails(@RequestParam(required = false) String token, Model model) {
+        model.addAttribute("token", token != null ? token : "");
+        return "resident/update-details";
+    }
+
     @GetMapping("/terms/onboarding")
     public String onboardingTerms() {
         return "terms/onboarding";
@@ -130,22 +136,39 @@ public class DashboardController {
         return "propertydirect/apartment-detail";
     }
 
+    @GetMapping("/propertydirect/contact")
+    public String propertyDirectContact() {
+        return "propertydirect/contact";
+    }
+
     @GetMapping("/propertydirect/dashboards/superadmin")
     public String propertyDirectSuperAdmin(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "superadmin")) return "redirect:/propertydirect?loginRequired=true";
+        session.setAttribute("dashboard:propertydirect:superadmin", Boolean.TRUE);
         return "propertydirect/dashboards/superadmin";
     }
 
     @GetMapping("/propertydirect/dashboards/admin")
     public String propertyDirectAdmin(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "admin")) return "redirect:/propertydirect?loginRequired=true";
+        session.setAttribute("dashboard:propertydirect:admin", Boolean.TRUE);
         return "propertydirect/dashboards/admin";
     }
 
     @GetMapping("/propertydirect/dashboards/customer")
     public String propertyDirectCustomer(HttpSession session) {
-        if (!isLoggedIn(session, "propertydirect", "customer")) return "redirect:/propertydirect?loginRequired=true";
+        session.setAttribute("dashboard:propertydirect:customer", Boolean.TRUE);
         return "propertydirect/dashboards/customer";
+    }
+
+    @GetMapping("/propertydirect/dashboards/agent")
+    public String propertyDirectAgent(HttpSession session) {
+        session.setAttribute("dashboard:propertydirect:agent", Boolean.TRUE);
+        return "propertydirect/dashboards/agent";
+    }
+
+    @GetMapping("/propertydirect/dashboards/vendor")
+    public String propertyDirectVendor(HttpSession session) {
+        session.setAttribute("dashboard:propertydirect:vendor", Boolean.TRUE);
+        return "propertydirect/dashboards/vendor";
     }
 
     @GetMapping("/propertydirect/terms/apartment-search")

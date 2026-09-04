@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /propertydirect/
+Allow: /propertydirect/property/
+Allow: /propertydirect/apartments
+
+Disallow: /propertydirect/dashboards/superadmin
+Disallow: /propertydirect/dashboards/admin
+Disallow: /propertydirect/dashboards/vendor
+
+Sitemap: https://propertydirect.in/sitemap.xml

@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -379,7 +380,7 @@ public class PlatformApiController {
             @NotBlank String city,
             @Email String contactEmail,
             String contactName,
-            String phone,
+            @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must contain exactly 10 digits") String phone,
             String website,
             String address,
             String state,
@@ -395,7 +396,7 @@ public class PlatformApiController {
             String adminName,
             String adminDesignation,
             @Email String adminEmail,
-            String adminPhone,
+            @Pattern(regexp = "^[0-9]{10}$", message = "Administrator phone number must contain exactly 10 digits") String adminPhone,
             @Size(min = 8, max = 72) String adminPassword
     ) {}
 

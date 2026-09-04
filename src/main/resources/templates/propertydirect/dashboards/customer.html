@@ -1,38 +1,53 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Customer Dashboard — PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
     <style>
         /* -------------------------------------------------------------
            PROPERTYDIRECT BRANDING & DESIGN SYSTEM FOR DASHBOARDS
            Matches PropertyDirect Landing Page Aesthetics
            ------------------------------------------------------------- */
         :root {
-            --pd-bg: #f8fafc;
+            --pd-bg: #ffffff;
             --pd-sidebar-bg: linear-gradient(180deg, #0a1834 0%, #172a4d 100%);
             --pd-card-bg: #ffffff;
             --pd-card-border: #e2e8f0;
             --pd-navy: #0f172a;
             --pd-navy-dark: #0a1834;
-            --pd-mint: #8cf0bd;
-            --pd-mint-dark: #065f46;
-            --pd-mint-soft: rgba(140, 240, 189, 0.14);
+            --pd-mint: #d97706;
+            --pd-mint-dark: #b45309;
+            --pd-mint-soft: rgba(217, 119, 6, 0.14);
             --pd-text-muted: #64748b;
         }
 
+        html,
+        body,
+        body.app-dashboard,
+        .dash-main,
+        .dash-panel {
+            background-color: #ffffff !important;
+        }
+
+        html,
+        body {
+            overflow-x: hidden !important;
+        }
+
         /* TAB SHOW / HIDE RESET - CRITICAL */
-        .hidden, [hidden], .dash-panel.hidden {
+        .hidden,
+        [hidden],
+        .dash-panel.hidden {
             display: none !important;
         }
 
         /* ULTRA-PREMIUM FLOATING TOAST NOTIFICATION - TOP RIGHT TOPBAR */
-        #toast, .toast {
+        #toast,
+        .toast {
             position: fixed !important;
             top: 28px !important;
             right: 28px !important;
@@ -55,7 +70,9 @@
             transition: opacity 0.25s ease, transform 0.25s ease !important;
         }
 
-        #toast.hidden, .toast.hidden, #toast:empty {
+        #toast.hidden,
+        .toast.hidden,
+        #toast:empty {
             display: none !important;
             opacity: 0 !important;
             visibility: hidden !important;
@@ -64,7 +81,8 @@
         }
 
         /* FIXED CENTERED SCREEN BACKDROP OVERLAY FOR MODALS */
-        .modal, #dashboardModal {
+        .modal,
+        #dashboardModal {
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
@@ -84,7 +102,8 @@
             box-sizing: border-box !important;
         }
 
-        .modal.hidden, #dashboardModal.hidden {
+        .modal.hidden,
+        #dashboardModal.hidden {
             display: none !important;
         }
 
@@ -150,7 +169,9 @@
         }
 
         /* MODAL FORM FLEX COLUMN STYLING - ZERO WHITE SPACE GAPS */
-        .modal-card .form-grid, .modal-card #modalFields, .modal-card .pd-detailed-form {
+        .modal-card .form-grid,
+        .modal-card #modalFields,
+        .modal-card .pd-detailed-form {
             display: flex !important;
             flex-direction: column !important;
             gap: 14px !important;
@@ -171,7 +192,9 @@
             text-align: left !important;
         }
 
-        .modal-card input, .modal-card select, .modal-card textarea {
+        .modal-card input,
+        .modal-card select,
+        .modal-card textarea {
             width: 100% !important;
             box-sizing: border-box !important;
             padding: 11px 16px !important;
@@ -187,7 +210,9 @@
         }
 
 
-        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+        .modal-card input:focus,
+        .modal-card select:focus,
+        .modal-card textarea:focus {
             border-color: #1d376c !important;
             box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
         }
@@ -208,7 +233,8 @@
             border-top: 1px solid #f1f5f9 !important;
         }
 
-        .modal-cancel, button[data-action="close-modal"].modal-cancel {
+        .modal-cancel,
+        button[data-action="close-modal"].modal-cancel {
             padding: 11px 22px !important;
             border-radius: 12px !important;
             background: #f1f5f9 !important;
@@ -228,7 +254,9 @@
 
 
         /* REMOVE UNWANTED BLACK OUTLINES OR BORDER FRAMES */
-        section.dash-panel, .dash-panel, [data-view] {
+        section.dash-panel,
+        .dash-panel,
+        [data-view] {
             border: none !important;
             outline: none !important;
             box-shadow: none !important;
@@ -283,7 +311,8 @@
         }
 
         /* FIXED LEFT NAVY GRADIENT SIDEBAR */
-        aside.dash-sidebar, .dash-sidebar {
+        aside.dash-sidebar,
+        .dash-sidebar {
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
@@ -335,7 +364,7 @@
         }
 
         .dash-brand span span {
-            color: var(--pd-mint) !important;
+            color: #f59e0b !important;
         }
 
         .sidebar-nav {
@@ -352,12 +381,14 @@
         .sidebar-nav::-webkit-scrollbar {
             width: 4px;
         }
+
         .sidebar-nav::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
         }
 
-        .sidebar-nav button, .sidebar-nav .nav-link {
+        .sidebar-nav button,
+        .sidebar-nav .nav-link {
             display: flex !important;
             align-items: center !important;
             gap: 10px !important;
@@ -394,16 +425,16 @@
         }
 
         .sidebar-nav button.active {
-            color: var(--pd-mint) !important;
-            background: var(--pd-mint-soft) !important;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
             font-weight: 700 !important;
-            border-left-color: var(--pd-mint) !important;
-            box-shadow: 0 4px 16px rgba(140, 240, 189, 0.1) !important;
+            border-left: 4px solid #f59e0b !important;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25) !important;
         }
 
         .sidebar-nav button.active svg {
             opacity: 1;
-            stroke: var(--pd-mint) !important;
+            stroke: #f59e0b !important;
         }
 
         .sidebar-user-card {
@@ -446,7 +477,7 @@
             width: 36px !important;
             height: 36px !important;
             border-radius: 10px !important;
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
             width: 30px !important;
             height: 30px !important;
             border-radius: 8px !important;
@@ -469,7 +500,7 @@
         }
 
         .user-details p {
-            color: var(--pd-mint) !important;
+            color: #d97706 !important;
             font-size: 0.68rem !important;
             font-weight: 600 !important;
             margin: 0 !important;
@@ -500,9 +531,10 @@
         }
 
         /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
-        main.dash-main, .dash-main {
+        main.dash-main,
+        .dash-main {
             margin: 0 0 0 275px !important;
-            padding: 32px 40px !important;
+            padding: 20px 24px !important;
             width: calc(100% - 275px) !important;
             max-width: calc(100% - 275px) !important;
             min-height: 100vh !important;
@@ -554,7 +586,9 @@
             gap: 14px !important;
         }
 
-        .dash-header button.primary, button.primary, a.primary {
+        .dash-header button.primary,
+        button.primary,
+        a.primary {
             padding: 11px 22px !important;
             border-radius: 12px !important;
             background: #0f2246 !important;
@@ -572,53 +606,7 @@
             gap: 8px !important;
         }
 
-        .dash-header button.primary:hover, button.primary:hover, a.primary:hover {
-            background: #1d376c !important;
-            transform: translateY(-2px) !important;
-        }
-
-        /* Overview Stat Grid */
-        .dash-grid {
-            display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 22px !important;
-            margin-bottom: 28px !important;
-        }
-
-        .dash-grid.three {
-            grid-template-columns: repeat(3, 1fr) !important;
-        }
-
-        .dash-grid article {
-            background: #ffffff !important;
-            border: 1px solid var(--pd-card-border) !important;
-            border-radius: 20px !important;
-            padding: 24px !important;
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-        }
-
-        .dash-grid article span {
-            font-size: 0.84rem !important;
-            font-weight: 600 !important;
-            color: #64748b !important;
-        }
-
-        .dash-grid article strong {
-            font-family: 'Manrope', sans-serif !important;
-            font-size: 1.9rem !important;
-            font-weight: 800 !important;
-            color: var(--pd-navy) !important;
-            margin-top: 8px !important;
-        }
-
-        .dash-card {
-            background: #ffffff !important;
-            border: 1px solid var(--pd-card-border) !important;
-            outline: none !important;
+        .card-box {
             border-radius: 20px !important;
             padding: 28px 32px !important;
             box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
@@ -702,7 +690,9 @@
             color: #475569 !important;
         }
 
-        .form-grid input, .form-grid select, .form-grid textarea {
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
             padding: 10px 16px !important;
             border-radius: 12px !important;
             border: 1px solid #cbd5e1 !important;
@@ -715,7 +705,211 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
         }
 
-        .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
+        .form-grid input:focus,
+        .form-grid select:focus,
+        .form-grid textarea:focus {
+            border-color: #1d376c !important;
+            box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
+        }
+
+        .dashboard-table-scroll {
+            overflow-x: auto !important;
+            border-radius: 14px !important;
+            border: 1px solid #e2e8f0 !important;
+            margin-top: 18px !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            background: #ffffff !important;
+        }
+
+        th {
+            background: #f8fafc !important;
+            color: #475569 !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            padding: 14px 18px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            text-align: left !important;
+        }
+
+        td {
+            padding: 16px 18px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #334155 !important;
+            font-size: 0.85rem !important;
+        }
+
+        td button {
+            padding: 7px 14px !important;
+            border-radius: 999px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            cursor: pointer !important;
+        }
+
+        td button:hover {
+            background: #0f2246 !important;
+            border-radius: 0 !important;
+            padding: 0 32px !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02) !important;
+            margin: 0 0 28px 0 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            box-sizing: border-box !important;
+        }
+
+        .dash-header .eyebrow {
+            color: #1d376c !important;
+            font-size: 0.74rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+            margin-bottom: 4px !important;
+        }
+
+        .dash-header h1 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        .header-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+        }
+
+        .dash-header button.primary,
+        button.primary,
+        a.primary {
+            padding: 11px 22px !important;
+            border-radius: 12px !important;
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 6px 18px rgba(15, 34, 70, 0.2) !important;
+            transition: all 0.22s ease !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        border-radius: 20px !important;
+        padding: 28px 32px !important;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.03) !important;
+        margin-bottom: 28px !important;
+        box-sizing: border-box !important;
+        }
+
+        .card-head {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin-bottom: 20px !important;
+            gap: 16px !important;
+            width: 100% !important;
+        }
+
+        .card-head h3 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.3rem !important;
+            font-weight: 800 !important;
+            color: var(--pd-navy) !important;
+            margin: 0 0 6px 0 !important;
+            line-height: 1.3 !important;
+        }
+
+        .card-head p {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.88rem !important;
+            color: #64748b !important;
+            line-height: 1.4 !important;
+            margin: 0 !important;
+        }
+
+        .pill-row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-top: 20px !important;
+            width: 100% !important;
+        }
+
+        .pill-row span {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 10px 20px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #1e293b !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+        }
+
+        .pill-row span:hover {
+            background: #0f2246 !important;
+            color: #ffffff !important;
+            border-color: #0f2246 !important;
+            box-shadow: 0 4px 12px rgba(15, 34, 70, 0.15) !important;
+        }
+
+
+        .form-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+            gap: 18px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-grid label {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+        }
+
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            padding: 10px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: var(--pd-navy) !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 500 !important;
+            outline: none !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        .form-grid input:focus,
+        .form-grid select:focus,
+        .form-grid textarea:focus {
             border-color: #1d376c !important;
             box-shadow: 0 0 0 3px rgba(29, 55, 108, 0.12) !important;
         }
@@ -766,163 +960,802 @@
             background: #0f2246 !important;
             color: #ffffff !important;
         }
+
+        html {
+            background: #ffffff !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        body,
+        body.app-dashboard,
+        .app-dashboard,
+        main.dash-main,
+        .dash-main,
+        .dash-panel {
+            background: #ffffff !important;
+        }
+
+        body {
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+        }
     </style>
     <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
-    <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260901-dashboard-clean-v2">
-<link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
-</head>
-<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
-<aside class="dash-sidebar">
-    <a class="dash-brand text-decoration-none" href="/propertydirect">
-        <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26" fill="#3b82f6"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/><path d="M9.5 9V5.5h4"/></svg></span>
-        <h4 class="mb-0 fw-bold text-white fs-5">Property<span style="color: #3b82f6 !important;">Direct</span></h4>
-    </a>
-    <nav class="sidebar-nav" aria-label="Dashboard sections">
-        <button class="active" data-panel="overview">Overview</button>
-        <button data-panel="search">Search Properties</button>
-        <button data-panel="saved-searches">Saved Searches</button>
-        <button data-panel="shortlist">Shortlisted</button>
-        <button data-panel="contacts">Owner Contact</button>
-        <button data-panel="visits">Site Visits</button>
-        <button data-panel="listings">My Listings</button>
-        <button data-panel="offers">Offers & Enquiries</button>
-        <button data-panel="reviews">Reviews & Reports</button>
-        <button data-panel="services">Home Services</button>
-        <button data-panel="rentpay">Rent Pay</button>
-        <button data-panel="plans">Plans</button>
-        <button data-panel="support">Support</button>
-    </nav>
-    <div class="sidebar-user-card">
-        <a class="logout" href="/dashboards/logout?platform=propertydirect" title="Logout">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            <span>Logout</span>
-        </a>
     </div>
-</aside>
-<main class="dash-main">
-    <header class="dash-header">
-        <div>
-            <p class="propertydirect-section-eyebrow">PROPERTYDIRECT CUSTOMER WORKSPACE</p>
-            <h1 id="panelTitle">Overview</h1>
-        </div>
-        <div class="header-actions">
-            <button class="primary" data-panel="search">Search Property</button>
-        </div>
-    </header>
+    <div class="pill-row">
+        <span data-panel="search">Filter discovery</span>
+        <span data-panel="shortlist">Persistent shortlist</span>
+        <span data-panel="visits">Visit requests</span>
+        <span data-panel="listings">Manage listings</span>
+        <span data-panel="offers">Offers & enquiries</span>
+        <span data-panel="reviews">Reviews & reports</span>
+    </div>
+    </div>
+    </section>
 
-    <section class="dash-panel" data-view="overview">
-        <div class="dash-grid">
-            <article><span>Shortlisted</span><strong data-property-stat="saved">0</strong></article>
-            <article><span>Saved Searches</span><strong data-property-stat="searches">0</strong></article>
-            <article><span>Visits</span><strong data-property-stat="visits">0</strong></article>
-            <article><span>Service Requests</span><strong data-property-stat="services">0</strong></article>
-        </div>
+    <section class="dash-panel hidden" data-view="search">
         <div class="dash-card">
             <div class="card-head">
-                <div>
-                    <h3>Your property journey</h3>
-                    <p>Search verified inventory, save filters, shortlist homes, contact owners, request visits or virtual tours, submit offers, and manage your own sale or rental listings.</p>
-                </div>
+                <h3>Search Properties</h3><span class="inline-state" id="searchResultState">Set any combination of
+                    filters</span>
             </div>
-            <div class="pill-row">
-                <span data-panel="search">Filter discovery</span>
-                <span data-panel="shortlist">Persistent shortlist</span>
-                <span data-panel="visits">Visit requests</span>
-                <span data-panel="listings">Manage listings</span>
-                <span data-panel="offers">Offers & enquiries</span>
-                <span data-panel="reviews">Reviews & reports</span>
+            <form class="form-grid" id="propertySearchForm"><label>City<input name="city"
+                        value="Bangalore"></label><label>Society or locality<input
+                        name="locality"></label><label>Purpose<select name="type">
+                        <option value="RENT">Rent</option>
+                        <option value="SALE">Buy</option>
+                        <option value="">Any</option>
+                    </select></label><label>BHK<select name="bhk">
+                        <option value="">Any</option>
+                        <option>1 BHK</option>
+                        <option>2 BHK</option>
+                        <option>3 BHK</option>
+                        <option>4 BHK</option>
+                    </select></label><label>Minimum price<input name="minPrice" type="number"
+                        min="0"></label><label>Maximum price<input name="maxPrice" type="number"
+                        min="0"></label><label>Furnishing<select name="furnishing">
+                        <option value="">Any</option>
+                        <option>Unfurnished</option>
+                        <option>Semi Furnished</option>
+                        <option>Fully Furnished</option>
+                    </select></label><label>Sort<select name="sort">
+                        <option value="newest">Newest</option>
+                        <option value="price_asc">Price: low to high</option>
+                        <option value="price_desc">Price: high to low</option>
+                    </select></label><button class="primary" data-property-api-action="search"
+                    type="submit">Search</button><a class="primary" href="/propertydirect/apartments">Open Full
+                    Listings</a></form>
+            <div class="grid" id="propertySearchResults"></div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="saved-searches">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Saved Searches & Alerts</h3><span class="inline-state">Store discovery criteria for later</span>
+            </div>
+            <form class="form-grid" id="savedSearchForm"><label>Search name<input name="name"
+                        placeholder="Whitefield 2 BHK" required></label><label>City<input name="city"
+                        value="Bangalore"></label><label>Locality<input name="locality"></label><label>Purpose<select
+                        name="type">
+                        <option value="RENT">Rent</option>
+                        <option value="SALE">Buy</option>
+                    </select></label><label>BHK<select name="bhk">
+                        <option value="">Any</option>
+                        <option>1 BHK</option>
+                        <option>2 BHK</option>
+                        <option>3 BHK</option>
+                        <option>4 BHK</option>
+                    </select></label><label>Minimum<input name="minPrice" type="number"
+                        min="0"></label><label>Maximum<input name="maxPrice" type="number" min="0"></label><label><input
+                        name="alertsEnabled" type="checkbox" checked> Enable alerts</label><button class="primary"
+                    data-property-api-action="save-search" type="submit">Save Search</button></form>
+            <div class="dashboard-table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Area</th>
+                            <th>Purpose</th>
+                            <th>BHK</th>
+                            <th>Budget</th>
+                            <th>Alerts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="savedSearchesBody"></tbody>
+                </table>
             </div>
         </div>
     </section>
 
-    <section class="dash-panel hidden" data-view="search"><div class="dash-card"><div class="card-head"><h3>Search Properties</h3><span class="inline-state" id="searchResultState">Set any combination of filters</span></div>
-        <form class="form-grid" id="propertySearchForm"><label>City<input name="city" value="Bangalore"></label><label>Society or locality<input name="locality"></label><label>Purpose<select name="type"><option value="RENT">Rent</option><option value="SALE">Buy</option><option value="">Any</option></select></label><label>BHK<select name="bhk"><option value="">Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select></label><label>Minimum price<input name="minPrice" type="number" min="0"></label><label>Maximum price<input name="maxPrice" type="number" min="0"></label><label>Furnishing<select name="furnishing"><option value="">Any</option><option>Unfurnished</option><option>Semi Furnished</option><option>Fully Furnished</option></select></label><label>Sort<select name="sort"><option value="newest">Newest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label><button class="primary" data-property-api-action="search" type="submit">Search</button><a class="primary" href="/propertydirect/apartments">Open Full Listings</a></form>
-        <div class="grid" id="propertySearchResults"></div>
-    </div></section>
+    <section class="dash-panel hidden" data-view="shortlist">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>️ My Favourite Properties</h3>
+                    <p>Saved properties you bookmarked while searching. Access them anytime from your account.</p>
+                </div>
+                <span class="inline-state">2 Saved Properties</span>
+            </div>
+            <div class="dash-grid two"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 16px;">
+                <article class="dash-card"
+                    style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 14px; background: #fff;">
+                    <img src="/propertydirect/images/orchid_enclave.jpg" alt="Property 1"
+                        style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 12px;">
+                    <span
+                        style="font-size: 0.76rem; font-weight: 800; color: #2563eb; text-transform: uppercase;">Apartment
+                        · For Sale</span>
+                    <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 4px 0;">3 BHK Luxury Flat in
+                        Anna Nagar</h4>
+                    <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 12px;"> Anna Nagar, Chennai</p>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #f1f5f9;">
+                        <strong style="font-size: 1.25rem; color: #16a34a; font-weight: 800;">₹70 Lakhs</strong>
+                        <a href="/propertydirect/apartment-detail?title=3%20BHK%20Luxury%20Flat&price=%E2%82%B970%20Lakhs&location=Anna%20Nagar,%20Chennai"
+                            class="primary small"
+                            style="text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; background: #2563eb; color: #fff;">View
+                            Details</a>
+                    </div>
+                </article>
 
-    <section class="dash-panel hidden" data-view="saved-searches"><div class="dash-card"><div class="card-head"><h3>Saved Searches & Alerts</h3><span class="inline-state">Store discovery criteria for later</span></div><form class="form-grid" id="savedSearchForm"><label>Search name<input name="name" placeholder="Whitefield 2 BHK" required></label><label>City<input name="city" value="Bangalore"></label><label>Locality<input name="locality"></label><label>Purpose<select name="type"><option value="RENT">Rent</option><option value="SALE">Buy</option></select></label><label>BHK<select name="bhk"><option value="">Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select></label><label>Minimum<input name="minPrice" type="number" min="0"></label><label>Maximum<input name="maxPrice" type="number" min="0"></label><label><input name="alertsEnabled" type="checkbox" checked> Enable alerts</label><button class="primary" data-property-api-action="save-search" type="submit">Save Search</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Name</th><th>Area</th><th>Purpose</th><th>BHK</th><th>Budget</th><th>Alerts</th></tr></thead><tbody id="savedSearchesBody"></tbody></table></div></div></section>
+                <article class="dash-card"
+                    style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 14px; background: #fff;">
+                    <img src="/shared/images/apartment-living-1.webp" alt="Property 2"
+                        style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 12px;">
+                    <span style="font-size: 0.76rem; font-weight: 800; color: #2563eb; text-transform: uppercase;">Gated
+                        Society · Rent</span>
+                    <h4 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 4px 0;">2 BHK Premium
+                        Residence</h4>
+                    <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 12px;"> Indiranagar, Bangalore</p>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #f1f5f9;">
+                        <strong style="font-size: 1.25rem; color: #16a34a; font-weight: 800;">₹85 Lakhs</strong>
+                        <a href="/propertydirect/apartment-detail?title=2%20BHK%20Premium%20Residence&price=%E2%82%B985%20Lakhs&location=Indiranagar,%20Bangalore"
+                            class="primary small"
+                            style="text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; background: #2563eb; color: #fff;">View
+                            Details</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
 
-    <section class="dash-panel hidden" data-view="shortlist"><div class="dash-card"><div class="card-head"><h3>Shortlisted Properties</h3><span class="inline-state">Available on every signed-in session</span></div><ul class="task-list actionable-list" id="savedPropertiesList"><li>Loading your shortlist…</li></ul></div></section>
+    <section class="dash-panel hidden" data-view="compare">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>️ Property Comparison Engine</h3>
+                    <p>Select multiple properties to compare features, price, area, rooms, and specifications side by
+                        side.</p>
+                </div>
+            </div>
 
-    <section class="dash-panel hidden" data-view="contacts"><div class="dash-card"><div class="card-head"><div><h3>Contact Property Owner</h3><p>Share complete contact, budget and move-in requirements so the owner can respond accurately.</p></div><span class="inline-state" id="ownerContactState">Choose a listing from search or shortlist</span></div><form class="form-grid detailed-property-form" id="ownerContactForm"><div class="property-form-section"><strong>Property and requester</strong><small>Required identity and listing information.</small></div><label>Listing ID *<input name="listingId" type="number" min="1" required></label><label>Your full name *<input name="name" maxlength="100" required></label><label>Phone number *<input name="phone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label>Email address *<input name="email" type="email" required></label><div class="property-form-section"><strong>Requirement</strong><small>Purpose, affordability and preferred response.</small></div><label>Request type *<select name="type" required><option value="OWNER_CONTACT">Owner contact</option><option value="PRICE_DISCUSSION">Price discussion</option><option value="DOCUMENT_QUERY">Document query</option><option value="AVAILABILITY_QUERY">Availability query</option></select></label><label>Expected move-in / purchase date<input name="moveInDate" type="date"></label><label>Budget range<input name="budget" placeholder="e.g. Rs. 25,000–30,000 per month"></label><label>Preferred contact method<select name="contactMethod"><option>Phone call</option><option>WhatsApp</option><option>Email</option><option>In-app response</option></select></label><label>Preferred callback time<input name="callbackAt" type="datetime-local"></label><label>Occupants / family size<input name="occupants" type="number" min="1" max="50"></label><label class="profile-wide">Detailed message *<textarea name="message" minlength="10" maxlength="1500" required placeholder="Describe your requirement, questions and any conditions"></textarea></label><label class="profile-wide"><input name="contactConsent" type="checkbox" required> I consent to sharing these contact details with the verified property owner. *</label><button class="primary profile-wide" data-property-api-action="contact-owner" type="submit">Send Detailed Enquiry</button></form></div></section>
+            <!-- Property Selection Checkboxes -->
+            <div
+                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
+                <strong style="display: block; font-size: 0.88rem; color: #0f172a; margin-bottom: 10px;">Select
+                    Properties to Compare:</strong>
+                <div
+                    style="display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.86rem; color: #1e293b; font-weight: 700;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #2563eb;">
+                        <span> Property A (2 BHK · Chennai - ₹70L)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #2563eb;">
+                        <span> Property B (3 BHK · Bangalore - ₹75L)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #2563eb;">
+                        <span> Property C (3 BHK · Hyderabad - ₹80L)</span>
+                    </label>
+                </div>
+            </div>
 
-    <section class="dash-panel hidden" data-view="visits"><div class="dash-card"><div class="card-head"><div><h3>Site Visits</h3><p>Request a physical visit or virtual tour with complete attendee and access details.</p></div><span class="inline-state">Requests remain traceable</span></div><form class="form-grid detailed-property-form" id="propertyVisitForm"><div class="property-form-section"><strong>Visit identity</strong><small>Property and visitor contact information.</small></div><label>Listing ID *<input name="listingId" type="number" min="1" required></label><label>Visitor full name *<input name="visitorName" maxlength="100" required></label><label>Contact phone *<input name="contactPhone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label>Attendees *<input name="attendees" type="number" min="1" max="20" value="1" required></label><div class="property-form-section"><strong>Schedule and access</strong><small>Select the preferred format, time and meeting instructions.</small></div><label>Visit mode *<select name="visitMode" required><option>Physical property visit</option><option>Live video tour</option><option>Owner callback and walkthrough</option></select></label><label>Preferred date and time *<input name="scheduledAt" type="datetime-local" required></label><label>Alternate date and time<input name="alternateAt" type="datetime-local"></label><label>Meeting point / landmark<input name="meetingPoint" maxlength="200"></label><label>Vehicle number<input name="vehicleNumber" maxlength="20"></label><label>Broker involved?<select name="brokerInvolved"><option>No</option><option>Yes</option></select></label><label class="profile-wide">Questions and visit notes<textarea name="notes" maxlength="1500" placeholder="Availability confirmation, rooms to inspect, documents to carry and accessibility needs"></textarea></label><button class="primary profile-wide" data-property-api-action="schedule-visit" type="submit">Request Detailed Visit</button></form><div class="dashboard-table-scroll"><table><thead><tr><th>Property</th><th>Scheduled</th><th>Status</th><th>Notes</th></tr></thead><tbody id="propertyVisitsBody"></tbody></table></div></div></section>
+            <!-- Comparison Table -->
+            <div class="dashboard-table-scroll">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #0f2246; color: #ffffff;">
+                            <th
+                                style="padding: 14px 18px; background: #0f2246; color: #fff; font-size: 0.85rem; font-weight: 800;">
+                                Feature</th>
+                            <th
+                                style="padding: 14px 18px; background: #0f2246; color: #fff; font-size: 0.85rem; font-weight: 800;">
+                                Property A</th>
+                            <th
+                                style="padding: 14px 18px; background: #0f2246; color: #fff; font-size: 0.85rem; font-weight: 800;">
+                                Property B</th>
+                            <th
+                                style="padding: 14px 18px; background: #0f2246; color: #fff; font-size: 0.85rem; font-weight: 800;">
+                                Property C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Price</td>
+                            <td style="font-weight: 800; color: #16a34a; font-size: 1rem;">₹70 Lakhs</td>
+                            <td style="font-weight: 800; color: #16a34a; font-size: 1rem;">₹75 Lakhs</td>
+                            <td style="font-weight: 800; color: #16a34a; font-size: 1rem;">₹80 Lakhs</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Area</td>
+                            <td>1,200 sqft</td>
+                            <td>1,450 sqft</td>
+                            <td>1,500 sqft</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Bedrooms</td>
+                            <td>2 BHK</td>
+                            <td>3 BHK</td>
+                            <td>3 BHK</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Bathrooms</td>
+                            <td>2 Baths</td>
+                            <td>2 Baths</td>
+                            <td>3 Baths</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Parking</td>
+                            <td>1 Parking</td>
+                            <td>1 Parking</td>
+                            <td>2 Parkings</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; color: #0f172a;">Floor</td>
+                            <td>3rd Floor</td>
+                            <td>5th Floor</td>
+                            <td>8th Floor</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-    <section class="dash-panel hidden" data-view="listings"><div class="dash-card"><div class="card-head"><div><h3>My property listings</h3><p>Create and manage your sale or rental inventory.</p></div><button class="primary small" data-panel="post-listing">Create listing</button></div><div class="dashboard-table-scroll"><table data-table="listings"><thead><tr><th>Property</th><th>Type</th><th>Price</th><th>Verification</th><th>Views</th><th>Actions</th></tr></thead><tbody id="ownerListingsBody"></tbody></table></div></div></section>
+    <section class="dash-panel hidden" data-view="recently-viewed">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3> Recently Viewed Properties</h3>
+                    <p>Properties you explored during your recent sessions.</p>
+                </div>
+            </div>
+            <p style="color: #64748b; font-size: 0.9rem;">Showing 2 properties viewed in the last 24 hours.</p>
+        </div>
+    </section>
 
-    <section class="dash-panel hidden" data-view="post-listing"><div class="dash-card detailed-property-card"><div class="card-head"><div><h3>Post a property</h3><p>Add complete property, pricing, location, availability and media details. The listing becomes public only after Super Admin approval.</p></div><span class="status pending">Approval required</span></div><form class="form-grid detailed-property-form" id="postApartmentForm"><div class="property-form-section"><strong>Property identity</strong><small>Basic information shown in search results.</small></div><label>Listing title<input name="title" required placeholder="e.g. Spacious 2 BHK near Metro"></label><label>Property type<select name="propertyType"><option>APARTMENT</option><option>VILLA</option><option>INDEPENDENT_HOUSE</option><option>COMMERCIAL</option><option>PLOT</option></select></label><label>Listing purpose<select name="type"><option value="RENT">Rent</option><option value="SALE">Sale</option><option value="LEASE">Lease</option></select></label><label>Society / project name<input name="society" required></label><label>BHK / configuration<select name="bhk"><option>Studio</option><option>1 BHK</option><option selected>2 BHK</option><option>3 BHK</option><option>4 BHK</option><option>5+ BHK</option></select></label><label>Built-up area (sq ft)<input name="areaSqft" type="number" min="1" required></label><div class="property-form-section"><strong>Location</strong><small>Exact address and map information used during verification.</small></div><label>City<input name="city" value="Bengaluru" required></label><label>Locality<input name="locality" required></label><label class="profile-wide">Complete property address<textarea name="address" required></textarea></label><label>Latitude<input name="latitude" type="number" step="any" placeholder="Optional"></label><label>Longitude<input name="longitude" type="number" step="any" placeholder="Optional"></label><div class="property-form-section"><strong>Pricing and availability</strong><small>Financial terms visible to interested customers.</small></div><label>Expected rent / sale price<input name="price" required type="number" min="1"></label><label>Security deposit<input name="deposit" type="number" min="0"></label><label>Monthly maintenance<input name="maintenance" type="number" min="0"></label><label>Available from<input name="availableFrom" type="date" required></label><label>Furnishing<select name="furnishing"><option>Unfurnished</option><option>Semi Furnished</option><option>Fully Furnished</option></select></label><label>Parking<select name="parking"><option>No Parking</option><option>Bike Parking</option><option>Car Parking</option><option>Bike and Car Parking</option></select></label><div class="property-form-section"><strong>Features and description</strong><small>Describe the property accurately for review and discovery.</small></div><label class="profile-wide">Amenities<textarea name="amenities" placeholder="Lift, power backup, gym, security, clubhouse..."></textarea></label><label class="profile-wide">Detailed description<textarea name="description" required placeholder="Rooms, floor, facing, property age, nearby landmarks and special features"></textarea></label><div class="property-form-section"><strong>Property photos</strong><small>Upload between 10 and 20 clear images. Include exterior, living room, bedrooms, kitchen, bathrooms and amenities.</small></div><label class="profile-wide property-photo-upload">Property photos (minimum 10)<input id="propertyPhotoFiles" name="photos" type="file" accept="image/*" multiple required><span id="propertyPhotoCount">No photos selected</span></label><div class="property-photo-preview profile-wide" id="propertyPhotoPreview"></div><div class="profile-wide property-submit-row"><span><strong>Approval workflow:</strong> Submitted → Super Admin review → Public listing</span><button class="primary" data-property-api-action="publish-owner-listing" type="button">Submit property for approval</button></div></form></div></section>
+    <section class="dash-panel hidden" data-view="notifications">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3> Account Notifications & Real-Time Alerts</h3>
+                    <p>Updates on enquiries, agent responses, site visit confirmations, price drops, and new matching
+                        properties.</p>
+                </div>
+                <button class="ghost small" onclick="alert('All notifications marked as read!')">Mark All as
+                    Read</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div
+                    style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 14px;">
+                    <span style="font-size: 1.2rem; background: #eff6ff; padding: 8px; border-radius: 10px;"></span>
+                    <div>
+                        <strong style="display: block; font-size: 0.92rem; color: #0f172a;">Enquiry Received</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 0.84rem; color: #64748b;">Your enquiry for 3 BHK Luxury
+                            Villa (#PD-8492) has been delivered to Agent Rajesh Kumar.</p>
+                        <small style="color: #94a3b8; font-size: 0.76rem;">Today, 10:15 AM</small>
+                    </div>
+                </div>
 
-    <section class="dash-panel hidden" data-view="offers"><div class="dash-card"><div class="card-head"><div><h3>Offers, enquiries & visit bookings</h3><p>Track incoming buyer or tenant interest for your listings.</p></div><button class="primary small" data-action="add-row">Create offer</button></div><div class="dashboard-table-scroll"><table><tbody><tr><th>Property</th><th>Interested party</th><th>Request</th><th>Offer / visit</th><th>Status</th><th>Action</th></tr><tr><td>2 BHK · Whitefield</td><td>Priya S</td><td>Rental enquiry</td><td>Visit: 24 Aug, 11:00 AM</td><td><span class="status pending">Awaiting response</span></td><td><button data-action="approve">Accept</button> <button data-action="edit-row">Counter</button></td></tr><tr><td>3 BHK · HSR Layout</td><td>Rahul K</td><td>Purchase offer</td><td>₹82,00,000</td><td><span class="status open">Offer received</span></td><td><button data-action="approve">Accept</button> <button data-action="resolve-task">Decline</button></td></tr></tbody></table></div></div></section>
+                <div
+                    style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 14px;">
+                    <span style="font-size: 1.2rem; background: #f0fdf4; padding: 8px; border-radius: 10px;"></span>
+                    <div>
+                        <strong style="display: block; font-size: 0.92rem; color: #0f172a;">Agent Responded</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 0.84rem; color: #64748b;">Agent Rajesh Kumar responded:
+                            <em>"Hello Rahul, floor plans sent to your email. Physical visit slot is available
+                                tomorrow."</em></p>
+                        <small style="color: #94a3b8; font-size: 0.76rem;">Today, 11:30 AM</small>
+                    </div>
+                </div>
 
-    <section class="dash-panel hidden" data-view="reviews"><div class="dash-card"><div class="card-head"><div><h3>Reviews, ratings & fraud reports</h3><p>Leave a verified review after a completed deal or flag a listing.</p></div><button class="primary small" data-action="add-row">Write review</button></div><div class="form-grid"><label>Listing or agent reference<input placeholder="Property ID or agent name"></label><label>Rating<select><option>5 - Excellent</option><option>4 - Good</option><option>3 - Average</option><option>2 - Poor</option><option>1 - Poor</option></select></label><label>Report type<select><option>Review only</option><option>Suspected fraud</option><option>Misleading details</option><option>Spam communication</option></select></label><label>Details<textarea placeholder="Share your review or explain the report"></textarea></label></div><button class="primary" data-action="save">Submit review or report</button></div></section>
+                <div
+                    style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 14px;">
+                    <span style="font-size: 1.2rem; background: #ecfdf5; padding: 8px; border-radius: 10px;"></span>
+                    <div>
+                        <strong style="display: block; font-size: 0.92rem; color: #0f172a;">Site Visit
+                            Confirmed</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 0.84rem; color: #64748b;">Your physical site tour for 3
+                            BHK Luxury Villa on 10 September at 4:00 PM has been confirmed.</p>
+                        <small style="color: #94a3b8; font-size: 0.76rem;">1 hour ago</small>
+                    </div>
+                </div>
 
-    <section class="dash-panel hidden" data-view="services"><div class="dash-card"><div class="card-head"><div><h3>Home Services</h3><p>Provide location, scope, schedule and contact details for an accurate service response.</p></div><span class="inline-state">Verified service request</span></div><div class="pill-row"><span>Packers</span><span>Legal</span><span>Cleaning</span><span>Painting</span><span>Electrical</span><span>Plumbing</span></div><form class="form-grid detailed-property-form" id="propertyServiceForm"><div class="property-form-section"><strong>Service and contact</strong><small>Identify the property, requester and service category.</small></div><label>Listing ID (optional)<input name="listingId" type="number" min="1"></label><label>Service *<select name="serviceType" required><option value="">Select service</option><option>PACKERS_AND_MOVERS</option><option>LEGAL_DOCUMENTATION</option><option>PAINTING</option><option>CLEANING</option><option>ELECTRICIAN</option><option>PLUMBING</option></select></label><label>Contact person *<input name="contactName" required maxlength="100"></label><label>Contact phone *<input name="contactPhone" type="tel" pattern="[0-9+ ]{7,20}" required></label><label class="profile-wide">Service address *<textarea name="serviceAddress" required maxlength="500"></textarea></label><div class="property-form-section"><strong>Schedule and work scope</strong><small>Timing, urgency, budget and access information.</small></div><label>Preferred date and time *<input name="preferredAt" type="datetime-local" required></label><label>Alternate date and time<input name="alternateAt" type="datetime-local"></label><label>Urgency *<select name="urgency" required><option>Normal</option><option>Priority</option><option>Emergency</option></select></label><label>Estimated budget (Rs.)<input name="budget" type="number" min="0"></label><label>Property access<select name="accessType"><option>Customer will be present</option><option>Security will provide access</option><option>Call before arrival</option></select></label><label>Preferred contact method<select name="contactMethod"><option>Phone</option><option>WhatsApp</option><option>Email</option></select></label><label class="profile-wide">Detailed work requirement *<textarea name="details" required minlength="10" maxlength="2000" placeholder="Describe rooms, dimensions, existing condition, materials and expected outcome"></textarea></label><button class="primary profile-wide" data-property-api-action="request-service" type="submit">Submit Detailed Service Request</button></form><h3>Service Requests</h3><div class="dashboard-table-scroll"><table><thead><tr><th>Service</th><th>Preferred</th><th>Status</th><th>Details</th></tr></thead><tbody id="propertyServicesBody"></tbody></table></div></div></section>
+                <div
+                    style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 14px;">
+                    <span style="font-size: 1.2rem; background: #fffbeb; padding: 8px; border-radius: 10px;">️</span>
+                    <div>
+                        <strong style="display: block; font-size: 0.92rem; color: #0f172a;">Property Price
+                            Changed</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 0.84rem; color: #64748b;">Price drop alert! 3 BHK Villa
+                            in Anna Nagar reduced price from ₹1.50 Cr to ₹1.45 Cr (Save ₹5L!).</p>
+                        <small style="color: #94a3b8; font-size: 0.76rem;">Yesterday</small>
+                    </div>
+                </div>
 
-    <section class="dash-panel hidden" data-view="rentpay"><div class="dash-card"><div class="card-head"><h3>Rent Pay</h3><span class="inline-state" id="rentPayState">Demo payment workflow</span></div><p>A production payment requires a configured payment gateway and webhooks.</p><button class="primary" data-action="pay">Start Demo Payment</button><h3>Payment History</h3><ul class="task-list" id="rentPaymentHistory"><li>No verified gateway payment yet</li></ul></div></section>
+                <div
+                    style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 14px;">
+                    <span style="font-size: 1.2rem; background: #f5f3ff; padding: 8px; border-radius: 10px;"></span>
+                    <div>
+                        <strong style="display: block; font-size: 0.92rem; color: #0f172a;">New Matching Property
+                            Found</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 0.84rem; color: #64748b;">New matching property: 3 BHK
+                            Apartment in Hebbal, Bangalore (₹28,000/mo) matches your saved search filters.</p>
+                        <small style="color: #94a3b8; font-size: 0.76rem;">2 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <section class="dash-panel hidden" data-view="plans"><div class="dash-card"><h3>Buyer / Tenant Plans</h3><div class="dash-grid three"><article><span>Basic</span><strong>Rs. 999</strong><button data-action="select-plan">Select Plan</button></article><article><span>Relax</span><strong>Rs. 1,999</strong><button data-action="current-plan">Current Plan</button></article><article><span>Assisted</span><strong>Rs. 4,999</strong><button data-action="select-plan">Select Plan</button></article></div></div></section>
+    <section class="dash-panel hidden" data-view="contacts">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Contact Property Owner</h3>
+                    <p>Share complete contact, budget and move-in requirements so the owner can respond accurately.</p>
+                </div><span class="inline-state" id="ownerContactState">Choose a listing from search or shortlist</span>
+            </div>
+            <form class="form-grid detailed-property-form" id="ownerContactForm">
+                <div class="property-form-section"><strong>Property and requester</strong><small>Required identity and
+                        listing information.</small></div><label>Listing ID *<input name="listingId" type="number"
+                        min="1" required></label><label>Your full name *<input name="name" maxlength="100"
+                        required></label><label>Phone number *<input name="phone" type="tel" pattern="[0-9+ ]{7,20}"
+                        required></label><label>Email address *<input name="email" type="email" required></label>
+                <div class="property-form-section"><strong>Requirement</strong><small>Purpose, affordability and
+                        preferred response.</small></div><label>Request type *<select name="type" required>
+                        <option value="OWNER_CONTACT">Owner contact</option>
+                        <option value="PRICE_DISCUSSION">Price discussion</option>
+                        <option value="DOCUMENT_QUERY">Document query</option>
+                        <option value="AVAILABILITY_QUERY">Availability query</option>
+                    </select></label><label>Expected move-in / purchase date<input name="moveInDate"
+                        type="date"></label><label>Budget range<input name="budget"
+                        placeholder="e.g. Rs. 25,000–30,000 per month"></label><label>Preferred contact method<select
+                        name="contactMethod">
+                        <option>Phone call</option>
+                        <option>WhatsApp</option>
+                        <option>Email</option>
+                        <option>In-app response</option>
+                    </select></label><label>Preferred callback time<input name="callbackAt"
+                        type="datetime-local"></label><label>Occupants / family size<input name="occupants"
+                        type="number" min="1" max="50"></label><label class="profile-wide">Detailed message *<textarea
+                        name="message" minlength="10" maxlength="1500" required
+                        placeholder="Describe your requirement, questions and any conditions"></textarea></label><label
+                    class="profile-wide"><input name="contactConsent" type="checkbox" required> I consent to sharing
+                    these contact details with the verified property owner. *</label><button
+                    class="primary profile-wide" data-property-api-action="contact-owner" type="submit">Send Detailed
+                    Enquiry</button>
+            </form>
+        </div>
+    </section>
 
-    <section class="dash-panel hidden" data-view="support"><div class="dash-card"><div class="card-head"><div><h3>Support</h3><p>Raise a traceable PropertyDirect support request with complete context.</p></div><span class="inline-state" id="supportState">Ready</span></div><form class="form-grid detailed-property-form" id="propertySupportForm"><label>Issue title *<input name="title" required maxlength="140" placeholder="Short summary"></label><label>Category *<select name="category" required><option>ACCOUNT_ACCESS</option><option>LISTING_APPROVAL</option><option>PAYMENT_OR_PLAN</option><option>OWNER_CONTACT</option><option>VISIT_OR_SERVICE</option><option>PRIVACY_OR_SAFETY</option><option>TECHNICAL_ISSUE</option></select></label><label>Priority *<select name="priority" required><option>NORMAL</option><option>HIGH</option><option>URGENT</option></select></label><label>Related listing / transaction ID<input name="reference"></label><label>Preferred contact method<select name="contactMethod"><option>In-app update</option><option>Phone</option><option>Email</option></select></label><label>Available callback time<input name="callbackAt" type="datetime-local"></label><label class="profile-wide">Detailed issue *<textarea name="details" required minlength="15" maxlength="2000" placeholder="Explain what happened, expected result, error message and steps already tried"></textarea></label><label class="profile-wide">Screenshot / document reference<input name="attachmentReference" placeholder="Filename or secure reference"></label><button class="primary profile-wide" data-action="support" type="button">Raise Detailed Ticket</button></form><h3 style="margin-top: 24px;">Tickets</h3><ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul></div></section>
-</main>
-<div class="toast hidden" id="toast"></div>
+    <section class="dash-panel hidden" data-view="visits">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Site Visits</h3>
+                    <p>Request a physical visit or virtual tour with complete attendee and access details.</p>
+                </div><span class="inline-state">Requests remain traceable</span>
+            </div>
+            <form class="form-grid detailed-property-form" id="propertyVisitForm">
+                <div class="property-form-section"><strong>Visit identity</strong><small>Property and visitor contact
+                        information.</small></div><label>Listing ID *<input name="listingId" type="number" min="1"
+                        required></label><label>Visitor full name *<input name="visitorName" maxlength="100"
+                        required></label><label>Contact phone *<input name="contactPhone" type="tel"
+                        pattern="[0-9+ ]{7,20}" required></label><label>Attendees *<input name="attendees" type="number"
+                        min="1" max="20" value="1" required></label>
+                <div class="property-form-section"><strong>Schedule and access</strong><small>Select the preferred
+                        format, time and meeting instructions.</small></div><label>Visit mode *<select name="visitMode"
+                        required>
+                        <option>Physical property visit</option>
+                        <option>Live video tour</option>
+                        <option>Owner callback and walkthrough</option>
+                    </select></label><label>Preferred date and time *<input name="scheduledAt" type="datetime-local"
+                        required></label><label>Alternate date and time<input name="alternateAt"
+                        type="datetime-local"></label><label>Meeting point / landmark<input name="meetingPoint"
+                        maxlength="200"></label><label>Vehicle number<input name="vehicleNumber"
+                        maxlength="20"></label><label>Broker involved?<select name="brokerInvolved">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select></label><label class="profile-wide">Questions and visit notes<textarea name="notes"
+                        maxlength="1500"
+                        placeholder="Availability confirmation, rooms to inspect, documents to carry and accessibility needs"></textarea></label><button
+                    class="primary profile-wide" data-property-api-action="schedule-visit" type="submit">Request
+                    Detailed Visit</button>
+            </form>
+            <div class="dashboard-table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Scheduled</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="propertyVisitsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    function switchTab(panelId) {
-        if (!panelId) return;
-        
-        document.querySelectorAll("[data-panel]").forEach(function(btn) {
-            if (btn.dataset.panel === panelId) {
-                btn.classList.add("active");
+    <section class="dash-panel hidden" data-view="listings">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>My property listings</h3>
+                    <p>Create and manage your sale or rental inventory.</p>
+                </div><button class="primary small" data-panel="post-listing">Create listing</button>
+            </div>
+            <div class="dashboard-table-scroll">
+                <table data-table="listings">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Verification</th>
+                            <th>Views</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ownerListingsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="post-listing">
+        <div class="dash-card detailed-property-card">
+            <div class="card-head">
+                <div>
+                    <h3>Post a property</h3>
+                    <p>Add complete property, pricing, location, availability and media details. The listing becomes
+                        public only after Super Admin approval.</p>
+                </div><span class="status pending">Approval required</span>
+            </div>
+            <form class="form-grid detailed-property-form" id="postApartmentForm">
+                <div class="property-form-section"><strong>Property identity</strong><small>Basic information shown in
+                        search results.</small></div><label>Listing title<input name="title" required
+                        placeholder="e.g. Spacious 2 BHK near Metro"></label><label>Property type<select
+                        name="propertyType">
+                        <option>APARTMENT</option>
+                        <option>VILLA</option>
+                        <option>INDEPENDENT_HOUSE</option>
+                        <option>COMMERCIAL</option>
+                        <option>PLOT</option>
+                    </select></label><label>Listing purpose<select name="type">
+                        <option value="RENT">Rent</option>
+                        <option value="SALE">Sale</option>
+                        <option value="LEASE">Lease</option>
+                    </select></label><label>Society / project name<input name="society" required></label><label>BHK /
+                    configuration<select name="bhk">
+                        <option>Studio</option>
+                        <option>1 BHK</option>
+                        <option selected>2 BHK</option>
+                        <option>3 BHK</option>
+                        <option>4 BHK</option>
+                        <option>5+ BHK</option>
+                    </select></label><label>Built-up area (sq ft)<input name="areaSqft" type="number" min="1"
+                        required></label>
+                <div class="property-form-section"><strong>Location</strong><small>Exact address and map information
+                        used during verification.</small></div><label>City<input name="city" value="Bengaluru"
+                        required></label><label>Locality<input name="locality" required></label><label
+                    class="profile-wide">Complete property address<textarea name="address"
+                        required></textarea></label><label>Latitude<input name="latitude" type="number" step="any"
+                        placeholder="Optional"></label><label>Longitude<input name="longitude" type="number" step="any"
+                        placeholder="Optional"></label>
+                <div class="property-form-section"><strong>Pricing and availability</strong><small>Financial terms
+                        visible to interested customers.</small></div><label>Expected rent / sale price<input
+                        name="price" required type="number" min="1"></label><label>Security deposit<input name="deposit"
+                        type="number" min="0"></label><label>Monthly maintenance<input name="maintenance" type="number"
+                        min="0"></label><label>Available from<input name="availableFrom" type="date"
+                        required></label><label>Furnishing<select name="furnishing">
+                        <option>Unfurnished</option>
+                        <option>Semi Furnished</option>
+                        <option>Fully Furnished</option>
+                    </select></label><label>Parking<select name="parking">
+                        <option>No Parking</option>
+                        <option>Bike Parking</option>
+                        <option>Car Parking</option>
+                        <option>Bike and Car Parking</option>
+                    </select></label>
+                <div class="property-form-section"><strong>Features and description</strong><small>Describe the property
+                        accurately for review and discovery.</small></div><label class="profile-wide">Amenities<textarea
+                        name="amenities"
+                        placeholder="Lift, power backup, gym, security, clubhouse..."></textarea></label><label
+                    class="profile-wide">Detailed description<textarea name="description" required
+                        placeholder="Rooms, floor, facing, property age, nearby landmarks and special features"></textarea></label>
+                <div class="property-form-section"><strong>Property photos</strong><small>Upload between 10 and 20 clear
+                        images. Include exterior, living room, bedrooms, kitchen, bathrooms and amenities.</small></div>
+                <label class="profile-wide property-photo-upload">Property photos (minimum 10)<input
+                        id="propertyPhotoFiles" name="photos" type="file" accept="image/*" multiple required><span
+                        id="propertyPhotoCount">No photos selected</span></label>
+                <div class="property-photo-preview profile-wide" id="propertyPhotoPreview"></div>
+                <div class="profile-wide property-submit-row"><span><strong>Approval workflow:</strong> Submitted →
+                        Super Admin review → Public listing</span><button class="primary"
+                        data-property-api-action="publish-owner-listing" type="button">Submit property for
+                        approval</button></div>
+            </form>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="offers">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Offers, enquiries & visit bookings</h3>
+                    <p>Track incoming buyer or tenant interest for your listings.</p>
+                </div><button class="primary small" data-action="add-row">Create offer</button>
+            </div>
+            <div class="dashboard-table-scroll">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Property</th>
+                            <th>Interested party</th>
+                            <th>Request</th>
+                            <th>Offer / visit</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>2 BHK · Whitefield</td>
+                            <td>Priya S</td>
+                            <td>Rental enquiry</td>
+                            <td>Visit: 24 Aug, 11:00 AM</td>
+                            <td><span class="status pending">Awaiting response</span></td>
+                            <td><button data-action="approve">Accept</button> <button
+                                    data-action="edit-row">Counter</button></td>
+                        </tr>
+                        <tr>
+                            <td>3 BHK · HSR Layout</td>
+                            <td>Rahul K</td>
+                            <td>Purchase offer</td>
+                            <td>₹82,00,000</td>
+                            <td><span class="status open">Offer received</span></td>
+                            <td><button data-action="approve">Accept</button> <button
+                                    data-action="resolve-task">Decline</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="reviews">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Reviews, ratings & fraud reports</h3>
+                    <p>Leave a verified review after a completed deal or flag a listing.</p>
+                </div><button class="primary small" data-action="add-row">Write review</button>
+            </div>
+            <div class="form-grid"><label>Listing or agent reference<input
+                        placeholder="Property ID or agent name"></label><label>Rating<select>
+                        <option>5 - Excellent</option>
+                        <option>4 - Good</option>
+                        <option>3 - Average</option>
+                        <option>2 - Poor</option>
+                        <option>1 - Poor</option>
+                    </select></label><label>Report type<select>
+                        <option>Review only</option>
+                        <option>Suspected fraud</option>
+                        <option>Misleading details</option>
+                        <option>Spam communication</option>
+                    </select></label><label>Details<textarea
+                        placeholder="Share your review or explain the report"></textarea></label></div><button
+                class="primary" data-action="save">Submit review or report</button>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="services">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Home Services</h3>
+                    <p>Provide location, scope, schedule and contact details for an accurate service response.</p>
+                </div><span class="inline-state">Verified service request</span>
+            </div>
+            <div class="pill-row">
+                <span>Packers</span><span>Legal</span><span>Cleaning</span><span>Painting</span><span>Electrical</span><span>Plumbing</span>
+            </div>
+            <form class="form-grid detailed-property-form" id="propertyServiceForm">
+                <div class="property-form-section"><strong>Service and contact</strong><small>Identify the property,
+                        requester and service category.</small></div><label>Listing ID (optional)<input name="listingId"
+                        type="number" min="1"></label><label>Service *<select name="serviceType" required>
+                        <option value="">Select service</option>
+                        <option>PACKERS_AND_MOVERS</option>
+                        <option>LEGAL_DOCUMENTATION</option>
+                        <option>PAINTING</option>
+                        <option>CLEANING</option>
+                        <option>ELECTRICIAN</option>
+                        <option>PLUMBING</option>
+                    </select></label><label>Contact person *<input name="contactName" required
+                        maxlength="100"></label><label>Contact phone *<input name="contactPhone" type="tel"
+                        pattern="[0-9+ ]{7,20}" required></label><label class="profile-wide">Service address *<textarea
+                        name="serviceAddress" required maxlength="500"></textarea></label>
+                <div class="property-form-section"><strong>Schedule and work scope</strong><small>Timing, urgency,
+                        budget and access information.</small></div><label>Preferred date and time *<input
+                        name="preferredAt" type="datetime-local" required></label><label>Alternate date and time<input
+                        name="alternateAt" type="datetime-local"></label><label>Urgency *<select name="urgency"
+                        required>
+                        <option>Normal</option>
+                        <option>Priority</option>
+                        <option>Emergency</option>
+                    </select></label><label>Estimated budget (Rs.)<input name="budget" type="number"
+                        min="0"></label><label>Property access<select name="accessType">
+                        <option>Customer will be present</option>
+                        <option>Security will provide access</option>
+                        <option>Call before arrival</option>
+                    </select></label><label>Preferred contact method<select name="contactMethod">
+                        <option>Phone</option>
+                        <option>WhatsApp</option>
+                        <option>Email</option>
+                    </select></label><label class="profile-wide">Detailed work requirement *<textarea name="details"
+                        required minlength="10" maxlength="2000"
+                        placeholder="Describe rooms, dimensions, existing condition, materials and expected outcome"></textarea></label><button
+                    class="primary profile-wide" data-property-api-action="request-service" type="submit">Submit
+                    Detailed Service Request</button>
+            </form>
+            <h3>Service Requests</h3>
+            <div class="dashboard-table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Preferred</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="propertyServicesBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="rentpay">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>Rent Pay</h3><span class="inline-state" id="rentPayState">Demo payment workflow</span>
+            </div>
+            <p>A production payment requires a configured payment gateway and webhooks.</p><button class="primary"
+                data-action="pay">Start Demo Payment</button>
+            <h3>Payment History</h3>
+            <ul class="task-list" id="rentPaymentHistory">
+                <li>No verified gateway payment yet</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="plans">
+        <div class="dash-card">
+            <h3>Buyer / Tenant Plans</h3>
+            <div class="dash-grid three">
+                <article><span>Basic</span><strong>Rs. 999</strong><button data-action="select-plan">Select
+                        Plan</button></article>
+                <article><span>Relax</span><strong>Rs. 1,999</strong><button data-action="current-plan">Current
+                        Plan</button></article>
+                <article><span>Assisted</span><strong>Rs. 4,999</strong><button data-action="select-plan">Select
+                        Plan</button></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="dash-panel hidden" data-view="support">
+        <div class="dash-card">
+            <div class="card-head">
+                <div>
+                    <h3>Support</h3>
+                    <p>Raise a traceable PropertyDirect support request with complete context.</p>
+                </div><span class="inline-state" id="supportState">Ready</span>
+            </div>
+            <form class="form-grid detailed-property-form" id="propertySupportForm"><label>Issue title *<input
+                        name="title" required maxlength="140" placeholder="Short summary"></label><label>Category
+                    *<select name="category" required>
+                        <option>ACCOUNT_ACCESS</option>
+                        <option>LISTING_APPROVAL</option>
+                        <option>PAYMENT_OR_PLAN</option>
+                        <option>OWNER_CONTACT</option>
+                        <option>VISIT_OR_SERVICE</option>
+                        <option>PRIVACY_OR_SAFETY</option>
+                        <option>TECHNICAL_ISSUE</option>
+                    </select></label><label>Priority *<select name="priority" required>
+                        <option>NORMAL</option>
+                        <option>HIGH</option>
+                        <option>URGENT</option>
+                    </select></label><label>Related listing / transaction ID<input
+                        name="reference"></label><label>Preferred contact method<select name="contactMethod">
+                        <option>In-app update</option>
+                        <option>Phone</option>
+                        <option>Email</option>
+                    </select></label><label>Available callback time<input name="callbackAt"
+                        type="datetime-local"></label><label class="profile-wide">Detailed issue *<textarea
+                        name="details" required minlength="15" maxlength="2000"
+                        placeholder="Explain what happened, expected result, error message and steps already tried"></textarea></label><label
+                    class="profile-wide">Screenshot / document reference<input name="attachmentReference"
+                        placeholder="Filename or secure reference"></label><button class="primary profile-wide"
+                    data-action="support" type="button">Raise Detailed Ticket</button></form>
+            <h3 style="margin-top: 24px;">Tickets</h3>
+            <ul class="task-list" id="supportTickets">
+                <li>No active support tickets</li>
+            </ul>
+        </div>
+    </section>
+    </main>
+    <div class="toast hidden" id="toast"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function switchTab(panelId) {
+                if (!panelId) return;
+
+                document.querySelectorAll("[data-panel]").forEach(function (btn) {
+                    if (btn.dataset.panel === panelId) {
+                        btn.classList.add("active");
+                    } else {
+                        btn.classList.remove("active");
+                    }
+                });
+
+                document.querySelectorAll("[data-view]").forEach(function (view) {
+                    if (view.dataset.view === panelId) {
+                        view.classList.remove("hidden");
+                        view.style.display = "block";
+                    } else {
+                        view.classList.add("hidden");
+                        view.style.display = "none";
+                    }
+                });
+
+                var activeBtn = document.querySelector('.sidebar-nav [data-panel="' + panelId + '"]');
+                var titleElem = document.getElementById("panelTitle");
+                if (activeBtn && titleElem) {
+                    var text = activeBtn.textContent.trim();
+                    titleElem.textContent = text;
+                }
+
+                if (history.pushState) {
+                    history.pushState(null, null, '#' + panelId);
+                } else {
+                    location.hash = '#' + panelId;
+                }
+            }
+
+            document.addEventListener("click", function (e) {
+                var target = e.target.closest("[data-panel]");
+                if (target) {
+                    e.preventDefault();
+                    switchTab(target.dataset.panel);
+                }
+            });
+
+            var initialHash = window.location.hash.replace("#", "");
+            if (initialHash && document.querySelector('[data-view="' + initialHash + '"]')) {
+                switchTab(initialHash);
             } else {
-                btn.classList.remove("active");
+                switchTab("overview");
             }
         });
-
-        document.querySelectorAll("[data-view]").forEach(function(view) {
-            if (view.dataset.view === panelId) {
-                view.classList.remove("hidden");
-                view.style.display = "block";
-            } else {
-                view.classList.add("hidden");
-                view.style.display = "none";
-            }
-        });
-
-        var activeBtn = document.querySelector('.sidebar-nav [data-panel="' + panelId + '"]');
-        var titleElem = document.getElementById("panelTitle");
-        if (activeBtn && titleElem) {
-            var text = activeBtn.textContent.trim();
-            titleElem.textContent = text;
-        }
-
-        if (history.pushState) {
-            history.pushState(null, null, '#' + panelId);
-        } else {
-            location.hash = '#' + panelId;
-        }
-    }
-
-    document.addEventListener("click", function(e) {
-        var target = e.target.closest("[data-panel]");
-        if (target) {
-            e.preventDefault();
-            switchTab(target.dataset.panel);
-        }
-    });
-
-    var initialHash = window.location.hash.replace("#", "");
-    if (initialHash && document.querySelector('[data-view="' + initialHash + '"]')) {
-        switchTab(initialHash);
-    } else {
-        switchTab("overview");
-    }
-});
-</script>
-<script src="/shared/js/required-fields.js?v=20260826-v2"></script>
-<script src="/propertydirect/js/dashboard.js?v=20260831-sidebar-v99"></script>
-<script src="/propertydirect/js/market-workflows.js?v=20260901-listing-workflow-v3"></script>
-<script src="/shared/js/theme.js?v=20260819-profile-form-grid-v23"></script>
+    </script>
+    <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
+    <script src="/propertydirect/js/dashboard.js?v=20260903-sidebar-icon-v3"></script>
+    <script src="/propertydirect/js/market-workflows.js?v=20260901-listing-workflow-v3"></script>
 
 
 
@@ -940,5 +1773,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-</body>
+    </body>
+
 </html>

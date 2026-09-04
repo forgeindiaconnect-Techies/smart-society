@@ -1,0 +1,840 @@
+/* PropertyDirect adopts the SmartSociety visual language: Urbanist, indigo and soft blue surfaces. */
+:root {
+  --ss-indigo: #4361ee;
+  --ss-indigo-dark: #2547c7;
+  --ss-sky: #3a86ff;
+  --ss-ink: #0f172a;
+  --ss-copy: #596579;
+  --ss-soft: #f4f7ff;
+  --ss-tint: #edf2ff;
+  --ss-line: rgba(30, 58, 138, .13);
+  --ss-radius: 12px;
+  --ss-shadow: 0 18px 52px rgba(31, 61, 140, .12);
+}
+
+body {
+  font-family: var(--app-font-family) !important;
+  color: var(--ss-ink) !important;
+  background: #f9fbff !important;
+  -webkit-font-smoothing: antialiased;
+}
+body :is(button, input, select, textarea) { font-family: inherit !important; }
+body :is(h1, h2, h3, h4, h5, h6) { color: var(--ss-ink) !important; letter-spacing: -.028em !important; }
+
+/* Shared glassy header and familiar SmartSociety indigo interactions. */
+.header-bottom, .header.active .header-bottom {
+  background: rgba(252, 253, 255, .90) !important;
+  border-bottom-color: var(--ss-line) !important;
+  box-shadow: 0 4px 28px rgba(30, 58, 138, .07) !important;
+}
+.header-bottom .logo .logo-icon-mark, .header-bottom .logo .logo-highlight,
+.header-bottom .navbar-link:is(:hover,:focus), .smartsociety-header-pill .pill-icon-box { color: var(--ss-indigo) !important; }
+.header-bottom .navbar-link:is(:hover,:focus), .header-bottom-actions-btn:hover { background: rgba(67, 97, 238, .08) !important; }
+.pd-header-login-btn, .pd-auth-submit, .hero .btn-primary, .hero .btn {
+  background: linear-gradient(135deg, var(--ss-indigo-dark), var(--ss-indigo), var(--ss-sky)) !important;
+  box-shadow: 0 9px 26px rgba(67, 97, 238, .34) !important;
+}
+.pd-header-login-btn:hover, .pd-auth-submit:hover, .hero .btn-primary:hover, .hero .btn:hover {
+  background: linear-gradient(135deg, var(--ss-indigo-dark), var(--ss-indigo), var(--ss-sky)) !important;
+  box-shadow: 0 16px 42px rgba(67, 97, 238, .46) !important;
+}
+
+/* Do not reserve an error row until there is an actual login error. */
+.pd-auth-form { gap:14px !important; }
+.pd-auth-error:empty { display:none !important; }
+.pd-auth-error:not(:empty) { display:block !important; min-height:0 !important; margin:0 !important; }
+
+/* Soft blue canvas, restrained borders and the same rounded SmartSociety surfaces. */
+.hero { background: linear-gradient(135deg, #fbfcff 0%, #f2f6ff 58%, #eef3ff 100%) !important; }
+.hero::before { background: radial-gradient(circle at 74% 24%, rgba(58,134,255,.11), transparent 30%), radial-gradient(circle at 22% 80%, rgba(245,158,11,.07), transparent 24%) !important; }
+.hero-subtitle { color: var(--ss-indigo) !important; background: rgba(67, 97, 238, .09) !important; }
+.hero-title { color: var(--ss-ink) !important; }
+.hero-text, .hero p, .section-text, .property-item-text p { color: var(--ss-copy) !important; }
+.service-card, .property-card, .blog-card, .contact-card, .about-card {
+  border-color: var(--ss-line) !important;
+  border-radius: var(--ss-radius) !important;
+  box-shadow: 0 14px 34px rgba(30, 58, 138, .08) !important;
+}
+.service-card:hover, .property-card:hover, .blog-card:hover { border-color: rgba(67,97,238,.28) !important; }
+.section, .property, .service, .blog, .cta { background-color: #f9fbff !important; }
+.footer, footer { background: #17213b !important; }
+
+/* Dashboard counterpart: identical type, indigo accents and quiet white surfaces. */
+body.app-dashboard[data-platform="propertydirect"] {
+  font-family: var(--app-font-family) !important;
+  color: var(--ss-ink) !important;
+}
+body.app-dashboard[data-platform="propertydirect"] :is(h1,h2,h3,h4,h5,h6,strong,b) { font-family:var(--app-font-family) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-sidebar { background: linear-gradient(165deg, #233c9d, #173078 82%) !important; }
+body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active { background: var(--ss-indigo) !important; }
+body.app-dashboard[data-platform="propertydirect"] :is(.primary, button.primary) { background:linear-gradient(135deg,var(--ss-indigo-dark),var(--ss-indigo),var(--ss-sky)) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
+body.app-dashboard[data-platform="propertydirect"] .dash-card { border-color:var(--ss-line) !important; box-shadow:0 8px 22px rgba(31,61,140,.06) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article strong,
+body.app-dashboard[data-platform="propertydirect"] .dash-header :is(h1,#panelTitle) { color:var(--ss-indigo) !important; }
+
+/* Vendor dashboard uses the same system even though its markup is standalone. */
+body[data-dashboard-role="vendor"] { font-family:var(--app-font-family) !important; background:#fff !important; color:var(--ss-ink) !important; }
+body[data-dashboard-role="vendor"] .vendor-sidebar { background:linear-gradient(165deg,#233c9d,#173078 82%) !important; }
+body[data-dashboard-role="vendor"] .vendor-nav button.active { background:var(--ss-indigo) !important; }
+body[data-dashboard-role="vendor"] :is(.primary,.vendor-badge) { background:linear-gradient(135deg,var(--ss-indigo-dark),var(--ss-indigo),var(--ss-sky)) !important; color:#fff !important; }
+body[data-dashboard-role="vendor"] :is(.vendor-card,.dash-card) { border-color:var(--ss-line) !important; box-shadow:0 8px 22px rgba(31,61,140,.06) !important; }
+
+/* Premium finish: controlled contrast, spacious surfaces, no decorative motion. */
+body {
+  background:
+    radial-gradient(circle at 92% 0%, rgba(67,97,238,.10), transparent 27rem),
+    linear-gradient(180deg, #fbfcff 0%, #f6f8fd 100%) !important;
+}
+.header-bottom, .header.active .header-bottom { border-bottom:1px solid rgba(30,58,138,.11) !important; }
+.header-bottom .logo .logo-icon-mark { border-color:rgba(67,97,238,.18) !important; box-shadow:0 10px 26px rgba(67,97,238,.15) !important; }
+.pd-header-login-btn { border-radius:12px !important; letter-spacing:.01em !important; }
+.pd-auth-dialog { border:1px solid rgba(255,255,255,.75) !important; box-shadow:0 30px 90px rgba(17,32,75,.30) !important; }
+.pd-auth-field input, .pd-auth-field select { background:rgba(255,255,255,.92) !important; border-color:rgba(30,58,138,.18) !important; }
+.hero { border-bottom-color:rgba(67,97,238,.12) !important; }
+.hero-title { text-shadow:0 2px 0 rgba(255,255,255,.85) !important; }
+.hero-subtitle { border:1px solid rgba(67,97,238,.16) !important; box-shadow:0 8px 20px rgba(67,97,238,.08) !important; }
+.service-card, .property-card, .blog-card, .contact-card, .about-card { background:rgba(255,255,255,.92) !important; }
+
+body.app-dashboard[data-platform="propertydirect"] .dash-header { box-shadow:0 6px 22px rgba(23,43,94,.035) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-card,
+body.app-dashboard[data-platform="propertydirect"] .dash-grid > article {
+  background:linear-gradient(145deg,#fff 0%,#fbfcff 100%) !important;
+  border-color:rgba(30,58,138,.13) !important;
+  box-shadow:0 12px 30px rgba(31,61,140,.07) !important;
+}
+body.app-dashboard[data-platform="propertydirect"] .status.active {
+  border:1px solid rgba(46,196,182,.16) !important;
+  box-shadow:0 5px 14px rgba(46,196,182,.08) !important;
+}
+body.app-dashboard[data-platform="propertydirect"] .header-actions .primary,
+body.app-dashboard[data-platform="propertydirect"] .card-head .primary {
+  min-height:42px !important; border-radius:12px !important; box-shadow:0 10px 24px rgba(67,97,238,.24) !important;
+}
+body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll { background:#fff !important; }
+body.app-dashboard[data-platform="propertydirect"] th { background:#f7f9ff !important; color:#64748b !important; }
+
+/* PROPERTY REVIEW MODAL & GOVERNANCE STYLING */
+.property-review-modal {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  width: 100vw !important; height: 100vh !important;
+  background: rgba(15, 23, 42, 0.72) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  z-index: 999999 !important; padding: 24px !important; box-sizing: border-box !important;
+}
+.property-review-modal.hidden { display: none !important; }
+
+.property-review-dialog {
+  position: relative !important;
+  width: min(840px, 94vw) !important;
+  max-height: calc(100vh - 48px) !important;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.3) !important;
+  display: grid !important;
+  grid-template-columns: 360px 1fr !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 800px) {
+  .property-review-dialog { grid-template-columns: 1fr !important; overflow-y: auto !important; }
+}
+
+.property-review-close {
+  position: absolute !important; top: 16px !important; right: 16px !important;
+  width: 34px !important; height: 34px !important; border-radius: 50% !important;
+  background: #f1f5f9 !important; color: #64748b !important; border: 1px solid #cbd5e1 !important;
+  font-size: 1.2rem !important; font-weight: 800 !important; display: flex !important;
+  align-items: center !important; justify-content: center !important; cursor: pointer !important;
+  z-index: 10 !important; transition: all 0.2s ease !important;
+}
+.property-review-close:hover { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
+
+.property-review-gallery {
+  background: #0f172a !important; padding: 20px !important;
+  display: flex !important; flex-direction: column !important; gap: 12px !important;
+  justify-content: center !important; border-right: 1px solid #1e293b !important;
+}
+.property-review-gallery img#propertyReviewMainImage {
+  width: 100% !important; aspect-ratio: 4/3 !important; object-fit: cover !important;
+  border-radius: 14px !important; border: 1px solid rgba(255,255,255,0.15) !important;
+}
+#propertyReviewThumbs {
+  display: flex !important; gap: 8px !important; overflow-x: auto !important; padding-bottom: 4px !important;
+}
+#propertyReviewThumbs img {
+  width: 60px !important; height: 45px !important; object-fit: cover !important;
+  border-radius: 8px !important; cursor: pointer !important; opacity: 0.7 !important; transition: opacity 0.2s ease !important;
+}
+#propertyReviewThumbs img:hover { opacity: 1 !important; }
+
+.property-review-content {
+  padding: 28px !important; overflow-y: auto !important; display: flex !important; flex-direction: column !important; gap: 14px !important;
+}
+.property-review-content h3 { font-size: 1.35rem !important; font-weight: 800 !important; color: #0f172a !important; margin: 0 !important; }
+.property-review-content p#propertyReviewOwner { font-size: 0.85rem !important; color: #64748b !important; margin: 0 !important; }
+
+.property-review-specs {
+  display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important;
+  background: #f8fafc !important; padding: 14px !important; border-radius: 14px !important; border: 1px solid #e2e8f0 !important;
+}
+.property-review-specs article { display: flex !important; flex-direction: column !important; gap: 2px !important; }
+.property-review-specs article span { font-size: 0.72rem !important; font-weight: 700 !important; color: #64748b !important; text-transform: uppercase !important; }
+.property-review-specs article strong { font-size: 0.9rem !important; font-weight: 800 !important; color: #0f172a !important; }
+
+.property-review-content section h4 { font-size: 0.85rem !important; font-weight: 800 !important; color: #1e293b !important; margin: 0 0 4px 0 !important; }
+.property-review-content section p { font-size: 0.84rem !important; color: #475569 !important; line-height: 1.45 !important; margin: 0 !important; }
+
+.approval-review-note { display: flex !important; flex-direction: column !important; gap: 6px !important; font-size: 0.82rem !important; font-weight: 700 !important; color: #334155 !important; }
+.approval-review-note textarea { width: 100% !important; padding: 10px 14px !important; border-radius: 12px !important; border: 1px solid #cbd5e1 !important; font-family: inherit !important; font-size: 0.85rem !important; }
+
+.property-review-actions { display: flex !important; gap: 12px !important; margin-top: 8px !important; }
+.property-review-actions button { flex: 1 !important; padding: 12px 18px !important; border-radius: 12px !important; font-family: inherit !important; font-size: 0.86rem !important; font-weight: 700 !important; cursor: pointer !important; }
+.property-review-actions button[data-property-api-action="approve-property"] { background: #10b981 !important; color: #fff !important; border: 0 !important; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.25) !important; }
+.property-review-actions button[data-property-api-action="reject-property"] { background: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fca5a5 !important; }
+
+.customer-governance-stats { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 16px !important; margin-bottom: 24px !important; }
+.customer-governance-stats article { background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 16px !important; padding: 18px !important; display: flex !important; flex-direction: column !important; gap: 4px !important; }
+.customer-governance-stats article span { font-size: 0.8rem !important; color: #64748b !important; font-weight: 600 !important; }
+.customer-governance-stats article strong { font-size: 1.7rem !important; font-weight: 800 !important; color: #0f172a !important; }
+.customer-governance-stats article small { font-size: 0.72rem !important; color: #94a3b8 !important; }
+
+/* FINANCE, PAYOUTS & PLAN MODULE STYLING */
+.payment-module-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 24px !important;
+  gap: 16px !important;
+}
+.payment-module-head h3 {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 0 0 4px 0 !important;
+  letter-spacing: -0.02em !important;
+}
+.payment-module-head p {
+  font-size: 0.88rem !important;
+  color: #64748b !important;
+  margin: 0 !important;
+}
+.payment-module-head .status.live {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #065f46 !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+}
+
+.payment-summary-grid, .plan-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 20px !important;
+  margin-bottom: 28px !important;
+}
+@media (max-width: 900px) {
+  .payment-summary-grid, .plan-summary-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 540px) {
+  .payment-summary-grid, .plan-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.payment-summary-grid article, .plan-summary-grid article {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  padding: 14px 18px !important;
+  min-height: 84px !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: all 0.22s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.payment-summary-grid article::before, .plan-summary-grid article::before {
+  display: none !important;
+  content: none !important;
+}
+.payment-summary-grid article:hover, .plan-summary-grid article:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.payment-summary-grid article span, .plan-summary-grid article span {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 4px !important;
+  display: block !important;
+}
+.payment-summary-grid article strong, .plan-summary-grid article strong {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.03em !important;
+  margin-bottom: 2px !important;
+  display: block !important;
+}
+.payment-summary-grid article small, .plan-summary-grid article small {
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  line-height: 1.35 !important;
+  display: block !important;
+}
+
+.subscription-subtabs, .payment-tabs {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 24px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  flex-wrap: wrap !important;
+}
+.subscription-subtabs button, .payment-tabs button {
+  padding: 10px 20px !important;
+  border-radius: 12px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+}
+.subscription-subtabs button:hover, .payment-tabs button:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.subscription-subtabs button.active, .payment-tabs button.active {
+  background: #0a1834 !important;
+  color: #ffffff !important;
+  border-color: #0a1834 !important;
+  box-shadow: 0 4px 14px rgba(10, 24, 52, 0.2) !important;
+}
+
+.payment-tab-panel, .plan-tab-panel {
+  width: 100% !important;
+}
+.payment-tab-panel.hidden, .plan-tab-panel.hidden {
+  display: none !important;
+}
+
+.payment-detail-table, .plan-detail-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 1px solid #e2e8f0 !important;
+}
+.payment-detail-table th, .plan-detail-table th {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 14px 18px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  text-align: left !important;
+}
+.payment-detail-table td, .plan-detail-table td {
+  padding: 16px 18px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #334155 !important;
+  font-size: 0.86rem !important;
+}
+.payment-detail-table td small, .plan-detail-table td small {
+  color: #64748b !important;
+  font-size: 0.78rem !important;
+}
+.payment-detail-table td button, .plan-detail-table td button {
+  padding: 8px 18px !important;
+  border-radius: 999px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.payment-detail-table td button:hover, .plan-detail-table td button:hover {
+  background: #0a1834 !important;
+  color: #ffffff !important;
+  border-color: #0a1834 !important;
+}
+
+.payment-detail-table .status.paid, .payment-detail-table .status.settled, .plan-detail-table .status.paid {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #065f46 !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+.payment-detail-table .status.pending, .plan-detail-table .status.pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+.payment-detail-table .status.open, .plan-detail-table .status.open {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.plan-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+  margin-top: 16px !important;
+}
+.plan-card-grid article {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+  transition: all 0.22s ease !important;
+}
+.plan-card-grid article.featured {
+  border-color: #2563eb !important;
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15) !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%) !important;
+}
+.plan-card-grid article span { font-size: 1.1rem !important; font-weight: 800 !important; color: #0f172a !important; }
+.plan-card-grid article strong { font-size: 1.8rem !important; font-weight: 800 !important; color: #2563eb !important; margin: 8px 0 4px 0 !important; }
+.plan-card-grid article small { font-size: 0.82rem !important; color: #64748b !important; margin-bottom: 16px !important; }
+.plan-card-grid article ul { list-style: none !important; padding: 0 !important; margin: 0 0 20px 0 !important; display: flex !important; flex-direction: column !important; gap: 8px !important; }
+.plan-card-grid article ul li { font-size: 0.84rem !important; color: #334155 !important; display: flex !important; align-items: center !important; gap: 8px !important; }
+.plan-card-grid article ul li::before { content: "✓"; color: #10b981; font-weight: 800; }
+
+/* COMPACT CARD OVERRIDE FOR ALL DASHBOARD METRICS */
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.three,
+html body.app-dashboard[data-platform="propertydirect"] .payment-summary-grid,
+html body.app-dashboard[data-platform="propertydirect"] .plan-summary-grid,
+html body.app-dashboard[data-platform="propertydirect"] .customer-governance-stats {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 14px !important;
+  justify-content: flex-start !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel .dash-grid > article,
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel .dash-grid.three > article,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid article,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.three article,
+html body.app-dashboard[data-platform="propertydirect"] .payment-summary-grid article,
+html body.app-dashboard[data-platform="propertydirect"] .plan-summary-grid article,
+html body.app-dashboard[data-platform="propertydirect"] .customer-governance-stats article {
+  flex: 0 1 210px !important;
+  min-width: 170px !important;
+  max-width: 230px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 10px 14px !important;
+  justify-content: flex-start !important;
+  gap: 2px !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid article span,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.three article span,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid > article span {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin: 0 0 2px 0 !important;
+  line-height: 1.2 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid article strong,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.three article strong,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid > article strong {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+}
+
+/* Polished Card Head & Table Alignments */
+html body.app-dashboard[data-platform="propertydirect"] .card-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-bottom: 18px !important;
+  width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head h3 {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #0f2246 !important;
+  margin: 0 0 4px 0 !important;
+  line-height: 1.3 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head p {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.86rem !important;
+  color: #64748b !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head button,
+html body.app-dashboard[data-platform="propertydirect"] .card-head .button {
+  margin: 0 !important;
+  align-self: center !important;
+  white-space: nowrap !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll {
+  width: 100% !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02) !important;
+  margin-top: 16px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  text-align: left !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table th {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  white-space: nowrap !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td {
+  padding: 14px 18px !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.88rem !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  vertical-align: middle !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table tr:last-child td {
+  border-bottom: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table tr:hover td {
+  background: #f8fafc !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td[colspan] {
+  text-align: center !important;
+  padding: 36px 20px !important;
+  color: #64748b !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  background: #fafafa !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(1),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(1) {
+  width: 180px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(2),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(2) {
+  width: 150px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(3),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(3) {
+  width: 200px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(4),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(4) {
+  width: auto !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(5),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(5) {
+  width: 110px !important;
+  text-align: center !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table th:nth-child(6),
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="support"] table td:nth-child(6) {
+  width: 140px !important;
+  text-align: right !important;
+}
+
+/* Polished "My Profile" Workspace Layout */
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-layout {
+  display: grid !important;
+  grid-template-columns: 280px 1fr !important;
+  gap: 24px !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 28px 24px !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-avatar {
+  width: 72px !important;
+  height: 72px !important;
+  margin: 0 auto 16px auto !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  font-size: 1.6rem !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary h3 {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 0 0 4px 0 !important;
+  line-height: 1.3 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary p {
+  font-size: 0.88rem !important;
+  color: #64748b !important;
+  margin: 0 0 12px 0 !important;
+  font-weight: 600 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary dl {
+  margin: 16px 0 0 0 !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #f1f5f9 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  text-align: left !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary dl > div {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 0.82rem !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary dl dt {
+  color: #64748b !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-summary dl dd {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 28px 32px !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-head h3 {
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 0 0 4px 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-head p {
+  font-size: 0.88rem !important;
+  color: #64748b !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 18px 20px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-section {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  margin-top: 14px !important;
+  margin-bottom: 4px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #f1f5f9 !important;
+  width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-section:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-section strong {
+  font-size: 1.02rem !important;
+  font-weight: 800 !important;
+  color: #0f2246 !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-section small {
+  font-size: 0.82rem !important;
+  color: #64748b !important;
+  margin: 0 !important;
+  display: block !important;
+  font-weight: 500 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form label.profile-wide {
+  grid-column: 1 / -1 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form input,
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form select,
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form textarea {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form input:disabled,
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form select:disabled,
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-form textarea:disabled {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+
+@media (max-width: 900px) {
+  html body.app-dashboard[data-platform="propertydirect"] .property-profile-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html body.app-dashboard[data-platform="propertydirect"] .property-profile-form {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+
+

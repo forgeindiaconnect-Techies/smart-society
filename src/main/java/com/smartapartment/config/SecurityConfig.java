@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/smartapartment/**",
                                 "/propertydirect/**",
                                 "/dashboards/**",
+                                "/resident/**",
                                 "/terms/**",
                                 "/error",
                                 "/api/auth/**"

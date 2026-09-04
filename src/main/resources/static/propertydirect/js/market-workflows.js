@@ -204,8 +204,8 @@
             delete form.dataset.editingId; form.reset(); const photosInput=form.querySelector('[name="photos"]'); if(photosInput) photosInput.required=true; const submit=form.querySelector('[data-property-api-action="publish-owner-listing"]'); if(submit) submit.textContent="Submit property for approval"; notify("Property updated and resubmitted. Your listing is pending Super Admin review."); await loadOwnerListings(); openPanel("listings"); return;
         }
         const photos = [...(form.querySelector('[name="photos"]')?.files || [])];
-        if (photos.length < 10) throw new Error("Please upload at least 10 property photos.");
-        if (photos.length > 20) throw new Error("Please upload no more than 20 property photos.");
+        if (!photos.length) throw new Error("Please upload at least one property photo.");
+        if (photos.length > 10) throw new Error("Please upload no more than 10 property photos.");
         const body = new FormData(); body.append("listing", new Blob([JSON.stringify(payload)], {type: "application/json"})); photos.forEach(photo => body.append("photos", photo));
         await api("/listings/with-photos", {method: "POST", body});
         form.reset(); document.getElementById("propertyPhotoPreview")?.replaceChildren(); const count = document.getElementById("propertyPhotoCount"); if (count) count.textContent = "No photos selected";
@@ -375,17 +375,18 @@
             dropZone.querySelector("span")?.insertAdjacentText("beforebegin", "Drag and drop images here, or click to browse. ");
             ["dragenter", "dragover"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add("is-dragging"); }));
             ["dragleave", "drop"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove("is-dragging"); }));
-            dropZone.addEventListener("drop", event => { const transfer = new DataTransfer(); [...event.dataTransfer.files].filter(file => file.type.startsWith("image/")).slice(0,20).forEach(file => transfer.items.add(file)); photoInput.files = transfer.files; previewPropertyFiles([...photoInput.files]); });
+            dropZone.addEventListener("drop", event => { const transfer = new DataTransfer(); [...event.dataTransfer.files].filter(file => file.type.startsWith("image/")).slice(0,10).forEach(file => transfer.items.add(file)); photoInput.files = transfer.files; previewPropertyFiles([...photoInput.files]); });
         }
         setDefaultDates();
         try {
             if (role === "customer") await Promise.all([searchListings(), loadSaved(), loadSavedSearches(), loadVisits(), loadServices(), loadOwnerListings()]);
+            else if (role === "vendor") await loadOwnerListings();
             else if (role === "admin") await loadOwnerListings();
             else if (role === "superadmin") { ensureSuperadminGovernancePanel(); await loadSuperadminGovernance(); }
             document.documentElement.dataset.propertyBackendConnected = "true";
         } catch (error) { console.error("PropertyDirect workflow hydration failed", error); notify(error.message); }
     });
 
-    function previewPropertyFiles(files) { const count = document.getElementById("propertyPhotoCount"); if (count) { count.textContent = `${files.length} photo${files.length === 1 ? "" : "s"} selected${files.length < 10 ? " — add at least 10" : " — ready"}`; count.classList.toggle("is-invalid", files.length < 10); } const preview = document.getElementById("propertyPhotoPreview"); if (preview) preview.replaceChildren(...files.slice(0,20).map(file => { const img = document.createElement("img"); img.src = URL.createObjectURL(file); img.alt = file.name; return img; })); }
+    function previewPropertyFiles(files) { const count = document.getElementById("propertyPhotoCount"); if (count) { count.textContent = `${files.length} of 10 photo${files.length === 1 ? "" : "s"} selected${files.length ? " — ready" : ""}`; count.classList.toggle("is-invalid", files.length > 10); } const preview = document.getElementById("propertyPhotoPreview"); if (preview) preview.replaceChildren(...files.slice(0,10).map(file => { const img = document.createElement("img"); img.src = URL.createObjectURL(file); img.alt = file.name; return img; })); }
     document.addEventListener("change", event => { if (event.target.matches("#propertyPhotoFiles")) previewPropertyFiles([...event.target.files]); });
 })();

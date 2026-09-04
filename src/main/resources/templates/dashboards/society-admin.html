@@ -332,23 +332,23 @@
                 <h4 class="mb-0 fw-bold">Smart<span class="text-primary">Apartment</span></h4>
             </div>
             <nav class="nav flex-column py-3 sidebar-nav" aria-label="Dashboard sections">
-                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
-                <a href="#flats" class="nav-link btn btn-link text-start text-decoration-none" data-panel="flats"><i class="fa-solid fa-building me-2"></i> Blocks & Flats</a>
-                <a href="#residents" class="nav-link btn btn-link text-start text-decoration-none" data-panel="residents"><i class="fa-solid fa-users me-2"></i> Residents</a>
-                <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Billing</a>
-                <a href="#visitors" class="nav-link btn btn-link text-start text-decoration-none" data-panel="visitors"><i class="fa-solid fa-address-card me-2"></i> Visitors</a>
-                <a href="#complaints" class="nav-link btn btn-link text-start text-decoration-none" data-panel="complaints"><i class="fa-solid fa-triangle-exclamation me-2"></i> Complaints</a>
-                <a href="#amenities" class="nav-link btn btn-link text-start text-decoration-none" data-panel="amenities"><i class="fa-solid fa-table-tennis-paddle-ball me-2"></i> Amenities</a>
-                <a href="#announcements" class="nav-link btn btn-link text-start text-decoration-none" data-panel="announcements"><i class="fa-solid fa-bullhorn me-2"></i> Announcements</a>
-                <a href="#billing-rules" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing-rules"><i class="fa-solid fa-money-check-dollar me-2"></i> Recurring Charges</a>
-                <a href="#staff" class="nav-link btn btn-link text-start text-decoration-none" data-panel="staff"><i class="fa-solid fa-broom me-2"></i> Domestic Staff</a>
-                <a href="#deliveries" class="nav-link btn btn-link text-start text-decoration-none" data-panel="deliveries"><i class="fa-solid fa-box me-2"></i> Deliveries</a>
-                <a href="#polls" class="nav-link btn btn-link text-start text-decoration-none" data-panel="polls"><i class="fa-solid fa-check-to-slot me-2"></i> Polls & Voting</a>
-                <a href="#assets" class="nav-link btn btn-link text-start text-decoration-none" data-panel="assets"><i class="fa-solid fa-boxes-stacked me-2"></i> Assets & AMC</a>
-                <a href="#expenses" class="nav-link btn btn-link text-start text-decoration-none" data-panel="expenses"><i class="fa-solid fa-receipt me-2"></i> Expenses</a>
-                <a href="#payments" class="nav-link btn btn-link text-start text-decoration-none" data-panel="payments"><i class="fa-solid fa-credit-card me-2"></i> Payments</a>
-                <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions"><i class="fa-solid fa-cloud me-2"></i> SaaS Plan</a>
-                <a href="#reports" class="nav-link btn btn-link text-start text-decoration-none" data-panel="reports"><i class="fa-solid fa-chart-pie me-2"></i> Reports</a>
+                <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview" onclick="openPanel('overview'); return false;"><i class="fa-solid fa-house me-2"></i> Overview</a>
+                <a href="#flats" class="nav-link btn btn-link text-start text-decoration-none" data-panel="flats" onclick="openPanel('flats'); return false;"><i class="fa-solid fa-building me-2"></i> Blocks & Flats</a>
+                <a href="#residents" class="nav-link btn btn-link text-start text-decoration-none" data-panel="residents" onclick="openPanel('residents'); return false;"><i class="fa-solid fa-users me-2"></i> Residents</a>
+                <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing" onclick="openPanel('billing'); return false;"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Billing</a>
+                <a href="#visitors" class="nav-link btn btn-link text-start text-decoration-none" data-panel="visitors" onclick="openPanel('visitors'); return false;"><i class="fa-solid fa-address-card me-2"></i> Visitors</a>
+                <a href="#complaints" class="nav-link btn btn-link text-start text-decoration-none" data-panel="complaints" onclick="openPanel('complaints'); return false;"><i class="fa-solid fa-triangle-exclamation me-2"></i> Complaints</a>
+                <a href="#amenities" class="nav-link btn btn-link text-start text-decoration-none" data-panel="amenities" onclick="openPanel('amenities'); return false;"><i class="fa-solid fa-table-tennis-paddle-ball me-2"></i> Amenities</a>
+                <a href="#announcements" class="nav-link btn btn-link text-start text-decoration-none" data-panel="announcements" onclick="openPanel('announcements'); return false;"><i class="fa-solid fa-bullhorn me-2"></i> Announcements</a>
+                <a href="#billing-rules" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing-rules" onclick="openPanel('billing-rules'); return false;"><i class="fa-solid fa-money-check-dollar me-2"></i> Recurring Charges</a>
+                <a href="#staff" class="nav-link btn btn-link text-start text-decoration-none" data-panel="staff" onclick="openPanel('staff'); return false;"><i class="fa-solid fa-broom me-2"></i> Domestic Staff</a>
+                <a href="#deliveries" class="nav-link btn btn-link text-start text-decoration-none" data-panel="deliveries" onclick="openPanel('deliveries'); return false;"><i class="fa-solid fa-box me-2"></i> Deliveries</a>
+                <a href="#polls" class="nav-link btn btn-link text-start text-decoration-none" data-panel="polls" onclick="openPanel('polls'); return false;"><i class="fa-solid fa-check-to-slot me-2"></i> Polls & Voting</a>
+                <a href="#assets" class="nav-link btn btn-link text-start text-decoration-none" data-panel="assets" onclick="openPanel('assets'); return false;"><i class="fa-solid fa-boxes-stacked me-2"></i> Assets & AMC</a>
+                <a href="#expenses" class="nav-link btn btn-link text-start text-decoration-none" data-panel="expenses" onclick="openPanel('expenses'); return false;"><i class="fa-solid fa-receipt me-2"></i> Expenses</a>
+                <a href="#payments" class="nav-link btn btn-link text-start text-decoration-none" data-panel="payments" onclick="openPanel('payments'); return false;"><i class="fa-solid fa-credit-card me-2"></i> Payments</a>
+                <a href="#subscriptions" class="nav-link btn btn-link text-start text-decoration-none" data-panel="subscriptions" onclick="openPanel('subscriptions'); return false;"><i class="fa-solid fa-cloud me-2"></i> SaaS Plan</a>
+                <a href="#reports" class="nav-link btn btn-link text-start text-decoration-none" data-panel="reports" onclick="openPanel('reports'); return false;"><i class="fa-solid fa-chart-pie me-2"></i> Reports</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
                 <a class="btn btn-outline-light w-100 rounded-pill" href="/dashboards/logout">
@@ -376,7 +376,7 @@
             <div class="container-fluid p-4 dashboard-container">
                 
                 <!-- Overview Panel -->
-                <section data-view="overview" class="animate__animated animate__fadeIn">
+                <section id="overview" data-view="overview" class="animate__animated animate__fadeIn">
                     <div class="row g-4 mb-4 stats">
                         <div class="col-xl-3 col-md-6">
                             <article class="card p-4 h-100 shadow-sm border-0">
@@ -422,7 +422,7 @@
                 </section>
 
                 <!-- Control Center -->
-                <section class="d-none" data-view="control" th:if="${false}">
+                <section id="control" class="d-none" data-view="control" th:if="${false}">
                     <div class="row g-4 mb-4 stats">
                         <div class="col-md-3"><article class="card p-4 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Pending Approvals</span><strong class="fs-2 fw-bold text-primary mt-2 d-block">23</strong></article></div>
                         <div class="col-md-3"><article class="card p-4 text-center h-100 shadow-sm border-0"><span class="text-muted small fw-bold text-uppercase">Assignments Due</span><strong class="fs-2 fw-bold text-warning mt-2 d-block">8</strong></article></div>
@@ -490,7 +490,7 @@
                 </section>
 
                 <!-- Flats -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="flats">
+                <section id="flats" class="d-none animate__animated animate__fadeIn" data-view="flats">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">Blocks and Flats</h4>
@@ -509,7 +509,7 @@
                 </section>
 
                 <!-- Residents -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="residents">
+                <section id="residents" class="d-none animate__animated animate__fadeIn" data-view="residents">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-start card-head gap-3">
                             <div><h4 class="fw-bold mb-1">Residents &amp; Society Team</h4><p class="small text-muted mb-0">Create resident accounts and operational staff access for this society.</p></div>
@@ -533,7 +533,7 @@
                 </section>
 
                 <!-- Billing -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="billing">
+                <section id="billing" class="d-none animate__animated animate__fadeIn" data-view="billing">
                     <div class="billing-workspace">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div>
@@ -708,7 +708,7 @@
                 </script>
 
                 <!-- Visitors -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="visitors">
+                <section id="visitors" class="d-none animate__animated animate__fadeIn" data-view="visitors">
                     <div class="card shadow-sm border-0 rounded-4 visitor-management-card">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">Visitor Management</h4>
@@ -734,7 +734,7 @@
                 </section>
 
                 <!-- Complaints -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="complaints">
+                <section id="complaints" class="d-none animate__animated animate__fadeIn" data-view="complaints">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <h4 class="fw-bold mb-0">Complaints</h4>
@@ -753,7 +753,7 @@
                 </section>
 
                 <!-- Amenities -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="amenities">
+                <section id="amenities" class="d-none animate__animated animate__fadeIn" data-view="amenities">
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Amenity Bookings</h4><p class="text-muted small mb-0">Record the resident, flat, date and time, payment method, amount and approval status.</p></div>
@@ -780,7 +780,7 @@
                 </section>
 
                 <!-- Announcements -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="announcements">
+                <section id="announcements" class="d-none animate__animated animate__fadeIn" data-view="announcements">
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Announcement Center</h4><p class="text-muted small mb-0">Send a clear update to the right people and keep a record of every notice.</p></div>
@@ -821,7 +821,7 @@
                 </section>
 
                 <!-- Billing Rules -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="billing-rules">
+                <section id="billing-rules" class="d-none animate__animated animate__fadeIn" data-view="billing-rules">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Recurring Charge Rules</h4><p class="text-muted small mb-0">Set a charge once, schedule it, and generate traceable bills whenever needed.</p></div>
@@ -849,7 +849,7 @@
                 </section>
 
                 <!-- Domestic Staff -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="staff">
+                <section id="staff" class="d-none animate__animated animate__fadeIn" data-view="staff">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Domestic Staff Registry</h4><p class="text-muted small mb-0">Maintain verified worker details, service coverage, working hours, and secure society access.</p></div>
@@ -881,7 +881,7 @@
                 </section>
 
                 <!-- Deliveries -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="deliveries">
+                <section id="deliveries" class="d-none animate__animated animate__fadeIn" data-view="deliveries">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Parcel Desk</h4><p class="text-muted small mb-0">Capture the complete parcel journey from courier arrival through secure resident collection.</p></div>
@@ -913,7 +913,7 @@
                 </section>
 
                 <!-- Polls -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="polls">
+                <section id="polls" class="d-none animate__animated animate__fadeIn" data-view="polls">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Community Polls</h4><p class="text-muted small mb-0">Create transparent resident decisions with a defined purpose, voting window, and live participation record.</p></div>
@@ -936,7 +936,7 @@
                 </section>
 
                 <!-- Assets -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="assets">
+                <section id="assets" class="d-none animate__animated animate__fadeIn" data-view="assets">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Assets, Warranty & AMC</h4><p class="text-muted mb-0">Track equipment ownership, vendor cover, service schedules and maintenance condition in one register.</p></div>
@@ -973,7 +973,7 @@
                 </section>
 
                 <!-- Expenses -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="expenses">
+                <section id="expenses" class="d-none animate__animated animate__fadeIn" data-view="expenses">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Expense Approvals</h4><p class="text-muted mb-0">Record vendor invoices, verify approval, and keep payment details ready for audit.</p></div>
@@ -1005,7 +1005,7 @@
                 </section>
 
                 <!-- Payments -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="payments">
+                <section id="payments" class="d-none animate__animated animate__fadeIn" data-view="payments">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
                             <div><h4 class="fw-bold mb-1">Payment Summary</h4><p class="text-muted mb-0">Review society collections, payment references, billing cycles, and outstanding dues.</p></div>
@@ -1032,7 +1032,7 @@
                 </section>
 
                 <!-- Subscriptions -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="subscriptions">
+                <section id="subscriptions" class="d-none animate__animated animate__fadeIn" data-view="subscriptions">
                     <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4 d-flex flex-wrap justify-content-between gap-3 align-items-center"><div><span id="saasHeroStatus" class="badge bg-secondary-subtle text-secondary-emphasis border mb-2">Loading subscription</span><h3 id="saasHeroPlan" class="fw-bold mb-1">Plan details</h3><p id="saasHeroDescription" class="text-muted mb-0">Checking the subscription assigned to this society workspace.</p></div><div class="d-flex flex-wrap gap-2"><a href="/saas" class="btn btn-outline-primary rounded-pill"><i class="fa-solid fa-layer-group me-2"></i>View plan catalogue</a><button type="button" class="btn btn-primary rounded-pill" data-subscription-action="support"><i class="fa-solid fa-headset me-2"></i>Contact support</button></div></div></div>
                     <div class="subscription-summary-grid">
                         <article class="subscription-summary-card"><span>Active plan</span><strong class="text-dark" id="saasCurrentPlan">Loading…</strong><small id="saasPlanCycle">Billing cycle</small></article>
@@ -1044,7 +1044,7 @@
                 </section>
 
                 <!-- Reports -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="reports">
+                <section id="reports" class="d-none animate__animated animate__fadeIn" data-view="reports">
                     <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4 d-flex flex-wrap justify-content-between gap-3 align-items-center"><div><span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-2">Society reporting workspace</span><h3 class="fw-bold mb-1">Reports and analytics</h3><p class="text-muted mb-0">Review financial, operational and service health before exporting a committee-ready report.</p></div><button type="button" class="btn btn-primary rounded-pill" data-society-report="all"><i class="fa-solid fa-file-arrow-down me-2"></i>Export reporting pack</button></div></div>
                     <div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4"><div class="row g-3 align-items-end"><div class="col-md-4"><label class="form-label fw-semibold">Reporting period</label><select class="form-select" id="reportPeriod"><option>Current month</option><option>Previous month</option><option>Current financial year</option></select></div><div class="col-md-4"><label class="form-label fw-semibold">Focus area</label><select class="form-select" id="reportFocus"><option>All operational areas</option><option>Billing and collections</option><option>Gate and visitor operations</option><option>Complaints and service teams</option><option>Occupancy and residents</option></select></div><div class="col-md-4 d-flex gap-2"><button type="button" class="btn btn-outline-primary flex-grow-1" data-society-report="refresh"><i class="fa-solid fa-rotate me-2"></i>Refresh insights</button><button type="button" class="btn btn-primary flex-grow-1" data-society-report="all"><i class="fa-solid fa-download me-2"></i>Export CSV</button></div></div><p class="small text-muted mb-0 mt-3" id="reportPreparedAt"><i class="fa-regular fa-clock me-1"></i>Prepared from the latest available society records.</p></div></div>
                     <div class="row g-4 mb-4 stats"><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Billing collection</span><strong class="fs-2 text-primary d-block mt-2">86%</strong><small class="text-muted mt-2">Rs. 4.30L collected of Rs. 5.00L billed</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Visitor entries</span><strong class="fs-2 text-info d-block mt-2">1,248</strong><small class="text-muted mt-2">42 delayed exits requiring review</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Complaint SLA</span><strong class="fs-2 text-success d-block mt-2">14h</strong><small class="text-muted mt-2">92% resolved within target</small></article></div><div class="col-md-3"><article class="card p-4 h-100 shadow-sm border-0"><span class="small text-muted fw-bold text-uppercase">Occupancy</span><strong class="fs-2 text-dark d-block mt-2">94%</strong><small class="text-muted mt-2">301 occupied of 320 total flats</small></article></div></div>
@@ -1101,6 +1101,67 @@
     <!-- Advanced scripts for Admin -->
     <script th:src="@{/smartapartment/js/advanced-dashboard.js}"></script>
     <script>
+        window.openPanel = function(panel, updateHistory = true) {
+            if (!panel) panel = 'overview';
+            const selectedView = document.querySelector('[data-view="' + panel + '"]') || document.querySelector('[data-view="overview"]');
+            if (!selectedView) return;
+
+            document.querySelectorAll('[data-panel]').forEach(function(button) {
+                const active = button.dataset.panel === panel;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-selected', String(active));
+            });
+
+            document.querySelectorAll('[data-view]').forEach(function(view) {
+                const shouldHide = view !== selectedView;
+                if (shouldHide) {
+                    view.style.setProperty('display', 'none', 'important');
+                    view.classList.add('d-none');
+                    view.classList.add('hidden');
+                } else {
+                    view.style.setProperty('display', 'block', 'important');
+                    view.classList.remove('d-none');
+                    view.classList.remove('hidden');
+                }
+            });
+
+            const title = document.getElementById('title');
+            const titles = {
+                overview: "Overview",
+                flats: "Blocks and Flats",
+                residents: "Residents",
+                billing: "Maintenance Billing",
+                visitors: "Visitor Management",
+                complaints: "Complaints",
+                amenities: "Amenities",
+                announcements: "Announcements",
+                "billing-rules": "Recurring Charge Rules",
+                staff: "Domestic Staff",
+                deliveries: "Delivery Management",
+                polls: "Community Polls",
+                assets: "Assets & AMC",
+                expenses: "Expenses",
+                payments: "Payments",
+                subscriptions: "SaaS Plan",
+                reports: "Reports"
+            };
+            if (title && titles[panel]) {
+                title.textContent = titles[panel];
+            }
+
+            if (updateHistory && location.hash !== '#' + panel) {
+                history.pushState(null, '', '#' + panel);
+            }
+        };
+
+        function syncHashPanel() {
+            const hash = (location.hash || '').replace('#', '');
+            if (hash) window.openPanel(hash, false);
+        }
+        window.addEventListener('hashchange', syncHashPanel);
+        document.addEventListener('DOMContentLoaded', syncHashPanel);
+        syncHashPanel();
+
         function syncAdminTickets() {
             try {
                 const stored = localStorage.getItem("smartapartment-tickets-v1");
