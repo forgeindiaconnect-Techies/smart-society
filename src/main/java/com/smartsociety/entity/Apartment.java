@@ -11,6 +11,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "apartments")
 public class Apartment extends BaseEntity {
+    /** Stable, read-only public reference; existing records receive the same format. */
+    @jakarta.persistence.Transient
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getApartmentCode() {
+        return getId() == null ? null : String.format(java.util.Locale.ROOT, "SMT-%04d", getId());
+    }
+
 
     @ManyToOne
     private Block block;

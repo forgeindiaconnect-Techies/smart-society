@@ -67,7 +67,7 @@ body.app-dashboard[data-platform="propertydirect"] {
 body.app-dashboard[data-platform="propertydirect"] :is(h1,h2,h3,h4,h5,h6,strong,b) { font-family:var(--app-font-family) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar { background: linear-gradient(165deg, #233c9d, #173078 82%) !important; }
 body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active { background: var(--ss-indigo) !important; }
-body.app-dashboard[data-platform="propertydirect"] :is(.primary, button.primary) { background:linear-gradient(135deg,var(--ss-indigo-dark),var(--ss-indigo),var(--ss-sky)) !important; }
+body.app-dashboard[data-platform="propertydirect"] :is(.primary, button.primary) { background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; border:1px solid rgba(255,255,255,0.18) !important; color:#ffffff !important; box-shadow:0 4px 14px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.2) !important; -webkit-font-smoothing:antialiased !important; -moz-osx-font-smoothing:grayscale !important; text-shadow:none !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
 body.app-dashboard[data-platform="propertydirect"] .dash-card { border-color:var(--ss-line) !important; box-shadow:0 8px 22px rgba(31,61,140,.06) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article strong,
@@ -835,6 +835,149 @@ html body.app-dashboard[data-platform="propertydirect"] .property-profile-form t
   }
 }
 
+/* Enforce the SmartSociety Urbanist type system over legacy PropertyDirect font rules. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-sidebar,.dash-header,.dash-panel,.dash-card,.dash-grid,.dashboard-table-scroll,.header-actions) *,
+body[data-dashboard-role="vendor"] :is(.vendor-sidebar,.vendor-main,.vendor-card,.dash-card,.vendor-top,.vendor-nav) * {
+  font-family:var(--app-font-family) !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] :is(h1,h2,h3,h4,h5,h6),
+body[data-dashboard-role="vendor"] :is(h1,h2,h3,h4,h5,h6) {
+  font-weight:800!important;
+  letter-spacing:-.028em!important;
+  line-height:1.14!important;
+}
+html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav :is(button,.nav-link) {
+  font-weight:700!important;
+  letter-spacing:-.008em!important;
+}
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid > article strong,.user-avatar-badge) {
+  font-weight:850!important;
+  letter-spacing:-.035em!important;
+}
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid > article span,.dash-card p,td,th) {
+  letter-spacing:.002em!important;
+}
+
+/* --- MODERN HIGH-CONTRAST TABLE ACTION BUTTONS --- */
+:is(.btn-table-action, .btn-table-edit, table td button, .dashboard-table-scroll table td button, table td a.btn-table-action) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 6px 14px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  border-radius: 8px !important;
+  border: 1px solid #1d4ed8 !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+:is(.btn-table-action, .btn-table-edit, table td button, .dashboard-table-scroll table td button, table td a.btn-table-action):hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+  border-color: #1e40af !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Call Button (Vivid Royal Blue) */
+:is(.btn-call, a[href^="tel:"]) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8 !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.28) !important;
+}
+:is(.btn-call, a[href^="tel:"]):hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+  border-color: #1e40af !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* WhatsApp Button (Vivid Emerald Green) */
+:is(.btn-whatsapp, a[href*="wa.me"]) {
+  background: linear-gradient(135deg, #16a34a, #15803d) !important;
+  color: #ffffff !important;
+  border: 1px solid #15803d !important;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.28) !important;
+}
+:is(.btn-whatsapp, a[href*="wa.me"]):hover {
+  background: linear-gradient(135deg, #15803d, #166534) !important;
+  color: #ffffff !important;
+  border-color: #166534 !important;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Contacted / Dark Slate Action Button */
+:is(.btn-contacted, table td button[onclick*="Contacted"], table td button[onclick*="contacted"]) {
+  background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+  color: #ffffff !important;
+  border: 1px solid #0f172a !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.28) !important;
+}
+:is(.btn-contacted, table td button[onclick*="Contacted"], table td button[onclick*="contacted"]):hover {
+  background: linear-gradient(135deg, #334155, #1e293b) !important;
+  color: #ffffff !important;
+  border-color: #334155 !important;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Edit Button (Vivid Indigo) */
+.btn-table-edit {
+  background: linear-gradient(135deg, #4f46e5, #3730a3) !important;
+  color: #ffffff !important;
+  border-color: #3730a3 !important;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.28) !important;
+}
+.btn-table-edit:hover {
+  background: linear-gradient(135deg, #4338ca, #312e81) !important;
+  color: #ffffff !important;
+  border-color: #312e81 !important;
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Block Button (Vivid Amber) */
+:is(.btn-table-block, table td button[onclick*="block"], table td button[onclick*="Block"]) {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.28) !important;
+}
+:is(.btn-table-block, table td button[onclick*="block"], table td button[onclick*="Block"]):hover {
+  background: linear-gradient(135deg, #b45309, #78350f) !important;
+  color: #ffffff !important;
+  border-color: #78350f !important;
+  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Delete Button (Vivid Crimson) */
+:is(.btn-table-delete, table td button[onclick*="delete"], table td button[onclick*="Delete"], table td button[data-action*="delete"]) {
+  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+  color: #ffffff !important;
+  border-color: #991b1b !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
+}
+:is(.btn-table-delete, table td button[onclick*="delete"], table td button[onclick*="Delete"], table td button[data-action*="delete"]):hover {
+  background: linear-gradient(135deg, #b91c1c, #7f1d1d) !important;
+  color: #ffffff !important;
+  border-color: #7f1d1d !important;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.45) !important;
+  transform: translateY(-1.5px) !important;
+}
 
 
 

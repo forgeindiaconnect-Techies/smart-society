@@ -10,6 +10,13 @@ import lombok.Setter;
 
 @Getter @Setter @Entity @Table(name = "properties")
 public class PropertyListing extends BaseEntity {
+    /** Stable, read-only public reference; existing records receive the same format. */
+    @jakarta.persistence.Transient
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getApartmentCode() {
+        return getId() == null ? null : String.format(java.util.Locale.ROOT, "PDT-%04d", getId());
+    }
+
     // 1. Primary Key inherited from BaseEntity: id
     
     // 2-3. Title & Description

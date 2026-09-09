@@ -367,28 +367,56 @@ body.app-dashboard[data-platform="propertydirect"] .dash-grid strong { color: #2
 body.app-dashboard[data-platform="propertydirect"] button.primary,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle),
 body.app-dashboard[data-platform="propertydirect"] .dash-card button.primary {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
-    border-color: #2563eb !important;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: #ffffff !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+    border-radius: 11px !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    font-weight: 700 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-shadow: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] button.primary:hover {
+body.app-dashboard[data-platform="propertydirect"] button.primary:hover,
+body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle):hover {
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-    border-color: #d97706 !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary),
-body.app-dashboard[data-platform="propertydirect"] table button {
+body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary) {
     color: #1e3a8a !important;
     border: 1px solid #cbd5e1 !important;
     background: #ffffff !important;
     border-radius: 10px !important;
 }
-body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary):hover,
-body.app-dashboard[data-platform="propertydirect"] table button:hover {
-    background: #eff6ff !important;
-    border-color: #2563eb !important;
-    color: #2563eb !important;
+body.app-dashboard[data-platform="propertydirect"] table td button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 5px 13px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 0.78rem !important;
+    font-weight: 750 !important;
+    line-height: 1 !important;
+    border-radius: 8px !important;
+    border: 1px solid #a5b4fc !important;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe) !important;
+    color: #4338ca !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 5px rgba(67, 56, 202, 0.08) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    white-space: nowrap !important;
+}
+body.app-dashboard[data-platform="propertydirect"] table td button:hover {
+    background: linear-gradient(135deg, #4f46e5, #4338ca) !important;
+    color: #ffffff !important;
+    border-color: #4338ca !important;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35) !important;
+    transform: translateY(-1.5px) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .pill-row span {
     color: #1e3a8a !important;
@@ -463,11 +491,13 @@ body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active {
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button.active::before { background: #d97706 !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-sidebar button:hover { background: rgba(37,99,235,.16) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-header {
-    min-height: 96px !important;
+    height: 80px !important;
+    min-height: 80px !important;
+    max-height: 80px !important;
     background: #ffffff !important;
     border-color: #e2e8f0 !important;
-    border-radius: 18px !important;
-    box-shadow: 0 4px 20px rgba(15,23,42,.03) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 1px 4px rgba(15,23,42,.04) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-header::before { background: linear-gradient(#2563eb, #f59e0b) !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-header .eyebrow { color: #d97706 !important; font-size: .75rem !important; letter-spacing: .1em !important; }
@@ -518,15 +548,21 @@ body.app-dashboard[data-platform="propertydirect"] a.button {
 body.app-dashboard[data-platform="propertydirect"] button.primary,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle),
 body.app-dashboard[data-platform="propertydirect"] .dash-card button.primary {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
     color: #ffffff !important;
-    border-color: #2563eb !important;
-    box-shadow: 0 4px 14px rgba(37,99,235,.28) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 11px !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-shadow: none !important;
 }
 body.app-dashboard[data-platform="propertydirect"] button.primary:hover,
 body.app-dashboard[data-platform="propertydirect"] .dash-header button:not(.dashboard-menu-toggle):hover {
-    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
-    border-color: #f59e0b !important;
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] .dash-card button:not(.primary),
 body.app-dashboard[data-platform="propertydirect"] table button {

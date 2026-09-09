@@ -53,6 +53,7 @@
                 <a href="#overview" class="nav-link btn btn-link text-start text-decoration-none active" data-panel="overview"><i class="fa-solid fa-house me-2"></i> Overview</a>
                 <a href="#billing" class="nav-link btn btn-link text-start text-decoration-none" data-panel="billing"><i class="fa-solid fa-file-invoice-dollar me-2"></i> My Maintenance Dues</a>
                 <a href="#pass" class="nav-link btn btn-link text-start text-decoration-none" data-panel="pass"><i class="fa-solid fa-id-badge me-2"></i> Visitor Pre-Approval</a>
+                <a href="#services" class="nav-link btn btn-link text-start text-decoration-none" data-panel="services"><i class="fa-solid fa-screwdriver-wrench me-2"></i> Carpentry & Home Services</a>
                 <a href="#complaints" class="nav-link btn btn-link text-start text-decoration-none" data-panel="complaints"><i class="fa-solid fa-headset me-2"></i> Helpdesk & Complaints</a>
                 <a href="#amenities" class="nav-link btn btn-link text-start text-decoration-none" data-panel="amenities"><i class="fa-solid fa-dumbbell me-2"></i> Amenity Booking</a>
                 <a href="#announcements" class="nav-link btn btn-link text-start text-decoration-none" data-panel="announcements"><i class="fa-solid fa-bullhorn me-2"></i> Notice Board</a>
@@ -259,31 +260,98 @@
                 </script>
 
                 <!-- Visitor Pre-Approval Pass Section -->
-                <section class="d-none animate__animated animate__fadeIn" data-view="pass">
-                    <div class="row g-3 mb-4"><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Active passes</span><strong class="fs-5 text-primary">02</strong><span class="small text-muted">Ready to share</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Guests expected</span><strong class="fs-5 text-success">03</strong><span class="small text-muted">Next 24 hours</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Pass validity</span><strong class="fs-5 text-warning">One visit</strong><span class="small text-muted">Within selected time</span></div></div></div><div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body py-3"><span class="small text-muted d-block">Gate contact</span><strong class="fs-5 text-primary">Available</strong><span class="small text-muted">For entry assistance</span></div></div></div></div>
+                <section class="d-none" data-view="pass">
+                    <div class="row g-4 mb-4 stats">
+                        <div class="col-sm-6 col-xl-3">
+                            <article class="card p-4 h-100 shadow-sm border border-light-subtle rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-bold text-uppercase">Active passes</span>
+                                    <div class="stat-icon-wrapper rounded-3 p-2 bg-primary-subtle text-primary">
+                                        <i class="fa-solid fa-id-badge fs-5"></i>
+                                    </div>
+                                </div>
+                                <strong class="fs-2 fw-bold text-primary d-block my-1">02</strong>
+                                <span class="small text-muted d-block"><i class="fa-solid fa-circle-check text-success me-1"></i>Ready to share</span>
+                            </article>
+                        </div>
+                        <div class="col-sm-6 col-xl-3">
+                            <article class="card p-4 h-100 shadow-sm border border-light-subtle rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-bold text-uppercase">Guests expected</span>
+                                    <div class="stat-icon-wrapper rounded-3 p-2 bg-success-subtle text-success">
+                                        <i class="fa-solid fa-user-clock fs-5"></i>
+                                    </div>
+                                </div>
+                                <strong class="fs-2 fw-bold text-success d-block my-1">03</strong>
+                                <span class="small text-muted d-block"><i class="fa-solid fa-calendar-day me-1"></i>Next 24 hours</span>
+                            </article>
+                        </div>
+                        <div class="col-sm-6 col-xl-3">
+                            <article class="card p-4 h-100 shadow-sm border border-light-subtle rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-bold text-uppercase">Pass validity</span>
+                                    <div class="stat-icon-wrapper rounded-3 p-2 bg-warning-subtle text-warning">
+                                        <i class="fa-solid fa-clock-rotate-left fs-5"></i>
+                                    </div>
+                                </div>
+                                <strong class="fs-2 fw-bold text-warning d-block my-1">One visit</strong>
+                                <span class="small text-muted d-block"><i class="fa-solid fa-hourglass-half me-1"></i>Within selected time</span>
+                            </article>
+                        </div>
+                        <div class="col-sm-6 col-xl-3">
+                            <article class="card p-4 h-100 shadow-sm border border-light-subtle rounded-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-bold text-uppercase">Gate contact</span>
+                                    <div class="stat-icon-wrapper rounded-3 p-2 bg-info-subtle text-info">
+                                        <i class="fa-solid fa-shield-halved fs-5"></i>
+                                    </div>
+                                </div>
+                                <strong class="fs-2 fw-bold text-primary d-block my-1">Available</strong>
+                                <span class="small text-muted d-block"><i class="fa-solid fa-phone me-1"></i>For entry assistance</span>
+                            </article>
+                        </div>
+                    </div>
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
-                            <h4 class="fw-bold mb-0">Pre-Approve Guest Entry (Gate Pass)</h4>
-                            <span class="badge badge-soft-primary inline-state"><i class="fa-solid fa-share-nodes me-1"></i> Share Pass Code with Guest</span>
+                            <h4 class="fw-bold mb-0">Visitor Request to Security</h4>
+                            <span class="badge badge-soft-primary inline-state"><i class="fa-solid fa-shield-halved me-1"></i> Sent Live to Gate Security</span>
                         </div>
                         <div class="card-body px-4 pb-4">
                             <form class="row g-4 form-grid mb-4" id="visitorPassForm">
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="text" class="form-control shadow-none border-light-subtle" id="guestName" placeholder="e.g. Rahul Sharma" required>
-                                        <label for="guestName">Guest Name</label>
+                                        <label for="guestName">Guest Name *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="tel" class="form-control shadow-none border-light-subtle" id="guestMobile" placeholder="9876543210" required>
-                                        <label for="guestMobile">Guest Mobile Number</label>
+                                        <label for="guestMobile">Guest Mobile Number *</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control shadow-none border-light-subtle" id="guestEmail" placeholder="guest@example.com">
+                                        <label for="guestEmail">Guest Email (optional)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="guestEntryType" required>
+                                            <option value="GUEST">Guest</option>
+                                            <option value="DELIVERY">Delivery</option>
+                                            <option value="SERVICE_STAFF">Service Staff</option>
+                                            <option value="VENDOR">Vendor</option>
+                                            <option value="CAB">Cab</option>
+                                        </select>
+                                        <label for="guestEntryType">Entry Type *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="datetime-local" class="form-control shadow-none border-light-subtle" id="visitDateTime" required>
-                                        <label for="visitDateTime">Expected Visit Date & Time</label>
+                                        <label for="visitDateTime">Expected Visit Date & Time *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -293,25 +361,72 @@
                                             <option>Food / Cab Delivery</option>
                                             <option>Home Service (Pest / Maid / Carpenter)</option>
                                         </select>
-                                        <label for="visitPurpose">Visit Purpose</label>
+                                        <label for="visitPurpose">Visit Purpose *</label>
                                     </div>
                                 </div>
-                                <div class="col-md-6"><div class="form-floating"><input type="email" class="form-control shadow-none border-light-subtle" id="guestEmail" placeholder="guest@example.com"><label for="guestEmail">Guest Email (optional)</label></div></div>
-                                <div class="col-md-6"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" id="guestEntryType" required><option value="GUEST">Guest</option><option value="DELIVERY">Delivery</option><option value="SERVICE_STAFF">Service Staff</option><option value="VENDOR">Vendor</option><option value="CAB">Cab</option></select><label for="guestEntryType">Entry Type</label></div></div>
-                                <div class="col-md-4"><div class="form-floating"><input type="number" class="form-control shadow-none border-light-subtle" id="guestPersons" value="1" min="1" max="50" required><label for="guestPersons">Persons Count</label></div></div>
-                                <div class="col-md-4"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestVehicle" maxlength="20" placeholder="TN 01 AB 1234"><label for="guestVehicle">Vehicle Number</label></div></div>
-                                <div class="col-md-4"><div class="form-floating"><select class="form-select shadow-none border-light-subtle" id="guestIdType"><option value="">No ID recorded</option><option>Aadhaar</option><option>Driving Licence</option><option>Passport</option><option>Voter ID</option><option>Company ID</option></select><label for="guestIdType">ID Proof Type</label></div></div>
-                                <div class="col-md-6"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestIdReference" maxlength="80" placeholder="Last four digits / reference"><label for="guestIdReference">ID Proof Reference</label></div></div>
-                                <div class="col-md-6"><div class="form-floating"><input class="form-control shadow-none border-light-subtle" id="guestPhotoReference" maxlength="255" placeholder="Photo or document filename"><label for="guestPhotoReference">Photo / Document Reference</label></div></div>
-                                <div class="col-12"><div class="form-floating"><textarea class="form-control shadow-none border-light-subtle" id="guestInstructions" maxlength="1000" style="height:100px" placeholder="Gate and access instructions"></textarea><label for="guestInstructions">Gate Instructions, Access Notes and Expected Duration</label></div></div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="guestGate" required>
+                                            <option>Gate 1</option>
+                                            <option>Gate 2</option>
+                                            <option>Gate 3</option>
+                                            <option>Service Gate</option>
+                                            <option>Basement Gate</option>
+                                        </select>
+                                        <label for="guestGate">Preferred Gate *</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control shadow-none border-light-subtle" id="guestPersons" value="1" min="1" max="50" required>
+                                        <label for="guestPersons">Persons Count *</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input class="form-control shadow-none border-light-subtle" id="guestVehicle" maxlength="20" placeholder="TN 01 AB 1234">
+                                        <label for="guestVehicle">Vehicle Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="guestIdType">
+                                            <option value="">No ID recorded</option>
+                                            <option>Aadhaar</option>
+                                            <option>Driving Licence</option>
+                                            <option>Passport</option>
+                                            <option>Voter ID</option>
+                                            <option>Company ID</option>
+                                        </select>
+                                        <label for="guestIdType">ID Proof Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input class="form-control shadow-none border-light-subtle" id="guestIdReference" maxlength="80" placeholder="Last four digits / reference">
+                                        <label for="guestIdReference">ID Proof Reference</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control shadow-none border-light-subtle" id="guestPhotoReference" maxlength="255" placeholder="Photo or document filename">
+                                        <label for="guestPhotoReference">Photo / Document Reference</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control shadow-none border-light-subtle" id="guestInstructions" maxlength="1000" style="height:100px" placeholder="Gate and access instructions"></textarea>
+                                        <label for="guestInstructions">Gate Instructions, Access Notes and Expected Duration</label>
+                                    </div>
+                                </div>
                                 <div class="col-12 mt-4">
-                                    <button class="btn btn-primary rounded-pill px-4 shadow-sm" type="submit"><i class="fa-solid fa-plus me-2"></i>Generate QR Visitor Pass</button>
+                                    <button class="btn btn-primary rounded-pill px-4 shadow-sm" type="submit"><i class="fa-solid fa-paper-plane me-2"></i>Submit Visitor Request to Security</button>
                                 </div>
                             </form>
                             <div class="table-responsive mt-2">
                                 <table class="table table-hover align-middle" data-table="passes">
                                     <thead class="table-light">
-                                        <tr><th>Pass Code</th><th>Guest Name</th><th>Mobile</th><th>Expected Time</th><th>Purpose</th><th>Status</th></tr>
+                                        <tr><th>Pass Code</th><th>Guest Name</th><th>Mobile</th><th>Expected Time</th><th>Purpose</th><th>Gate</th><th>Status</th></tr>
                                     </thead>
                                     <tbody id="passesBody">
                                         <tr>
@@ -320,19 +435,471 @@
                                             <td>98123 45678</td>
                                             <td>Today 7:00 PM</td>
                                             <td>Family Guest</td>
-                                            <td><span class="badge bg-success">Valid & Pre-Approved</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>SG-1102</strong></td>
-                                            <td>QuickCart Agent</td>
-                                            <td>98765 00011</td>
-                                            <td>Today 6:30 PM</td>
-                                            <td>Delivery</td>
-                                            <td><span class="badge bg-success">Valid & Pre-Approved</span></td>
+                                            <td>Service Gate</td>
+                                            <td><span class="badge bg-success">Sent to Security</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NoBroker Carpentry & Home Services Section -->
+                <!-- NoBroker Home Services Hub Section (https://www.nobroker.in/home-services-in-bangalore) -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="services" id="nobrokerServicesSection">
+                    
+                    <!-- Top Search & City Header Bar -->
+                    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-danger px-3 py-2 rounded-pill fw-bold text-uppercase" style="font-size: 0.78rem;">
+                                    <i class="fa-solid fa-location-dot me-1"></i> Bangalore ▾
+                                </span>
+                                <h4 class="fw-bold mb-0 text-dark" style="font-size: 1.15rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                    NoBroker Home Services
+                                </h4>
+                            </div>
+                            <div class="flex-grow-1 mx-lg-3" style="max-width: 520px;">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-light-subtle rounded-start-pill ps-3 text-muted">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                    <input type="search" id="nobrokerHubSearchInput" class="form-control bg-light border-light-subtle rounded-end-pill py-2 text-dark shadow-none" placeholder="Search Kitchen Cleaning, Painting, Packers, Carpenter, AC Repair..." onkeyup="filterNoBrokerServices(this.value)">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-bold" onclick="scrollToNoBrokerBookings()">
+                                <i class="fa-solid fa-receipt me-1 text-primary"></i> My Bookings
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 8 Core Service Categories Grid (NoBroker Layout) -->
+                    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shapes text-primary me-2"></i>Explore All Home Services</h5>
+                    <div class="row g-3 mb-4" id="nobrokerCategoryGrid">
+                        <!-- Category 1: Home Cleaning -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="cleaning kitchen bathroom deep house maid">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-danger" onclick="selectNoBrokerCategory('Home Cleaning', 499)">
+                                <span class="badge bg-danger bg-opacity-10 text-danger position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Upto 60% OFF*</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-danger" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-broom fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Home Cleaning</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Bathroom, Kitchen, Deep Clean</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Category 2: Packers & Movers -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="packers movers relocation shift luggage truck">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-primary" onclick="selectNoBrokerCategory('Packers & Movers', 999)">
+                                <span class="badge bg-primary bg-opacity-10 text-primary position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Lowest Quote*</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-primary" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-truck-ramp-box fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Packers & Movers</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Intercity & Local Shifting</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 3: Painting -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="painting wall color whitewash damp patch">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-warning" onclick="selectNoBrokerCategory('Painting & Waterproofing', 399)">
+                                <span class="badge bg-warning bg-opacity-10 text-dark position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Flat 15% OFF</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-warning" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-paint-roller fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Painting & Waterproofing</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Full Home & Touchup Painting</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 4: Sales & Rental Legal Agreement -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="rental agreement sales agreement legal verification stamp draft">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-info" onclick="selectNoBrokerCategory('Rental & Legal Agreement', 299)">
+                                <span class="badge bg-info bg-opacity-10 text-info position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Flat 30% OFF*</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-info" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-file-contract fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Rental & Legal Agreement</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Doorstep Delivery & E-Stamp</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 5: Electrician, Plumber & Carpenter -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="carpenter electrician plumber drill lock tap switch fan tv">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-success" onclick="selectNoBrokerCategory('Electrician, Plumber & Carpenter', 49)">
+                                <span class="badge bg-success bg-opacity-10 text-success position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Express 60Min</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-success" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-screwdriver-wrench fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Electrician, Plumber & Carpenter</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Door Lock, Drill, Taps & Wiring</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 6: Interior & Renovation -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="interior renovation modular kitchen wardrobe design furniture">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-purple" style="border-top-color: #8b5cf6 !important;" onclick="selectNoBrokerCategory('Interior & Renovation', 0)">
+                                <span class="badge bg-purple bg-opacity-10 text-purple position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="background: #f3e8ff; color: #7c3aed; font-size: 0.65rem;">Free Consult</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-purple" style="width: 54px; height: 54px; color: #7c3aed;">
+                                    <i class="fa-solid fa-couch fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Interior & Renovation</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Full Home 3D Design & Modular Work</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 7: AC & Appliance Repair -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="ac appliance fridge washing machine repair servicing gas fill">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-teal" style="border-top-color: #0d9488 !important;" onclick="selectNoBrokerCategory('AC & Appliance Repair', 399)">
+                                <span class="badge bg-teal bg-opacity-10 text-teal position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="background: #ccfbf1; color: #0f766e; font-size: 0.65rem;">Upto 20% OFF*</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-teal" style="width: 54px; height: 54px; color: #0f766e;">
+                                    <i class="fa-solid fa-snowflake fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">AC & Appliance Repair</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">AC Gas Refill, Washing Machine, Fridge</span>
+                            </div>
+                        </div>
+
+                        <!-- Category 8: Pest Control & Sanitization -->
+                        <div class="col-6 col-md-4 col-lg-3 nobroker-cat-item" data-keywords="pest control cockroach termite bedbug spray sanitization">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 hover-shadow transition-all bg-white cursor-pointer position-relative border-top border-3 border-danger" onclick="selectNoBrokerCategory('Pest Control & Sanitization', 299)">
+                                <span class="badge bg-danger bg-opacity-10 text-danger position-absolute top-0 end-0 m-2 rounded-pill fw-bold" style="font-size: 0.65rem;">Herbal & Safe</span>
+                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-2 text-danger" style="width: 54px; height: 54px;">
+                                    <i class="fa-solid fa-bug fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Pest Control</h6>
+                                <span class="text-muted small d-block" style="font-size: 0.72rem;">Cockroach, Termite & Bed Bug Treatment</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Hero Banner Slider & Promotional Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-8">
+                            <div class="card border-0 rounded-4 shadow-sm text-white overflow-hidden h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);">
+                                <div class="card-body p-4 p-md-5 d-flex flex-column justify-content-between position-relative">
+                                    <div>
+                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                                            <i class="fa-solid fa-bolt me-1"></i> Express 60-Minute Arrival Guaranteed
+                                        </span>
+                                        <h2 class="fw-extrabold display-6 text-white mb-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                                            Expert Professional Home Services
+                                        </h2>
+                                        <p class="text-light opacity-90 fs-6 mb-4" style="max-width: 620px;">
+                                            Book background-verified electricians, plumbers, carpenters, deep home cleaners, painters & packers with 30-day warranty protection.
+                                        </p>
+                                    </div>
+
+                                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                                        <div class="d-flex align-items-center gap-2 bg-white bg-opacity-10 px-3 py-2 rounded-3 text-white border border-white border-opacity-10">
+                                            <i class="fa-solid fa-indian-rupee-sign text-warning fs-5"></i>
+                                            <div>
+                                                <div class="fw-bold fs-6" style="line-height: 1.1;">₹49 Inspection Fee</div>
+                                                <small class="text-light opacity-75" style="font-size: 0.72rem;">100% credited in final bill</small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2 bg-white bg-opacity-10 px-3 py-2 rounded-3 text-white border border-white border-opacity-10">
+                                            <i class="fa-solid fa-shield-halved text-success fs-5"></i>
+                                            <div>
+                                                <div class="fw-bold fs-6" style="line-height: 1.1;">30-Day Warranty</div>
+                                                <small class="text-light opacity-75" style="font-size: 0.72rem;">Free re-inspection guarantee</small>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm py-2 ms-auto" onclick="scrollToNoBrokerBookingForm()">
+                                            <i class="fa-solid fa-calendar-check me-1"></i> Book Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <!-- Banner Video Preview Card -->
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 bg-dark text-white position-relative">
+                                <div class="card-body p-0 position-relative d-flex flex-column justify-content-end" style="background: url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80') center/cover no-repeat; min-height: 240px;">
+                                    <div class="p-4 bg-dark bg-opacity-75 backdrop-blur">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-success rounded-pill px-3 py-1">Cleaning Services</span>
+                                            <button class="btn btn-sm btn-light rounded-circle p-2" onclick="alert('Playing NoBroker Service Demonstration Video')"><i class="fa-solid fa-play text-dark"></i></button>
+                                        </div>
+                                        <h5 class="fw-bold text-white mb-1">Deep Sanitization & Scrubbing</h5>
+                                        <p class="text-light small opacity-75 mb-3" style="font-size: 0.78rem;">Single-touch machinery with 100% eco-friendly chemicals.</p>
+                                        <button class="btn btn-emerald btn-success w-100 rounded-pill fw-bold btn-sm" onclick="selectNoBrokerCategory('Home Cleaning', 499)">
+                                            Book Cleaning Service
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- "Offers for you" Section (NoBroker Carousel) -->
+                    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-tag text-danger me-2"></i>Offers for You</h5>
+                    <div class="row g-3 mb-4">
+                        <!-- Offer 1: VIP Membership -->
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 text-white h-100" style="background: linear-gradient(135deg, #18181b 0%, #27272a 100%);">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1" style="font-size: 0.7rem;">VIP MEMBERSHIP</span>
+                                    <i class="fa-solid fa-crown text-warning fs-3"></i>
+                                </div>
+                                <h4 class="fw-extrabold text-white mb-1">Save upto 15-25% off</h4>
+                                <p class="text-light opacity-75 small mb-4">Get FREE Inspection & flat discounts on all Home Services.</p>
+                                <button type="button" class="btn btn-outline-light rounded-pill px-4 fw-bold btn-sm mt-auto" onclick="applyNoBrokerVipPass()">
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Offer 2: Free Tenant Verification -->
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0369a1;">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge bg-primary rounded-pill px-3 py-1">Free Tenant Verification</span>
+                                    <i class="fa-solid fa-file-shield text-primary fs-3"></i>
+                                </div>
+                                <h4 class="fw-extrabold text-dark mb-1">Upto 30% off on Rental agreement</h4>
+                                <p class="text-muted small mb-4">Instant draft, doorstep e-stamp paper & online delivery.</p>
+                                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm mt-auto" onclick="selectNoBrokerCategory('Rental & Legal Agreement', 299)">
+                                    Create Agreement
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Offer 3: Festive Sale -->
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e;">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Festive Sale</span>
+                                    <i class="fa-solid fa-wand-magic-sparkles text-warning fs-3"></i>
+                                </div>
+                                <h4 class="fw-extrabold text-dark mb-1">Flat 15% off on Home Painting</h4>
+                                <p class="text-muted small mb-4">Laser measurement, 1-year warranty & dust-free painting.</p>
+                                <button type="button" class="btn btn-dark rounded-pill px-4 fw-bold btn-sm mt-auto" onclick="selectNoBrokerCategory('Painting & Waterproofing', 399)">
+                                    Explore Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NoBroker Standard vs VIP Rate Card Table -->
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0"><i class="fa-solid fa-table-list text-primary me-2"></i>NoBroker Rate Card & Price Comparison</h5>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2"><i class="fa-solid fa-shield-check me-1"></i> Transparent Fixed Pricing</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Service Category</th>
+                                        <th>Scope & Description</th>
+                                        <th>Standard Rate</th>
+                                        <th>VIP Pass Member Rate</th>
+                                        <th>Warranty</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Drill & Hang Wall Mounts</strong></td>
+                                        <td>TV bracket, wall shelf, curtain rod, frames & clock installation</td>
+                                        <td><span class="text-muted text-decoration-line-through">₹149</span></td>
+                                        <td><strong class="text-success fs-6">₹99</strong> <span class="badge bg-danger ms-1">33% OFF</span></td>
+                                        <td>30 Days Warranty</td>
+                                        <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="selectNoBrokerService('Drill & Hang|99')">Book ₹99</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Door & Lock Fitting</strong></td>
+                                        <td>Door lock repair, handle / latch setup, door shaving & hinges repair</td>
+                                        <td><span class="text-muted text-decoration-line-through">₹199</span></td>
+                                        <td><strong class="text-success fs-6">₹149</strong> <span class="badge bg-danger ms-1">25% OFF</span></td>
+                                        <td>30 Days Warranty</td>
+                                        <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="selectNoBrokerService('Door & Lock Fitting|149')">Book ₹149</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cupboards & Drawer Repair</strong></td>
+                                        <td>Drawer channels, wardrobe hinges, handle replacements & shelf repair</td>
+                                        <td><span class="text-muted text-decoration-line-through">₹229</span></td>
+                                        <td><strong class="text-success fs-6">₹179</strong> <span class="badge bg-danger ms-1">22% OFF</span></td>
+                                        <td>30 Days Warranty</td>
+                                        <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="selectNoBrokerService('Cupboards & Drawers|179')">Book ₹179</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Furniture Assembly</strong></td>
+                                        <td>Bed assembly, study table, 2/3 door wardrobe & modular furniture setup</td>
+                                        <td><span class="text-muted text-decoration-line-through">₹399</span></td>
+                                        <td><strong class="text-success fs-6">₹299</strong> <span class="badge bg-danger ms-1">25% OFF</span></td>
+                                        <td>60 Days Warranty</td>
+                                        <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="selectNoBrokerService('Furniture Assembly|299')">Book ₹299</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Full Home Deep Cleaning</strong></td>
+                                        <td>Single/multi-room deep cleaning, kitchen & bathroom scrubbing</td>
+                                        <td><span class="text-muted text-decoration-line-through">₹799</span></td>
+                                        <td><strong class="text-success fs-6">₹499</strong> <span class="badge bg-danger ms-1">37% OFF</span></td>
+                                        <td>Quality Re-check Support</td>
+                                        <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="selectNoBrokerService('Home Cleaning|499')">Book ₹499</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ₹49 Inspection Booking Form & Checkout Summary -->
+                    <div class="row g-4 mb-4" id="nobrokerBookingFormAnchor">
+                        <div class="col-lg-7">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                                <h5 class="fw-bold text-dark mb-1"><i class="fa-solid fa-calendar-check text-primary me-2"></i>Book NoBroker Home Service</h5>
+                                <p class="text-muted small mb-4">Select your service, choose a time slot, and our verified professional will arrive at your doorstep.</p>
+                                
+                                <form id="noBrokerBookingForm" onsubmit="handleNoBrokerSubmit(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold text-dark small">Selected Service / Category *</label>
+                                            <select class="form-select shadow-none border-light-subtle rounded-3" id="nbSelectedService" required onchange="updateNoBrokerCheckoutPrice()">
+                                                <option value="General Inspection|49">General Home Inspection (₹49 Fee - 100% Adjusted)</option>
+                                                <option value="Home Cleaning|499">Deep Home Cleaning (Starts ₹499)</option>
+                                                <option value="Packers & Movers|999">Packers & Movers Shifting (Starts ₹999)</option>
+                                                <option value="Painting & Waterproofing|399">Painting & Touchup (Starts ₹399)</option>
+                                                <option value="Rental & Legal Agreement|299">Rental Agreement & E-Stamp (Starts ₹299)</option>
+                                                <option value="Electrician, Plumber & Carpenter|49">Electrician, Plumber & Carpenter (Starts ₹49)</option>
+                                                <option value="AC & Appliance Repair|399">AC Servicing & Gas Refill (Starts ₹399)</option>
+                                                <option value="Pest Control & Sanitization|299">Pest Control Herbal Treatment (Starts ₹299)</option>
+                                                <option value="Drill & Hang|99">Drill & Hang Wall Mounting (Starts ₹99)</option>
+                                                <option value="Door & Lock Fitting|149">Door & Lock Repair / Fitting (Starts ₹149)</option>
+                                                <option value="Cupboards & Drawers|179">Cupboards & Drawer Channels (Starts ₹179)</option>
+                                                <option value="Furniture Assembly|299">Furniture Assembly & Dismantling (Starts ₹299)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold text-dark small">Preferred Date *</label>
+                                            <input type="date" class="form-control shadow-none border-light-subtle rounded-3" id="nbServiceDate" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold text-dark small">Preferred Time Slot *</label>
+                                            <select class="form-select shadow-none border-light-subtle rounded-3" id="nbServiceSlot" required>
+                                                <option value="EXPRESS_60MIN">Express Slot (Within 60 Mins)</option>
+                                                <option value="MORNING">Morning (09:00 AM - 12:00 PM)</option>
+                                                <option value="AFTERNOON">Afternoon (12:00 PM - 04:00 PM)</option>
+                                                <option value="EVENING">Evening (04:00 PM - 08:00 PM)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold text-dark small">Contact Person Name *</label>
+                                            <input type="text" class="form-control shadow-none border-light-subtle rounded-3" id="nbCustomerName" placeholder="Your full name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold text-dark small">Mobile Phone Number *</label>
+                                            <input type="tel" class="form-control shadow-none border-light-subtle rounded-3" id="nbCustomerPhone" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold text-dark small">Service Address *</label>
+                                            <input type="text" class="form-control shadow-none border-light-subtle rounded-3" id="nbAddress" placeholder="Flat / House No, Tower / Block, Street, City" required>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold text-dark small">Specific Instructions or Repairs Needed</label>
+                                            <textarea class="form-control shadow-none border-light-subtle rounded-3" id="nbNotes" rows="2" placeholder="Describe work, rooms, specific repair items or instructions"></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4 pt-3 border-top border-light d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small"><i class="fa-solid fa-shield me-1 text-success"></i> Pay on service completion</span>
+                                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                            <i class="fa-solid fa-circle-check me-2"></i> Confirm Booking
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-5">
+                            <!-- Price Summary Card -->
+                            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-receipt text-success me-2"></i>Booking Summary</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Inspection / Base Visit Fee</span>
+                                    <strong class="text-dark" id="nbSummaryFee">₹49</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Safety & Sanitized Equipment</span>
+                                    <span class="text-success fw-bold">FREE</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">NoBroker Warranty Protection</span>
+                                    <span class="text-success fw-bold">30 Days Included</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2 d-none" id="nbVipDiscountRow">
+                                    <span class="text-danger fw-bold"><i class="fa-solid fa-crown me-1 text-warning"></i>VIP Discount</span>
+                                    <strong class="text-danger" id="nbVipDiscountVal">-₹49</strong>
+                                </div>
+                                <hr class="my-3 border-light">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="fw-bold text-dark fs-6">Total Amount Payable</span>
+                                    <strong class="fs-4 text-primary fw-extrabold" id="nbSummaryTotal">₹49</strong>
+                                </div>
+                                
+                                <div class="p-3 bg-light rounded-3 border border-light-subtle">
+                                    <div class="d-flex gap-2 text-dark small fw-bold mb-1">
+                                        <i class="fa-solid fa-circle-info text-info mt-1"></i> No-Risk Guarantee
+                                    </div>
+                                    <p class="text-muted mb-0" style="font-size: 0.76rem;">
+                                        The ₹49 inspection charge is 100% credited against your final service invoice when you approve the professional's estimate.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Customer Reviews Card -->
+                            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 / 5 Rating</h6>
+                                    <span class="text-muted small">35,000+ Happy Customers</span>
+                                </div>
+                                <div class="p-3 bg-light rounded-3 mb-2" style="font-size: 0.8rem;">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <strong class="text-dark">Arun Kumar</strong>
+                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                                    </div>
+                                    <p class="text-muted mb-0">"Professional arrived within 45 mins! Fixed TV mounts and door lock smoothly."</p>
+                                </div>
+                                <div class="p-3 bg-light rounded-3" style="font-size: 0.8rem;">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <strong class="text-dark">Sneha Reddy</strong>
+                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                                    </div>
+                                    <p class="text-muted mb-0">"The ₹49 inspection charge was deducted from my cleaning bill as promised."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Bookings Table -->
+                    <div class="card border-0 shadow-sm rounded-4 bg-white" id="nobrokerBookingsTableAnchor">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1"><i class="fa-solid fa-list-check text-primary me-2"></i>My NoBroker Service Bookings</h5>
+                                <p class="text-muted small mb-0">Saved into the common backend database. Refreshing the page will keep these records.</p>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary rounded-pill btn-sm px-3 fw-bold" onclick="loadNoBrokerMaintenanceTickets()">Refresh</button>
+                        </div>
+                        <div class="card-body px-4 pb-4 table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ticket</th>
+                                        <th>Service</th>
+                                        <th>Schedule</th>
+                                        <th>Address</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="noBrokerMaintenanceRows">
+                                    <tr><td colspan="7" class="text-muted text-center py-4">Loading saved service bookings...</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -537,7 +1104,7 @@
     <script>
         const dashboardTitles = {
             overview: "Overview", billing: "My Maintenance Dues", pass: "Visitor Pre-Approval",
-            complaints: "Helpdesk & Complaints", amenities: "Amenity Booking", announcements: "Notice Board",
+            services: "NoBroker Carpentry & Home Services", "home-services": "Maintenance Services", complaints: "Helpdesk & Complaints", amenities: "Amenity Booking", announcements: "Notice Board",
             deliveries: "Parcel & Deliveries", profile: "My Profile"
         };
         
@@ -580,16 +1147,62 @@
             } else {
                 forceOpenPanel("overview");
             }
+            const renderVisitorPassRow = pass => {
+                const row = document.createElement("tr");
+                const qrCell = document.createElement("td");
+                const code = document.createElement("strong");
+                code.textContent = pass.qrCode || "Pending code";
+                if (pass.id) {
+                    const image = document.createElement("img");
+                    image.src = `/api/society/visitors/${pass.id}/qr`;
+                    image.alt = "Visitor QR code";
+                    image.width = 52;
+                    image.height = 52;
+                    image.className = "ms-2";
+                    qrCell.append(code, image);
+                } else {
+                    qrCell.append(code);
+                }
+                row.appendChild(qrCell);
+                [pass.name, pass.phone, pass.expectedAt ? new Date(pass.expectedAt).toLocaleString("en-IN") : "—", pass.purpose, pass.gateNumber || "Gate 1"].forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value || "—";
+                    row.appendChild(cell);
+                });
+                const status = document.createElement("td");
+                const badge = document.createElement("span");
+                const state = String(pass.status || "EXPECTED").toUpperCase();
+                badge.className = state === "CHECKED_IN" ? "badge bg-primary" : (state === "CHECKED_OUT" ? "badge bg-secondary" : "badge bg-success");
+                badge.textContent = state === "CHECKED_IN" ? "Inside Campus" : (state === "CHECKED_OUT" ? "Checked Out" : "Sent to Security");
+                status.appendChild(badge);
+                row.appendChild(status);
+                return row;
+            };
+            const loadResidentVisitorRequests = async () => {
+                const body = document.getElementById("passesBody");
+                if (!body) return;
+                const response = await fetch("/api/society/visitors", {headers: {Accept: "application/json"}});
+                const passes = await response.json().catch(() => []);
+                if (!response.ok || !Array.isArray(passes)) return;
+                if (!passes.length) {
+                    body.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No visitor requests yet. Submit one above and it will appear in the security dashboard.</td></tr>';
+                    return;
+                }
+                body.replaceChildren(...passes.map(renderVisitorPassRow));
+            };
+
             document.getElementById("visitorPassForm")?.addEventListener("submit", async event => {
                 event.preventDefault();
                 if (!event.currentTarget.reportValidity()) return;
-                const response = await fetch("/api/society/visitors", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({name: document.getElementById("guestName").value, phone: document.getElementById("guestMobile").value, email: document.getElementById("guestEmail").value, purpose: document.getElementById("visitPurpose").value, expectedAt: document.getElementById("visitDateTime").value, entryType: document.getElementById("guestEntryType").value, personsCount: Number(document.getElementById("guestPersons").value), vehicleNumber: document.getElementById("guestVehicle").value, idProofType: document.getElementById("guestIdType").value, idProofNumber: document.getElementById("guestIdReference").value, photoReference: document.getElementById("guestPhotoReference").value, specialInstructions: document.getElementById("guestInstructions").value})});
+                const response = await fetch("/api/society/visitors", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({name: document.getElementById("guestName").value, phone: document.getElementById("guestMobile").value, email: document.getElementById("guestEmail").value, purpose: document.getElementById("visitPurpose").value, expectedAt: document.getElementById("visitDateTime").value, entryType: document.getElementById("guestEntryType").value, gateNumber: document.getElementById("guestGate").value, personsCount: Number(document.getElementById("guestPersons").value), vehicleNumber: document.getElementById("guestVehicle").value, idProofType: document.getElementById("guestIdType").value, idProofNumber: document.getElementById("guestIdReference").value, photoReference: document.getElementById("guestPhotoReference").value, specialInstructions: document.getElementById("guestInstructions").value})});
                 const pass = await response.json().catch(() => ({}));
                 if (!response.ok) return showToast(pass.message || "Unable to create the visitor pass");
-                const body = document.getElementById("passesBody"); const row = document.createElement("tr");
-                const qrCell = document.createElement("td"); const code = document.createElement("strong"); code.textContent = pass.qrCode; const image = document.createElement("img"); image.src = `/api/society/visitors/${pass.id}/qr`; image.alt = "Visitor QR code"; image.width = 52; image.height = 52; image.className = "ms-2"; qrCell.append(code, image); row.appendChild(qrCell);
-                event.currentTarget.reset(); showToast(`QR visitor pass created. Share code: ${pass.qrCode}`);
+                event.currentTarget.reset();
+                await loadResidentVisitorRequests();
+                window.loadSocietyBackendData?.();
+                showToast(`Visitor request sent to security. Share code: ${pass.qrCode}`);
             });
+            loadResidentVisitorRequests();
 
             function syncResidentTickets() {
                 try {
@@ -620,5 +1233,271 @@
             syncResidentTickets();
         });
     </script>
+    <script>
+        function selectNoBrokerService(serviceName, price) {
+            const sel = document.getElementById('nbSelectedService');
+            if (sel) {
+                let matchedOption = false;
+                for (let i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].text.includes(serviceName) || sel.options[i].value.includes(serviceName)) {
+                        sel.selectedIndex = i;
+                        matchedOption = true;
+                        break;
+                    }
+                }
+                if (!matchedOption) {
+                    const opt = document.createElement('option');
+                    opt.value = serviceName + '|' + price;
+                    opt.textContent = serviceName + ' (Starts ₹' + price + ')';
+                    sel.appendChild(opt);
+                    sel.selectedIndex = sel.options.length - 1;
+                }
+                updateNoBrokerCheckoutPrice();
+            }
+            const form = document.getElementById('noBrokerBookingForm');
+            if (form) {
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (typeof showToast === 'function') {
+                showToast('Selected service: ' + serviceName + ' (₹' + price + ')');
+            }
+        }
+
+        function noBrokerServiceMeta(service) {
+            const name = String(service || "General Inspection");
+            if (name.includes("Drill")) return {category: "Carpentry", option: "Drill and hang", warranty: "30 days", priceLabel: "Starts at Rs. 99"};
+            if (name.includes("Door") || name.includes("Lock")) return {category: "Carpentry", option: "Door and lock repair", warranty: "30 days", priceLabel: "Starts at Rs. 149"};
+            if (name.includes("Cupboard") || name.includes("Drawer")) return {category: "Carpentry", option: "Cupboard and drawer repair", warranty: "30 days", priceLabel: "Starts at Rs. 179"};
+            if (name.includes("Furniture") || name.includes("Bed") || name.includes("Wardrobe")) return {category: "Carpentry", option: "Furniture assembly", warranty: "30 days", priceLabel: "Starts at Rs. 299"};
+            return {category: "Carpentry", option: "Inspection and diagnosis", warranty: "Inspection report", priceLabel: "Rs. 49 inspection fee"};
+        }
+
+        async function noBrokerMaintenanceApi(path, options = {}) {
+            const response = await fetch(`/api/maintenance${path}`, {
+                ...options,
+                headers: {
+                    Accept: "application/json",
+                    ...(options.body ? {"Content-Type": "application/json"} : {}),
+                    ...options.headers
+                }
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(payload.message || payload.detail || "Unable to save service booking.");
+            return payload;
+        }
+
+        function formatNoBrokerDate(value) {
+            return value ? new Date(value).toLocaleString("en-IN", {dateStyle: "medium", timeStyle: "short"}) : "—";
+        }
+
+        async function loadNoBrokerMaintenanceTickets() {
+            const body = document.getElementById("noBrokerMaintenanceRows");
+            if (!body) return;
+            try {
+                const tickets = await noBrokerMaintenanceApi("?sourcePlatform=smartsociety");
+                const serviceTickets = tickets.filter(ticket => String(ticket.serviceCategory || ticket.serviceType || "").toLowerCase().includes("carpentry") || String(ticket.externalReference || "").startsWith("NB-CRP-"));
+                if (!serviceTickets.length) {
+                    body.innerHTML = '<tr><td colspan="7" class="text-muted text-center py-4">No saved NoBroker-style service bookings yet.</td></tr>';
+                    return;
+                }
+                body.innerHTML = serviceTickets.map(ticket => {
+                    const status = String(ticket.ticketStatus || "REQUESTED").replaceAll("_", " ");
+                    const done = /RESOLVED|CLOSED/i.test(status);
+                    const badgeClass = done ? "bg-success" : "bg-warning text-dark";
+                    return `<tr>
+                        <td><strong>#${ticket.id}</strong><br><small class="text-muted">${ticket.externalReference || "Resident booking"}</small></td>
+                        <td><strong>${ticket.serviceType || "Carpentry service"}</strong><br><small class="text-muted">${ticket.serviceOption || "Standard visit"}</small></td>
+                        <td>${formatNoBrokerDate(ticket.preferredAt)}</td>
+                        <td>${ticket.serviceAddress || "—"}</td>
+                        <td>${ticket.priceLabel || "Rs. 49"}</td>
+                        <td><span class="badge ${badgeClass}">${status}</span></td>
+                        <td>${done ? '<span class="text-success fw-bold small">Closed</span>' : `<button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="resolveNoBrokerTicket(${ticket.id})">Mark Resolved</button>`}</td>
+                    </tr>`;
+                }).join("");
+            } catch (error) {
+                body.innerHTML = `<tr><td colspan="7" class="text-danger text-center py-4">${error.message}</td></tr>`;
+            }
+        }
+
+        async function resolveNoBrokerTicket(id) {
+            try {
+                await noBrokerMaintenanceApi(`/${id}/status`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ticketStatus: "RESOLVED", vendorNotes: "Marked resolved by resident after service completion."})
+                });
+                if (typeof showToast === "function") showToast("Service ticket marked resolved and saved.");
+                await loadNoBrokerMaintenanceTickets();
+            } catch (error) {
+                if (typeof showToast === "function") showToast(error.message);
+                else alert(error.message);
+            }
+        }
+
+        function applyNoBrokerVipPass() {
+            const discRow = document.getElementById('nbVipDiscountRow');
+            const discVal = document.getElementById('nbVipDiscountVal');
+            const totalEl = document.getElementById('nbSummaryTotal');
+            if (discRow && discVal && totalEl) {
+                discRow.classList.remove('d-none');
+                discRow.classList.remove('hidden');
+                discRow.style.display = 'flex';
+                discVal.textContent = '-₹49';
+                totalEl.textContent = '₹0 (Free Inspection)';
+            }
+            if (typeof showToast === 'function') {
+                showToast('NoBroker VIP Membership Pass Applied. Rs. 49 inspection fee waived.');
+            } else {
+                alert('NoBroker VIP Membership Pass Applied. Rs. 49 inspection fee waived.');
+            }
+        }
+
+        function updateNoBrokerCheckoutPrice() {
+            const sel = document.getElementById('nbSelectedService');
+            const summaryFee = document.getElementById('nbSummaryFee');
+            const summaryTotal = document.getElementById('nbSummaryTotal');
+            if (sel) {
+                const val = sel.value || '';
+                const parts = val.split('|');
+                const price = parts[1] || '49';
+                if (summaryFee) summaryFee.textContent = '₹' + price;
+                const discRow = document.getElementById('nbVipDiscountRow');
+                if (discRow && !discRow.classList.contains('d-none') && !discRow.classList.contains('hidden') && discRow.style.display !== 'none') {
+                    if (summaryTotal) summaryTotal.textContent = '₹0 (VIP Discount)';
+                } else {
+                    if (summaryTotal) summaryTotal.textContent = '₹' + price;
+                }
+            }
+        }
+
+        async function handleNoBrokerSubmit(e) {
+            e.preventDefault();
+            const selectedValue = document.getElementById('nbSelectedService')?.value || 'General Inspection|49';
+            const service = selectedValue.split('|')[0] || 'Carpentry Inspection';
+            const price = selectedValue.split('|')[1] || '49';
+            const date = document.getElementById('nbServiceDate')?.value || 'Tomorrow';
+            const slot = document.getElementById('nbServiceSlot')?.value || 'Express 60min';
+            const name = document.getElementById('nbCustomerName')?.value || 'Resident';
+            const phone = document.getElementById('nbCustomerPhone')?.value || '';
+            const address = document.getElementById('nbAddress')?.value || '';
+            const notes = document.getElementById('nbNotes')?.value || '';
+            const meta = noBrokerServiceMeta(service);
+            const bookingId = 'NB-CRP-' + Math.floor(100000 + Math.random() * 900000);
+            const preferredAt = `${date}T${slot === "MORNING" ? "09:00" : slot === "AFTERNOON" ? "12:00" : slot === "EVENING" ? "16:00" : "10:00"}`;
+
+            try {
+                const saved = await noBrokerMaintenanceApi("", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        sourcePlatform: "smartsociety",
+                        targetEntityType: "APARTMENT_UNIT",
+                        requesterName: name,
+                        requesterPhone: phone,
+                        serviceType: service,
+                        serviceCategory: meta.category,
+                        serviceOption: meta.option,
+                        priceLabel: price === "0" ? "Free inspection pass" : `Rs. ${price}`,
+                        warrantyLabel: meta.warranty,
+                        title: `${service} - ${address || name}`,
+                        description: [
+                            `NoBroker-style resident service booking`,
+                            `Selected slot: ${slot}`,
+                            `Inspection fee / starting price: Rs. ${price}`,
+                            notes && `Resident instructions: ${notes}`,
+                            "Material and spare costs are separate unless approved in final vendor estimate."
+                        ].filter(Boolean).join("\n"),
+                        serviceAddress: address,
+                        priority: slot === "EXPRESS_60MIN" ? "HIGH" : "MEDIUM",
+                        preferredAt,
+                        vendorName: "External NoBroker-style vendor",
+                        vendorPhone: "",
+                        accessType: "Resident will be present",
+                        contactMethod: "Phone",
+                        externalReference: bookingId
+                    })
+                });
+                e.currentTarget.reset();
+                updateNoBrokerCheckoutPrice();
+                await loadNoBrokerMaintenanceTickets();
+                if (typeof showToast === 'function') showToast(`Service booking #${saved.id} saved. Reference: ${bookingId}`);
+                else alert(`Service booking saved. Reference: ${bookingId}`);
+            } catch (error) {
+                if (typeof showToast === 'function') showToast(error.message);
+                else alert(error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('nbServiceDate');
+            if (dateInput && !dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+            loadNoBrokerMaintenanceTickets();
+        });
+    </script>
+    <script>
+        (() => {
+            const residentTitles = {
+                overview: "Overview",
+                billing: "My Maintenance Dues",
+                pass: "Visitor Pre-Approval",
+                services: "NoBroker Carpentry & Home Services",
+                complaints: "Helpdesk & Complaints",
+                amenities: "Amenity Booking",
+                announcements: "Notice Board",
+                deliveries: "Parcel & Deliveries",
+                profile: "My Profile"
+            };
+
+            function openResidentSection(panel) {
+                if (panel === "home-services") panel = "services";
+                const selected = document.querySelector(`[data-view="${panel}"]`);
+                if (!selected) return false;
+                document.querySelectorAll("#sidebar [data-panel], .sidebar-nav [data-panel]").forEach(item => {
+                    const active = item.dataset.panel === panel;
+                    item.classList.toggle("active", active);
+                    item.setAttribute("aria-selected", active ? "true" : "false");
+                });
+                document.querySelectorAll("[data-view]").forEach(view => {
+                    const active = view === selected;
+                    view.classList.toggle("d-none", !active);
+                    view.classList.toggle("hidden", !active);
+                    view.style.display = active ? "block" : "none";
+                });
+                const title = document.getElementById("title");
+                if (title) title.textContent = residentTitles[panel] || "Resident Dashboard";
+                if (location.hash !== `#${panel}`) history.pushState(null, "", `#${panel}`);
+                return true;
+            }
+
+            window.forceOpenPanel = openResidentSection;
+            window.openPanel = openResidentSection;
+
+            document.addEventListener("click", event => {
+                const navItem = event.target.closest("#sidebar [data-panel], .sidebar-nav [data-panel]");
+                if (!navItem) return;
+                if (openResidentSection(navItem.dataset.panel)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                }
+            }, true);
+
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll("#sidebar [data-panel], .sidebar-nav [data-panel]").forEach(item => {
+                    item.style.pointerEvents = "auto";
+                    item.style.cursor = "pointer";
+                });
+                const panel = location.hash.replace("#", "") || "overview";
+                openResidentSection(document.querySelector(`[data-view="${panel}"]`) ? panel : "overview");
+            });
+
+            window.addEventListener("hashchange", () => {
+                const panel = location.hash.replace("#", "") || "overview";
+                openResidentSection(document.querySelector(`[data-view="${panel}"]`) ? panel : "overview");
+            });
+        })();
+    </script>
+<script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
 </body>
 </html>

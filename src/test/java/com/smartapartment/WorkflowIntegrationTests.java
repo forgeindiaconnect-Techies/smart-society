@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
 @SpringBootTest @AutoConfigureMockMvc
 class WorkflowIntegrationTests {
@@ -152,15 +153,19 @@ class WorkflowIntegrationTests {
     }
 
     @Test void propertyDiscoveryPersistsShortlistsSearchesVisitsAndServices() throws Exception {
-        var owner = login("propertydirect", "admin", "admin@propertydirect", "admin123");
-        String listingJson = mvc.perform(post("/api/property/listings").session(owner)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Test Lake View Home\",\"society\":\"Lake View\",\"locality\":\"Whitefield\",\"city\":\"Bangalore\",\"type\":\"RENT\",\"propertyType\":\"APARTMENT\",\"price\":32000,\"deposit\":100000,\"maintenance\":2500,\"areaSqft\":1100,\"bhk\":\"2 BHK\",\"furnishing\":\"Semi Furnished\",\"parking\":\"Car Parking\",\"amenities\":\"Gym, Pool\"}"))
+        var vendor = login("propertydirect", "vendor", "vendor@propertydirect", "vendor123");
+        var superAdmin = login("propertydirect", "superadmin", "superadmin@propertydirect", "superadmin123");
+        String listingPayload = "{\"title\":\"Test Lake View Home\",\"society\":\"Lake View\",\"locality\":\"Whitefield\",\"address\":\"12 Lake Road\",\"pincode\":\"560066\",\"city\":\"Bangalore\",\"type\":\"RENT\",\"propertyType\":\"APARTMENT\",\"price\":32000,\"deposit\":100000,\"maintenance\":2500,\"areaSqft\":1100,\"bhk\":\"2 BHK\",\"bathrooms\":2,\"furnishing\":\"Semi Furnished\",\"parking\":\"Car Parking\",\"amenities\":\"Gym, Pool\"}";
+        MockMultipartFile listingPart = new MockMultipartFile("listing", "listing.json", "application/json", listingPayload.getBytes());
+        MockMultipartFile photoPart = new MockMultipartFile("photos", "lake-view.jpg", "image/jpeg", new byte[]{1, 2, 3});
+        String listingJson = mvc.perform(multipart("/api/property/listings/with-photos").file(listingPart).file(photoPart).session(vendor))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.verificationStatus").value("PENDING"))
                 .andReturn().getResponse().getContentAsString();
         long listingId = json.readTree(listingJson).get("id").asLong();
-        mvc.perform(patch("/api/property/listings/{id}/verification", listingId).param("status", "VERIFIED").session(owner))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.verificationStatus").value("VERIFIED"));
+        mvc.perform(patch("/api/property/listings/{id}/verification", listingId).session(superAdmin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"decision\":\"APPROVED\",\"reviewer\":\"Workflow test\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.verificationStatus").value("APPROVED"));
         mvc.perform(get("/api/property/listings").param("city", "Bangalore").param("bhk", "2 BHK").param("maxPrice", "35000"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[*].id", hasItem((int) listingId)));
 

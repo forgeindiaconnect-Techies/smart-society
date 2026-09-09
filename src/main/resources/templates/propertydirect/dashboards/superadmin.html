@@ -121,6 +121,15 @@
             font-family: 'Manrope', sans-serif !important;
         }
 
+        .dash-header h1 {
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            letter-spacing: -0.02em !important;
+            margin: 0 !important;
+        }
+
         .modal-card h2 {
             font-family: 'Manrope', sans-serif !important;
             font-size: 1.4rem !important;
@@ -524,38 +533,46 @@
             color: #ef4444 !important;
             transform: scale(1.05) !important;
         }
-
         /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
         main.dash-main,
         .dash-main {
             margin: 0 0 0 275px !important;
-            padding: 20px 24px !important;
+            padding: 0 !important;
             width: calc(100% - 275px) !important;
             max-width: calc(100% - 275px) !important;
             min-height: 100vh !important;
             height: auto !important;
             box-sizing: border-box !important;
             flex: 1 !important;
-            background: var(--pd-bg) !important;
+            background: #f8fafc !important;
             overflow-y: visible !important;
         }
 
-        /* Top Header Bar */
+        /* Top Header Bar - Full Width & Clean Top */
         .dash-header {
-            height: 64px !important;
-            min-height: 64px !important;
-            max-height: 64px !important;
+            height: 72px !important;
+            min-height: 72px !important;
+            max-height: 72px !important;
             background: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 14px !important;
-            padding: 0 24px !important;
-            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03) !important;
-            margin: 0 0 20px 0 !important;
+            border: none !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            border-radius: 0 !important;
+            padding: 0 32px !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+            margin: 0 0 28px 0 !important;
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
             box-sizing: border-box !important;
             width: 100% !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+        }
+
+        .dash-panel {
+            padding: 0 32px 32px 32px !important;
+            box-sizing: border-box !important;
         }
 
         .dash-header .eyebrow {
@@ -585,25 +602,28 @@
         button.primary {
             padding: 11px 22px !important;
             border-radius: 12px !important;
-            background: #0f2246 !important;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
             color: #ffffff !important;
-            font-family: 'Manrope', sans-serif !important;
+            font-family: 'Manrope', 'Urbanist', sans-serif !important;
             font-size: 0.85rem !important;
             font-weight: 700 !important;
-            border: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
             cursor: pointer !important;
-            box-shadow: 0 6px 18px rgba(15, 34, 70, 0.2) !important;
-            transition: all 0.22s ease !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
             display: inline-flex !important;
             align-items: center !important;
             gap: 8px !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+            text-shadow: none !important;
         }
 
         .dash-header button.primary:hover,
         button.primary:hover {
-            background: #1d376c !important;
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
             transform: translateY(-2px) !important;
-            box-shadow: 0 10px 24px rgba(15, 34, 70, 0.28) !important;
+            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
         }
 
         .user-avatar-badge {
@@ -618,6 +638,12 @@
             align-items: center !important;
             justify-content: center !important;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .user-avatar-badge:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.45) !important;
         }
 
         /* Overview Stat Grid */
@@ -916,25 +942,28 @@
         }
 
         .status.active {
-            background: #fef3c7 !important;
-            color: #b45309 !important;
+            background: rgba(16, 185, 129, 0.12) !important;
+            color: #059669 !important;
+            border: 1px solid rgba(16, 185, 129, 0.25) !important;
             font-size: 0.78rem !important;
-            font-weight: 700 !important;
+            font-weight: 750 !important;
             padding: 6px 14px !important;
             border-radius: 999px !important;
             display: inline-flex !important;
             align-items: center !important;
-            gap: 6px !important;
+            gap: 8px !important;
             white-space: nowrap !important;
             flex-shrink: 0 !important;
+            backdrop-filter: blur(8px) !important;
         }
 
         .status.active::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background: #2563eb;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
         }
 
         .status.pending,
@@ -1395,6 +1424,8 @@
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260903-header-baseline-v11">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
     <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
+    <link rel="stylesheet" href="/propertydirect/css/superadmin-premium.css?v=20260908-attached-header-v1">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
@@ -1451,13 +1482,6 @@
                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                 </svg>
                 Property Approval System
-            </button>
-            <button data-panel="duplicate-properties">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M8 16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"></path>
-                    <rect x="8" y="8" width="12" height="12" rx="2"></rect>
-                </svg>
-                Duplicate Property Scanner
             </button>
             <button data-panel="reported-properties">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1889,10 +1913,10 @@
                                 <td><span class="status active user-status">Active</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Anand Verma', 'anand@example.com', 'Customer / Buyer', '+91 98765 12345', '14 views, 3 enquiries')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; cursor: pointer;" onclick="toggleUserBlock(this, 'Anand Verma')">Block</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Anand Verma')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Anand Verma', 'anand@example.com', 'Customer / Buyer', '+91 98765 12345', '14 views, 3 enquiries')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-block" onclick="toggleUserBlock(this, 'Anand Verma')">Block</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Anand Verma')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -1913,10 +1937,10 @@
                                 <td><span class="status active user-status">Active</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Priya Sundaram', 'priya@example.com', 'Tenant', '+91 98765 23456', '8 views, 1 booking')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; cursor: pointer;" onclick="toggleUserBlock(this, 'Priya Sundaram')">Block</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Priya Sundaram')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Priya Sundaram', 'priya@example.com', 'Tenant', '+91 98765 23456', '8 views, 1 booking')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-block" onclick="toggleUserBlock(this, 'Priya Sundaram')">Block</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Priya Sundaram')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -1937,10 +1961,10 @@
                                 <td><span class="status active user-status">Active</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Rajesh Kumar', 'agent@apexrealty.in', 'Verified Agent', '+91 98765 34567', '18 listings, 42 leads')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; cursor: pointer;" onclick="toggleUserBlock(this, 'Rajesh Kumar')">Block</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Rajesh Kumar')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Rajesh Kumar', 'agent@apexrealty.in', 'Verified Agent', '+91 98765 34567', '18 listings, 42 leads')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-block" onclick="toggleUserBlock(this, 'Rajesh Kumar')">Block</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Rajesh Kumar')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -1961,10 +1985,10 @@
                                 <td><span class="status active user-status">Active</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Rohan Mehta', 'rohan.mehta@example.com', 'Direct Owner', '+91 98765 45678', '2 properties listed')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; cursor: pointer;" onclick="toggleUserBlock(this, 'Rohan Mehta')">Block</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Rohan Mehta')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Rohan Mehta', 'rohan.mehta@example.com', 'Direct Owner', '+91 98765 45678', '2 properties listed')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-block" onclick="toggleUserBlock(this, 'Rohan Mehta')">Block</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Rohan Mehta')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -1985,10 +2009,10 @@
                                 <td><span class="status pending user-status" style="background: #fef3c7; color: #b45309; font-weight: 800;">Blocked</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Suresh Nair', 'suresh.nair@example.com', 'Customer / Buyer', '+91 98765 56789', 'Account Blocked')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; cursor: pointer;" onclick="toggleUserBlock(this, 'Suresh Nair')">Unblock</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Suresh Nair')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Suresh Nair', 'suresh.nair@example.com', 'Customer / Buyer', '+91 98765 56789', 'Account Blocked')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-action" onclick="toggleUserBlock(this, 'Suresh Nair')">Unblock</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Suresh Nair')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -2009,10 +2033,10 @@
                                 <td><span class="status active user-status">Active</span></td>
                                 <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="viewUserActivity('Ananya Patel', 'ananya.p@example.com', 'Tenant', '+91 98765 67890', '5 views')">Activity</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; cursor: pointer;" onclick="openEditUserModal(this)">Edit</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; cursor: pointer;" onclick="toggleUserBlock(this, 'Ananya Patel')">Block</button>
-                                        <button type="button" style="padding: 5px 11px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; background: #ffffff; color: #b45309; border: 1px solid #fde68a; cursor: pointer;" onclick="deleteUserAccount(this, 'Ananya Patel')">Delete</button>
+                                        <button type="button" class="btn-table-action" onclick="viewUserActivity('Ananya Patel', 'ananya.p@example.com', 'Tenant', '+91 98765 67890', '5 views')">Activity</button>
+                                        <button type="button" class="btn-table-edit" onclick="openEditUserModal(this)">✏️ Edit</button>
+                                        <button type="button" class="btn-table-block" onclick="toggleUserBlock(this, 'Ananya Patel')">Block</button>
+                                        <button type="button" class="btn-table-delete" onclick="deleteUserAccount(this, 'Ananya Patel')">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -2317,7 +2341,7 @@
                         </div>
                     </div>
                     <strong style="font-size: 1.4rem; font-weight: 900; color: #0f172a; display: block; margin-bottom: 6px;">₹4.2 Crores</strong>
-                    <span class="stat-trend up" style="font-size: 0.74rem; font-weight: 800; background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 6px; border: 1px solid #fde68a; display: inline-block; width: fit-content;">★ Customer Savings</span>
+                    <span class="stat-trend up" style="font-size: 0.74rem; font-weight: 800; background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 6px; border: 1px solid #fde68a; display: inline-block; width: fit-content;">Customer Savings</span>
                 </article>
             </div>
 
@@ -2540,58 +2564,58 @@
             <!-- Property Management Summary Metrics Bar -->
             <div class="dash-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
                 <!-- Card 1: Total Inventory -->
-                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 4px;">
-                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b;">Total Inventory</span>
-                        <div class="stat-icon-badge" style="width: 26px; height: 26px; background: #eff6ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe;">
+                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">Total Inventory</span>
+                        <div class="stat-icon-badge" style="width: 26px; height: 26px; min-width: 26px; background: #eff6ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; flex-shrink: 0;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px;">
-                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1;">18,490</strong>
-                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; border: 1px solid #bfdbfe; white-space: nowrap;">↑ 14.2k Pub · 84 Pend</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; min-width: 0;">
+                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin: 0;">18,490</strong>
+                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 6px; border: 1px solid #bfdbfe; white-space: nowrap; flex-shrink: 0;">↑ 14.2k Live</span>
                     </div>
                 </article>
 
                 <!-- Card 2: Active Published -->
-                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 4px;">
-                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b;">Active Published</span>
-                        <div class="stat-icon-badge" style="width: 26px; height: 26px; background: #eff6ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe;">
+                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">Active Published</span>
+                        <div class="stat-icon-badge" style="width: 26px; height: 26px; min-width: 26px; background: #eff6ff; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; flex-shrink: 0;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px;">
-                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1;">14,210</strong>
-                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; border: 1px solid #bfdbfe; white-space: nowrap;">↑ Live Index</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; min-width: 0;">
+                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin: 0;">14,210</strong>
+                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 6px; border: 1px solid #bfdbfe; white-space: nowrap; flex-shrink: 0;">↑ Live Index</span>
                     </div>
                 </article>
 
                 <!-- Card 3: Pending Review Queue -->
-                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 4px;">
-                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b;">Pending Review</span>
-                        <div class="stat-icon-badge" style="width: 26px; height: 26px; background: #fef3c7; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #fde68a;">
+                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">Pending Review</span>
+                        <div class="stat-icon-badge" style="width: 26px; height: 26px; min-width: 26px; background: #fef3c7; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #fde68a; flex-shrink: 0;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px;">
-                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1;">84</strong>
-                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; border: 1px solid #fde68a; white-space: nowrap;">★ Moderation</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; min-width: 0;">
+                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin: 0;">84</strong>
+                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 6px; border: 1px solid #fde68a; white-space: nowrap; flex-shrink: 0;">Moderation</span>
                     </div>
                 </article>
 
                 <!-- Card 4: Featured Tiers -->
-                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 4px;">
-                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b;">Featured Tiers</span>
-                        <div class="stat-icon-badge" style="width: 26px; height: 26px; background: #fef3c7; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #fde68a;">
+                <article style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02); display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div class="stat-card-top" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">Featured Tiers</span>
+                        <div class="stat-icon-badge" style="width: 26px; height: 26px; min-width: 26px; background: #fef3c7; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #fde68a; flex-shrink: 0;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px;">
-                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1;">1,250</strong>
-                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; border: 1px solid #fde68a; white-space: nowrap;">★ Promoted</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; min-width: 0;">
+                        <strong style="font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin: 0;">1,250</strong>
+                        <span class="stat-trend up" style="font-size: 0.68rem; font-weight: 700; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 6px; border: 1px solid #fde68a; white-space: nowrap; flex-shrink: 0;">Promoted</span>
                     </div>
                 </article>
             </div>
@@ -2809,80 +2833,6 @@
 
         <!--  PROPERTY APPROVAL SYSTEM PANEL -->
         <section class="dash-panel hidden" data-view="customers">
-            <!-- Property Approval Summary Metrics Bar -->
-            <div class="dash-grid"
-                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Pending Approval Queue</span>
-                        <div class="stat-icon-badge">⏳</div>
-                    </div>
-                    <strong id="queuePendingMetric" style="color: #d97706;">4 Pending</strong>
-                    <span class="stat-trend up">↑ Pre-Publication Moderation</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Approved Today</span>
-                        <div class="stat-icon-badge">✓</div>
-                    </div>
-                    <strong id="queueApprovedMetric">28 Listings</strong>
-                    <span class="stat-trend up">↑ Published to Marketplace</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Rejected / Fake Purged</span>
-                        <div class="stat-icon-badge">🛡️</div>
-                    </div>
-                    <strong id="queueRejectedMetric">3 Purged</strong>
-                    <span class="stat-trend up">Zero Tolerance Trust Shield</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Avg Moderation Speed</span>
-                        <div class="stat-icon-badge">⚡</div>
-                    </div>
-                    <strong>8.5 Minutes</strong>
-                    <span class="stat-trend up">Real-time Review SLA</span>
-                </article>
-            </div>
-
-            <div class="dash-card">
-                <div class="card-head" style="margin-bottom: 16px;">
-                    <div>
-                        <h3>Property Approval & Moderation Queue</h3>
-                        <p>Super Admin pre-publication review workflow. Prevent fake/spam listings by approving or
-                            rejecting agent and owner submissions before public indexing.</p>
-                    </div>
-                    <button class="primary small" style="background: #2563eb;"
-                        onclick="batchApproveAllQueue()"> Batch Approve All (4)</button>
-                </div>
-
-                <!-- Approval Workflow Step Diagram -->
-                <div
-                    style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px;">
-                    <strong style="display: block; color: #0f172a; font-size: 0.88rem; margin-bottom: 10px;"> Step 12
-                        Specification: Automated Moderation & Publication Pipeline</strong>
-                    <div
-                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 0.8rem; font-weight: 700; color: #475569; text-align: center;">
-                        <div
-                            style="background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                            1. Seller Submits<br><small style="color: #64748b; font-weight: 400;">Agent or Owner</small>
-                        </div>
-                        <div
-                            style="background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 8px; border: 1px solid #fcd34d;">
-                            2. Pending Queue<br><small style="color: #b45309; font-weight: 400;">Hidden from
-                                Search</small></div>
-                        <div
-                            style="background: #eff6ff; color: #1d4ed8; padding: 8px 12px; border-radius: 8px; border: 1px solid #93c5fd;">
-                            3. Admin Audit<br><small style="color: #2563eb; font-weight: 400;">Docs & Media
-                                Check</small></div>
-                        <div
-                            style="background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 8px; border: 1px solid #86efac;">
-                            4. Live Marketplace<br><small style="color: #15803d; font-weight: 400;">Publicly
-                                Indexed</small></div>
-                    </div>
-                </div>
-
                 <!-- Search & Filters Toolbar -->
                 <div
                     style="display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
@@ -3093,329 +3043,6 @@
                 <div
                     style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 14px; font-size: 0.84rem; color: #64748b;">
                     <span>Showing <strong>1 to 4</strong> of <strong>4 pending approval items</strong> in queue</span>
-                    <div style="display: flex; gap: 6px;">
-                        <button disabled
-                            style="padding: 6px 12px; font-size: 0.8rem; background: #f1f5f9; color: #94a3b8; border: 1px solid #cbd5e1; border-radius: 6px;">‹
-                            Previous</button>
-                        <button
-                            style="padding: 6px 12px; font-size: 0.8rem; background: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-weight: 700;">1</button>
-                        <button
-                            style="padding: 6px 12px; font-size: 0.8rem; background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 6px;"
-                            onclick="alert('Next Page')">Next ›</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. Duplicate Property Detection & Review Console -->
-        <section class="dash-panel hidden" data-view="duplicate-properties">
-            <!-- 4 Top Metric Cards -->
-            <div class="dash-grid"
-                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px;">
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Total Scanned Today</span>
-                        <div class="stat-icon-badge"></div>
-                    </div>
-                    <strong>1,420 Listings</strong>
-                    <span class="stat-trend up">Automated AI Pipeline</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>High Similarity Flagged</span>
-                        <div class="stat-icon-badge">️</div>
-                    </div>
-                    <strong>6 Flagged</strong>
-                    <span class="stat-trend neutral">Requires Super Admin Review</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Merged / Deduplicated</span>
-                        <div class="stat-icon-badge"></div>
-                    </div>
-                    <strong>18 Listings</strong>
-                    <span class="stat-trend up">Inventory Cleaned</span>
-                </article>
-                <article style="padding: 16px;">
-                    <div class="stat-card-top">
-                        <span>Scanner Precision SLA</span>
-                        <div class="stat-icon-badge"></div>
-                    </div>
-                    <strong>99.4% Precision</strong>
-                    <span class="stat-trend up">5-Vector Matching Engine</span>
-                </article>
-            </div>
-
-            <div class="dash-card">
-                <div class="card-head" style="margin-bottom: 16px;">
-                    <div>
-                        <h3>Duplicate Property Detection & Deduplication Engine</h3>
-                        <p>Automated pre-publication scan analyzing 5 similarity signals: Same Owner, Same Location,
-                            Same Price, Same Area (sqft), and Similar Image Signatures.</p>
-                    </div>
-                    <span class="status pending"
-                        style="background: #fffbeb; color: #b45309; font-weight: 800; padding: 6px 14px; border-radius: 999px;">Automated
-                        Pre-Publish Scan Active</span>
-                </div>
-
-                <!-- Priority Alert Box for High Match Flagged Item -->
-                <div
-                    style="margin-bottom: 24px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #fcd34d; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);">
-                    <div
-                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span
-                                style="background: #d97706; color: #ffffff; font-weight: 800; font-size: 0.8rem; padding: 5px 14px; border-radius: 999px;">️
-                                Possible Duplicate Property Flagged</span>
-                            <span style="font-size: 0.82rem; color: #92400e; font-weight: 700;">Ref Pair: #PD-9201 ↔
-                                #PD-8492</span>
-                        </div>
-                        <strong
-                            style="color: #b45309; font-size: 0.92rem; background: #ffffff; padding: 4px 12px; border-radius: 8px; border: 1px solid #fde68a;">Match
-                            Confidence: 94% Similarity</strong>
-                    </div>
-
-                    <!-- 2-Column Comparison Card -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                        <div
-                            style="background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <strong style="font-size: 0.9rem; color: #0f172a;">🆕 Incoming Submission
-                                    (#PD-9201)</strong>
-                                <span
-                                    style="background: #eff6ff; color: #1d4ed8; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Submitted
-                                    10m ago</span>
-                            </div>
-                            <div style="font-size: 0.83rem; color: #334155; line-height: 1.5;">
-                                <p style="margin: 0 0 4px 0;"><strong>Title:</strong> 3 BHK Villa in Anna Nagar</p>
-                                <p style="margin: 0 0 4px 0;"><strong>Owner:</strong> Rajesh Kumar (<code
-                                        style="background: #f1f5f9; padding: 1px 5px; border-radius: 4px;">agent@apexrealty.in</code>)
-                                </p>
-                                <p style="margin: 0 0 4px 0;"><strong>Price & Area:</strong> <strong
-                                        style="color: #16a34a;">₹1.45 Cr</strong> · 1,450 sqft</p>
-                                <p style="margin: 0;"><strong>Address:</strong> Plot 42, 2nd Avenue, Anna Nagar, Chennai
-                                </p>
-                            </div>
-                        </div>
-                        <div
-                            style="background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <strong style="font-size: 0.9rem; color: #0f172a;"> Existing Live Listing
-                                    (#PD-8492)</strong>
-                                <span
-                                    style="background: #dcfce7; color: #166534; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Live
-                                    on Site</span>
-                            </div>
-                            <div style="font-size: 0.83rem; color: #334155; line-height: 1.5;">
-                                <p style="margin: 0 0 4px 0;"><strong>Title:</strong> 3 BHK Luxury Villa in Anna Nagar
-                                </p>
-                                <p style="margin: 0 0 4px 0;"><strong>Owner:</strong> Rajesh Kumar (<code
-                                        style="background: #f1f5f9; padding: 1px 5px; border-radius: 4px;">agent@apexrealty.in</code>)
-                                </p>
-                                <p style="margin: 0 0 4px 0;"><strong>Price & Area:</strong> <strong
-                                        style="color: #16a34a;">₹1.45 Cr</strong> · 1,450 sqft</p>
-                                <p style="margin: 0;"><strong>Address:</strong> Plot 42, 2nd Avenue, Anna Nagar, Chennai
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Signals Row & Action Buttons Row (Cleanly Stacked) -->
-                    <div
-                        style="background: #ffffff; padding: 14px 16px; border-radius: 12px; border: 1px solid #fde68a; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.78rem; font-weight: 700;">
-                            <span
-                                style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #fde68a;">
-                                Same Owner (100%)</span>
-                            <span
-                                style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #fde68a;">
-                                Same Location (100%)</span>
-                            <span
-                                style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #fde68a;">
-                                Same Price (100%)</span>
-                            <span
-                                style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #fde68a;">
-                                Same Area (100%)</span>
-                            <span
-                                style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #fde68a;">
-                                Similar Images (88%)</span>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="alert('Submission merged with existing live listing #PD-8492!')"
-                                style="padding: 8px 16px; background: #2563eb; color: #ffffff; font-weight: 800; font-size: 0.82rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-                                Merge Listings</button>
-                            <button onclick="alert('Duplicate submission rejected & submitter notified!')"
-                                style="padding: 8px 16px; background: #dc2626; color: #ffffff; font-weight: 800; font-size: 0.82rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-                                Reject Duplicate</button>
-                            <button onclick="alert('Override duplicate warning & publish as distinct property!')"
-                                style="padding: 8px 16px; background: #0f172a; color: #ffffff; font-weight: 800; font-size: 0.82rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-                                Approve as Distinct</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Search & Filters Toolbar -->
-                <div
-                    style="display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 12px; flex: 1; min-width: 280px;">
-                        <input type="text" id="duplicateScannerSearchInput"
-                            placeholder=" Search property title, ref ID #PD-..., owner email, or city..."
-                            style="flex: 1; padding: 9px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem;"
-                            onkeyup="filterDuplicateScannerTable()">
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <select id="duplicateScannerMatchFilter"
-                            style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.84rem;"
-                            onchange="filterDuplicateScannerTable()">
-                            <option value="">All Match Confidence Levels</option>
-                            <option value="High">High Similarity (>90%)</option>
-                            <option value="Medium">Medium Similarity (70-90%)</option>
-                        </select>
-                        <select id="duplicateScannerStatusFilter"
-                            style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.84rem;"
-                            onchange="filterDuplicateScannerTable()">
-                            <option value="">All Scan Statuses</option>
-                            <option value="Flagged">Action Required (Flagged)</option>
-                            <option value="Merged">Resolved / Merged</option>
-                            <option value="Approved">Approved as Distinct</option>
-                        </select>
-                        <button class="primary small" style="background: #64748b;"
-                            onclick="document.getElementById('duplicateScannerSearchInput').value=''; document.getElementById('duplicateScannerMatchFilter').value=''; document.getElementById('duplicateScannerStatusFilter').value=''; filterDuplicateScannerTable();">Reset</button>
-                    </div>
-                </div>
-
-                <!-- Duplicate Audit Directory Table -->
-                <div class="dashboard-table-scroll"
-                    style="overflow-x: auto !important; max-width: 100% !important; width: 100% !important;">
-                    <table id="duplicateScannerTable" style="width: 100% !important;">
-                        <colgroup>
-                            <col style="width: 20%;">
-                            <col style="width: 20%;">
-                            <col style="width: 18%;">
-                            <col style="width: 15%;">
-                            <col style="width: 12%;">
-                            <col style="width: 15%;">
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th>Incoming Submission</th>
-                                <th>Matched Live Listing</th>
-                                <th>Match Score & Signals</th>
-                                <th>Submitter & Owner</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Super Admin Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>3 BHK Villa in Anna Nagar</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-9201</code>
-                                        · Anna Nagar</small>
-                                </td>
-                                <td>
-                                    <strong>3 BHK Luxury Villa in Anna Nagar</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-8492</code>
-                                        · Anna Nagar</small>
-                                </td>
-                                <td>
-                                    <span
-                                        style="background: #fef3c7; color: #92400e; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
-                                        94% Match</span><br>
-                                    <small style="color: #64748b;">Same Owner, Price & Area</small>
-                                </td>
-                                <td>Rajesh Kumar<br><small style="color: #64748b;">agent@apexrealty.in</small></td>
-                                <td><span class="status pending"
-                                        style="background: #fef3c7; color: #92400e; font-weight: 800;">️ Flagged</span>
-                                </td>
-                                <td style="text-align: right;">
-                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button
-                                            style="padding: 5px 10px; font-size: 0.76rem; background: #2563eb; color: #ffffff;"
-                                            onclick="alert('Listing Merged!')"> Merge</button>
-                                        <button
-                                            style="padding: 5px 10px; font-size: 0.76rem; background: #ef4444; color: #ffffff;"
-                                            onclick="alert('Duplicate Rejected!')"> Reject</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Suburban Commercial Complex</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-4410</code>
-                                        · Velachery</small>
-                                </td>
-                                <td>
-                                    <strong>Velachery Commercial Hub</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-1029</code>
-                                        · Velachery</small>
-                                </td>
-                                <td>
-                                    <span
-                                        style="background: #fef3c7; color: #92400e; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
-                                        91% Match</span><br>
-                                    <small style="color: #64748b;">Same Address & Specs</small>
-                                </td>
-                                <td>Suresh Reddy<br><small style="color: #64748b;">suresh@chennaiproperties.com</small>
-                                </td>
-                                <td><span class="status pending"
-                                        style="background: #fef3c7; color: #92400e; font-weight: 800;">️ Flagged</span>
-                                </td>
-                                <td style="text-align: right;">
-                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <button
-                                            style="padding: 5px 10px; font-size: 0.76rem; background: #2563eb; color: #ffffff;"
-                                            onclick="alert('Listing Merged!')"> Merge</button>
-                                        <button
-                                            style="padding: 5px 10px; font-size: 0.76rem; background: #ef4444; color: #ffffff;"
-                                            onclick="alert('Duplicate Rejected!')"> Reject</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Royal Residency 2 BHK Flat</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-7721</code>
-                                        · Indiranagar</small>
-                                </td>
-                                <td>
-                                    <strong>Royal Residency Apartment 2BHK</strong><br>
-                                    <small style="color: #64748b;"><code
-                                            style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">#PD-3310</code>
-                                        · Indiranagar</small>
-                                </td>
-                                <td>
-                                    <span
-                                        style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
-                                        Auto-Resolved</span><br>
-                                    <small style="color: #64748b;">Merged into #PD-3310</small>
-                                </td>
-                                <td>Anita Rao<br><small style="color: #64748b;">anita.rao@gmail.com</small></td>
-                                <td><span class="status active"
-                                        style="background: #dcfce7; color: #166534; font-weight: 800;"> Merged</span>
-                                </td>
-                                <td style="text-align: right;">
-                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
-                                        <span
-                                            style="color: #166534; font-weight: 700; font-size: 0.78rem; padding: 4px 8px; background: #dcfce7; border-radius: 6px;">Consolidated</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Table Footer / Pagination -->
-                <div
-                    style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 14px; font-size: 0.84rem; color: #64748b;">
-                    <span>Showing <strong>1 to 3</strong> of <strong>6 flagged duplicate records</strong></span>
                     <div style="display: flex; gap: 6px;">
                         <button disabled
                             style="padding: 6px 12px; font-size: 0.8rem; background: #f1f5f9; color: #94a3b8; border: 1px solid #cbd5e1; border-radius: 6px;">‹
@@ -4267,7 +3894,7 @@
                 <article style="padding: 16px;">
                     <div class="stat-card-top">
                         <span>Total System Admins</span>
-                        <div class="stat-icon-badge">‍</div>
+                        <div class="stat-icon-badge"></div>
                     </div>
                     <strong>8 Accounts</strong>
                     <span class="stat-trend up">Active Staff & Operators</span>
@@ -4283,7 +3910,7 @@
                 <article style="padding: 16px;">
                     <div class="stat-card-top">
                         <span>Staff / Moderation Accounts</span>
-                        <div class="stat-icon-badge">️</div>
+                        <div class="stat-icon-badge"></div>
                     </div>
                     <strong>6 Operations</strong>
                     <span class="stat-trend neutral">Verification & Support Staff</span>
@@ -4595,99 +4222,106 @@
                          Agent Subscription Plans</h4>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
                         <div
-                            style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03); display: flex; flex-direction: column; justify-content: space-between;">
+                            style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
                             <div>
                                 <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="color: #475569; font-size: 0.95rem;">Free Tier</strong>
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <strong style="color: #334155; font-size: 1rem; font-weight: 800;">Free Tier</strong>
                                     <span
-                                        style="background: #f1f5f9; color: #475569; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Standard</span>
+                                        style="background: #f1f5f9; color: #475569; font-size: 0.72rem; font-weight: 800; padding: 3px 9px; border-radius: 6px; border: 1px solid #e2e8f0;">Standard</span>
                                 </div>
                                 <strong
-                                    style="display: block; font-size: 1.35rem; color: #0f172a; margin-bottom: 8px;">₹0
-                                    <small style="font-size: 0.8rem; color: #64748b;">/ mo</small></strong>
+                                    style="display: block; font-size: 1.5rem; color: #0f172a; margin-bottom: 10px; font-weight: 900;">₹0
+                                    <small style="font-size: 0.82rem; color: #64748b; font-weight: 700;">/ mo</small></strong>
                                 <ul
-                                    style="margin: 0 0 14px 0; padding-left: 16px; font-size: 0.8rem; color: #64748b; line-height: 1.6;">
+                                    style="margin: 0 0 16px 0; padding-left: 18px; font-size: 0.82rem; color: #64748b; line-height: 1.7; font-weight: 600;">
                                     <li>1 Active Property Listing</li>
                                     <li>Basic Customer Leads</li>
                                     <li>Standard Search Ranking</li>
                                 </ul>
                             </div>
-                            <button
-                                style="width: 100%; padding: 7px; font-size: 0.78rem; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700;"
-                                onclick="alert('Editing Free Tier Settings')">️ Edit Tier</button>
+                            <button class="tier-edit-btn btn-free"
+                                onclick="openEditTierModal('Free Tier', '0', '1 Active Listing', 'Standard', '1 Active Property Listing\nBasic Customer Leads\nStandard Search Ranking', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>Edit Free Tier</span>
+                            </button>
                         </div>
                         <div
-                            style="background: #ffffff; border: 1px solid #93c5fd; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06); display: flex; flex-direction: column; justify-content: space-between;">
+                            style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 14px; padding: 18px; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
                             <div>
                                 <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="color: #1d4ed8; font-size: 0.95rem;">Basic Agent</strong>
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <strong style="color: #1d4ed8; font-size: 1rem; font-weight: 800;">Basic Agent</strong>
                                     <span
-                                        style="background: #eff6ff; color: #1d4ed8; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Entry
-                                        Plan</span>
+                                        style="background: #eff6ff; color: #1d4ed8; font-size: 0.72rem; font-weight: 800; padding: 3px 9px; border-radius: 6px; border: 1px solid #bfdbfe;">Entry Plan</span>
                                 </div>
                                 <strong
-                                    style="display: block; font-size: 1.35rem; color: #1e40af; margin-bottom: 8px;">₹999
-                                    <small style="font-size: 0.8rem; color: #3b82f6;">/ mo</small></strong>
+                                    style="display: block; font-size: 1.5rem; color: #1e40af; margin-bottom: 10px; font-weight: 900;">₹999
+                                    <small style="font-size: 0.82rem; color: #3b82f6; font-weight: 700;">/ mo</small></strong>
                                 <ul
-                                    style="margin: 0 0 14px 0; padding-left: 16px; font-size: 0.8rem; color: #334155; line-height: 1.6;">
-                                    <li>5 Active Listings</li>
+                                    style="margin: 0 0 16px 0; padding-left: 18px; font-size: 0.82rem; color: #334155; line-height: 1.7; font-weight: 600;">
+                                    <li>5 Active Property Listings</li>
                                     <li>Phone Verified Badge</li>
                                     <li>Direct WhatsApp Enquiries</li>
                                 </ul>
                             </div>
-                            <button
-                                style="width: 100%; padding: 7px; font-size: 0.78rem; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700;"
-                                onclick="alert('Editing Basic Agent Tier')">️ Edit Tier</button>
+                            <button class="tier-edit-btn btn-basic"
+                                onclick="openEditTierModal('Basic Agent', '999', '5 Active Listings', 'Entry Plan', '5 Active Property Listings\nPhone Verified Badge\nDirect WhatsApp Enquiries', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>Edit Basic Tier</span>
+                            </button>
                         </div>
                         <div
-                            style="background: #ffffff; border: 2px solid #16a34a; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.08); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+                            style="background: #ffffff; border: 2px solid #16a34a; border-radius: 14px; padding: 18px; box-shadow: 0 6px 20px rgba(22, 163, 74, 0.12); display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s ease;">
                             <span
-                                style="position: absolute; top: -10px; right: 14px; background: #16a34a; color: #ffffff; font-size: 0.68rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;">POPULAR</span>
+                                style="position: absolute; top: -11px; right: 16px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-size: 0.68rem; font-weight: 900; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.05em; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);">MOST POPULAR</span>
                             <div>
                                 <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="color: #15803d; font-size: 0.95rem;">Professional</strong>
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <strong style="color: #15803d; font-size: 1rem; font-weight: 800;">Professional</strong>
                                     <span
-                                        style="background: #f0fdf4; color: #15803d; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Growth</span>
+                                        style="background: #f0fdf4; color: #15803d; font-size: 0.72rem; font-weight: 800; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0;">Growth</span>
                                 </div>
                                 <strong
-                                    style="display: block; font-size: 1.35rem; color: #166534; margin-bottom: 8px;">₹2,499
-                                    <small style="font-size: 0.8rem; color: #22c55e;">/ mo</small></strong>
+                                    style="display: block; font-size: 1.5rem; color: #166534; margin-bottom: 10px; font-weight: 900;">₹2,499
+                                    <small style="font-size: 0.82rem; color: #22c55e; font-weight: 700;">/ mo</small></strong>
                                 <ul
-                                    style="margin: 0 0 14px 0; padding-left: 16px; font-size: 0.8rem; color: #334155; line-height: 1.6;">
-                                    <li>20 Active Listings</li>
+                                    style="margin: 0 0 16px 0; padding-left: 18px; font-size: 0.82rem; color: #334155; line-height: 1.7; font-weight: 600;">
+                                    <li>20 Active Property Listings</li>
                                     <li>Priority WhatsApp Leads</li>
                                     <li>Verified Broker Badge</li>
                                 </ul>
                             </div>
-                            <button
-                                style="width: 100%; padding: 7px; font-size: 0.78rem; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700;"
-                                onclick="alert('Editing Professional Tier')">️ Edit Tier</button>
+                            <button class="tier-edit-btn btn-pro"
+                                onclick="openEditTierModal('Professional', '2499', '20 Active Listings', 'Growth', '20 Active Property Listings\nPriority WhatsApp Leads\nVerified Broker Badge', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>Edit Pro Tier</span>
+                            </button>
                         </div>
                         <div
-                            style="background: #ffffff; border: 1px solid #c4b5fd; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.06); display: flex; flex-direction: column; justify-content: space-between;">
+                            style="background: #ffffff; border: 1.5px solid #c4b5fd; border-radius: 14px; padding: 18px; box-shadow: 0 6px 18px rgba(124, 58, 237, 0.08); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
                             <div>
                                 <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="color: #6d28d9; font-size: 0.95rem;">Premium Brokerage</strong>
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <strong style="color: #6d28d9; font-size: 1rem; font-weight: 800;">Premium Brokerage</strong>
                                     <span
-                                        style="background: #f5f3ff; color: #6d28d9; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Enterprise</span>
+                                        style="background: #f5f3ff; color: #6d28d9; font-size: 0.72rem; font-weight: 800; padding: 3px 9px; border-radius: 6px; border: 1px solid #ddd6fe;">Enterprise</span>
                                 </div>
                                 <strong
-                                    style="display: block; font-size: 1.35rem; color: #5b21b6; margin-bottom: 8px;">₹4,999
-                                    <small style="font-size: 0.8rem; color: #8b5cf6;">/ mo</small></strong>
+                                    style="display: block; font-size: 1.5rem; color: #5b21b6; margin-bottom: 10px; font-weight: 900;">₹4,999
+                                    <small style="font-size: 0.82rem; color: #8b5cf6; font-weight: 700;">/ mo</small></strong>
                                 <ul
-                                    style="margin: 0 0 14px 0; padding-left: 16px; font-size: 0.8rem; color: #334155; line-height: 1.6;">
+                                    style="margin: 0 0 16px 0; padding-left: 18px; font-size: 0.82rem; color: #334155; line-height: 1.7; font-weight: 600;">
                                     <li>Unlimited Property Listings</li>
                                     <li>Dedicated Account Manager</li>
                                     <li>Top Homepage Showcase</li>
                                 </ul>
                             </div>
-                            <button
-                                style="width: 100%; padding: 7px; font-size: 0.78rem; background: #7c3aed; color: #ffffff; border: none; border-radius: 8px; font-weight: 700;"
-                                onclick="alert('Editing Premium Brokerage Tier')">️ Edit Tier</button>
+                            <button class="tier-edit-btn btn-premium"
+                                onclick="openEditTierModal('Premium Brokerage', '4999', 'Unlimited Listings', 'Enterprise', 'Unlimited Property Listings\nDedicated Account Manager\nTop Homepage Showcase', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>Edit Premium Tier</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -4907,7 +4541,7 @@
                 <article style="padding: 16px;">
                     <div class="stat-card-top">
                         <span>Failed / Review Callbacks</span>
-                        <div class="stat-icon-badge">️</div>
+                        <div class="stat-icon-badge"></div>
                     </div>
                     <strong>18 Failed</strong>
                     <span class="stat-trend neutral">Payment callbacks needing action</span>
@@ -4915,7 +4549,7 @@
                 <article style="padding: 16px;">
                     <div class="stat-card-top">
                         <span>Customer Refund Queue</span>
-                        <div class="stat-icon-badge">↩️</div>
+                        <div class="stat-icon-badge"></div>
                     </div>
                     <strong>₹74,000</strong>
                     <span class="stat-trend up">Customer support review pending</span>
@@ -5130,7 +4764,11 @@
                             </tr>
                         </tbody>
                     </table>
-                    <!-- 12. Immutable Security Audit Logs & Governance Panel -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. Immutable Security Audit Logs & Governance Panel -->
                     <section class="dash-panel hidden" data-view="audit">
                         <!-- 4 Top Metric Cards -->
                         <div class="dash-grid"
@@ -5138,7 +4776,7 @@
                             <article style="padding: 16px;">
                                 <div class="stat-card-top">
                                     <span>Total Audit Events</span>
-                                    <div class="stat-icon-badge">️</div>
+                                    <div class="stat-icon-badge"></div>
                                 </div>
                                 <strong>486 Recorded</strong>
                                 <span class="stat-trend up">System Events Today</span>
@@ -5410,25 +5048,9 @@
                                 </div>
                             </div>
                         </div>
-                    </section>#402</code><br><small>Customer Account</small></td>
-                    <td><span>Phone: 9876543210</span></td>
-                    <td><span style="color: #7c3aed;">Phone: 9123456789</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Super Admin (admin@propertydirect.in)</strong><br><small>Role: SUPER_ADMIN</small>
-                        </td>
-                        <td><span class="status active"
-                                style="background: #f0fdf4; color: #166534;">APPROVE_AGENT</span><br>Admin approved
-                            agent</td>
-                        <td>2026-09-03 06:05:50</td>
-                        <td><code>103.14.22.18</code></td>
-                        <td><code>AgentBroker #15</code><br><small>RERA Broker Verification</small></td>
-                        <td><span>Verification: PENDING</span></td>
-                        <td><strong style="color: #166534;">VERIFIED_BROKER</strong></td>
-                    </tr>
-                    </tbody>
-                    </table>
+                    </div>
                 </div>
+            </div>
         </section>
 
         <!-- SYSTEM INTEGRATIONS PANEL -->
@@ -5701,7 +5323,7 @@
                 <article style="padding: 16px;">
                     <div class="stat-card-top">
                         <span>Active Hero Banners</span>
-                        <div class="stat-icon-badge">️</div>
+                        <div class="stat-icon-badge"></div>
                     </div>
                     <strong>3 Live Banners</strong>
                     <span class="stat-trend up">Homepage & Ad Slots</span>
@@ -6046,15 +5668,15 @@
                                     <label
                                         style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Mobile
                                         number</label>
-                                    <input type="tel" value="+91 98765 43210"
-                                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.88rem; font-weight: 700; color: #0f172a; background: #f8fafc;">
+                                    <input type="tel" value="+91 98765 43210" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9+ \-]/g, '')"
+                                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.88rem; font-weight: 700; color: #0f172a; background: #ffffff;">
                                 </div>
                                 <div>
                                     <label
                                         style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Alternate
                                         mobile</label>
-                                    <input type="tel" value="Optional" placeholder="Optional"
-                                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.88rem; font-weight: 700; color: #0f172a; background: #f8fafc;">
+                                    <input type="tel" value="" placeholder="e.g. +91 98401 23456 (Optional)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9+ \-]/g, '')"
+                                        style="width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.88rem; font-weight: 700; color: #0f172a; background: #ffffff;">
                                 </div>
                             </div>
                         </div>
@@ -9101,12 +8723,287 @@
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 16px; flex-shrink: 0;">
-                    <button type="button" onclick="closeEditPropertyModal()" style="padding: 10px 18px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 10px; font-weight: 700; font-size: 0.86rem; cursor: pointer;">Cancel</button>
+                        </div>
+                        <button type="button" onclick="closeEditPropertyModal()" style="padding: 10px 18px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 10px; font-weight: 700; font-size: 0.86rem; cursor: pointer;">Cancel</button>
                     <button type="button" onclick="savePropertyEdits()" style="padding: 10px 22px; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #ffffff; border: none; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">Save Property Listing</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Edit Subscription Tier Console Modal -->
+    <div id="editTierModal" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s ease; padding: 20px;">
+        <div style="background: #ffffff; border-radius: 20px; width: 100%; max-width: 540px; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25); border: 1px solid #cbd5e1; overflow: hidden; transform: scale(0.94); transition: all 0.3s ease; box-sizing: border-box; max-height: 90vh; display: flex; flex-direction: column;">
+            <!-- Modal Header -->
+            <div id="editTierModalHeader" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #2563eb; flex-shrink: 0;">
+                <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff !important; display: flex; align-items: center; gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <span id="editTierModalTitle" style="color: #ffffff !important; font-weight: 800;">Edit Agent Tier Settings</span>
+                </h3>
+                <button type="button" onclick="closeEditTierModal()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #ffffff !important; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;">✕</button>
+            </div>
+
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">Tier Name:</label>
+                        <input type="text" id="editTierNameInput" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 700;" placeholder="e.g. Basic Agent">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">Monthly Fee (₹):</label>
+                        <input type="text" id="editTierPriceInput" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; font-weight: 700;" placeholder="e.g. 999">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">Active Listing Allowance:</label>
+                        <input type="text" id="editTierLimitInput" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem;" placeholder="e.g. 5 Active Listings">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">Badge Tag Label:</label>
+                        <input type="text" id="editTierBadgeInput" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem;" placeholder="e.g. Entry Plan / MOST POPULAR">
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.84rem; font-weight: 800; color: #0f172a;">Tier Features (One line per feature):</label>
+                    <textarea id="editTierFeaturesInput" rows="4" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; font-family: inherit; resize: vertical;" placeholder="1 Active Property Listing&#10;Basic Customer Leads&#10;Standard Search Ranking"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 16px; flex-shrink: 0;">
+                    <button type="button" onclick="closeEditTierModal()" style="padding: 10px 18px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 10px; font-weight: 700; font-size: 0.86rem; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="saveTierEdits()" style="padding: 10px 22px; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #ffffff; border: none; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">Save Tier Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var currentEditingTierBtn = null;
+
+        function openEditTierModal(name, price, limit, badge, featuresStr, btnElem) {
+            currentEditingTierBtn = btnElem;
+            var modal = document.getElementById('editTierModal');
+            if (!modal) return;
+            
+            document.getElementById('editTierModalTitle').textContent = 'Edit ' + name + ' Settings';
+            document.getElementById('editTierNameInput').value = name;
+            document.getElementById('editTierPriceInput').value = price;
+            document.getElementById('editTierLimitInput').value = limit;
+            document.getElementById('editTierBadgeInput').value = badge;
+            document.getElementById('editTierFeaturesInput').value = featuresStr;
+            
+            modal.style.opacity = '1';
+            modal.style.pointerEvents = 'auto';
+            var card = modal.firstElementChild;
+            if (card) card.style.transform = 'scale(1)';
+        }
+
+        function closeEditTierModal() {
+            var modal = document.getElementById('editTierModal');
+            if (!modal) return;
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
+            var card = modal.firstElementChild;
+            if (card) card.style.transform = 'scale(0.94)';
+        }
+
+        function saveTierEdits() {
+            var name = document.getElementById('editTierNameInput').value;
+            var price = document.getElementById('editTierPriceInput').value;
+            var limit = document.getElementById('editTierLimitInput').value;
+            var badge = document.getElementById('editTierBadgeInput').value;
+            var featuresRaw = document.getElementById('editTierFeaturesInput').value;
+            
+            if (currentEditingTierBtn) {
+                var cardContainer = currentEditingTierBtn.closest('div[style*="background"]');
+                if (cardContainer) {
+                    var titleElem = cardContainer.querySelector('strong');
+                    if (titleElem) titleElem.textContent = name;
+                    
+                    var badgeElem = cardContainer.querySelector('span');
+                    if (badgeElem && badge) badgeElem.textContent = badge;
+                    
+                    var priceElem = cardContainer.querySelectorAll('strong')[1];
+                    if (priceElem) priceElem.innerHTML = '₹' + price + ' <small style="font-size: 0.82rem; color: #64748b; font-weight: 700;">/ mo</small>';
+                    
+                    var ulElem = cardContainer.querySelector('ul');
+                    if (ulElem && featuresRaw) {
+                        var lines = featuresRaw.split('\n').filter(function(l) { return l.trim().length > 0; });
+                        ulElem.innerHTML = lines.map(function(l) { return '<li>' + l.trim() + '</li>'; }).join('');
+                    }
+                }
+            }
+            
+            closeEditTierModal();
+            if (typeof pdSaToast === 'function') pdSaToast('✓ Subscription tier updated: ' + name + ' (₹' + price + ')');
+            if (typeof pdSaSave === 'function') pdSaSave('update_tier', name, 'Price: ₹' + price + ' | Limit: ' + limit);
+        }
+        (function () {
+            function pdSaToast(message) {
+                var toast = document.getElementById('pdSaInlineToast') || document.createElement('div');
+                toast.id = 'pdSaInlineToast';
+                toast.textContent = message;
+                toast.style.cssText = 'position:fixed;right:24px;bottom:76px;z-index:999999;background:#0f172a;color:#fff;border-radius:12px;padding:12px 18px;font:800 13px/1.25 Manrope,Arial,sans-serif;box-shadow:0 16px 34px rgba(15,23,42,.28);';
+                if (!toast.parentNode) document.body.appendChild(toast);
+                clearTimeout(toast._timer);
+                toast._timer = setTimeout(function () { toast.remove(); }, 2600);
+            }
+            function pdSaSave(action, label, rowText) {
+                fetch('/api/workflows', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        workspace: 'PropertyDirect',
+                        dashboardRole: 'superadmin',
+                        panel: (location.hash || '#overview').slice(1) || 'overview',
+                        actionType: action,
+                        targetLabel: label,
+                        details: { row: rowText || label }
+                    })
+                }).catch(function () {});
+            }
+            function pdSaInfo(title, lines) {
+                var modal = document.getElementById('pdSaInlineInfoModal') || document.createElement('div');
+                modal.id = 'pdSaInlineInfoModal';
+                modal.className = 'modal';
+                modal.innerHTML = '<div class="modal-card" style="width:min(560px,92vw);"><button class="close" type="button" data-pd-sa-close>×</button><h3></h3><div class="pd-sa-info"></div><div class="modal-actions"><button type="button" class="primary" data-pd-sa-close>Done</button></div></div>';
+                if (!modal.parentNode) document.body.appendChild(modal);
+                modal.querySelector('h3').textContent = title;
+                modal.querySelector('.pd-sa-info').innerHTML = (lines || []).map(function (line) { return '<p style="margin:8px 0;color:#475569;font-weight:700;">' + String(line).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }) + '</p>'; }).join('');
+                modal.classList.remove('hidden');
+            }
+            window.viewAgentProperties = window.viewAgentProperties || function (agencyName, info) {
+                pdSaSave('view-agent-properties', agencyName || 'Agent properties', info);
+                pdSaInfo('Agent properties', [agencyName || 'Agent', info || 'Property inventory']);
+            };
+            window.viewAgentLeads = window.viewAgentLeads || function (agencyName, info) {
+                pdSaSave('view-agent-leads', agencyName || 'Agent leads', info);
+                pdSaInfo('Agent leads', [agencyName || 'Agent', info || 'Lead pipeline']);
+            };
+            window.approveAgentRegistration = window.approveAgentRegistration || function (buttonOrAgency, maybeAgency) {
+                var button = buttonOrAgency && buttonOrAgency.nodeType === 1 ? buttonOrAgency : null;
+                var label = maybeAgency || buttonOrAgency || 'Agent registration';
+                var row = button && button.closest('tr');
+                var status = row && row.querySelector('.status');
+                if (status) { status.textContent = 'Approved'; status.className = 'status active'; }
+                if (button) { button.textContent = 'Approved'; button.disabled = true; }
+                pdSaSave('approve-agent-registration', label, row && row.innerText);
+                pdSaToast(label + ' approved and saved.');
+            };
+            window.rejectAgentRegistration = window.rejectAgentRegistration || function (buttonOrAgency, maybeAgency) {
+                var button = buttonOrAgency && buttonOrAgency.nodeType === 1 ? buttonOrAgency : null;
+                var label = maybeAgency || buttonOrAgency || 'Agent registration';
+                var row = button && button.closest('tr');
+                var status = row && row.querySelector('.status');
+                if (status) { status.textContent = 'Rejected'; status.className = 'status rejected'; }
+                pdSaSave('reject-agent-registration', label, row && row.innerText);
+                pdSaToast(label + ' rejected and saved.');
+            };
+            document.addEventListener('click', function (event) {
+                if (event.target.closest('[data-pd-sa-close]')) {
+                    event.preventDefault();
+                    document.getElementById('pdSaInlineInfoModal')?.classList.add('hidden');
+                }
+            }, true);
+    <!-- DETAILED PLATFORM EXPORT REPORT CONFIGURATION MODAL -->
+    <div id="exportReportModal" class="modal hidden" style="z-index: 999999;">
+        <div class="modal-card" style="width: min(680px, 94vw); padding: 28px; border-radius: 16px; background: #ffffff; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; display: flex; align-items: center; justify-content: center;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a;">Export Platform Report</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Configure dataset scope, format, and date parameters for download.</p>
+                    </div>
+                </div>
+                <button type="button" class="close" onclick="closeExportReportModal()" style="border: none; background: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer;">&times;</button>
+            </div>
+
+            <form id="exportReportForm" onsubmit="submitPlatformReportExport(event)">
+                <div style="display: grid; gap: 18px;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Report Title / Header</label>
+                        <input type="text" id="reportTitleInput" class="form-control" value="Platform Operations Executive Report" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; box-sizing: border-box;" />
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Report Scope / Module</label>
+                            <select id="reportScopeSelect" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; box-sizing: border-box;">
+                                <option value="OVERVIEW" selected>📊 Overview & Executive Summary</option>
+                                <option value="USERS">👥 User Accounts & Governance</option>
+                                <option value="SUBSCRIPTIONS">💎 Subscriptions & Revenue Plans</option>
+                                <option value="FINANCE">💰 Financial Ledger & Maintenance</option>
+                                <option value="AUDIT_LOGS">📜 Platform Security Audit Logs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Export Format</label>
+                            <select id="reportFormatSelect" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; box-sizing: border-box;">
+                                <option value="CSV" selected>📄 CSV Spreadsheet (.csv)</option>
+                                <option value="JSON">⚙️ JSON Structured API Data (.json)</option>
+                                <option value="HTML">🌐 HTML Executive Printable Report (.html)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Reporting Period</label>
+                            <select id="reportPeriodSelect" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; box-sizing: border-box;">
+                                <option value="ALL_TIME" selected>All Available Records</option>
+                                <option value="CURRENT_MONTH">Current Month</option>
+                                <option value="PREVIOUS_MONTH">Previous Month</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Status Filter</label>
+                            <select id="reportStatusFilterSelect" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; box-sizing: border-box;">
+                                <option value="ALL" selected>All Statuses (Active & Inactive)</option>
+                                <option value="ACTIVE_ONLY">Active Records Only</option>
+                                <option value="PENDING_ONLY">Pending / Under Review Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="includeMetadataCheckbox" checked style="width: 18px; height: 18px; accent-color: #2563eb;" />
+                        <label for="includeMetadataCheckbox" style="font-size: 0.85rem; font-weight: 700; color: #334155; cursor: pointer; margin: 0;">Include Audit Timestamps, Generated By metadata, and Header Counters</label>
+                    </div>
+
+                    <div id="exportStatusMessage" class="hidden" style="padding: 10px 14px; border-radius: 8px; font-size: 0.84rem; font-weight: 700; background: #e0f2fe; color: #0369a1;">
+                        ⏳ Generating platform report, please wait...
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                    <button type="button" onclick="closeExportReportModal()" style="padding: 10px 20px; border-radius: 10px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; font-weight: 700; cursor: pointer;">Cancel</button>
+                    <button type="submit" id="btnSubmitExportReport" class="primary" style="padding: 10px 22px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Generate & Download Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/propertydirect/js/superadmin-actions.js?v=20260908-actions-v3"></script>
+    <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
 </body>
 
 </html>
+
+
+
+
+
+
+
+

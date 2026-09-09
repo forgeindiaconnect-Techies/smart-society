@@ -129,7 +129,7 @@ public class PropertyWorkflowController {
     private AdminPropertyView adminView(PropertyListing item) {
         PropertyCustomer owner = customers.findById(item.getCustomerId()).orElse(null);
         List<String> images = item.getImageUrls() == null ? List.of() : item.getImageUrls().lines().filter(url -> !url.isBlank()).toList();
-        return new AdminPropertyView(item.getId(), item.getTitle(), owner == null ? "Unknown owner" : owner.getName(),
+        return new AdminPropertyView(item.getId(), item.getApartmentCode(), item.getTitle(), owner == null ? "Unknown owner" : owner.getName(),
                 owner == null ? "" : owner.getEmail(), item.getPrice(), item.getDeposit(), item.getMaintenance(),
                 item.getPropertyType(), item.getBhk(), item.getBathrooms(), item.getAreaSqft(), item.getFurnishing(), item.getParking(),
                 item.getAddress(), item.getLocality(), item.getCity(), item.getPincode(), item.getLatitude(),
@@ -144,7 +144,7 @@ public class PropertyWorkflowController {
             @NotBlank String status,
             @Size(max = 2000) String rejectionReason) {}
 
-    public record AdminPropertyView(Long id, String title, String ownerName, String ownerEmail,
+    public record AdminPropertyView(Long id, String apartmentCode, String title, String ownerName, String ownerEmail,
             BigDecimal price, BigDecimal deposit, BigDecimal maintenance, String propertyType,
             String bedrooms, Integer bathrooms, Integer areaSqFt, String furnishing, String parking, String address,
             String locality, String city, String postalCode, Double latitude, Double longitude,

@@ -25,7 +25,10 @@
       font-family: var(--app-font-family) !important;
     }
     .header-top { display:none; }
-    .header { padding-bottom:76px !important; }
+    /* The fixed navigation must sit above every section.  The previous z-index
+       lived only on .header-bottom, which was trapped in the header stacking
+       context and let the hero label paint over the logo while scrolling. */
+    .header { position:relative !important; z-index:1001 !important; isolation:isolate; padding-bottom:76px !important; }
     .header-bottom,
     .header.active .header-bottom {
       position:fixed !important;
@@ -55,7 +58,8 @@
 
     /* Smart Society Pill Link in Header */
     .smartsociety-header-pill { min-height:42px !important; padding:9px 15px !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; gap:8px !important; border:1px solid rgba(67,97,238,.18) !important; border-radius:10px !important; color:#26344f !important; background:rgba(255,255,255,.9) !important; box-shadow:0 7px 20px rgba(31,61,140,.07) !important; font-size:.83rem !important; font-weight:760 !important; text-decoration:none !important; white-space:nowrap !important; transition:transform .22s, color .22s, border-color .22s, box-shadow .22s, background .22s !important; }
-    .smartsociety-header-pill .pill-icon-box { width:25px !important; height:25px !important; display:grid !important; place-items:center !important; border-radius:7px !important; color:#2563eb !important; background:rgba(67,97,238,.1) !important; font-size:.9rem !important; }
+    .smartsociety-header-pill .pill-icon-box { width:25px !important; height:25px !important; display:grid !important; place-items:center !important; border-radius:7px !important; color:#2563eb !important; background:rgba(67,97,238,.1) !important; font-size:.9rem !important; flex:0 0 25px !important; }
+    .smartsociety-header-pill .pill-icon-box svg { width:15px !important; height:15px !important; fill:none !important; stroke:currentColor !important; stroke-width:2 !important; stroke-linecap:round !important; stroke-linejoin:round !important; }
     .smartsociety-header-pill:hover { transform:translateY(-2px) !important; color:#1d4ed8 !important; border-color:rgba(67,97,238,.38) !important; background:#ffffff !important; box-shadow:0 12px 28px rgba(31,61,140,.13) !important; }
 
     /* Header Actions & Gradient Login Button */
@@ -65,14 +69,20 @@
     button[data-nav-open-btn] { display:none !important; }
     .pd-header-login-btn { min-width:92px !important; min-height:42px !important; padding:10px 22px !important; border-radius:10px !important; font-size:.88rem !important; font-weight:750 !important; color:white !important; background:linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6) !important; border:none !important; box-shadow:0 9px 26px rgba(67, 97, 238, .36) !important; cursor:pointer !important; text-decoration:none !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; transition:transform .25s, box-shadow .25s, filter .25s !important; }
     .pd-header-login-btn:hover { transform:translateY(-3px) !important; box-shadow:0 16px 42px rgba(67, 97, 238, .48) !important; filter:saturate(1.08) !important; }
-    .pd-auth-modal { position:fixed; inset:0; z-index:1000; display:none; place-items:center; padding:20px; background:rgba(15,23,42,.52); backdrop-filter:blur(8px); }
+    .pd-auth-modal { position:fixed; inset:0; z-index:3000; display:none; place-items:center; padding:20px; background:rgba(15,23,42,.52); backdrop-filter:blur(8px); }
     .pd-auth-modal.is-open { display:grid; }
-    .pd-auth-dialog { position:relative; width:min(420px,100%); padding:30px; border-radius:18px; background:#fff; box-shadow:0 28px 80px rgba(15,23,42,.28); }
+    .pd-auth-dialog { position:relative; width:min(480px,100%); max-height:calc(100vh - 40px); overflow:auto; padding:30px; border-radius:18px; background:#fff; box-shadow:0 28px 80px rgba(15,23,42,.28); }
+    .pd-auth-dialog h2 { margin:0 0 8px; color:#0f172a; font-size:1.65rem; }
+    .pd-auth-dialog p { margin:0 0 22px; color:#64748b; line-height:1.5; }
     .pd-auth-dialog h2 { margin:0 0 8px; color:#0f172a; font-size:1.65rem; }
     .pd-auth-dialog p { margin:0 0 22px; color:#64748b; line-height:1.5; }
     .pd-auth-close { position:absolute; top:16px; right:16px; width:26px; height:26px; padding:0; border:0; background:transparent; color:#475569; font-size:26px; font-weight:400; line-height:1; cursor:pointer; }
     .pd-auth-close:hover { color:#1d4ed8; }
+    .pd-auth-tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:5px; margin:0 0 20px; border:1px solid #dbe7f6; border-radius:14px; background:#f6f9ff; box-sizing:border-box; }
+    .pd-auth-tab { min-height:40px; width:100%; padding:0 16px; border:0; border-radius:10px; background:transparent; color:#52637a; font:800 .9rem var(--app-font-family,inherit); cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1; box-sizing:border-box; white-space:nowrap; }
+    .pd-auth-tab.is-active { background:#2563eb; color:#fff; box-shadow:0 8px 20px rgba(37,99,235,.24); }
     .pd-auth-form { display:grid; gap:14px; }
+    .is-hidden { display:none !important; }
     .pd-auth-field { display:grid; gap:6px; color:#1e293b; font-size:.84rem; font-weight:700; }
     .pd-auth-field input, .pd-auth-field select { width:100%; min-height:46px; padding:10px 12px; border:1px solid #cbd5e1; border-radius:10px; color:#0f172a; background:#fff; font:inherit; box-sizing:border-box; }
     .pd-auth-field input:focus, .pd-auth-field select:focus { outline:2px solid rgba(37,99,235,.25); border-color:#2563eb; }
@@ -81,13 +91,10 @@
     .pd-password-toggle { position:absolute; top:50%; right:8px; width:34px; height:34px; padding:0; transform:translateY(-50%); border:0 !important; border-radius:8px; background:transparent !important; box-shadow:none !important; color:#64748b; cursor:pointer; display:grid; place-items:center; }
     .pd-password-toggle ion-icon { font-size:20px; pointer-events:none; }
     .pd-password-toggle:hover, .pd-password-toggle:focus-visible { background:#eff6ff !important; color:#2563eb; outline:none; }
-    .pd-auth-submit { min-height:48px; border:0; border-radius:10px; color:#fff; background:#2563eb; font:700 .95rem var(--app-font-family,inherit); cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center; }
+    .pd-auth-submit { width:100% !important; min-height:48px; padding:12px 20px; border:0; border-radius:10px; color:#fff !important; background:linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6) !important; font:700 .95rem var(--app-font-family,inherit); cursor:pointer; display:flex; align-items:center; justify-content:center; text-align:center; box-sizing:border-box; transition:transform .2s, box-shadow .2s; }
+    .pd-auth-submit:hover { transform:translateY(-1px); box-shadow:0 8px 22px rgba(37,99,235,.35) !important; }
     .pd-auth-submit:disabled { opacity:.65; cursor:wait; }
-    .pd-auth-error { min-height:18px; margin:0; color:#dc2626 !important; font-size:.82rem; }
-    @media (max-width:900px) { button[data-nav-open-btn] { display:grid !important; } }
-    .hero { padding-block:88px 76px !important; }
-    .hero-subtitle { font-size:.92rem !important; margin-bottom:20px !important; display:inline-flex !important; align-items:center !important; gap:8px !important; padding:8px 16px !important; border-radius:999px !important; background:rgba(37,99,235,0.09) !important; color:#2563eb !important; font-weight:700 !important; }
-    .hero-title { font-size:clamp(3.2rem, 5vw, 4.4rem) !important; font-weight:850 !important; line-height:1.1 !important; letter-spacing:-0.04em !important; margin-bottom:22px !important; color:#0f172a !important; }
+    .pd-auth-error { min-height:18px; margin:0; color:#dc2626 !important; font-size:.82rem; font-weight:700; }
     .hero-text { font-size:clamp(1.1rem, 1.35vw, 1.28rem) !important; line-height:1.7 !important; margin-bottom:34px !important; color:#475569 !important; max-width:580px !important; }
     .hero-content .btn { min-height:52px !important; padding:14px 34px !important; font-size:1.05rem !important; font-weight:750 !important; border-radius:12px !important; background:linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6) !important; border:none !important; color:white !important; box-shadow:0 12px 32px rgba(37,99,235,0.38) !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; transition:transform .25s, box-shadow .25s !important; }
     .hero-content .btn:hover { transform:translateY(-3px) !important; background:#1d4ed8 !important; color:#ffffff !important; box-shadow:0 18px 44px rgba(37,99,235,0.48) !important; }
@@ -95,11 +102,18 @@
     .about .btn { border-radius:12px !important; padding:13px 26px !important; background:#2563eb !important; color:#ffffff !important; box-shadow:0 10px 24px rgba(37,99,235,.26) !important; }
     .about .btn:hover { background:#1d4ed8 !important; color:#ffffff !important; box-shadow:0 14px 30px rgba(37,99,235,.32) !important; }
     .about .btn::before { content:none !important; display:none !important; }
-    .hero .container { width:min(1380px, calc(100% - 48px)) !important; max-width:min(1380px, calc(100% - 48px)) !important; margin-inline:auto !important; }
+    .hero .container {
+      width:min(1480px, calc(100% - 48px)) !important;
+      max-width:min(1480px, calc(100% - 48px)) !important;
+      margin-inline:auto !important;
+      grid-template-columns:minmax(500px, .86fr) minmax(660px, 1.14fr) !important;
+      gap:34px !important;
+      align-items:center !important;
+    }
     .hero-content { margin-left:-35px !important; }
     @media (max-width:900px) { .hero-content { margin-left:0 !important; } }
-    .hero-banner { max-width:660px !important; width:100% !important; margin-inline:auto !important; }
-    .hero-banner img { max-height:540px !important; transform:scale(1.05) !important; object-fit:contain !important; border-radius:0 !important; box-shadow:none !important; filter:drop-shadow(0 14px 28px rgba(15,23,42,0.08)) !important; }
+    .hero-banner { max-width:820px !important; width:100% !important; margin-inline:auto !important; }
+    .hero-banner img { max-height:640px !important; transform:scale(1.08) !important; object-fit:contain !important; border-radius:0 !important; box-shadow:none !important; filter:drop-shadow(0 14px 28px rgba(15,23,42,0.08)) !important; }
     
     /* Hero Interactive Search Box & Popular Locations */
     .pd-hero-search-box {
@@ -405,8 +419,8 @@
     }
     /* SmartSociety Style Compact CTA Banner System */
     .cta {
-      background: linear-gradient(to bottom, #f4f8ff 50%, #0b1727 50%) !important;
-      padding-block: 0 !important;
+      background:#f6f9fe !important;
+      padding: 16px 0 34px !important;
       margin: 0 !important;
     }
     .cta-card {
@@ -414,7 +428,7 @@
       background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%) !important;
       border-radius: 20px !important;
       padding: 28px 40px !important;
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.28) !important;
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.2) !important;
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
@@ -520,6 +534,7 @@
       background: #0b1727 !important;
       color: #cbd5e1 !important;
       border-top: none !important;
+      margin-top: 0 !important;
     }
     .footer-top {
       padding: 38px 0 24px !important;
@@ -650,11 +665,11 @@
     /* Premium 3D hero composition: no image panel or clipped heading */
     .hero { background:#eef5fc !important; overflow:hidden; }
     .hero-content { margin-left:0 !important; position:relative; z-index:2; }
-    .hero-banner { max-width:600px !important; overflow:visible !important; }
+    .hero-banner { max-width:820px !important; overflow:visible !important; }
     .hero-banner img {
       display:block !important;
       width:100% !important;
-      max-height:480px !important;
+      max-height:650px !important;
       object-fit:contain !important;
       /* Isolated house artwork only — no card, frame, or image panel. */
       mix-blend-mode:normal;
@@ -662,16 +677,141 @@
       mask-image:none;
       transform-origin:center bottom;
       /* A fixed perspective angle gives depth without any movement. */
-      transform:perspective(1200px) rotateX(1deg) rotateY(-4deg) scale(1.17) !important;
+      transform:translate(58px, 34px) perspective(1200px) rotateX(1deg) rotateY(-4deg) scale(1.26) !important;
       border-radius:0 !important;
       box-shadow:none !important;
     }
     @media (max-width:900px) {
-      .hero-banner { max-width:460px !important; }
-      .hero-banner img { max-height:390px !important; mix-blend-mode:normal; }
+      .hero .container { grid-template-columns:1fr !important; width:min(100% - 32px, 680px) !important; max-width:min(100% - 32px, 680px) !important; gap:24px !important; }
+      .hero-banner { max-width:min(520px, 92vw) !important; }
+      .hero-banner img { max-height:430px !important; mix-blend-mode:normal; transform:translate(0, 18px) perspective(1200px) rotateX(1deg) rotateY(-4deg) scale(1.12) !important; }
+    }
+    .pd-contact {
+      background:#f6f9fe !important;
+      padding-block:64px !important;
+    }
+    .pd-contact .container {
+      display:grid !important;
+      grid-template-columns:minmax(320px, .9fr) minmax(420px, 1.1fr) !important;
+      gap:56px !important;
+      align-items:start !important;
+      width:min(1360px, calc(100% - 48px)) !important;
+      max-width:min(1360px, calc(100% - 48px)) !important;
+      margin-inline:auto !important;
+    }
+    .pd-contact-copy {
+      padding-top:18px !important;
+    }
+    .pd-contact-copy .section-subtitle {
+      margin-inline:0 !important;
+      margin-bottom:18px !important;
+    }
+    .pd-contact-copy .section-title {
+      margin:0 0 22px !important;
+      text-align:left !important;
+      max-width:620px !important;
+    }
+    .pd-contact-copy .section-text {
+      max-width:560px !important;
+      margin:0 !important;
+      color:#5b6b84 !important;
+      font-size:1rem !important;
+      line-height:1.7 !important;
+    }
+    .pd-contact-list {
+      display:grid !important;
+      gap:18px !important;
+      margin-top:34px !important;
+      color:#244260 !important;
+    }
+    .pd-contact-list a,
+    .pd-contact-list span {
+      color:inherit !important;
+      text-decoration:none !important;
+      font-size:.98rem !important;
+      line-height:1.35 !important;
+    }
+    .pd-contact-list strong {
+      display:block !important;
+      color:#17314d !important;
+      font-weight:800 !important;
+      margin-bottom:4px !important;
+    }
+    .pd-contact-form {
+      display:grid !important;
+      grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+      gap:18px 20px !important;
+      padding:34px !important;
+      background:#fff !important;
+      border:1px solid #d8e4f2 !important;
+      border-radius:18px !important;
+      box-shadow:0 16px 38px rgba(31,68,122,.08) !important;
+    }
+    .pd-contact-form h3 {
+      grid-column:1/-1 !important;
+      margin:0 0 4px !important;
+      color:#102a43 !important;
+      font-size:1.45rem !important;
+      font-weight:850 !important;
+      line-height:1.2 !important;
+    }
+    .pd-contact-form label {
+      display:grid !important;
+      gap:8px !important;
+      color:#132b45 !important;
+      font-size:.9rem !important;
+      font-weight:750 !important;
+      line-height:1.2 !important;
+    }
+    .pd-contact-form .pd-form-wide {
+      grid-column:1/-1 !important;
+    }
+    .pd-contact-form input,
+    .pd-contact-form textarea {
+      width:100% !important;
+      min-height:50px !important;
+      padding:13px 15px !important;
+      border:1px solid #bfd0e5 !important;
+      border-radius:12px !important;
+      background:#fff !important;
+      color:#102033 !important;
+      font:600 .94rem var(--app-font-family, inherit) !important;
+      box-sizing:border-box !important;
+      outline:none !important;
+      transition:border-color .2s ease, box-shadow .2s ease !important;
+    }
+    .pd-contact-form textarea {
+      min-height:140px !important;
+      resize:vertical !important;
+      line-height:1.5 !important;
+    }
+    .pd-contact-form input:focus,
+    .pd-contact-form textarea:focus {
+      border-color:#2563eb !important;
+      box-shadow:0 0 0 4px rgba(37,99,235,.12) !important;
+    }
+    .pd-contact-form .btn {
+      grid-column:1/-1 !important;
+      width:100% !important;
+      min-height:56px !important;
+      justify-content:center !important;
+      border-radius:12px !important;
+      font-size:1rem !important;
+    }
+    #landingContactStatus {
+      grid-column:1/-1 !important;
+      min-height:20px !important;
+      margin:0 !important;
+      color:#2563eb !important;
+      font-size:.88rem !important;
+      font-weight:700 !important;
+    }
+    @media (max-width:900px) {
+      .pd-contact .container { grid-template-columns:1fr !important; gap:28px !important; width:min(100% - 32px, 680px) !important; max-width:min(100% - 32px, 680px) !important; }
+      .pd-contact-form { grid-template-columns:1fr !important; padding:24px !important; }
     }
   </style>
-  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
+  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
 </head>
 
 <body>
@@ -787,7 +927,7 @@
                 <a href="/propertydirect/apartments?category=COMMERCIAL" class="navbar-link">Commercial</a>
               </li>
               <li>
-                <a href="/propertydirect/contact" class="navbar-link">Agents & Contact</a>
+                <a href="#contact" class="navbar-link">Agents & Contact</a>
               </li>
             </ul>
           </div>
@@ -797,7 +937,7 @@
         <div class="header-bottom-actions">
 
           <a class="smartsociety-header-pill" href="/" title="Go to SmartSociety Workspace">
-            <span class="pill-icon-box" aria-hidden="true"></span>
+            <span class="pill-icon-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg></span>
             SmartSociety
           </a>
 
@@ -805,7 +945,7 @@
             <ion-icon name="search-outline"></ion-icon>
           </button>
 
-          <button type="button" class="pd-header-login-btn" id="pdLoginTrigger">Login</button>
+          <button type="button" class="pd-header-login-btn" id="pdLoginTrigger" onclick="window.openPropertyDirectLoginModal?.(event)">Login</button>
 
           <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
             <ion-icon name="menu-outline"></ion-icon>
@@ -1091,7 +1231,7 @@
 
                 <figure class="card-banner">
 
-                  <a href="/propertydirect/apartment-detail">
+                  <a href="/propertydirect/apartments">
                     <img src="./assets/images/property-1.jpg" alt="New Apartment Nice View" class="w-100">
                   </a>
 
@@ -1128,7 +1268,7 @@
                   </div>
 
                   <h3 class="h3 card-title">
-                    <a href="#">New Apartment Nice View</a>
+                    <a href="/propertydirect/apartments">New Apartment Nice View</a>
                   </h3>
 
                   <p class="card-text">
@@ -1209,7 +1349,7 @@
 
                 <figure class="card-banner">
 
-                  <a href="#">
+                  <a href="/propertydirect/apartments">
                     <img src="./assets/images/property-2.jpg" alt="Modern Apartments" class="w-100">
                   </a>
 
@@ -1246,7 +1386,7 @@
                   </div>
 
                   <h3 class="h3 card-title">
-                    <a href="#">Modern Apartments</a>
+                    <a href="/propertydirect/apartments">Modern Apartments</a>
                   </h3>
 
                   <p class="card-text">
@@ -1327,7 +1467,7 @@
 
                 <figure class="card-banner">
 
-                  <a href="#">
+                  <a href="/propertydirect/apartments">
                     <img src="./assets/images/property-3.jpg" alt="Comfortable Apartment" class="w-100">
                   </a>
 
@@ -1364,7 +1504,7 @@
                   </div>
 
                   <h3 class="h3 card-title">
-                    <a href="#">Comfortable Apartment</a>
+                    <a href="/propertydirect/apartments">Comfortable Apartment</a>
                   </h3>
 
                   <p class="card-text">
@@ -1445,7 +1585,7 @@
 
                 <figure class="card-banner">
 
-                  <a href="#">
+                  <a href="/propertydirect/apartments">
                     <img src="./assets/images/property-4.png" alt="Luxury villa in Rego Park" class="w-100">
                   </a>
 
@@ -1482,7 +1622,7 @@
                   </div>
 
                   <h3 class="h3 card-title">
-                    <a href="#">Luxury villa in Rego Park</a>
+                    <a href="/propertydirect/apartments">Luxury villa in Rego Park</a>
                   </h3>
 
                   <p class="card-text">
@@ -1896,6 +2036,13 @@
 
 
 
+      <section class="pd-contact" id="contact">
+        <div class="container">
+          <div class="pd-contact-copy"><p class="section-subtitle">PERSONAL SUPPORT</p><h2 class="h2 section-title">Let’s find your next home.</h2><p class="section-text">Ask about a listing, arrange a property visit, or get help from the PropertyDirect support team.</p><div class="pd-contact-list"><a href="mailto:support@propertydirect.in"><strong>Email support</strong>support@propertydirect.in</a><a href="tel:+9118001232026"><strong>Call support</strong>+91 1800 123 2026</a><span><strong>Service location</strong>Bengaluru, India</span></div></div>
+          <form id="landingContactForm" class="pd-contact-form"><h3>Send a message</h3><label>First name<input name="firstName" required maxlength="60"></label><label>Last name<input name="lastName" required maxlength="60"></label><label>Email address<input name="email" type="email" required maxlength="160"></label><label>Phone number<input name="phone" required pattern="[0-9+() -]{7,20}"></label><label class="pd-form-wide">Message<textarea name="message" required minlength="10" maxlength="2000" rows="5" placeholder="Tell us how we can help."></textarea></label><p id="landingContactStatus" aria-live="polite"></p><button class="btn" type="submit">Send message</button></form>
+        </div>
+      </section>
+
       <!-- 
         - #CTA
       -->
@@ -1964,7 +2111,7 @@
             <li><a href="/propertydirect/apartments?type=RENT" class="footer-link">Rent a home</a></li>
             <li><a href="/propertydirect/terms/post-property" class="footer-link">Post your property</a></li>
             <li><a href="#about" class="footer-link">Why PropertyDirect</a></li>
-            <li><a href="/propertydirect/contact" class="footer-link">Contact us</a></li>
+            <li><a href="#contact" class="footer-link">Contact us</a></li>
           </ul>
 
           <ul class="footer-list">
@@ -1975,14 +2122,14 @@
             <li><a href="/propertydirect/dashboards/admin" class="footer-link">Admin dashboard</a></li>
             <li><a href="/propertydirect/dashboards/superadmin" class="footer-link">Superadmin dashboard</a></li>
             <li><a href="/propertydirect/terms/post-property" class="footer-link">Listing guidelines</a></li>
-            <li><a href="/propertydirect/contact" class="footer-link">Help and support</a></li>
+            <li><a href="#contact" class="footer-link">Help and support</a></li>
           </ul>
 
           <ul class="footer-list">
             <li><p class="footer-list-title">Support</p></li>
             <li><a href="mailto:support@propertydirect.in" class="footer-link">Email support</a></li>
             <li><a href="tel:+9118001232026" class="footer-link">Call support</a></li>
-            <li><a href="/propertydirect/contact" class="footer-link">Send a message</a></li>
+            <li><a href="#contact" class="footer-link">Send a message</a></li>
             <li><a href="/propertydirect/apartments" class="footer-link">Property search</a></li>
             <li><a href="#about" class="footer-link">About us</a></li>
             <li><a href="/propertydirect" class="footer-link">Home</a></li>
@@ -2015,19 +2162,36 @@
   <!-- 
     - custom js link
   -->
-  <script src="./assets/js/script.js"></script>
+  <script src="/propertydirect/assets/js/script.js?v=20260908-login-buttons-v2"></script>
 
   <!-- 
     - ionicon link
   -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script>
+    document.getElementById('landingContactForm')?.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const form = event.currentTarget, button = form.querySelector('button'), status = document.getElementById('landingContactStatus');
+      button.disabled = true; button.textContent = 'Sending…'; status.textContent = '';
+      try {
+        const response = await fetch('/api/property/contact-messages', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(Object.fromEntries(new FormData(form)))});
+        const result = await response.json(); if (!response.ok) throw new Error(result.message || 'Unable to send your message.');
+        form.reset(); status.style.color = '#15803d'; status.textContent = result.message;
+      } catch (error) { status.style.color = '#b91c1c'; status.textContent = error.message || 'Unable to send your message.'; }
+      finally { button.disabled = false; button.textContent = 'Send message'; }
+    });
+  </script>
 
   <div class="pd-auth-modal" id="pdLoginModal" aria-hidden="true">
     <section class="pd-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="pdLoginTitle">
       <button type="button" class="pd-auth-close" id="pdLoginClose" aria-label="Close login">×</button>
       <h2 id="pdLoginTitle">Welcome back</h2>
-      <p>Sign in to access your PropertyDirect workspace.</p>
+      <p id="pdLoginHelp">Sign in if you already have an account, or create a new customer account.</p>
+      <div class="pd-auth-tabs" role="tablist" aria-label="PropertyDirect account access">
+        <button type="button" class="pd-auth-tab is-active" data-pd-auth-mode="signin">Sign in</button>
+        <button type="button" class="pd-auth-tab" data-pd-auth-mode="signup">Sign up</button>
+      </div>
       <form class="pd-auth-form" id="pdLoginForm">
         <input id="pdLoginRole" name="role" type="hidden" value="">
         <label class="pd-auth-field">
@@ -2035,7 +2199,10 @@
           <input id="pdLoginUsername" name="username" autocomplete="username" required>
         </label>
         <label class="pd-auth-field">
-          Password
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:4px;">
+            <span>Password</span>
+            <button type="button" id="pdForgotPasswordTrigger" style="background:none; border:none; color:#2563eb; font-size:0.78rem; font-weight:700; cursor:pointer; padding:0;">Forgot password?</button>
+          </div>
           <span class="pd-password-field">
             <input id="pdLoginPassword" name="password" type="password" autocomplete="current-password" required>
             <button type="button" class="pd-password-toggle" id="pdPasswordToggle" aria-label="Show password" aria-pressed="false"><ion-icon name="eye-outline"></ion-icon></button>
@@ -2044,28 +2211,317 @@
         <p class="pd-auth-error" id="pdLoginError" aria-live="polite"></p>
         <button class="pd-auth-submit" type="submit">Sign in</button>
       </form>
+      <form class="pd-auth-form is-hidden" id="pdSignupForm">
+        <label class="pd-auth-field">
+          Full name
+          <input id="pdSignupName" name="name" autocomplete="name" required maxlength="120">
+        </label>
+        <label class="pd-auth-field">
+          Email address
+          <input id="pdSignupEmail" name="email" type="email" autocomplete="email" required maxlength="160">
+        </label>
+        <label class="pd-auth-field">
+          Phone number
+          <input id="pdSignupPhone" name="phone" autocomplete="tel" required pattern="[0-9+() -]{7,20}" maxlength="20">
+        </label>
+        <label class="pd-auth-field">
+          Password
+          <span class="pd-password-field">
+            <input id="pdSignupPassword" name="password" type="password" autocomplete="new-password" required minlength="6">
+            <button type="button" class="pd-password-toggle" data-password-toggle="pdSignupPassword" aria-label="Show password" aria-pressed="false"><ion-icon name="eye-outline"></ion-icon></button>
+          </span>
+        </label>
+        <p class="pd-auth-error" id="pdSignupError" aria-live="polite"></p>
+        <button class="pd-auth-submit" type="submit">Create account</button>
+      </form>
+      <form class="pd-auth-form is-hidden" id="pdForgotForm">
+        <!-- Stage 1: Request OTP -->
+        <div id="pdForgotStep1">
+          <label class="pd-auth-field">
+            Registered Email Address
+            <input id="pdForgotEmail" name="email" type="email" autocomplete="email" placeholder="e.g. customer@propertydirect" required maxlength="160">
+          </label>
+          <p class="pd-auth-error" id="pdForgotError" aria-live="polite"></p>
+          <p class="pd-auth-success" id="pdForgotSuccess" style="color:#059669; font-size:0.8rem; font-weight:700; margin:6px 0; display:none;"></p>
+          <button class="pd-auth-submit" type="button" id="pdSendOtpBtn" style="margin-top:8px;">Send Reset Code to Email</button>
+        </div>
+
+        <!-- Stage 2: OTP Verification -->
+        <div id="pdForgotStep2" class="is-hidden" style="margin-top:14px; border-top:1px solid #e2e8f0; padding-top:14px;">
+          <label class="pd-auth-field">
+            6-Digit Verification Code (OTP)
+            <input id="pdResetOtp" name="otp" autocomplete="off" placeholder="Enter 6-digit OTP from email" required maxlength="6" style="letter-spacing:0.12em; font-weight:800; font-size:1.1rem; text-align:center;">
+          </label>
+          <p class="pd-auth-error" id="pdVerifyError" aria-live="polite"></p>
+          <p class="pd-auth-success" id="pdVerifySuccess" style="color:#059669; font-size:0.8rem; font-weight:700; margin:6px 0; display:none;"></p>
+          <button class="pd-auth-submit" type="button" id="pdVerifyOtpBtn" style="margin-top:6px; background:linear-gradient(135deg, #059669, #047857);">Verify OTP Code</button>
+        </div>
+
+        <!-- Stage 3: Set New Password -->
+        <div id="pdForgotStep3" class="is-hidden" style="margin-top:14px; border-top:1px solid #e2e8f0; padding-top:14px;">
+          <label class="pd-auth-field">
+            New Password
+            <span class="pd-password-field">
+              <input id="pdResetNewPassword" name="newPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters">
+              <button type="button" class="pd-password-toggle" data-password-toggle="pdResetNewPassword" aria-label="Show password" aria-pressed="false"><ion-icon name="eye-outline"></ion-icon></button>
+            </span>
+          </label>
+          <label class="pd-auth-field">
+            Confirm New Password
+            <span class="pd-password-field">
+              <input id="pdResetConfirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Re-enter new password">
+              <button type="button" class="pd-password-toggle" data-password-toggle="pdResetConfirmPassword" aria-label="Show password" aria-pressed="false"><ion-icon name="eye-outline"></ion-icon></button>
+            </span>
+          </label>
+          <p class="pd-auth-error" id="pdResetError" aria-live="polite"></p>
+          <button class="pd-auth-submit" type="submit" id="pdResetSubmitBtn" style="margin-top:8px;">Save New Password</button>
+        </div>
+
+        <div style="text-align:center; margin-top:16px;">
+          <button type="button" id="pdBackToSigninBtn" style="background:none; border:none; color:#64748b; font-size:0.8rem; font-weight:700; cursor:pointer;">← Back to Sign in</button>
+        </div>
+      </form>
     </section>
   </div>
 
   <script>
+    window.openPropertyDirectLoginModal = function (event) {
+      const modal = document.getElementById('pdLoginModal');
+      const username = document.getElementById('pdLoginUsername');
+      const form = document.getElementById('pdLoginForm');
+      const signupForm = document.getElementById('pdSignupForm');
+      const forgotForm = document.getElementById('pdForgotForm');
+      const authTabs = document.querySelector('.pd-auth-tabs');
+      if (!modal || !form || !signupForm) return;
+      event?.preventDefault?.();
+      form.classList.remove('is-hidden');
+      signupForm.classList.add('is-hidden');
+      if (forgotForm) forgotForm.classList.add('is-hidden');
+      if (authTabs) authTabs.style.display = 'grid';
+      document.querySelectorAll('[data-pd-auth-mode]').forEach((tab) => {
+        const active = tab.dataset.pdAuthMode === 'signin';
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      window.setTimeout(() => username?.focus(), 0);
+    };
+
     document.addEventListener('DOMContentLoaded', function () {
       const trigger = document.getElementById('pdLoginTrigger');
       const modal = document.getElementById('pdLoginModal');
       const close = document.getElementById('pdLoginClose');
       const form = document.getElementById('pdLoginForm');
+      const signupForm = document.getElementById('pdSignupForm');
+      const help = document.getElementById('pdLoginHelp');
       const error = document.getElementById('pdLoginError');
+      const signupError = document.getElementById('pdSignupError');
       const username = document.getElementById('pdLoginUsername');
       const password = document.getElementById('pdLoginPassword');
       const passwordToggle = document.getElementById('pdPasswordToggle');
       const role = document.getElementById('pdLoginRole');
       const submit = form?.querySelector('button[type="submit"]');
-      if (!trigger || !modal || !close || !form || !username || !password || !role || !submit) return;
+      const signupSubmit = signupForm?.querySelector('button[type="submit"]');
+      const tabs = [...document.querySelectorAll('[data-pd-auth-mode]')];
+      if (!trigger || !modal || !close || !form || !signupForm || !username || !password || !role || !submit || !signupSubmit) return;
+
+      const forgotForm = document.getElementById('pdForgotForm');
+      const forgotTrigger = document.getElementById('pdForgotPasswordTrigger');
+      const backToSigninBtn = document.getElementById('pdBackToSigninBtn');
+      const sendOtpBtn = document.getElementById('pdSendOtpBtn');
+      const verifyOtpBtn = document.getElementById('pdVerifyOtpBtn');
+      const forgotEmail = document.getElementById('pdForgotEmail');
+      const forgotError = document.getElementById('pdForgotError');
+      const forgotSuccess = document.getElementById('pdForgotSuccess');
+      const forgotStep1 = document.getElementById('pdForgotStep1');
+      const forgotStep2 = document.getElementById('pdForgotStep2');
+      const forgotStep3 = document.getElementById('pdForgotStep3');
+      const resetOtp = document.getElementById('pdResetOtp');
+      const verifyError = document.getElementById('pdVerifyError');
+      const verifySuccess = document.getElementById('pdVerifySuccess');
+      const resetNewPassword = document.getElementById('pdResetNewPassword');
+      const resetConfirmPassword = document.getElementById('pdResetConfirmPassword');
+      const resetError = document.getElementById('pdResetError');
+      let isOtpVerified = false;
+
+      const setAuthMode = (mode) => {
+        const isSignup = mode === 'signup';
+        const isForgot = mode === 'forgot';
+        const authTabs = document.querySelector('.pd-auth-tabs');
+        if (authTabs) authTabs.style.display = isForgot ? 'none' : 'grid';
+
+        tabs.forEach((tab) => {
+          const active = !isForgot && tab.dataset.pdAuthMode === mode;
+          tab.classList.toggle('is-active', active);
+          tab.setAttribute('aria-selected', String(active));
+        });
+        form.classList.toggle('is-hidden', isSignup || isForgot);
+        signupForm.classList.toggle('is-hidden', !isSignup || isForgot);
+        if (forgotForm) forgotForm.classList.toggle('is-hidden', !isForgot);
+
+        if (isForgot) {
+          if (forgotStep1) forgotStep1.classList.remove('is-hidden');
+          if (forgotStep2) forgotStep2.classList.add('is-hidden');
+          if (forgotStep3) forgotStep3.classList.add('is-hidden');
+          if (forgotSuccess) forgotSuccess.style.display = 'none';
+          if (verifySuccess) verifySuccess.style.display = 'none';
+          isOtpVerified = false;
+        }
+
+        document.getElementById('pdLoginTitle').textContent = isForgot ? 'Reset your password' : isSignup ? 'Create your account' : 'Welcome back';
+        help.textContent = isForgot ? 'Enter your email to receive an OTP code, verify it, and set a new password.' : isSignup ? 'New to PropertyDirect? Create your customer account to save, enquire, and manage visits.' : 'Sign in if you already have an account, or create a new customer account.';
+        error.textContent = '';
+        signupError.textContent = '';
+        if (forgotError) forgotError.textContent = '';
+        if (verifyError) verifyError.textContent = '';
+        if (resetError) resetError.textContent = '';
+        window.setTimeout(() => (isForgot ? forgotEmail : isSignup ? document.getElementById('pdSignupName') : username)?.focus(), 0);
+      };
+
+      if (forgotTrigger) forgotTrigger.addEventListener('click', () => setAuthMode('forgot'));
+      if (backToSigninBtn) backToSigninBtn.addEventListener('click', () => setAuthMode('signin'));
+
+      // Stage 1: Send OTP to Email
+      if (sendOtpBtn) {
+        sendOtpBtn.addEventListener('click', async () => {
+          if (forgotError) forgotError.textContent = '';
+          if (forgotSuccess) forgotSuccess.style.display = 'none';
+          const emailVal = (forgotEmail?.value || '').trim();
+          if (!emailVal) {
+            if (forgotError) forgotError.textContent = 'Please enter your registered email address.';
+            return;
+          }
+          sendOtpBtn.disabled = true;
+          sendOtpBtn.textContent = 'Sending OTP...';
+          try {
+            const res = await fetch('/api/auth/forgot-password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ email: emailVal, platform: 'propertydirect' })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              if (forgotError) forgotError.textContent = data.message || data.error || 'Failed to send OTP code.';
+            } else {
+              if (forgotSuccess) {
+                forgotSuccess.textContent = "✓ " + (data.message || "OTP code sent to email.");
+                if (data.otpPreview) forgotSuccess.textContent += " (Dev OTP Code: " + data.otpPreview + ")";
+                forgotSuccess.style.display = 'block';
+              }
+              if (forgotStep2) forgotStep2.classList.remove('is-hidden');
+              if (resetOtp) {
+                if (data.otpPreview) resetOtp.value = data.otpPreview;
+                resetOtp.focus();
+              }
+            }
+          } catch (err) {
+            if (forgotError) forgotError.textContent = 'Network error. Please try again.';
+          } finally {
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.textContent = 'Send Reset Code to Email';
+          }
+        });
+      }
+
+      // Stage 2: Verify OTP
+      if (verifyOtpBtn) {
+        verifyOtpBtn.addEventListener('click', async () => {
+          if (verifyError) verifyError.textContent = '';
+          if (verifySuccess) verifySuccess.style.display = 'none';
+          const emailVal = (forgotEmail?.value || '').trim();
+          const otpVal = (resetOtp?.value || '').trim();
+
+          if (!otpVal || otpVal.length < 6) {
+            if (verifyError) verifyError.textContent = 'Please enter the valid 6-digit OTP code sent to your email.';
+            return;
+          }
+
+          verifyOtpBtn.disabled = true;
+          verifyOtpBtn.textContent = 'Verifying...';
+
+          try {
+            const res = await fetch('/api/auth/verify-reset-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ email: emailVal, otp: otpVal })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              if (verifyError) verifyError.textContent = data.message || 'Invalid or expired OTP code.';
+            } else {
+              isOtpVerified = true;
+              if (verifySuccess) {
+                verifySuccess.textContent = "✓ OTP Verified! You can now set your new password below.";
+                verifySuccess.style.display = 'block';
+              }
+              if (forgotStep3) forgotStep3.classList.remove('is-hidden');
+              if (resetNewPassword) resetNewPassword.focus();
+            }
+          } catch (err) {
+            if (verifyError) verifyError.textContent = 'Network error. Please try again.';
+          } finally {
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.textContent = 'Verify OTP Code';
+          }
+        });
+      }
+
+      // Stage 3: Submit New Password
+      if (forgotForm) {
+        forgotForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          if (resetError) resetError.textContent = '';
+          const emailVal = (forgotEmail?.value || '').trim();
+          const otpVal = (resetOtp?.value || '').trim();
+          const newPassVal = (resetNewPassword?.value || '').trim();
+          const confirmPassVal = (resetConfirmPassword?.value || '').trim();
+
+          if (!isOtpVerified) {
+            if (resetError) resetError.textContent = 'Please verify your OTP code first before setting a new password.';
+            return;
+          }
+
+          if (!newPassVal || newPassVal.length < 6) {
+            if (resetError) resetError.textContent = 'New password must be at least 6 characters long.';
+            return;
+          }
+
+          if (newPassVal !== confirmPassVal) {
+            if (resetError) resetError.textContent = 'Passwords do not match. Please check and try again.';
+            return;
+          }
+
+          const resetSubmit = document.getElementById('pdResetSubmitBtn');
+          if (resetSubmit) { resetSubmit.disabled = true; resetSubmit.textContent = 'Saving Password...'; }
+
+          try {
+            const res = await fetch('/api/auth/reset-password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ email: emailVal, otp: otpVal, newPassword: newPassVal })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              if (resetError) resetError.textContent = data.message || 'Password reset failed.';
+            } else {
+              alert(data.message || 'Password reset successfully! Please sign in with your new password.');
+              setAuthMode('signin');
+              if (username) username.value = emailVal;
+              if (password) password.value = newPassVal;
+            }
+          } catch (err) {
+            if (resetError) resetError.textContent = 'Network error. Please try again.';
+          } finally {
+            if (resetSubmit) { resetSubmit.disabled = false; resetSubmit.textContent = 'Save New Password'; }
+          }
+        });
+      }
 
       const openModal = () => {
         error.textContent = '';
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-        window.setTimeout(() => username.focus(), 0);
+        signupError.textContent = '';
+        window.openPropertyDirectLoginModal();
       };
       const closeModal = () => {
         modal.classList.remove('is-open');
@@ -2074,16 +2530,21 @@
       };
       trigger.addEventListener('click', openModal);
       close.addEventListener('click', closeModal);
+      tabs.forEach((tab) => tab.addEventListener('click', () => setAuthMode(tab.dataset.pdAuthMode)));
       if (new URLSearchParams(window.location.search).get('loginRequired') === 'true') {
         window.history.replaceState({}, '', '/propertydirect');
         openModal();
       }
-      passwordToggle?.addEventListener('click', () => {
-        const isHidden = password.type === 'password';
-        password.type = isHidden ? 'text' : 'password';
-        passwordToggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-        passwordToggle.setAttribute('aria-pressed', String(isHidden));
-        passwordToggle.querySelector('ion-icon')?.setAttribute('name', isHidden ? 'eye-off-outline' : 'eye-outline');
+      document.querySelectorAll('.pd-password-toggle').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const target = document.getElementById(toggle.dataset.passwordToggle || 'pdLoginPassword');
+          if (!target) return;
+          const isHidden = target.type === 'password';
+          target.type = isHidden ? 'text' : 'password';
+          toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+          toggle.setAttribute('aria-pressed', String(isHidden));
+          toggle.querySelector('ion-icon')?.setAttribute('name', isHidden ? 'eye-off-outline' : 'eye-outline');
+        });
       });
       modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
       document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
@@ -2091,6 +2552,7 @@
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         error.textContent = '';
+        error.style.color = '#dc2626';
         submit.disabled = true;
         submit.textContent = 'Signing in…';
         const inferRole = (u) => {
@@ -2118,7 +2580,48 @@
           submit.textContent = 'Sign in';
         }
       });
+
+      signupForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        signupError.textContent = '';
+        signupSubmit.disabled = true;
+        signupSubmit.textContent = 'Creating account...';
+        try {
+          const signupData = Object.fromEntries(new FormData(signupForm));
+          const response = await fetch('/api/auth/propertydirect/register-customer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(signupData)
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.message || 'Unable to create account.');
+          username.value = signupData.email;
+          password.value = signupData.password;
+          signupForm.reset();
+          setAuthMode('signin');
+          error.style.color = '#15803d';
+          error.textContent = 'Account created. Sign in with your email and password.';
+        } catch (requestError) {
+          signupError.textContent = requestError.message || 'Unable to create account. Please try again.';
+        } finally {
+          signupSubmit.disabled = false;
+          signupSubmit.textContent = 'Create account';
+        }
+      });
     });
+
+    document.addEventListener('click', function (event) {
+      const trigger = event.target.closest?.('#pdLoginTrigger, [data-pd-login-trigger]');
+      if (!trigger) return;
+      const modal = document.getElementById('pdLoginModal');
+      const username = document.getElementById('pdLoginUsername');
+      const form = document.getElementById('pdLoginForm');
+      const signupForm = document.getElementById('pdSignupForm');
+      if (!modal || !form || !signupForm) return;
+      event.preventDefault();
+      window.openPropertyDirectLoginModal(event);
+    }, true);
   </script>
 
   <script>
@@ -2130,57 +2633,54 @@
       }).format(Number(value || 0));
       const listingUrl = (id) => '/propertydirect/apartment-detail?id=' + encodeURIComponent(id);
 
+      const propertyList = document.querySelector('.property-list');
+      if (!propertyList) return;
+
+      const emptyState = () => {
+        propertyList.replaceChildren();
+        const item = document.createElement('li');
+        item.className = 'property-list-empty';
+        item.innerHTML = '<p><strong>No approved properties are available yet.</strong><br>New properties appear here once they have been verified.</p>';
+        propertyList.append(item);
+      };
+
+      const propertyCard = (listing) => {
+        const image = listing.imageUrl || String(listing.imageUrls || '').split(/\r?\n/).find(Boolean) || '/propertydirect/assets/images/property-1.jpg';
+        const isSale = String(listing.listingType || '').toUpperCase() === 'SALE';
+        const place = [listing.locality, listing.city].filter(Boolean).join(', ') || 'India';
+        const link = listingUrl(listing.id);
+        const item = document.createElement('li');
+        item.dataset.listingId = String(listing.id);
+        item.innerHTML = `
+          <div class="property-card">
+            <figure class="card-banner"><a href="${link}"><img src="${image}" alt=""></a><div class="card-badge ${isSale ? 'orange' : 'green'}">${isSale ? 'For Sale' : 'For Rent'}</div><div class="banner-actions"><span class="banner-actions-btn"><ion-icon name="location"></ion-icon><address></address></span></div></figure>
+            <div class="card-content"><div class="card-price"><strong></strong></div><h3 class="h3 card-title"><a href="${link}"></a></h3><p class="card-text"></p><ul class="card-list"><li class="card-item"><strong></strong><ion-icon name="bed-outline"></ion-icon><span>Bedrooms</span></li><li class="card-item"><strong></strong><ion-icon name="man-outline"></ion-icon><span>Bathrooms</span></li><li class="card-item"><strong></strong><ion-icon name="square-outline"></ion-icon><span>Square Ft</span></li></ul></div>
+            <div class="card-footer"><div class="card-footer-actions"><a class="card-footer-actions-btn" href="${link}" title="View details"><ion-icon name="resize-outline"></ion-icon></a></div></div>
+          </div>`;
+        item.querySelector('.card-banner img').src = image;
+        item.querySelector('.card-banner img').alt = listing.title || 'Verified Property';
+        item.querySelector('.banner-actions address').textContent = place;
+        item.querySelector('.card-price strong').textContent = formatInr(listing.price);
+        item.querySelector('.card-price').append(isSale ? '' : '/Month');
+        item.querySelector('.card-title a').textContent = listing.title || 'Verified Property';
+        item.querySelector('.card-text').textContent = listing.description || listing.society || 'Verified PropertyDirect listing.';
+        const specs = item.querySelectorAll('.card-list .card-item strong');
+        specs[0].textContent = listing.bhk || '—';
+        specs[1].textContent = listing.bathrooms || '—';
+        specs[2].textContent = listing.areaSqft ? Number(listing.areaSqft).toLocaleString('en-IN') : '—';
+        return item;
+      };
+
+      // Replace every template/demo card with the approved public inventory.
+      propertyList.replaceChildren();
       fetch('/api/properties/public?page=0&size=4', { headers: { Accept: 'application/json' } })
         .then((response) => response.ok ? response.json() : Promise.reject())
         .then((payload) => {
           const listings = Array.isArray(payload) ? payload : (payload.content || []);
-          document.querySelectorAll('.property-list .property-card').forEach((card, index) => {
-            const listing = listings[index];
-            if (!listing) return;
-
-            const link = listingUrl(listing.id);
-            card.dataset.listingId = String(listing.id);
-            const image = listing.imageUrl || String(listing.imageUrls || '').split(/\r?\n/).find(Boolean);
-            const bannerLink = card.querySelector('.card-banner > a');
-            const titleLink = card.querySelector('.card-title a');
-            if (bannerLink) bannerLink.href = link;
-            if (titleLink) {
-              titleLink.href = link;
-              titleLink.textContent = listing.title || 'Verified Property';
-            }
-            const imageElement = card.querySelector('.card-banner img');
-            if (image && imageElement) {
-              imageElement.src = image;
-              imageElement.alt = listing.title || 'Verified Property';
-            }
-            const badge = card.querySelector('.card-badge');
-            if (badge) {
-              const isSale = String(listing.listingType || '').toUpperCase() === 'SALE';
-              badge.textContent = isSale ? 'For Sale' : 'For Rent';
-              badge.classList.toggle('orange', isSale);
-              badge.classList.toggle('green', !isSale);
-            }
-            const address = card.querySelector('.banner-actions address');
-            if (address) address.textContent = [listing.locality, listing.city].filter(Boolean).join(', ') || 'India';
-            const actionCounts = card.querySelectorAll('.banner-actions-btn span');
-            if (actionCounts[0]) actionCounts[0].textContent = image ? '1' : '0';
-            if (actionCounts[1]) actionCounts[1].textContent = listing.bhk || '—';
-            const price = card.querySelector('.card-price');
-            if (price) {
-              price.replaceChildren();
-              const amount = document.createElement('strong');
-              amount.textContent = formatInr(listing.price);
-              price.append(amount, String(listing.listingType || '').toUpperCase() === 'SALE' ? '' : '/Month');
-            }
-            const description = card.querySelector('.card-text');
-            if (description) description.textContent = listing.description || listing.society || 'Verified PropertyDirect listing.';
-            const specs = card.querySelectorAll('.card-list .card-item strong');
-            if (specs[0]) specs[0].textContent = listing.bhk || '—';
-            if (specs[1]) specs[1].textContent = listing.bathrooms || '—';
-            if (specs[2]) specs[2].textContent = listing.areaSqft ? Number(listing.areaSqft).toLocaleString('en-IN') : '—';
-          });
+          if (!listings.length) { emptyState(); return; }
+          propertyList.replaceChildren(...listings.map(propertyCard));
         })
-        .catch(() => { /* Keep the curated fallback cards available offline. */ });
+        .catch(emptyState);
     });
   </script>
 
@@ -2301,6 +2801,9 @@
 
     // Dynamic Property Listing Sync Engine for Main Landing Page
     document.addEventListener("DOMContentLoaded", function() {
+      // Browser storage is never a source of public inventory. Listings must
+      // come from the approved public API above.
+      return;
       try {
         var propList = document.querySelector(".property-list");
         if (!propList) return;
@@ -2423,3 +2926,4 @@
 </body>
 
 </html>
+

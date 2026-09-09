@@ -12,6 +12,7 @@ import com.smartapartment.entity.Visitor;
 import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -136,39 +137,43 @@ public class DashboardController {
         return "propertydirect/apartment-detail";
     }
 
+    /** Keeps previously shared PropertyDirect listing URLs working after the detail route consolidation. */
+    @GetMapping("/propertydirect/property/{slug}")
+    public String legacyPropertyDirectDetail(@PathVariable String slug, @RequestParam(required = false) String id) {
+        if (id != null && id.matches("\\d+")) {
+            return "redirect:/propertydirect/apartment-detail?id=" + id;
+        }
+        return "redirect:/propertydirect/apartments";
+    }
+
     @GetMapping("/propertydirect/contact")
     public String propertyDirectContact() {
-        return "propertydirect/contact";
+        return "redirect:/propertydirect/#contact";
     }
 
     @GetMapping("/propertydirect/dashboards/superadmin")
     public String propertyDirectSuperAdmin(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:superadmin", Boolean.TRUE);
-        return "propertydirect/dashboards/superadmin";
+        return propertyDirectDashboard(session, "superadmin", "propertydirect/dashboards/superadmin");
     }
 
     @GetMapping("/propertydirect/dashboards/admin")
     public String propertyDirectAdmin(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:admin", Boolean.TRUE);
-        return "propertydirect/dashboards/admin";
+        return propertyDirectDashboard(session, "admin", "propertydirect/dashboards/admin");
     }
 
     @GetMapping("/propertydirect/dashboards/customer")
     public String propertyDirectCustomer(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:customer", Boolean.TRUE);
-        return "propertydirect/dashboards/customer";
+        return propertyDirectDashboard(session, "customer", "propertydirect/dashboards/customer");
     }
 
     @GetMapping("/propertydirect/dashboards/agent")
     public String propertyDirectAgent(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:agent", Boolean.TRUE);
-        return "propertydirect/dashboards/agent";
+        return propertyDirectDashboard(session, "agent", "propertydirect/dashboards/agent");
     }
 
     @GetMapping("/propertydirect/dashboards/vendor")
     public String propertyDirectVendor(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:vendor", Boolean.TRUE);
-        return "propertydirect/dashboards/vendor";
+        return propertyDirectDashboard(session, "vendor", "propertydirect/dashboards/vendor");
     }
 
     @GetMapping("/propertydirect/terms/apartment-search")
@@ -193,5 +198,17 @@ public class DashboardController {
 
     private boolean isLoggedIn(HttpSession session, String platform, String role) {
         return Boolean.TRUE.equals(session.getAttribute("dashboard:" + platform + ":" + role));
+    }
+
+    /**
+     * A dashboard route must only consume the role session created by the login
+     * endpoint.  Never set a role here: doing so turns a bookmarked URL into an
+     * authentication bypass.
+     */
+    private String propertyDirectDashboard(HttpSession session, String role, String view) {
+        if (!isLoggedIn(session, "propertydirect", role)) {
+            return "redirect:/propertydirect?loginRequired=true";
+        }
+        return view;
     }
 }

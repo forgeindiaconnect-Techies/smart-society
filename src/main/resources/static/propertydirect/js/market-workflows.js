@@ -80,7 +80,7 @@
     function listingCard(listing) {
         const card = document.createElement("article");
         card.className = "dash-card";
-        const title = document.createElement("h3"); title.textContent = listing.title;
+        const title = document.createElement("h3"); title.textContent = [listing.apartmentCode, listing.title].filter(Boolean).join(" · ");
         const place = document.createElement("p"); place.textContent = `${listing.society} · ${listing.locality}, ${listing.city}`;
         const detail = document.createElement("p"); detail.textContent = `${listing.bhk} · ${listing.furnishing || "Furnishing not specified"} · ${listing.areaSqft ? `${listing.areaSqft} sqft` : "Area not specified"}`;
         const price = document.createElement("strong"); price.textContent = currency(listing.price);
@@ -96,7 +96,17 @@
         const params = new URLSearchParams();
         Object.entries(fields(form)).forEach(([key, value]) => { if (value !== "") params.set(key, value); });
         const items = await api(`/listings?${params}`);
-        document.getElementById("propertySearchResults")?.replaceChildren(...items.map(listingCard));
+        const results = document.getElementById("propertySearchResults");
+        if (results) {
+            if (items.length) {
+                results.replaceChildren(...items.map(listingCard));
+            } else {
+                const empty = document.createElement("p");
+                empty.className = "empty-state";
+                empty.textContent = "No approved properties match these filters yet.";
+                results.replaceChildren(empty);
+            }
+        }
         const state = document.getElementById("searchResultState");
         if (state) state.textContent = `${items.length} matching propert${items.length === 1 ? "y" : "ies"}`;
         return items;
@@ -177,7 +187,7 @@
         const items = await api("/my-listings");
         ownerProperties.clear(); items.forEach(item => ownerProperties.set(String(item.id), item));
         body.replaceChildren(...items.map(item => {
-            const row = document.createElement("tr"); cell(row, item.title); cell(row, item.listingType); cell(row, currency(item.price));
+            const row = document.createElement("tr"); cell(row, [item.apartmentCode, item.title].filter(Boolean).join(" · ")); cell(row, item.listingType); cell(row, currency(item.price));
             const status = cell(row, ""); status.appendChild(statusBadge(item.verificationStatus)); if (item.verificationStatus === "REJECTED" && item.rejectionReason) { const reason = document.createElement("small"); reason.className = "listing-rejection-reason"; reason.textContent = item.rejectionReason; status.appendChild(reason); } cell(row, item.viewCount || 0);
             const actions = cell(row, ""); if (["REJECTED", "CHANGES_REQUESTED"].includes(item.verificationStatus)) actions.appendChild(actionButton("Edit & Resubmit", "edit-resubmit-listing", item.id)); actions.appendChild(actionButton("Deactivate", "deactivate-listing", item.id));
             return row;
@@ -242,7 +252,7 @@
         const [summary, pending] = await Promise.all([api("/admin/summary"), absoluteApi("/api/admin/properties/pending")]);
         document.getElementById("totalPropertyCount").textContent = summary.totalListings; document.getElementById("registeredCustomerCount").textContent = summary.registeredCustomers; document.getElementById("pendingPropertyCount").textContent = summary.pendingListings; document.getElementById("approvedPropertyCount").textContent = summary.approvedListings;
         pendingProperties.clear(); pending.forEach(item => pendingProperties.set(String(item.id), item));
-        const rows = document.getElementById("propertyApprovalRows"); if (rows) { const rendered = pending.map(item => { const row = document.createElement("tr"); cell(row, item.title); cell(row, `${item.ownerName}\n${item.ownerEmail}`); cell(row, currency(item.price)); cell(row, [item.locality, item.city, item.postalCode].filter(Boolean).join(", ")); cell(row, when(item.submittedAt)); const actions = cell(row, ""); const review = document.createElement("button"); review.type = "button"; review.dataset.propertyApiAction = "review-property"; review.dataset.listingId = item.id; review.textContent = "Review"; actions.appendChild(review); return row; }); if (!rendered.length) { const row = document.createElement("tr"); const empty = cell(row, "No properties are waiting for approval."); empty.colSpan = 6; empty.className = "governance-empty"; rendered.push(row); } rows.replaceChildren(...rendered); }
+        const rows = document.getElementById("propertyApprovalRows"); if (rows) { const rendered = pending.map(item => { const row = document.createElement("tr"); cell(row, [item.apartmentCode, item.title].filter(Boolean).join(" · ")); cell(row, `${item.ownerName}\n${item.ownerEmail}`); cell(row, currency(item.price)); cell(row, [item.locality, item.city, item.postalCode].filter(Boolean).join(", ")); cell(row, when(item.submittedAt)); const actions = cell(row, ""); const review = document.createElement("button"); review.type = "button"; review.dataset.propertyApiAction = "review-property"; review.dataset.listingId = item.id; review.textContent = "Review"; actions.appendChild(review); return row; }); if (!rendered.length) { const row = document.createElement("tr"); const empty = cell(row, "No properties are waiting for approval."); empty.colSpan = 6; empty.className = "governance-empty"; rendered.push(row); } rows.replaceChildren(...rendered); }
         const state = document.getElementById("approvalTableState"); if (state) state.textContent = `${pending.length} pending`;
     }
 
@@ -250,7 +260,7 @@
         const item = pendingProperties.get(String(id));
         const modal = document.getElementById("propertyReviewModal");
         if (!item || !modal) return;
-        modal.querySelector("#propertyReviewTitle").textContent = item.title || "Untitled property";
+        modal.querySelector("#propertyReviewTitle").textContent = [item.apartmentCode, item.title || "Untitled property"].filter(Boolean).join(" · ");
         modal.querySelector("#propertyReviewOwner").textContent = `${item.ownerName || "Unknown owner"} · ${item.ownerEmail || "No email"}`;
         modal.querySelector("#propertyReviewDescription").textContent = item.description || "No description supplied.";
         modal.querySelector("#propertyReviewLocation").textContent = [item.address, item.locality, item.city, item.postalCode, item.latitude && item.longitude ? `${item.latitude}, ${item.longitude}` : ""].filter(Boolean).join(" · ");
@@ -340,9 +350,6 @@
         if (!button && event.target.closest('#propertySupportForm [data-action="support"]')) {
             button = event.target.closest('#propertySupportForm [data-action="support"]'); button.dataset.propertyApiAction = "support-ticket"; button.type = "submit";
         }
-        if (!button && role === "customer" && event.target.closest('#postApartmentForm [data-action="post-property"]')) {
-            button = event.target.closest('#postApartmentForm [data-action="post-property"]'); button.dataset.propertyApiAction = "publish-owner-listing";
-        }
         if (!button) return;
         event.preventDefault(); event.stopImmediatePropagation(); handle(button);
     }, true);
@@ -379,7 +386,7 @@
         }
         setDefaultDates();
         try {
-            if (role === "customer") await Promise.all([searchListings(), loadSaved(), loadSavedSearches(), loadVisits(), loadServices(), loadOwnerListings()]);
+            if (role === "customer") await Promise.all([searchListings(), loadSaved(), loadSavedSearches(), loadVisits(), loadServices()]);
             else if (role === "vendor") await loadOwnerListings();
             else if (role === "admin") await loadOwnerListings();
             else if (role === "superadmin") { ensureSuperadminGovernancePanel(); await loadSuperadminGovernance(); }

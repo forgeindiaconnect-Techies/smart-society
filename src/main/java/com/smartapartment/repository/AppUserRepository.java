@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
     List<AppUser> findByTenantId(String tenantId);
 }

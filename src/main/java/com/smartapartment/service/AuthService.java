@@ -43,12 +43,12 @@ public class AuthService {
         if (tenantCode.isBlank()) {
             throw new IllegalArgumentException("Society name must contain letters or numbers");
         }
+        String adminEmail = normalizeEmail(request.adminEmail());
+        if (userRepository.existsByEmailIgnoreCase(adminEmail)) {
+            throw new IllegalArgumentException("User already exists. Contact your admin.");
+        }
         if (tenantRepository.findByCode(tenantCode).isPresent()) {
             throw new IllegalArgumentException("A society with this name already exists");
-        }
-        String adminEmail = normalizeEmail(request.adminEmail());
-        if (userRepository.findByEmail(adminEmail).isPresent()) {
-            throw new IllegalArgumentException("An account with this email already exists");
         }
 
         Tenant tenant = new Tenant();

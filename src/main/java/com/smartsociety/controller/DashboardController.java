@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DashboardController {
@@ -112,14 +114,20 @@ public class DashboardController {
 
     @GetMapping("/propertydirect/dashboards/agent")
     public String propertyDirectAgent(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:agent", Boolean.TRUE);
+        if (!isLoggedIn(session, "propertydirect", "agent")) return "redirect:/propertydirect?loginRequired=true";
         return "propertydirect/dashboards/agent";
     }
 
     @GetMapping("/propertydirect/dashboards/vendor")
     public String propertyDirectVendor(HttpSession session) {
-        session.setAttribute("dashboard:propertydirect:vendor", Boolean.TRUE);
+        if (!isLoggedIn(session, "propertydirect", "vendor")) return "redirect:/propertydirect?loginRequired=true";
         return "propertydirect/dashboards/vendor";
+    }
+
+    @GetMapping("/propertydirect/property/{slug}")
+    public String legacyPropertyDirectDetail(@PathVariable String slug, @RequestParam(required = false) String id) {
+        if (id != null && id.matches("\\d+")) return "redirect:/propertydirect/apartment-detail?id=" + id;
+        return "redirect:/propertydirect/apartments";
     }
 
     @GetMapping("/propertydirect/terms/apartment-search")

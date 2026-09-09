@@ -157,15 +157,16 @@
         if (!body) return;
         const items = await request("/deliveries");
         if (!items.length) {
-            body.innerHTML = '<tr><td colspan="7" class="text-muted text-center py-4">No deliveries recorded yet. Record the next courier arrival above.</td></tr>';
+            body.innerHTML = '<tr><td colspan="8" class="text-muted text-center py-4">No deliveries recorded yet. Record the next courier arrival above.</td></tr>';
             return;
         }
         body.replaceChildren(...items.map(item => {
             const row = document.createElement("tr");
             appendCell(row, `${item.recipientName || "Resident"} · ${item.unitNo}`);
-            appendCell(row, `${item.provider || "—"}${item.trackingNumber ? ` · ${item.trackingNumber}` : ""}${item.agentName ? ` · ${item.agentName}` : ""}`);
+            appendCell(row, item.gateNumber || "Gate 1");
+            appendCell(row, `${item.provider || "—"}${item.trackingNumber ? ` · ${item.trackingNumber}` : ""}`);
+            appendCell(row, `${item.agentName || "—"}${item.phone ? ` · ${item.phone}` : ""}`);
             appendCell(row, `${item.packageType || "—"}${item.packageCondition ? ` · ${item.packageCondition}` : ""}`);
-            appendCell(row, `${item.storageLocation || "No storage location"}${item.deliveryNotes ? ` · ${item.deliveryNotes}` : ""}`);
             appendCell(row, `${dateTime(item.arrivedAt)}${item.collectedAt ? ` · Collected ${dateTime(item.collectedAt)}${item.collectedBy ? ` by ${item.collectedBy}` : ""}` : ""}`);
             appendCell(row, item.approvalStatus, statusClass(item.approvalStatus));
             const action = appendCell(row, "");
@@ -192,7 +193,7 @@
     function editDelivery(button) {
         const form = document.getElementById("deliveryForm"); if (!form) return;
         const delivery = JSON.parse(button.dataset.delivery || "{}"); form.dataset.editingId = delivery.id || "";
-        ["unitNo", "provider", "trackingNumber", "agentName", "phone", "recipientName", "packageType", "packageCondition", "storageLocation", "photoReference", "deliveryNotes"].forEach(field => { if (form.elements[field]) form.elements[field].value = delivery[field] || ""; });
+        ["unitNo", "gateNumber", "provider", "trackingNumber", "agentName", "phone", "recipientName", "packageType", "packageCondition", "storageLocation", "photoReference", "deliveryNotes"].forEach(field => { if (form.elements[field]) form.elements[field].value = delivery[field] || ""; });
         const save = document.getElementById("saveDelivery"); if (save) { save.dataset.advancedAction = "save-delivery"; save.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i>Save Delivery Details'; }
         document.getElementById("cancelDeliveryEdit")?.classList.remove("d-none");
         const state = document.getElementById("deliveryDeskState"); if (state) { state.textContent = `Editing ${delivery.provider || "delivery"}`; state.className = "badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2"; }

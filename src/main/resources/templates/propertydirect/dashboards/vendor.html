@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
-  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
+  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
+  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
   <style>
     :root {
       --pd-navy: #0a1834;
@@ -37,9 +38,9 @@
     }
 
     .vendor-shell {
-      display: grid;
-      grid-template-columns: 260px 1fr;
+      display: block;
       min-height: 100vh;
+      width: 100%;
     }
 
     /* SIDEBAR STYLING */
@@ -208,9 +209,12 @@
     /* MAIN CONTENT CANVAS */
     .vendor-main {
       margin-left: 260px;
-      padding: 32px 40px;
+      padding: 0 32px 36px 0;
       width: calc(100% - 260px);
-      max-width: 1440px;
+      max-width: calc(100% - 260px);
+      box-sizing: border-box;
+      min-height: 100vh;
+      background: var(--pd-bg);
     }
 
     .vendor-top {
@@ -218,12 +222,24 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 28px;
+      margin: 0 0 24px 0;
       background: #ffffff;
-      padding: 20px 28px;
-      border-radius: 16px;
-      border: 1px solid var(--pd-border);
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--pd-border);
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-radius: 0 0 14px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .vendor-panel {
+      margin-left: 32px;
+      width: calc(100% - 32px);
+      max-width: calc(100% - 32px);
+      box-sizing: border-box;
     }
 
     .vendor-top h1 {
@@ -638,16 +654,30 @@
 
     .toast.hidden {
       display: none !important;
-      opacity: 0;
-      transform: translateY(-10px);
+    }
+
+    .hidden, [hidden], .vendor-panel.hidden, .pd-modal-overlay.hidden {
+      display: none !important;
+    }
+
+    .pd-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
     /* RESPONSIVE */
     @media (max-width: 992px) {
-      .vendor-shell { grid-template-columns: 1fr; }
+      .vendor-shell { display: block; }
       .vendor-sidebar { display: none; }
       .vendor-sidebar.open { display: flex; width: 280px; }
-      .vendor-main { margin-left: 0; width: 100%; padding: 20px; }
+      .vendor-main { margin-left: 0; width: 100%; max-width: 100%; padding: 20px; }
       .vendor-sidebar-toggle { display: inline-flex; align-items: center; gap: 6px; }
       .vendor-grid { grid-template-columns: repeat(2, 1fr); }
       .form-grid { grid-template-columns: 1fr; }
@@ -672,19 +702,19 @@
           <div class="vendor-brand-text">Property<span>Direct</span></div>
         </a>
         <nav class="vendor-nav sidebar-nav" aria-label="Vendor dashboard navigation">
-          <button class="active" data-panel="overview">
+          <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="active" data-panel="overview">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
             Overview
           </button>
-          <button data-panel="listings">
+          <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="listings">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
             My Listings
           </button>
-          <button data-panel="builder-projects">
+          <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="builder-projects">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v8h4"/><path d="M18 9h2a2 2 0 0 1 2 2v11h-4"/></svg>
-            ️ Builder Projects
+            🏢 Builder Projects
           </button>
-          <button data-panel="post-listing">
+          <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="post-listing">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
             Add Apartment
           </button>
@@ -774,7 +804,7 @@
               <h2>Quick Actions & Owner Workflow</h2>
               <p>Follow these steps to list your property and maximize tenant reach.</p>
             </div>
-            <button class="primary" data-panel="post-listing">
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="primary" data-panel="post-listing">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
               Post New Property
             </button>
@@ -807,7 +837,7 @@
               <h2>My Property Listings</h2>
               <p>Track every submitted property and monitor its Super Admin approval state.</p>
             </div>
-            <button class="primary" data-panel="post-listing">Add Apartment</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="primary" data-panel="post-listing">Add Apartment</button>
           </div>
           <div class="dashboard-table-scroll">
             <table>
@@ -821,87 +851,47 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="ownerListingsBody">
-                <!-- Dynamically populated by market-workflows.js -->
+              <tbody id="vendorListingsBody">
+                <tr>
+                  <td><strong>Prestige High Line (2 BHK)</strong><br><small style="color: #64748b;">Outer Ring Road, Bengaluru</small></td>
+                  <td>Apartment / Rent</td>
+                  <td>₹42,000/mo</td>
+                  <td><span class="status APPROVED">● Verified & Live</span></td>
+                  <td>02 Sep 2026</td>
+                  <td><button style="padding: 5px 12px; font-size: 0.78rem;" onclick="showVendorToast('✏️ Edit Listing dialog opened')">Edit</button></td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- BUILDER / DEVELOPER PROJECTS PANEL -->
+      <!-- BUILDER PROJECTS PANEL -->
       <section class="vendor-panel hidden" data-view="builder-projects">
-        <div class="dash-card" style="margin-bottom: 24px;">
+        <div class="dash-card">
           <div class="card-head">
             <div>
-              <h2>Builder & Developer Projects Portal</h2>
-              <p>Manage multi-tower residential and commercial township projects, unit configurations, floor plans, and launch timelines.</p>
+              <h2>🏢 Builder Projects & Multi-Tower Enclaves</h2>
+              <p>Promote township launches, master floor plans, and direct builder sales contacts.</p>
             </div>
-            <button class="primary" onclick="alert('Create New Builder Project Modal Opened')">＋ Launch New Project</button>
+            <button class="primary" onclick="openLaunchProjectModal()">+ Launch New Project</button>
           </div>
-
-          <!-- Project Hierarchy Diagram -->
-          <div style="background: #0f172a; color: #38bdf8; padding: 20px; border-radius: 14px; margin-bottom: 20px; font-family: monospace; font-size: 0.85rem; line-height: 1.6;">
-            <strong style="color: #ffffff; display: block; margin-bottom: 8px;">Project Inventory Hierarchy Blueprint</strong>
-            <pre style="margin: 0; white-space: pre-wrap; font-family: inherit;">
-Residential Project (Prestige Grand Palms Township)
-     │
- ┌───┼───┐
- ▼   ▼   ▼
-Tower A (Emerald) · Tower B (Sapphire) · Tower C (Ruby)
- ┌───┼───┐
- ▼   ▼   ▼
-2 BHK / 3 BHK / 4 BHK Units
-            </pre>
-          </div>
-
-          <!-- Active Builder Projects Grid -->
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-            <!-- Project 1 -->
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(15,23,42,0.04);">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div style="border: 1px solid #cbd5e1; border-radius: 16px; padding: 20px; background: #ffffff;">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                <span class="status active" style="background: #fef3c7; color: #b45309; font-weight: 800;">Under Construction</span>
-                <strong style="color: #2563eb; font-size: 0.88rem;">Possession: Q4 2027</strong>
+                <span class="status APPROVED">Under Construction</span>
+                <span style="font-size: 0.78rem; color: #64748b; font-weight: 700;">Possession Q4 2027</span>
               </div>
-              <h3 style="margin: 0 0 6px 0; font-size: 1.2rem; color: #0f172a; font-weight: 800;">Prestige Grand Palms Township</h3>
-              <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #64748b;">Location: Outer Ring Road, Bangalore · 4.5 Acres</p>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 14px; font-size: 0.82rem;">
-                <div><strong>Towers:</strong> Tower A, B, C (24 Floors)</div>
-                <div><strong>Units:</strong> 2 BHK, 3 BHK, 4 BHK</div>
-                <div><strong>Starting Price:</strong> ₹85.0 Lakhs</div>
-                <div><strong>Amenities:</strong> Clubhouse, Pool, Gym</div>
+              <h3 style="margin: 0 0 4px 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">Prestige Grand Palms</h3>
+              <p style="margin: 0 0 14px 0; font-size: 0.84rem; color: #64748b;">Whitefield Main Road, Bengaluru</p>
+              <div style="background: #f8fafc; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.82rem; font-weight: 700; color: #334155;">
+                Config: 2, 3 & 4 BHK Luxury Apartments<br>
+                <span style="color: #2563eb; font-weight: 800; font-size: 0.95rem;">Starting ₹1.15 Cr</span>
               </div>
-
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button onclick="alert('Viewing Master Renders & Elevation Photos')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Project Images</button>
-                <button onclick="alert('Viewing Master Floor Plans & Tower Diagrams')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Floor Plans</button>
-                <button onclick="alert('Viewing Unit Configurations & Pricing Sheet')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Unit Config</button>
-                <button onclick="alert('Contact Hotline: +91 98000 11223 · sales@prestige.com')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; cursor: pointer;">Sales Hotline</button>
-              </div>
-            </div>
-
-            <!-- Project 2 -->
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(15,23,42,0.04);">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                <span class="status pending" style="background: #eff6ff; color: #1d4ed8; font-weight: 800;">Pre-Launch</span>
-                <strong style="color: #2563eb; font-size: 0.88rem;">Possession: Q2 2028</strong>
-              </div>
-              <h3 style="margin: 0 0 6px 0; font-size: 1.2rem; color: #0f172a; font-weight: 800;">Casagrand Oceanus Luxury Enclave</h3>
-              <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #64748b;">Location: ECR, Chennai · 6.2 Acres</p>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 14px; font-size: 0.82rem;">
-                <div><strong>Towers:</strong> Block 1, Block 2 (Sea Facing)</div>
-                <div><strong>Units:</strong> 3 BHK & 4 BHK Duplex</div>
-                <div><strong>Starting Price:</strong> ₹1.45 Cr</div>
-                <div><strong>Amenities:</strong> Private Beach Access, Pool</div>
-              </div>
-
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button onclick="alert('Viewing Master Renders & Elevation Photos')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Project Images</button>
-                <button onclick="alert('Viewing Master Floor Plans & Tower Diagrams')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Floor Plans</button>
-                <button onclick="alert('Viewing Unit Configurations & Pricing Sheet')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">Unit Config</button>
-                <button onclick="alert('Contact Hotline: +91 98444 55667 · sales@casagrand.com')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; cursor: pointer;">Sales Hotline</button>
+                <button onclick="openProjectGallery('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">🖼️ Gallery</button>
+                <button onclick="openFloorPlans('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">📐 Floor Plans</button>
+                <button onclick="openSalesHotline('Prestige Grand Palms', '+91 98000 11223', 'sales@prestige.com')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; cursor: pointer;">Sales Hotline</button>
               </div>
             </div>
           </div>
@@ -913,313 +903,100 @@ Tower A (Emerald) · Tower B (Sapphire) · Tower C (Ruby)
         <div class="dash-card">
           <div class="card-head">
             <div>
-              <h2>Add an Apartment</h2>
-              <p>Your property submission will be held in pending status until reviewed by the Super Admin.</p>
+              <h2>Post New Apartment Listing</h2>
+              <p>Submit your property details and high-resolution photos for Super Admin verification.</p>
             </div>
-            <span class="status pending">PENDING REVIEW</span>
           </div>
+          <form id="postApartmentForm">
+            <div class="form-grid">
+              <div class="property-form-section">
+                <strong>1. Basic Property Information</strong>
+                <small>Title, location, BHK configuration, and availability state</small>
+              </div>
+              <div>
+                <label>Property Title *</label>
+                <input type="text" name="title" required placeholder="e.g. Luxury 3 BHK in Prestige Shantiniketan">
+              </div>
+              <div>
+                <label>City *</label>
+                <input type="text" name="city" required value="Bengaluru">
+              </div>
+              <div>
+                <label>Locality / Society Name *</label>
+                <input type="text" name="locality" required placeholder="e.g. Whitefield / Brigade Metropolis">
+              </div>
+              <div>
+                <label>BHK Configuration *</label>
+                <select name="bhk" required>
+                  <option value="1 BHK">1 BHK</option>
+                  <option value="2 BHK" selected>2 BHK</option>
+                  <option value="3 BHK">3 BHK</option>
+                  <option value="4 BHK">4 BHK</option>
+                </select>
+              </div>
 
-          <form class="form-grid" id="postApartmentForm">
-            <!-- Step 1 — Basic Information -->
-            <div class="property-form-section">
-              <strong>Step 1 — Basic Information</strong>
-              <small>Provide title, listing type (Sale/Rent/Lease), property type, and category.</small>
-            </div>
+              <div class="property-form-section">
+                <strong>2. Financial & Rental Terms</strong>
+                <small>Expected monthly rent or total sale price and security deposit</small>
+              </div>
+              <div>
+                <label>Listing Purpose *</label>
+                <select name="purpose" required>
+                  <option value="RENT">Rent</option>
+                  <option value="SALE">Sale</option>
+                </select>
+              </div>
+              <div>
+                <label>Asking Rent / Price (₹) *</label>
+                <input type="number" name="price" required placeholder="e.g. 45000">
+              </div>
+              <div>
+                <label>Security Deposit (₹)</label>
+                <input type="number" name="deposit" placeholder="e.g. 200000">
+              </div>
+              <div>
+                <label>Maintenance Fee (₹/month)</label>
+                <input type="number" name="maintenance" placeholder="e.g. 3500">
+              </div>
 
-            <label class="profile-wide">Property Title *
-              <input name="title" required placeholder="e.g. Spacious 3 BHK Luxury Villa in Anna Nagar">
-            </label>
-
-            <label>Listing Type (Purpose) *
-              <select name="type" required>
-                <option value="SALE">Sale</option>
-                <option value="RENT" selected>Rent</option>
-                <option value="LEASE">Lease</option>
-              </select>
-            </label>
-
-            <label>Property Type *
-              <select name="propertyType" required>
-                <option value="APARTMENT">Apartment</option>
-                <option value="VILLA">Villa</option>
-                <option value="INDEPENDENT_HOUSE">Independent House</option>
-                <option value="PLOT">Plot / Land</option>
-                <option value="COMMERCIAL_BUILDING">Commercial Building</option>
-                <option value="OFFICE">Office Space</option>
-                <option value="SHOP">Shop / Retail</option>
-                <option value="WAREHOUSE">Warehouse</option>
-                <option value="FARM_LAND">Farm Land</option>
-                <option value="PG_HOSTEL">PG / Hostel</option>
-              </select>
-            </label>
-
-            <label>Property Category *
-              <select name="category" required>
-                <option value="RESIDENTIAL">Residential</option>
-                <option value="COMMERCIAL">Commercial</option>
-                <option value="AGRICULTURAL">Agricultural</option>
-                <option value="INDUSTRIAL">Industrial</option>
-              </select>
-            </label>
-
-            <label>Society / Project Name
-              <input name="society" required placeholder="e.g. Prestige Lavender Fields">
-            </label>
-
-            <label>BHK Category
-              <select name="bhk">
-                <option value="1 BHK">1 BHK</option>
-                <option value="2 BHK" selected>2 BHK</option>
-                <option value="3 BHK">3 BHK</option>
-                <option value="4 BHK">4 BHK</option>
-                <option value="5+ BHK">5+ BHK</option>
-              </select>
-            </label>
-
-            <label>Bathrooms
-              <input name="bathrooms" type="number" min="1" max="20" required value="2">
-            </label>
-
-            <label>Carpet Area (sq ft)
-              <input name="areaSqft" type="number" min="1" required placeholder="e.g. 1250">
-            </label>
-
-            <label>Available From
-              <input name="availableFrom" type="date">
-            </label>
-
-            <!-- Step 2 — Location -->
-            <div class="property-form-section">
-              <strong>Step 2 — Location</strong>
-              <small>Provide address, city, state, area, pincode, and map GPS coordinates.</small>
-            </div>
-
-            <label class="profile-wide">Address *
-              <input name="address" required placeholder="Building No, Street Name, Landmark">
-            </label>
-
-            <label>City *
-              <input name="city" value="Chennai" required placeholder="e.g. Chennai">
-            </label>
-
-            <label>State *
-              <input name="state" value="Tamil Nadu" required placeholder="e.g. Tamil Nadu">
-            </label>
-
-            <label>Area / Locality *
-              <input name="locality" required placeholder="e.g. Anna Nagar">
-            </label>
-
-            <label>Pincode *
-              <input name="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required placeholder="600040">
-            </label>
-
-            <label>Latitude (GPS)
-              <input name="latitude" type="number" step="any" placeholder="e.g. 13.0827">
-            </label>
-
-            <label>Longitude (GPS)
-              <input name="longitude" type="number" step="any" placeholder="e.g. 80.2707">
-            </label>
-
-            <!-- Step 3 — Property Details -->
-            <div class="property-form-section">
-              <strong>Step 3 — Property Details & Specifications</strong>
-              <small>Specify pricing, room count, areas, floor position, facing, and property age.</small>
-            </div>
-
-            <label>Price / Monthly Rent (INR) *
-              <input name="price" type="number" min="1" required placeholder="e.g. 7500000">
-            </label>
-
-            <label>Bedrooms (BHK) *
-              <select name="bhk" required>
-                <option value="1 BHK">1 BHK</option>
-                <option value="2 BHK">2 BHK</option>
-                <option value="3 BHK" selected>3 BHK</option>
-                <option value="4 BHK">4 BHK</option>
-                <option value="5+ BHK">5+ BHK</option>
-              </select>
-            </label>
-
-            <label>Bathrooms *
-              <select name="bathrooms" required>
-                <option value="1">1 Bathroom</option>
-                <option value="2" selected>2 Bathrooms</option>
-                <option value="3">3 Bathrooms</option>
-                <option value="4+">4+ Bathrooms</option>
-              </select>
-            </label>
-
-            <label>Carpet Area (sq ft) *
-              <input name="carpetArea" type="number" min="1" required placeholder="e.g. 1250">
-            </label>
-
-            <label>Built-up Area (sq ft) *
-              <input name="areaSqft" type="number" min="1" required placeholder="e.g. 1450">
-            </label>
-
-            <label>Plot Area (sq ft / cents)
-              <input name="plotArea" placeholder="Optional for plots / villas">
-            </label>
-
-            <label>Floor *
-              <input name="floor" type="number" min="0" value="4" placeholder="e.g. 4">
-            </label>
-
-            <label>Total Floors *
-              <input name="totalFloors" type="number" min="1" value="12" placeholder="e.g. 12">
-            </label>
-
-            <label>Facing *
-              <select name="facing">
-                <option value="East" selected>East Facing</option>
-                <option value="West">West Facing</option>
-                <option value="North">North Facing</option>
-                <option value="South">South Facing</option>
-                <option value="North-East">North-East Facing</option>
-                <option value="South-East">South-East Facing</option>
-              </select>
-            </label>
-
-            <label>Property Age *
-              <select name="propertyAge">
-                <option value="Under Construction">Under Construction</option>
-                <option value="New / 0-1 Year">New (0-1 Year)</option>
-                <option value="1-3 Years" selected>1-3 Years</option>
-                <option value="3-5 Years">3-5 Years</option>
-                <option value="5-10 Years">5-10 Years</option>
-                <option value="10+ Years">10+ Years</option>
-              </select>
-            </label>
-
-            <label>Furnishing Status
-              <select name="furnishing">
-                <option value="Fully Furnished">Fully Furnished</option>
-                <option value="Semi Furnished" selected>Semi Furnished</option>
-                <option value="Unfurnished">Unfurnished</option>
-              </select>
-            </label>
-
-            <label>Parking Space
-              <select name="parking">
-                <option value="Bike and Car Parking" selected>Bike and Car Parking</option>
-                <option value="Car Parking">Car Parking</option>
-                <option value="Two Wheeler Only">Two Wheeler Only</option>
-                <option value="No Parking">No Parking</option>
-              </select>
-            </label>
-
-            <!-- Step 4 — Amenities -->
-            <div class="property-form-section">
-              <strong>Step 4 — Amenities & Facilities</strong>
-              <small>Select all available property features and society amenities.</small>
-            </div>
-
-            <div class="profile-wide" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; background: #f8fafc; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_parking" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Parking
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_lift" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Lift
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_gym" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Gym
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_swimming" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Swimming Pool
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_security" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Security
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_cctv" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> CCTV
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_garden" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Garden
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_clubhouse" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Clubhouse
-              </label>
-              <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
-                <input type="checkbox" name="amenity_power" checked style="width: 18px; height: 18px; accent-color: #2563eb;"> Power Backup
-              </label>
-            </div>
-
-            <label class="profile-wide">Property Description
-              <textarea name="description" required placeholder="Describe the apartment layout, ventilation, floor level, orientation, nearby schools/tech parks, and tenant requirements."></textarea>
-            </label>
-
-            <!-- Photo Upload Dropzone -->
-            <!-- Step 5 — Media Uploads -->
-            <div class="property-form-section">
-              <strong>Step 5 — Media & Attachments</strong>
-              <small>Upload multiple photos, video tour, floor plan, brochure, and virtual tour links.</small>
-            </div>
-
-            <div class="profile-wide property-photo-upload" id="photoDropZone">
-              <label for="propertyPhotoFiles" style="cursor: pointer; width: 100%;">
-                <div class="property-photo-upload-content">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                  <span id="dropZoneText">Click or drag multiple property photos here (minimum 5, max 20)</span>
+              <div class="property-form-section">
+                <strong>3. Property Photos (Max 10 High Quality Photos)</strong>
+                <small>Direct photos increase lead conversion by 3x</small>
+              </div>
+              <div class="profile-wide">
+                <div class="property-photo-upload" id="photoDropzone">
+                  <input type="file" id="propertyPhotoInput" multiple accept="image/*">
+                  <div class="property-photo-upload-content">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                    <strong>Click or Drag Photos Here to Upload</strong>
+                    <span>Supports JPG, PNG, WEBP up to 10 photos total</span>
+                  </div>
                 </div>
-                <input id="propertyPhotoFiles" name="photos" type="file" accept="image/*" multiple required>
-              </label>
-              <span id="propertyPhotoCount" style="margin-top: 8px; display: block; font-size: 0.82rem; color: #64748b;">No photos selected</span>
+                <div class="property-photo-preview" id="photoPreviewContainer"></div>
+              </div>
+
+              <div class="property-form-section">
+                <strong>4. Amenities & Key Features</strong>
+              </div>
+              <div class="profile-wide" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
+                  <input type="checkbox" name="amenities" value="Gym"> 🏋️ Fitness Gym
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
+                  <input type="checkbox" name="amenities" value="Swimming Pool"> 🏊 Swimming Pool
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
+                  <input type="checkbox" name="amenities" value="Power Backup"> ⚡ Power Backup
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1e293b; cursor: pointer;">
+                  <input type="checkbox" name="amenities" value="Covered Parking"> 🚗 Covered Parking
+                </label>
+              </div>
             </div>
 
-            <div class="property-photo-preview profile-wide" id="propertyPhotoPreview"></div>
-
-            <label>Property Video Tour Link (YouTube / MP4)
-              <input name="videoUrl" type="url" placeholder="https://www.youtube.com/watch?v=sample">
-            </label>
-
-            <label>Floor Plan Image / Document
-              <input name="floorPlanFile" type="file" accept="image/*,.pdf">
-            </label>
-
-            <label>Property Brochure (PDF Document)
-              <input name="brochureFile" type="file" accept=".pdf">
-            </label>
-
-            <label>Virtual Tour 360° Link (Matterport / VR)
-              <input name="virtualTourUrl" type="url" placeholder="https://my.matterport.com/show/?m=sample">
-            </label>
-
-            <!-- Step 6 — Description -->
-            <div class="property-form-section">
-              <strong>Step 6 — Property Description</strong>
-              <small>Provide a detailed description highlighting room layout, ventilation, orientation, and nearby landmarks.</small>
-            </div>
-
-            <label class="profile-wide">Detailed Property Description *
-              <textarea name="description" required rows="6" style="min-height: 120px;" placeholder="Describe the property in detail... Mention layout, ventilation, floor position, orientation, nearby schools/tech parks, and tenant guidelines."></textarea>
-            </label>
-
-            <!-- Step 7 — Contact Details -->
-            <div class="property-form-section">
-              <strong>Step 7 — Contact Information</strong>
-              <small>Provide the owner/agent contact details for verified buyer and tenant enquiries.</small>
-            </div>
-
-            <label>Owner / Agent Name *
-              <input name="contactName" required placeholder="e.g. Rohan Mehta (Property Owner)">
-            </label>
-
-            <label>Phone Number *
-              <input name="contactPhone" type="tel" pattern="[0-9+ ]{7,20}" required placeholder="+91 98765 43210">
-            </label>
-
-            <label>Email Address *
-              <input name="contactEmail" type="email" required placeholder="owner@example.com">
-            </label>
-
-            <!-- Submit Controls -->
-            <div class="profile-wide property-submit-row">
-              <span>Approval Workflow: Vendor Submits &rarr; Super Admin Reviews &rarr; Live Listing</span>
-              <button class="primary" data-property-api-action="publish-owner-listing" type="button">
-                Submit for Super Admin Approval
-              </button>
+            <div class="property-submit-row">
+              <span>⚠️ Submitted listings require Super Admin approval before going live.</span>
+              <button type="submit" class="primary">Submit Property for Approval</button>
             </div>
           </form>
         </div>
@@ -1227,42 +1004,181 @@ Tower A (Emerald) · Tower B (Sapphire) · Tower C (Ruby)
     </main>
   </div>
 
-  <!-- Toast Notification -->
-  <div class="toast hidden" id="toast"></div>
+  <!-- Builder Project Modals for vendor.html -->
+  <div class="pd-modal-overlay hidden" id="launchProjectModal">
+    <div style="background: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
+      <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">🏗️ Launch New Builder Township Project</h3>
+          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Register a multi-tower project, township, or commercial enclave</p>
+        </div>
+        <button onclick="document.getElementById('launchProjectModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleSaveProject(event)" style="padding: 24px; display: grid; gap: 16px; font-size: 0.88rem;">
+        <div>
+          <label style="font-weight: 700; color: #0f172a; display: block; margin-bottom: 6px;">Project Name *</label>
+          <input type="text" id="newProjName" required placeholder="e.g. Prestige High Line Towers" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-weight: 700; color: #0f172a; display: block; margin-bottom: 6px;">City & Location *</label>
+            <input type="text" id="newProjLoc" required placeholder="e.g. OMR, Chennai" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px;">
+          </div>
+          <div>
+            <label style="font-weight: 700; color: #0f172a; display: block; margin-bottom: 6px;">Land Parcel (Acres)</label>
+            <input type="text" id="newProjAcres" placeholder="e.g. 5.8 Acres" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px;">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-weight: 700; color: #0f172a; display: block; margin-bottom: 6px;">Starting Price (₹) *</label>
+            <input type="text" id="newProjPrice" required placeholder="e.g. ₹95 Lakhs" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px;">
+          </div>
+          <div>
+            <label style="font-weight: 700; color: #0f172a; display: block; margin-bottom: 6px;">Possession Date</label>
+            <input type="text" id="newProjPossession" placeholder="e.g. Q3 2028" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px;">
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 12px;">
+          <button type="button" onclick="document.getElementById('launchProjectModal').classList.add('hidden')" style="padding: 10px 18px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; cursor: pointer;">Cancel</button>
+          <button type="submit" style="padding: 10px 22px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Launch & Register Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="pd-modal-overlay hidden" id="projectGalleryModal">
+    <div style="background: #ffffff; width: 100%; max-width: 700px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
+      <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h3 id="galleryTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">🖼️ Project Architectural Renders</h3>
+          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">High-resolution elevation photos and 3D walkthrough views</p>
+        </div>
+        <button onclick="document.getElementById('projectGalleryModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;">
+            <div style="height: 140px; background: linear-gradient(135deg, #1e293b, #334155); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: 800; font-size: 1.1rem; margin-bottom: 8px;">🏢 Master Tower Elevation</div>
+            <strong style="font-size: 0.84rem; color: #0f172a;">Front Facade Render</strong>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;">
+            <div style="height: 140px; background: linear-gradient(135deg, #065f46, #047857); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #a7f3d0; font-weight: 800; font-size: 1.1rem; margin-bottom: 8px;">🏊 Clubhouse & Pool Deck</div>
+            <strong style="font-size: 0.84rem; color: #0f172a;">Luxury Amenity Deck</strong>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button onclick="document.getElementById('projectGalleryModal').classList.add('hidden')" style="padding: 9px 20px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Close Gallery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pd-modal-overlay hidden" id="floorPlansModal">
+    <div style="background: #ffffff; width: 100%; max-width: 650px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
+      <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h3 id="floorTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">📐 Master Floor Plans & Layout Blueprint</h3>
+          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Architectural unit blueprints, carpet area, and balcony orientation</p>
+        </div>
+        <button onclick="document.getElementById('floorPlansModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="padding: 24px;">
+        <div style="background: #0f172a; color: #38bdf8; padding: 18px; border-radius: 12px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px;">
+          <pre style="margin: 0; white-space: pre-wrap;">
+┌──────────────────────────────────────────────┐
+│  2 BHK (Carpet: 980 sq.ft. | Balcony: 120)    │
+├──────────────────────────────────────────────┤
+│  3 BHK Premium (Carpet: 1,450 sq.ft.)        │
+├──────────────────────────────────────────────┤
+│  4 BHK Duplex Penthouse (Carpet: 2,600 sq.ft)│
+└──────────────────────────────────────────────┘
+          </pre>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button onclick="downloadFloorPlanPDF()" style="padding: 9px 16px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">📥 Download Floor Plan PDF</button>
+          <button onclick="document.getElementById('floorPlansModal').classList.add('hidden')" style="padding: 9px 18px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; cursor: pointer;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pd-modal-overlay hidden" id="salesHotlineModal">
+    <div style="background: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
+      <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h3 id="hotlineTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">📞 Builder Direct Sales Desk</h3>
+          <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Connect with direct relationship manager and sales team</p>
+        </div>
+        <button onclick="document.getElementById('salesHotlineModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div style="padding: 24px; display: grid; gap: 16px;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+          <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">DIRECT PHONE HOTLINE</div>
+          <strong id="hotlinePhone" style="font-size: 1.1rem; color: #2563eb;">+91 98000 11223</strong>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+          <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">OFFICIAL PROJECT EMAIL</div>
+          <strong id="hotlineEmail" style="font-size: 1.05rem; color: #0f172a;">sales@prestige.com</strong>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button onclick="triggerHotlineCall()" style="flex: 1; padding: 10px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">📞 Call Sales Desk</button>
+          <button onclick="triggerHotlineEmail()" style="flex: 1; padding: 10px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">✉️ Send Inquiry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const sidebar = document.getElementById('vendorSidebar');
-      const toggle = document.getElementById('vendorSidebarToggle');
-      if (toggle && sidebar) {
-        toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    function showVendorToast(msg) {
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
       }
-
-      const showPanel = panel => {
-        document.querySelectorAll('.vendor-panel').forEach(item => {
-          item.classList.toggle('hidden', item.dataset.view !== panel);
-        });
-        document.querySelectorAll('.vendor-nav button').forEach(button => {
-          button.classList.toggle('active', button.dataset.panel === panel);
-        });
-        const titleMap = {
-          'overview': 'Vendor Dashboard',
-          'listings': 'My Property Listings',
-          'post-listing': 'Add Apartment'
-        };
-        const titleNode = document.getElementById('panelTitle');
-        if (titleNode) titleNode.textContent = titleMap[panel] || 'Vendor Dashboard';
-      };
-
-      document.addEventListener('click', event => {
-        const btn = event.target.closest('[data-panel]');
-        if (btn) {
-          event.preventDefault();
-          showPanel(btn.dataset.panel);
-        }
-      });
-    });
+    }
+    function openLaunchProjectModal() {
+      document.getElementById('launchProjectModal').classList.remove('hidden');
+    }
+    function openProjectGallery(projectName) {
+      document.getElementById('galleryTitle').textContent = '🖼️ ' + (projectName || 'Project Renders');
+      document.getElementById('projectGalleryModal').classList.remove('hidden');
+    }
+    function openFloorPlans(projectName) {
+      document.getElementById('floorTitle').textContent = '📐 ' + (projectName || 'Floor Plans');
+      document.getElementById('floorPlansModal').classList.remove('hidden');
+    }
+    function openSalesHotline(projectName, phone, email) {
+      document.getElementById('hotlineTitle').textContent = '📞 Sales Desk — ' + (projectName || 'Project');
+      document.getElementById('hotlinePhone').textContent = phone || '+91 98000 11223';
+      document.getElementById('hotlineEmail').textContent = email || 'sales@prestige.com';
+      document.getElementById('salesHotlineModal').classList.remove('hidden');
+    }
+    function handleSaveProject(e) {
+      e.preventDefault();
+      const name = document.getElementById('newProjName').value;
+      document.getElementById('launchProjectModal').classList.add('hidden');
+      showVendorToast('🎉 Builder Project "' + name + '" launched and registered successfully!');
+    }
+    function downloadFloorPlanPDF() {
+      showVendorToast('📥 Master Floor Plan PDF downloaded!');
+    }
+    function triggerHotlineCall() {
+      const phone = document.getElementById('hotlinePhone').textContent;
+      window.location.href = 'tel:' + phone.replace(/\s+/g, '');
+    }
+    function triggerHotlineEmail() {
+      const email = document.getElementById('hotlineEmail').textContent;
+      window.location.href = 'mailto:' + email;
+    }
   </script>
-  <script src="/propertydirect/js/market-workflows.js?v=20260902-vendor-workflow"></script>
+  <script src="/propertydirect/js/market-workflows.js?v=20260905-vendor-only-v1"></script>
+  <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
 </body>
 </html>
+
+
+

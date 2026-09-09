@@ -163,6 +163,19 @@ public class DataLoader {
                 return residents.save(newResident);
             });
 
+            users.findByTenantId("green-heights").stream()
+                    .filter(user -> user.getRole() == UserRole.RESIDENT)
+                    .filter(user -> residents.findFirstByUserOrderByIdAsc(user).isEmpty())
+                    .forEach(user -> {
+                        Resident demoResident = new Resident();
+                        demoResident.setTenantId("green-heights");
+                        demoResident.setUser(user);
+                        demoResident.setApartment(apartment);
+                        demoResident.setResidentType("OWNER");
+                        demoResident.setVehicleNumber("TN01AB1234");
+                        residents.save(demoResident);
+                    });
+
             complaints.findFirstByTenantIdAndTitleOrderByIdAsc("green-heights", "Water leakage").orElseGet(() -> {
                 Complaint complaint = new Complaint();
                 complaint.setTenantId("green-heights");

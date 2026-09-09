@@ -434,6 +434,65 @@
                 border-top: 1px solid #f1f5f9 !important;
             }
 
+            .header-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 14px !important;
+            }
+
+            .dash-header button.primary,
+            button.primary {
+                padding: 11px 22px !important;
+                border-radius: 12px !important;
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                color: #ffffff !important;
+                font-family: 'Manrope', 'Urbanist', sans-serif !important;
+                font-size: 0.85rem !important;
+                font-weight: 700 !important;
+                border: 1px solid rgba(255, 255, 255, 0.18) !important;
+                cursor: pointer !important;
+                box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                -webkit-font-smoothing: antialiased !important;
+                -moz-osx-font-smoothing: grayscale !important;
+                text-shadow: none !important;
+            }
+
+            .dash-header button.primary:hover,
+            button.primary:hover {
+                background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 22px rgba(37, 99, 235, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+            }
+
+            .status.active {
+                background: rgba(16, 185, 129, 0.12) !important;
+                color: #059669 !important;
+                border: 1px solid rgba(16, 185, 129, 0.25) !important;
+                font-size: 0.78rem !important;
+                font-weight: 750 !important;
+                padding: 6px 14px !important;
+                border-radius: 999px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
+                backdrop-filter: blur(8px) !important;
+            }
+
+            .status.active::before {
+                content: '';
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #10b981;
+                box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            }
+
             .modal-cancel,
             button[data-action="close-modal"].modal-cancel {
                 padding: 11px 22px !important;
@@ -1058,6 +1117,201 @@
             .dash-main,
             .dash-panel {
                 background: #ffffff !important;
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 1.3rem !important;
+                font-weight: 800 !important;
+                color: var(--pd-navy) !important;
+                margin: 0 0 6px 0 !important;
+                line-height: 1.3 !important;
+            }
+
+            .card-head p {
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 0.88rem !important;
+                color: #64748b !important;
+                line-height: 1.4 !important;
+                margin: 0 !important;
+            }
+
+            .status.active {
+                background: rgba(140, 240, 189, 0.25) !important;
+                color: #065f46 !important;
+                font-size: 0.78rem !important;
+                font-weight: 700 !important;
+                padding: 6px 14px !important;
+                border-radius: 999px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+
+            .status.pending,
+            .status.open {
+                background: #fef3c7 !important;
+                color: #92400e !important;
+                font-size: 0.78rem !important;
+                font-weight: 700 !important;
+                padding: 6px 14px !important;
+                border-radius: 999px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+
+            .pill-row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+                gap: 12px !important;
+                width: 100% !important;
+                margin-top: 20px !important;
+            }
+
+            .pill-row span {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 10px 20px !important;
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 12px !important;
+                color: #1e293b !important;
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 0.84rem !important;
+                font-weight: 700 !important;
+                cursor: pointer !important;
+                transition: all 0.2s ease !important;
+                white-space: nowrap !important;
+            }
+
+            .pill-row span:hover {
+                background: #0f2246 !important;
+                color: #ffffff !important;
+                border-color: #0f2246 !important;
+                box-shadow: 0 4px 12px rgba(15, 34, 70, 0.15) !important;
+            }
+
+
+            /* FORM GRID & PROFILE CARD STYLING */
+            .dash-card .form-grid,
+            .form-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 20px !important;
+                margin-top: 20px !important;
+                margin-bottom: 24px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .dash-card .form-grid label,
+            .form-grid label {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 0.84rem !important;
+                font-weight: 700 !important;
+                color: #334155 !important;
+                text-align: left !important;
+            }
+
+            .dash-card .form-grid input,
+            .dash-card .form-grid select,
+            .dash-card .form-grid textarea,
+            .form-grid input,
+            .form-grid select,
+            .form-grid textarea {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 12px 16px !important;
+                border-radius: 12px !important;
+                border: 1px solid #cbd5e1 !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 0.88rem !important;
+                font-weight: 600 !important;
+                outline: none !important;
+                transition: all 0.2s ease !important;
+                box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) !important;
+            }
+
+            .dash-card .form-grid input:focus,
+            .dash-card .form-grid select:focus,
+            .dash-card .form-grid textarea:focus,
+            .form-grid input:focus,
+            .form-grid select:focus,
+            .form-grid textarea:focus {
+                border-color: #1d376c !important;
+                box-shadow: 0 0 0 4px rgba(29, 55, 108, 0.1) !important;
+                background: #ffffff !important;
+            }
+
+            .dashboard-table-scroll {
+                overflow-x: auto !important;
+                border-radius: 14px !important;
+                border: 1px solid #e2e8f0 !important;
+                margin-top: 18px !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                background: #ffffff !important;
+            }
+
+            th {
+                background: #f8fafc !important;
+                color: #475569 !important;
+                font-size: 0.78rem !important;
+                font-weight: 800 !important;
+                text-transform: uppercase !important;
+                padding: 14px 18px !important;
+                border-bottom: 2px solid #e2e8f0 !important;
+                text-align: left !important;
+            }
+
+            td {
+                padding: 16px 18px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                color: #334155 !important;
+                font-size: 0.85rem !important;
+            }
+
+            td button {
+                padding: 7px 14px !important;
+                border-radius: 99px !important;
+                font-size: 0.8rem !important;
+                font-weight: 700 !important;
+                background: #f1f5f9 !important;
+                color: #0f172a !important;
+                border: 1px solid #cbd5e1 !important;
+                cursor: pointer !important;
+            }
+
+            td button:hover {
+                background: #0f2246 !important;
+                color: #ffffff !important;
+            }
+
+            html {
+                background: #ffffff !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
+
+            body,
+            body.app-dashboard,
+            .app-dashboard,
+            main.dash-main,
+            .dash-main,
+            .dash-panel {
+                background: #ffffff !important;
             }
 
             body {
@@ -1067,31 +1321,28 @@
     </style>
     <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260903-header-baseline-v11">
-    <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
+    <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
     <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="admin">
     <aside class="dash-sidebar">
         <a class="dash-brand text-decoration-none" href="/propertydirect">
-            <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26"
-                    fill="#3b82f6">
-                    <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z" />
-                    <path d="M9.5 9V5.5h4" />
-                </svg></span>
+            <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26" fill="#3b82f6"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z" /><path d="M9.5 9V5.5h4" /></svg></span>
             <h4 class="mb-0 fw-bold text-white fs-5">Property<span style="color: #3b82f6 !important;">Direct</span></h4>
         </a>
         <nav class="sidebar-nav" aria-label="Agent broker sections">
-            <button class="active" data-panel="overview">Dashboard</button>
-            <button data-panel="my-properties">My Properties</button>
-            <button data-panel="add-property">Add Property</button>
-            <button data-panel="edit-property">Edit Property</button>
-            <button data-panel="enquiries">Property Enquiries</button>
-            <button data-panel="leads">Leads</button>
-            <button data-panel="tours">Scheduled Visits</button>
-            <button data-panel="messages">Messages</button>
-            <button data-panel="profile">Profile</button>
-            <button data-panel="reports">Reports</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="active" data-panel="overview">Dashboard</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="my-properties">My Properties</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="add-property">Add Property</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="edit-property">Edit Property</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="enquiries">Property Enquiries</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="leads">Leads</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="tours">Scheduled Visits</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="messages">Messages</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="profile">Profile</button>
+            <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="reports">Reports</button>
         </nav>
         <div class="sidebar-user-card">
             <a class="logout" href="/dashboards/logout?platform=propertydirect" title="Logout">
@@ -1110,21 +1361,21 @@
                 <p class="propertydirect-section-eyebrow">AGENT & BROKER DASHBOARD</p>
                 <h1 id="panelTitle">Dashboard</h1>
             </div>
-            <div class="header-actions">
-                <span class="status active">Verified Broker</span>
-                <button class="primary" data-panel="add-property">＋ Add Property</button>
+            <div class="header-actions" style="display: flex; align-items: center; gap: 12px;">
+                <span class="status active" style="padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: 0.78rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; white-space: nowrap;">✓ Verified Broker</span>
+                <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="primary" data-panel="add-property">＋ Add Property</button>
                 <div class="user-avatar-badge" title="Click to open Agent Profile" data-panel="profile"
-                    style="cursor: pointer; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; margin-left: 10px; box-shadow: 0 4px 10px rgba(37,99,235,0.25);">
+                    style="cursor: pointer; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(37,99,235,0.25);">
                     SA</div>
             </div>
         </header>
 
         <section class="dash-panel" data-view="overview">
             <div class="dash-grid">
-                <article><span>Active Properties</span><strong>18</strong></article>
-                <article><span>Total Leads</span><strong>42</strong></article>
-                <article><span>Scheduled Visits</span><strong>09</strong></article>
-                <article><span>Unread Messages</span><strong>05</strong></article>
+                <article><span>Active Properties</span><strong data-summary-key="activeListings">0</strong></article>
+                <article><span>Total Leads</span><strong data-summary-key="totalEnquiries">0</strong></article>
+                <article><span>Scheduled Visits</span><strong data-summary-key="scheduledVisits">0</strong></article>
+                <article><span>Contact Messages</span><strong data-summary-key="totalEnquiries">0</strong></article>
             </div>
             <div class="dash-card">
                 <div class="card-head">
@@ -1134,71 +1385,14 @@
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div
-                        style="padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 1.1rem; background: #eff6ff; padding: 6px; border-radius: 8px;"></span>
+                    <div style="padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="font-size: 1.1rem; background: #eff6ff; padding: 6px; border-radius: 8px;">📩</span>
                         <div>
                             <strong style="display: block; font-size: 0.88rem; color: #0f172a;">New Enquiry</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Rahul Sharma submitted an
-                                enquiry for 3 BHK Luxury Villa (#PD-8492).</p>
+                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Rahul Sharma submitted an enquiry for 3 BHK Luxury Villa (#PD-8492).</p>
                             <small style="color: #94a3b8; font-size: 0.74rem;">10 mins ago</small>
                         </div>
                     </div>
-
-                    <div
-                        style="padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 1.1rem; background: #f0fdf4; padding: 6px; border-radius: 8px;"></span>
-                        <div>
-                            <strong style="display: block; font-size: 0.88rem; color: #0f172a;">New Site Visit
-                                Requested</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Rahul Sharma requested
-                                physical tour for 10 Sept, 4:00 PM (2 Attendees).</p>
-                            <small style="color: #94a3b8; font-size: 0.74rem;">30 mins ago</small>
-                        </div>
-                    </div>
-
-                    <div
-                        style="padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 1.1rem; background: #d1fae5; padding: 6px; border-radius: 8px;"></span>
-                        <div>
-                            <strong style="display: block; font-size: 0.88rem; color: #0f172a;">Property
-                                Approved</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #065f46;">Super Admin approved &
-                                published your listing: <em>"3 BHK Villa in Anna Nagar (#PD-8492)"</em>.</p>
-                            <small style="color: #94a3b8; font-size: 0.74rem;">2 hours ago</small>
-                        </div>
-                    </div>
-
-                    <div
-                        style="padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; display: flex; align-items: flex-start; gap: 12px;">
-                        <span style="font-size: 1.1rem; background: #fee2e2; padding: 6px; border-radius: 8px;"></span>
-                        <div>
-                            <strong style="display: block; font-size: 0.88rem; color: #0f172a;">Property
-                                Rejected</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #991b1b;">Your listing '#PD-1092'
-                                was returned by Super Admin. <em>Reason: Please update property age & RERA
-                                    document.</em></p>
-                            <small style="color: #94a3b8; font-size: 0.74rem;">Yesterday</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dash-card">
-                <div class="card-head">
-                    <div>
-                        <h3>Broker Operations Console</h3>
-                        <p>Manage active inventory, leads, property enquiries, and scheduled site visits.</p>
-                    </div>
-                    <span class="status active">Active Agent</span>
-                </div>
-                <div class="pill-row">
-                    <span data-panel="my-properties">My Properties</span>
-                    <span data-panel="add-property">Add Property</span>
-                    <span data-panel="enquiries">Property Enquiries</span>
-                    <span data-panel="leads">Leads</span>
-                    <span data-panel="tours">Scheduled Visits</span>
-                    <span data-panel="messages">Messages</span>
                 </div>
             </div>
         </section>
@@ -1210,7 +1404,7 @@
                         <h3> My Agent Listings & Inventory</h3>
                         <p>Manage active, pending, and sold properties listed by your brokerage agency.</p>
                     </div>
-                    <button class="primary small" data-panel="add-property">＋ Post New Property</button>
+                    <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" class="primary small" data-panel="add-property">＋ Post New Property</button>
                 </div>
                 <div class="dashboard-table-scroll">
                     <table>
@@ -1233,7 +1427,7 @@
                                 <td>₹1.45 Cr</td>
                                 <td><span class="status active">Active</span></td>
                                 <td>14 Leads</td>
-                                <td><button data-panel="edit-property">Edit</button></td>
+                                <td><button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="edit-property">Edit</button></td>
                             </tr>
                             <tr>
                                 <td><strong>2 BHK Modern Apartment</strong></td>
@@ -1242,7 +1436,7 @@
                                 <td>₹42,000/mo</td>
                                 <td><span class="status active">Active</span></td>
                                 <td>8 Leads</td>
-                                <td><button data-panel="edit-property">Edit</button></td>
+                                <td><button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="edit-property">Edit</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1259,18 +1453,18 @@
                             publication.</p>
                     </div>
                 </div>
-                <form class="form-grid">
+                <form class="form-grid" id="postApartmentForm">
                     <div class="property-form-section" style="grid-column: 1 / -1;">
                         <strong>Step 1 — Basic Information</strong>
                         <small>Provide title, listing type (Sale/Rent/Lease), property type, and category.</small>
                     </div>
 
                     <label style="grid-column: 1 / -1;">Property Title *
-                        <input placeholder="e.g. Spacious 3 BHK Luxury Villa in Anna Nagar">
+                        <input name="title" required placeholder="e.g. Spacious 3 BHK Luxury Villa in Anna Nagar">
                     </label>
 
                     <label>Listing Type (Purpose) *
-                        <select>
+                        <select name="type">
                             <option value="SALE">Sale</option>
                             <option value="RENT" selected>Rent</option>
                             <option value="LEASE">Lease</option>
@@ -1288,7 +1482,7 @@
                     </label>
 
                     <label>Property Type (Sub-category) *
-                        <select id="pdSubtypeSelect">
+                        <select id="pdSubtypeSelect" name="propertyType">
                             <optgroup label=" Residential">
                                 <option value="APARTMENT" selected>Apartment</option>
                                 <option value="VILLA">Villa</option>
@@ -1313,19 +1507,19 @@
                         </select>
                     </label>
 
-                    <button type="button" class="primary"
+                    <button type="button" class="primary pd-form-step-btn"
                         style="grid-column: 1 / -1; width: fit-content; margin-top: 10px;"
-                        onclick="alert('Step 1 Saved! Proceeding to Step 2 Location...')">Save Step 1 & Next</button>
+                        onclick="goToAddPropertyStep(2)">Save Step 1 & Next</button>
 
                     <!-- Step 2 — Location Hierarchy (Country -> State -> City -> District -> Area -> Locality -> Pincode) -->
-                    <div class="property-form-section" style="grid-column: 1 / -1; margin-top: 24px;">
+                    <div class="property-form-section" id="addPropertyStep2" style="grid-column: 1 / -1; margin-top: 24px;">
                         <strong>Step 2 — Location Hierarchy & Mapping</strong>
                         <small>Structured 7-tier geographic mapping: Country → State → City → District → Area → Locality
                             → Pincode.</small>
                     </div>
 
                     <label style="grid-column: 1 / -1;">Full Street Address *
-                        <input placeholder="Building No, Street Name, Floor, Landmark">
+                        <input name="address" required placeholder="Building No, Street Name, Floor, Landmark">
                     </label>
 
                     <label>Country *
@@ -1342,7 +1536,7 @@
                     </label>
 
                     <label>City *
-                        <input value="Chennai" placeholder="e.g. Chennai, Bangalore, Mumbai">
+                        <input name="city" value="Chennai" required placeholder="e.g. Chennai, Bangalore, Mumbai">
                     </label>
 
                     <label>District *
@@ -1354,37 +1548,37 @@
                     </label>
 
                     <label>Locality / Sub-locality *
-                        <input value="Anna Nagar" placeholder="e.g. Anna Nagar, Indiranagar, Whitefield">
+                        <input name="locality" value="Anna Nagar" required placeholder="e.g. Anna Nagar, Indiranagar, Whitefield">
                     </label>
 
                     <label>Pincode *
-                        <input inputmode="numeric" pattern="[0-9]{6}" maxlength="6" value="600040" placeholder="600040">
+                        <input name="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" value="600040" required placeholder="600040">
                     </label>
 
                     <label>Latitude (GPS)
-                        <input type="number" step="any" value="13.0827" placeholder="e.g. 13.0827">
+                        <input name="latitude" type="number" step="any" value="13.0827" placeholder="e.g. 13.0827">
                     </label>
 
                     <label>Longitude (GPS)
-                        <input type="number" step="any" value="80.2707" placeholder="e.g. 80.2707">
+                        <input name="longitude" type="number" step="any" value="80.2707" placeholder="e.g. 80.2707">
                     </label>
 
-                    <button type="button" class="primary"
+                    <button type="button" class="primary pd-form-step-btn"
                         style="grid-column: 1 / -1; width: fit-content; margin-top: 10px;"
-                        onclick="alert('Step 2 Location Saved! Proceeding to Step 3...')">Save Step 2 & Next</button>
+                        onclick="goToAddPropertyStep(3)">Save Step 2 & Next</button>
 
                     <!-- Step 3 — Property Details -->
-                    <div class="property-form-section" style="grid-column: 1 / -1; margin-top: 24px;">
+                    <div class="property-form-section" id="addPropertyStep3" style="grid-column: 1 / -1; margin-top: 24px;">
                         <strong>Step 3 — Property Details & Specifications</strong>
                         <small>Specify pricing, room count, areas, floor position, facing, and property age.</small>
                     </div>
 
                     <label>Price / Rent (INR) *
-                        <input type="number" min="1" required placeholder="e.g. 7500000">
+                        <input name="price" type="number" min="1" required placeholder="e.g. 7500000">
                     </label>
 
                     <label>Bedrooms (BHK) *
-                        <select required>
+                        <select name="bhk" required>
                             <option value="1 BHK">1 BHK</option>
                             <option value="2 BHK">2 BHK</option>
                             <option value="3 BHK" selected>3 BHK</option>
@@ -1394,7 +1588,7 @@
                     </label>
 
                     <label>Bathrooms *
-                        <select required>
+                        <select name="bathrooms" required>
                             <option value="1">1 Bathroom</option>
                             <option value="2" selected>2 Bathrooms</option>
                             <option value="3">3 Bathrooms</option>
@@ -1403,7 +1597,7 @@
                     </label>
 
                     <label>Carpet Area (sq ft) *
-                        <input type="number" min="1" required placeholder="e.g. 1250">
+                        <input name="areaSqft" type="number" min="1" required placeholder="e.g. 1250">
                     </label>
 
                     <label>Built-up Area (sq ft) *
@@ -1423,7 +1617,7 @@
                     </label>
 
                     <label>Facing *
-                        <select>
+                        <select name="facing">
                             <option value="East" selected>East Facing</option>
                             <option value="West">West Facing</option>
                             <option value="North">North Facing</option>
@@ -1444,12 +1638,12 @@
                         </select>
                     </label>
 
-                    <button type="button" class="primary"
+                    <button type="button" class="primary pd-form-step-btn"
                         style="grid-column: 1 / -1; width: fit-content; margin-top: 10px;"
-                        onclick="alert('Step 3 Saved! Proceeding to Step 4 Amenities...')">Save Step 3 & Next</button>
+                        onclick="goToAddPropertyStep(4)">Save Step 3 & Next</button>
 
                     <!-- Step 4 — Amenities -->
-                    <div class="property-form-section" style="grid-column: 1 / -1; margin-top: 24px;">
+                    <div class="property-form-section" id="addPropertyStep4" style="grid-column: 1 / -1; margin-top: 24px;">
                         <strong>Step 4 — Amenities & Facilities</strong>
                         <small>Select all available property features and society amenities.</small>
                     </div>
@@ -1529,7 +1723,7 @@
                             </label>
 
                             <label>Upload Image File *
-                                <input type="file" accept="image/*" id="pdCategorizedImageInput" multiple>
+                                <input type="file" accept="image/*" id="propertyPhotoFiles" name="photos" multiple required>
                             </label>
                         </div>
 
@@ -1554,16 +1748,16 @@
                                 <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Primary cover image updated!')"> Primary</button>
+                                        onclick="showToast('Primary cover image updated!')"> Primary</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved up!')">⬆️ Up</button>
+                                        onclick="showToast('Image moved up!')">⬆️ Up</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved down!')">⬇️ Down</button>
+                                        onclick="showToast('Image moved down!')">⬇️ Down</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image deleted!')">️ Delete</button>
+                                        onclick="showToast('Image deleted!')">️ Delete</button>
                                 </div>
                             </div>
 
@@ -1582,16 +1776,16 @@
                                 <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Set as Primary cover image!')"> Set Primary</button>
+                                        onclick="showToast('Set as Primary cover image!')"> Set Primary</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved up!')">⬆️ Up</button>
+                                        onclick="showToast('Image moved up!')">⬆️ Up</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved down!')">⬇️ Down</button>
+                                        onclick="showToast('Image moved down!')">⬇️ Down</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image deleted!')">️ Delete</button>
+                                        onclick="showToast('Image deleted!')">️ Delete</button>
                                 </div>
                             </div>
 
@@ -1610,16 +1804,16 @@
                                 <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Set as Primary cover image!')"> Set Primary</button>
+                                        onclick="showToast('Set as Primary cover image!')"> Set Primary</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved up!')">⬆️ Up</button>
+                                        onclick="showToast('Image moved up!')">⬆️ Up</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image moved down!')">⬇️ Down</button>
+                                        onclick="showToast('Image moved down!')">⬇️ Down</button>
                                     <button type="button"
                                         style="padding: 4px 8px; font-size: 0.72rem; font-weight: 700; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer;"
-                                        onclick="alert('Image deleted!')">️ Delete</button>
+                                        onclick="showToast('Image deleted!')">️ Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -1645,7 +1839,7 @@
                     </div>
 
                     <label style="grid-column: 1 / -1;">Detailed Property Description *
-                        <textarea rows="6" style="min-height: 120px;"
+                        <textarea name="description" rows="6" required style="min-height: 120px;"
                             placeholder="Describe the property in detail... Mention layout, ventilation, floor position, orientation, nearby schools/tech parks, and tenant guidelines."></textarea>
                     </label>
 
@@ -1656,20 +1850,20 @@
                     </div>
 
                     <label>Owner / Agent Name *
-                        <input required placeholder="e.g. Rajesh Kumar (Apex Brokerage)">
+                        <input name="ownerName" required placeholder="e.g. Rajesh Kumar (Apex Brokerage)">
                     </label>
 
                     <label>Phone Number *
-                        <input type="tel" required placeholder="+91 98765 43210">
+                        <input name="ownerPhone" type="tel" required placeholder="+91 98765 43210">
                     </label>
 
                     <label>Email Address *
-                        <input type="email" required placeholder="agent@apexrealty.in">
+                        <input name="ownerEmail" type="email" required placeholder="agent@apexrealty.in">
                     </label>
 
-                    <button type="button" class="primary"
+                    <button type="submit" class="primary" data-property-api-action="publish-owner-listing"
                         style="grid-column: 1 / -1; width: fit-content; margin-top: 18px;"
-                        onclick="alert('Property Submitted for Super Admin Approval Successfully!')">Submit Property
+                        >Submit Property
                         Listing</button>
                 </form>
             </div>
@@ -1677,14 +1871,95 @@
 
         <section class="dash-panel hidden" data-view="edit-property">
             <div class="dash-card">
-                <div class="card-head">
+                <div class="card-head" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h3>️ Edit Property Listing</h3>
-                        <p>Update pricing, availability, description, or status of your listed property.</p>
+                        <h3 style="margin: 0 0 4px 0; color: #0f172a; font-weight: 800;">Edit Property Listing</h3>
+                        <p style="margin: 0; color: #64748b; font-size: 0.88rem;">Update pricing, availability, specs, media attachments, or listing status.</p>
                     </div>
+                    <button type="button" class="btn-table-action" onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel('my-properties'); }" style="background: #f1f5f9; color: #334155 !important; border: 1px solid #cbd5e1; font-weight: 700; cursor: pointer; padding: 6px 14px; border-radius: 8px;">← Back to My Properties</button>
                 </div>
-                <p style="font-size: 0.88rem; color: #64748b;">Select a property from "My Properties" tab to edit
-                    details.</p>
+
+                <!-- Property Selector bar -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 280px;">
+                        <label for="editPropertySelect" style="font-weight: 800; font-size: 0.85rem; color: #1e293b; white-space: nowrap;">Select Listing:</label>
+                        <select id="editPropertySelect" onchange="loadPropertyForEditing(this.value)" style="width: 100%; max-width: 450px; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.86rem; background: #ffffff; color: #0f172a; cursor: pointer;">
+                            <option value="p1" selected>3 BHK Luxury Villa (Anna Nagar, Chennai - ₹1.45 Cr)</option>
+                            <option value="p2">2 BHK Modern Apartment (Indiranagar, Bangalore - ₹42,000/mo)</option>
+                        </select>
+                    </div>
+                    <span id="editPropStatusBadge" class="status active" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.76rem; padding: 5px 12px; border-radius: 999px;">● Active Listing</span>
+                </div>
+
+                <!-- Edit Form -->
+                <form id="editPropertyForm" onsubmit="savePropertyEdits(event)" style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Property Title *</label>
+                            <input type="text" id="editPropTitle" value="3 BHK Luxury Villa" required style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Property Type & Transaction *</label>
+                            <select id="editPropType" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                                <option value="Villa / Sale" selected>Villa / Sale</option>
+                                <option value="Apartment / Rent">Apartment / Rent</option>
+                                <option value="Plot / Land">Plot / Land</option>
+                                <option value="Commercial / Lease">Commercial / Lease</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Price / Rent (INR) *</label>
+                            <input type="text" id="editPropPrice" value="₹1.45 Cr" required style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Location & City *</label>
+                            <input type="text" id="editPropLocation" value="Anna Nagar, Chennai" required style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Listing Status</label>
+                            <select id="editPropStatus" onchange="updatePropStatusBadge(this.value)" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                                <option value="Active" selected>Active / Published</option>
+                                <option value="Under Negotiation">Under Negotiation</option>
+                                <option value="Sold / Rented">Sold / Rented</option>
+                                <option value="Archived">Archived / Inactive</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Bedrooms / Area Specs</label>
+                            <input type="text" id="editPropSpecs" value="3 BHK | 3 Baths | 2,400 sq.ft" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: #ffffff;">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.82rem; color: #334155; margin-bottom: 6px;">Property Description</label>
+                        <textarea id="editPropDesc" rows="3" style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 500; background: #ffffff; resize: vertical;">Spacious 3 BHK Luxury Villa featuring modern architecture, private garden, modular kitchen, 24/7 security, and premium fittings in prime Anna Nagar location.</textarea>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: grid; gap: 14px;">
+                        <h4 style="margin: 0; font-size: 0.88rem; font-weight: 800; color: #0f172a;">Media & Walkthrough Links</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                            <div>
+                                <label style="display: block; font-weight: 700; font-size: 0.78rem; color: #475569; margin-bottom: 4px;">Cover Photo Image URL</label>
+                                <input type="url" id="editPropImage" value="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 700; font-size: 0.78rem; color: #475569; margin-bottom: 4px;">Video Walkthrough URL</label>
+                                <input type="url" id="editPropVideo" value="https://www.youtube.com/watch?v=demo-virtual-tour" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px;">
+                        <button type="button" onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel('my-properties'); }" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
+                        <button type="submit" style="padding: 10px 24px; border-radius: 8px; border: none; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3);">Save Changes</button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -1713,7 +1988,7 @@
                                 <td>Karthik Raja</td>
                                 <td>+91 98401 23456</td>
                                 <td>3 BHK Luxury Villa (Anna Nagar)</td>
-                                <td><span class="status open">New Lead</span></td>
+                                <td><span class="status active">New Lead</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1726,8 +2001,7 @@
                 <div class="card-head">
                     <div>
                         <h3> Lead Management Pipeline</h3>
-                        <p>Track client acquisition, preferred contact times, site visit conversions, and deal status.
-                        </p>
+                        <p>Track client acquisition, preferred contact times, site visit conversions, and deal status.</p>
                     </div>
                 </div>
                 <div class="dash-grid three" style="margin-bottom: 24px;">
@@ -1736,112 +2010,288 @@
                     <article><span>Closed Deals</span><strong>12</strong></article>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;" id="agentLeadsContainer">
-                    <!-- Lead Card 1 (Sample Rahul) -->
-                    <div class="dash-card"
-                        style="margin-bottom: 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <span class="status pending"
-                                style="background: #dbeafe; color: #1e40af; font-weight: 800; font-size: 0.76rem; padding: 4px 12px; border-radius: 999px;">
-                                New Lead
-                            </span>
-                            <select onchange="alert('Lead status updated to: ' + this.value)"
-                                style="padding: 4px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.78rem; background: #ffffff; cursor: pointer;">
-                                <option value="New" selected>New</option>
-                                <option value="Contacted">Contacted</option>
-                                <option value="Interested">Interested</option>
-                                <option value="Site Visit Scheduled">Site Visit Scheduled</option>
-                                <option value="Negotiation">Negotiation</option>
-                                <option value="Closed">Closed</option>
-                                <option value="Not Interested">Not Interested</option>
-                            </select>
-                        </div>
-
-                        <h4 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #0f172a; font-weight: 800;">Name: Rahul
-                            Sharma</h4>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Phone: +91 98401 23456</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;">️ Email: rahul@example.com</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Property: 3
-                            BHK Apartment (#PD-8492)</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Location: Anna Nagar, Chennai
-                        </p>
-                        <p style="margin: 0 0 14px 0; font-size: 0.82rem; color: #2563eb; font-weight: 700;"> Preferred
-                            Contact Time: Afternoon (12 PM - 4 PM)</p>
-
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                            <a href="tel:+919840123456"
-                                style="padding: 7px 14px; background: #2563eb; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                Call</a>
-                            <a href="https://wa.me/919840123456?text=Hi%20Rahul,%20regarding%20your%20enquiry%20for%203%20BHK%20Apartment"
-                                target="_blank"
-                                style="padding: 7px 14px; background: #16a34a; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                WhatsApp</a>
-                            <button onclick="alert('Lead marked as Contacted!')"
-                                style="padding: 7px 14px; background: #0f172a; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; border: none; cursor: pointer;">Mark
-                                Contacted</button>
-                        </div>
-                    </div>
-
-                    <!-- Lead Card 2 -->
-                    <div class="dash-card"
-                        style="margin-bottom: 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <span class="status active"
-                                style="background: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.76rem; padding: 4px 12px; border-radius: 999px;">
-                                Interested
-                            </span>
-                            <select onchange="alert('Lead status updated to: ' + this.value)"
-                                style="padding: 4px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.78rem; background: #ffffff; cursor: pointer;">
-                                <option value="New">New</option>
-                                <option value="Contacted">Contacted</option>
-                                <option value="Interested" selected>Interested</option>
-                                <option value="Site Visit Scheduled">Site Visit Scheduled</option>
-                                <option value="Negotiation">Negotiation</option>
-                                <option value="Closed">Closed</option>
-                                <option value="Not Interested">Not Interested</option>
-                            </select>
-                        </div>
-
-                        <h4 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #0f172a; font-weight: 800;">Name: Ananya
-                            Roy</h4>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Phone: +91 98123 45678</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;">️ Email: ananya@example.com
-                        </p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Property: 2
-                            BHK Modern Flat (#PD-3104)</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Location: Indiranagar,
-                            Bangalore</p>
-                        <p style="margin: 0 0 14px 0; font-size: 0.82rem; color: #2563eb; font-weight: 700;"> Preferred
-                            Contact Time: Evening (4 PM - 8 PM)</p>
-
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                            <a href="tel:+919812345678"
-                                style="padding: 7px 14px; background: #2563eb; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                Call</a>
-                            <a href="https://wa.me/919812345678?text=Hi%20Ananya,%20regarding%20your%20enquiry"
-                                target="_blank"
-                                style="padding: 7px 14px; background: #16a34a; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                WhatsApp</a>
-                            <button onclick="alert('Lead marked as Contacted!')"
-                                style="padding: 7px 14px; background: #0f172a; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.8rem; border: none; cursor: pointer;">Mark
-                                Contacted</button>
-                        </div>
-                    </div>
+                <div class="dashboard-table-scroll" id="agentLeadsContainer" style="margin-top: 16px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8fafc; border-bottom: 1px solid #cbd5e1; text-align: left;">
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase;">Lead / Name</th>
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase;">Contact Details</th>
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase;">Property & Location</th>
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase;">Preferred Time</th>
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase;">Status</th>
+                                <th style="padding: 12px 16px; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.95rem; font-weight: 800;">Rahul Sharma</strong>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <div style="font-size: 0.85rem; color: #334155; font-weight: 600;">+91 98401 23456</div>
+                                    <small style="color: #64748b;">rahul@example.com</small>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem;">3 BHK Apartment (#PD-8492)</strong><br>
+                                    <small style="color: #64748b;">Anna Nagar, Chennai</small>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #2563eb; font-weight: 700;">
+                                    Afternoon (12 PM - 4 PM)
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                                        <span class="status pending" style="background: #dbeafe; color: #1e40af; font-weight: 800; font-size: 0.74rem; padding: 3px 10px; border-radius: 999px;">New Lead</span>
+                                        <select onchange="showToast('Lead status updated to: ' + this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.76rem; background: #ffffff; cursor: pointer;">
+                                            <option value="New" selected>New</option>
+                                            <option value="Contacted">Contacted</option>
+                                            <option value="Interested">Interested</option>
+                                            <option value="Site Visit Scheduled">Site Visit Scheduled</option>
+                                            <option value="Negotiation">Negotiation</option>
+                                            <option value="Closed">Closed</option>
+                                            <option value="Not Interested">Not Interested</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <a href="tel:+919840123456" class="btn-table-action btn-call">Call</a>
+                                        <a href="https://wa.me/919840123456?text=Hi%20Rahul,%20regarding%20your%20enquiry" target="_blank" class="btn-table-action btn-whatsapp">WhatsApp</a>
+                                        <button type="button" class="btn-table-action btn-contacted" onclick="showToast('Lead marked as Contacted!')">Mark Contacted</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.95rem; font-weight: 800;">Ananya Roy</strong>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <div style="font-size: 0.85rem; color: #334155; font-weight: 600;">+91 98123 45678</div>
+                                    <small style="color: #64748b;">ananya@example.com</small>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem;">2 BHK Modern Flat (#PD-3104)</strong><br>
+                                    <small style="color: #64748b;">Indiranagar, Bangalore</small>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #2563eb; font-weight: 700;">
+                                    Evening (4 PM - 8 PM)
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                                        <span class="status active" style="background: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.74rem; padding: 3px 10px; border-radius: 999px;">Interested</span>
+                                        <select onchange="showToast('Lead status updated to: ' + this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.76rem; background: #ffffff; cursor: pointer;">
+                                            <option value="New">New</option>
+                                            <option value="Contacted">Contacted</option>
+                                            <option value="Interested" selected>Interested</option>
+                                            <option value="Site Visit Scheduled">Site Visit Scheduled</option>
+                                            <option value="Negotiation">Negotiation</option>
+                                            <option value="Closed">Closed</option>
+                                            <option value="Not Interested">Not Interested</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <a href="tel:+919812345678" class="btn-table-action btn-call">Call</a>
+                                        <a href="https://wa.me/919812345678?text=Hi%20Ananya,%20regarding%20your%20enquiry" target="_blank" class="btn-table-action btn-whatsapp">WhatsApp</a>
+                                        <button type="button" class="btn-table-action btn-contacted" onclick="showToast('Lead marked as Contacted!')">Mark Contacted</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
         <section class="dash-panel hidden" data-view="messages">
             <div class="dash-card">
-                <div class="card-head">
+                <div class="card-head" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <h3> Client Messages</h3>
-                        <p>Direct communication channel with buyers, tenants, and property owners.</p>
+                        <h3 style="margin: 0 0 4px 0; color: #0f172a; font-weight: 800;">Client Messages & Communications</h3>
+                        <p style="margin: 0; color: #64748b; font-size: 0.88rem;">Direct response-tracked communication hub with buyers, tenants, and property owners.</p>
                     </div>
+                    <button class="primary small" onclick="showToast('✓ Checked for new client messages!')" style="box-shadow: 0 4px 12px rgba(37,99,235,0.25);">Refresh Messages</button>
                 </div>
-                <p style="color: #64748b;">All client messages are response-tracked and verified.</p>
+
+                <!-- Search & Quick Filter Row -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" onclick="filterClientMessages('all')" class="btn-table-action" style="background: #2563eb; color: #ffffff !important; border: 1px solid #2563eb; font-weight: 800; padding: 6px 14px; border-radius: 999px;">All Messages (4)</button>
+                        <button type="button" onclick="filterClientMessages('unread')" class="btn-table-action" style="background: #fffbeb; color: #b45309 !important; border: 1px solid #fde68a; font-weight: 800; padding: 6px 14px; border-radius: 999px;">Unread (2)</button>
+                        <button type="button" onclick="filterClientMessages('buyer')" class="btn-table-action" style="background: #ffffff; color: #334155 !important; border: 1px solid #cbd5e1; font-weight: 700; padding: 6px 14px; border-radius: 999px;">Buyer Inquiries</button>
+                        <button type="button" onclick="filterClientMessages('tenant')" class="btn-table-action" style="background: #ffffff; color: #334155 !important; border: 1px solid #cbd5e1; font-weight: 700; padding: 6px 14px; border-radius: 999px;">Tenant Requests</button>
+                    </div>
+                    <input type="text" id="clientMessageSearch" onkeyup="searchClientMessages()" placeholder="🔍 Search client or property..." style="padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; width: 280px; background: #ffffff;">
+                </div>
+
+                <!-- Messages Table -->
+                <div class="dashboard-table-scroll">
+                    <table id="clientMessagesTable">
+                        <thead>
+                            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem;">CLIENT & SENDER</th>
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem;">PROPERTY CONTEXT</th>
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem;">MESSAGE CONTENT</th>
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem;">RECEIVED</th>
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem;">STATUS</th>
+                                <th style="padding: 14px 16px; font-weight: 800; color: #475569; font-size: 0.78rem; text-align: right;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Message 1 -->
+                            <tr class="msg-row" data-type="unread buyer" style="border-bottom: 1px solid #e2e8f0; background: #fbfcfd;">
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">RS</div>
+                                        <div>
+                                            <strong style="color: #0f172a; font-size: 0.92rem; display: block;">Rahul Sharma</strong>
+                                            <small style="color: #64748b; font-weight: 600;">+91 98401 23456</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem; display: block;">3 BHK Luxury Villa</strong>
+                                    <small style="color: #2563eb; font-weight: 700;">Anna Nagar, Chennai</small>
+                                </td>
+                                <td style="padding: 14px 16px; max-width: 300px;">
+                                    <p style="margin: 0; font-size: 0.85rem; color: #334155; font-weight: 600; line-height: 1.4;">"Hi Rajesh, is the price negotiable for immediate registration? We are planning a site visit this Sunday."</p>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #475569; font-weight: 700;">
+                                    Today, 02:15 PM
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <span class="status pending" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-weight: 800; font-size: 0.76rem; padding: 4px 10px; border-radius: 999px;">● New / Unread</span>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <button type="button" class="btn-table-action" onclick="openReplyModal('Rahul Sharma', '+91 98401 23456', '3 BHK Luxury Villa')" style="background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; color: white !important; font-weight: 800;">Reply</button>
+                                        <a href="tel:+919840123456" class="btn-table-action btn-call">Call</a>
+                                        <a href="https://wa.me/919840123456?text=Hi%20Rahul,%20regarding%20your%20message" target="_blank" class="btn-table-action btn-whatsapp">WhatsApp</a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Message 2 -->
+                            <tr class="msg-row" data-type="unread tenant" style="border-bottom: 1px solid #e2e8f0; background: #fbfcfd;">
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">AR</div>
+                                        <div>
+                                            <strong style="color: #0f172a; font-size: 0.92rem; display: block;">Ananya Roy</strong>
+                                            <small style="color: #64748b; font-weight: 600;">+91 98123 45678</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem; display: block;">2 BHK Modern Apartment</strong>
+                                    <small style="color: #16a34a; font-weight: 700;">Indiranagar, Bangalore</small>
+                                </td>
+                                <td style="padding: 14px 16px; max-width: 300px;">
+                                    <p style="margin: 0; font-size: 0.85rem; color: #334155; font-weight: 600; line-height: 1.4;">"Hello! Is the maintenance fee included in the ₹42,000/mo rent? When can we inspect the flat?"</p>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #475569; font-weight: 700;">
+                                    Today, 11:45 AM
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <span class="status pending" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-weight: 800; font-size: 0.76rem; padding: 4px 10px; border-radius: 999px;">● New / Unread</span>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <button type="button" class="btn-table-action" onclick="openReplyModal('Ananya Roy', '+91 98123 45678', '2 BHK Modern Apartment')" style="background: linear-gradient(135deg, #2563eb, #1d4ed8) !important; color: white !important; font-weight: 800;">Reply</button>
+                                        <a href="tel:+919812345678" class="btn-table-action btn-call">Call</a>
+                                        <a href="https://wa.me/919812345678?text=Hi%20Ananya,%20regarding%20your%20message" target="_blank" class="btn-table-action btn-whatsapp">WhatsApp</a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Message 3 -->
+                            <tr class="msg-row" data-type="read owner" style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #3730a3); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">VP</div>
+                                        <div>
+                                            <strong style="color: #0f172a; font-size: 0.92rem; display: block;">Venkatesh Prasad</strong>
+                                            <small style="color: #64748b; font-weight: 600;">+91 94440 12345</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem; display: block;">Commercial Space</strong>
+                                    <small style="color: #4f46e5; font-weight: 700;">Guindy, Chennai</small>
+                                </td>
+                                <td style="padding: 14px 16px; max-width: 300px;">
+                                    <p style="margin: 0; font-size: 0.85rem; color: #334155; font-weight: 500; line-height: 1.4;">"I have uploaded the updated structural audit & RERA documents. Please publish the listing."</p>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #64748b;">
+                                    Yesterday, 05:30 PM
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <span class="status active" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.76rem; padding: 4px 10px; border-radius: 999px;">✓ Replied</span>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <button type="button" class="btn-table-action" onclick="openReplyModal('Venkatesh Prasad', '+91 94440 12345', 'Commercial Space')" style="background: linear-gradient(135deg, #334155, #0f172a) !important; color: white !important; font-weight: 800;">View Thread</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Message 4 -->
+                            <tr class="msg-row" data-type="read buyer" style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 14px 16px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #0f172a, #334155); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;">SM</div>
+                                        <div>
+                                            <strong style="color: #0f172a; font-size: 0.92rem; display: block;">Siddharth Malhotra</strong>
+                                            <small style="color: #64748b; font-weight: 600;">+91 97110 55443</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <strong style="color: #0f172a; font-size: 0.85rem; display: block;">Plot / Land</strong>
+                                    <small style="color: #475569; font-weight: 700;">ECR Beach Road, Chennai</small>
+                                </td>
+                                <td style="padding: 14px 16px; max-width: 300px;">
+                                    <p style="margin: 0; font-size: 0.85rem; color: #334155; font-weight: 500; line-height: 1.4;">"Please share the DTCP approval number and boundary coordinates."</p>
+                                </td>
+                                <td style="padding: 14px 16px; font-size: 0.82rem; color: #64748b;">
+                                    06 Sept 2026
+                                </td>
+                                <td style="padding: 14px 16px;">
+                                    <span class="status closed" style="background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; font-weight: 800; font-size: 0.76rem; padding: 4px 10px; border-radius: 999px;">✓ Resolved</span>
+                                </td>
+                                <td style="padding: 14px 16px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                        <button type="button" class="btn-table-action" onclick="openReplyModal('Siddharth Malhotra', '+91 97110 55443', 'Plot / Land')" style="background: linear-gradient(135deg, #334155, #0f172a) !important; color: white !important; font-weight: 800;">View Thread</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Client Message Reply Modal -->
+            <div id="replyModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+                <div style="background: #ffffff; width: 100%; max-width: 520px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid #e2e8f0; animation: modalFadeIn 0.2s ease-out;">
+                    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 18px 24px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800;" id="replyModalTitle">Reply to Client</h4>
+                        <button type="button" onclick="closeReplyModal()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; line-height: 1;">&times;</button>
+                    </div>
+                    <form onsubmit="sendClientReply(event)" style="padding: 20px 24px;">
+                        <div style="margin-bottom: 14px; background: #f8fafc; padding: 12px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <small style="color: #64748b; font-weight: 700; display: block; margin-bottom: 2px;">CLIENT DETAILS</small>
+                            <span id="replyClientMeta" style="color: #0f172a; font-weight: 800; font-size: 0.9rem;"></span>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 6px;">YOUR RESPONSE MESSAGE</label>
+                            <textarea id="replyMessageText" required rows="4" placeholder="Type your response to the client..." style="width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px 12px; font-size: 0.88rem; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button type="button" onclick="closeReplyModal()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; font-weight: 700; cursor: pointer;">Cancel</button>
+                            <button type="submit" class="primary small" style="padding: 8px 20px; font-weight: 800;">Send Message</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -1862,149 +2312,216 @@
             </div>
         </section>
 
-        <section class="dash-panel hidden" data-view="reports">
-            <div class="dash-card">
-                <div class="card-head">
+        <section class="dash-panel hidden pd-reports-panel" data-view="reports">
+            <!-- Header Bar Card -->
+            <div class="dash-card" style="margin-bottom: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px 28px; box-shadow: 0 8px 24px rgba(15,23,42,0.06);">
+                <div class="card-head" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                     <div>
-                        <h3> Reports & Intelligence Dashboard</h3>
-                        <p>Comprehensive analytics covering Property Metrics, User Acquisition, and Lead Conversion
-                            Pipelines.</p>
+                        <h3 style="margin: 0 0 4px 0; color: #0f172a; font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em;">Reports & Intelligence Dashboard</h3>
+                        <p style="margin: 0; color: #64748b; font-size: 0.88rem; font-weight: 500;">Comprehensive analytics covering Property Metrics, User Acquisition, and Lead Conversion Pipelines.</p>
                     </div>
-                    <button class="primary small" onclick="alert('Exporting Full Analytics Report PDF...')"> Download
-                        PDF Report</button>
+                    <button class="primary small pd-report-download" onclick="exportAnalyticsReportCSV()" style="padding: 10px 20px; font-weight: 800; box-shadow: 0 4px 14px rgba(37,99,235,0.25); white-space: nowrap;">Download PDF Report</button>
                 </div>
+            </div>
 
-                <!-- 1. Property Reports -->
-                <div style="margin-bottom: 24px;">
-                    <h4
-                        style="font-size: 1.05rem; color: #0f172a; font-weight: 800; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px;">
-                        Property Analytics Reports</h4>
-                    <div class="dash-grid three" style="margin-bottom: 14px;">
-                        <article><span>Most Viewed Property</span><strong>3 BHK Villa (4,820 Views)</strong></article>
-                        <article><span>Most Searched Location</span><strong>Anna Nagar & Indiranagar</strong></article>
-                        <article><span>Most Saved Property</span><strong>2 BHK Apartment (1,240 Saves)</strong>
-                        </article>
-                    </div>
-                    <div class="dash-grid three">
-                        <article><span>Most Contacted Agency</span><strong>Apex Realty (42 Leads)</strong></article>
-                        <article><span>Sold Properties</span><strong>2,180 Units Sold</strong></article>
-                        <article><span>Rented Properties</span><strong>1,874 Units Rented</strong></article>
-                    </div>
+            <!-- 1. Property Reports Section -->
+            <div class="pd-report-section" style="margin-bottom: 32px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #2563eb;">
+                    <span style="font-size: 1.1rem;">🏢</span>
+                    <h4 style="margin: 0; color: #1e3a8a; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;">Property Analytics Reports</h4>
                 </div>
-
-                <!-- 2. User Reports -->
-                <div style="margin-bottom: 24px;">
-                    <h4
-                        style="font-size: 1.05rem; color: #0f172a; font-weight: 800; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px;">
-                        User Growth & Engagement Reports</h4>
-                    <div class="dash-grid three">
-                        <article><span>New Registrations</span><strong>148 Today (+1,420 Week)</strong></article>
-                        <article><span>Active Users</span><strong>42,850 Active Accounts</strong></article>
-                        <article><span>Inactive Users</span><strong>6,070 Inactive Accounts</strong></article>
-                    </div>
+                <div class="dash-grid three pd-report-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">MOST VIEWED PROPERTY</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">3 BHK Villa</strong>
+                        <small style="font-size: 0.82rem; color: #2563eb; font-weight: 700; background: #eff6ff; padding: 3px 10px; border-radius: 999px; width: fit-content;">4,820 total views</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">MOST SEARCHED LOCATION</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">Anna Nagar</strong>
+                        <small style="font-size: 0.82rem; color: #475569; font-weight: 700;">& Indiranagar Hub</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">MOST SAVED PROPERTY</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">2 BHK Apartment</strong>
+                        <small style="font-size: 0.82rem; color: #2563eb; font-weight: 700; background: #eff6ff; padding: 3px 10px; border-radius: 999px; width: fit-content;">1,240 user saves</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">MOST CONTACTED AGENCY</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">Apex Realty</strong>
+                        <small style="font-size: 0.82rem; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 3px 10px; border-radius: 999px; width: fit-content;">42 verified leads</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">SOLD PROPERTIES</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">2,180</strong>
+                        <small style="font-size: 0.82rem; color: #475569; font-weight: 700;">Units sold this quarter</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">RENTED PROPERTIES</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">1,874</strong>
+                        <small style="font-size: 0.82rem; color: #475569; font-weight: 700;">Units rented this quarter</small>
+                    </article>
                 </div>
+            </div>
 
-                <!-- 3. Lead Reports -->
-                <div>
-                    <h4
-                        style="font-size: 1.05rem; color: #0f172a; font-weight: 800; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px;">
-                        Lead Conversion Pipeline Reports</h4>
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;" class="dash-grid">
-                        <article><span>Total Leads</span><strong>68,430</strong></article>
-                        <article><span>New Leads</span><strong>12,410</strong></article>
-                        <article><span>Contacted Leads</span><strong>42,890</strong></article>
-                        <article><span>Closed Leads</span><strong>13,130</strong></article>
-                        <article style="background: #f0fdf4; border-color: #86efac;"><span
-                                style="color: #166534;">Conversion Rate</span><strong
-                                style="color: #15803d;">19.2%</strong></article>
-                    </div>
+            <!-- 2. User Growth & Engagement Section -->
+            <div class="pd-report-section" style="margin-bottom: 32px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #0284c7;">
+                    <span style="font-size: 1.1rem;">📈</span>
+                    <h4 style="margin: 0; color: #0369a1; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;">User Growth & Engagement Reports</h4>
+                </div>
+                <div class="dash-grid three pd-report-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">NEW REGISTRATIONS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">148</strong>
+                        <small style="font-size: 0.82rem; color: #16a34a; font-weight: 700;">Today · +1,420 this week</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">ACTIVE USERS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">42,850</strong>
+                        <small style="font-size: 0.82rem; color: #2563eb; font-weight: 700;">Active platform accounts</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">INACTIVE USERS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">6,070</strong>
+                        <small style="font-size: 0.82rem; color: #64748b; font-weight: 700;">Dormant accounts</small>
+                    </article>
+                </div>
+            </div>
+
+            <!-- 3. Lead Conversion Pipeline Section -->
+            <div class="pd-report-section">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #16a34a;">
+                    <span style="font-size: 1.1rem;">🎯</span>
+                    <h4 style="margin: 0; color: #15803d; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;">Lead Conversion Pipeline Reports</h4>
+                </div>
+                <div class="dash-grid pd-report-grid pd-report-grid-five" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">TOTAL LEADS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">68,430</strong>
+                        <small style="font-size: 0.82rem; color: #475569; font-weight: 700;">Total pipeline leads</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">NEW LEADS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">12,410</strong>
+                        <small style="font-size: 0.82rem; color: #d97706; font-weight: 700;">Awaiting contact</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">CONTACTED LEADS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">42,890</strong>
+                        <small style="font-size: 0.82rem; color: #2563eb; font-weight: 700;">In active discussion</small>
+                    </article>
+                    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">CLOSED LEADS</span>
+                        <strong style="font-size: 1.35rem; color: #0f172a; font-weight: 800; line-height: 1.2;">13,130</strong>
+                        <small style="font-size: 0.82rem; color: #16a34a; font-weight: 700;">Successfully converted</small>
+                    </article>
+                    <article class="pd-positive-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(22,163,74,0.12); display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: 0.04em;">CONVERSION RATE</span>
+                        <strong style="font-size: 1.4rem; color: #15803d; font-weight: 900; line-height: 1.2;">19.2%</strong>
+                        <small style="font-size: 0.82rem; color: #166534; font-weight: 700;">Pipeline win rate</small>
+                    </article>
                 </div>
             </div>
         </section>
 
         <section class="dash-panel hidden" data-view="tours">
-            <div class="dash-card">
+            <!-- Header Bar Card -->
+            <div class="dash-card" style="margin-bottom: 20px;">
                 <div class="card-head">
                     <div>
-                        <h3> Scheduled Property Visit Requests</h3>
-                        <p>Approve, reschedule, or reject customer physical and video tour requests.</p>
+                        <h3 style="margin: 0 0 4px 0; color: #0f172a; font-weight: 800;">Scheduled Property Visit Requests</h3>
+                        <p style="margin: 0; color: #64748b; font-size: 0.88rem;">Approve, reschedule, or reject customer physical and video tour requests.</p>
                     </div>
-                    <button class="primary small" id="refreshAdminTours">Refresh Requests</button>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"
-                    id="agentVisitRequestsContainer">
-                    <!-- Request Card 1 -->
-                    <div class="dash-card"
-                        style="margin-bottom: 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <span class="status pending"
-                                style="background: #fef3c7; color: #b45309; font-weight: 800; font-size: 0.76rem; padding: 4px 12px; border-radius: 999px;">
-                                New Site Visit Request
-                            </span>
-                            <span style="font-size: 0.78rem; color: #64748b; font-weight: 700;">Received Today</span>
-                        </div>
-
-                        <h4 style="margin: 0 0 6px 0; font-size: 1.1rem; color: #0f172a; font-weight: 800;">3 BHK Luxury
-                            Villa (Anna Nagar)</h4>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Date: 10
-                            September 2026</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Time: 4:00
-                            PM</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Visitor: Rahul Sharma (+91
-                            98401 23456)</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;">‍‍ Attendees: 2 People</p>
-                        <p style="margin: 0 0 14px 0; font-size: 0.82rem; color: #64748b;"> Message: "Looking forward to
-                            inspecting the living room layout and balcony orientation."</p>
-
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <button onclick="alert('Visit Request Accepted & Confirmed!')"
-                                style="padding: 8px 18px; background: #16a34a; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.82rem; border: none; cursor: pointer;">Accept</button>
-                            <button onclick="alert('Visit Request Rejected')"
-                                style="padding: 8px 18px; background: #dc2626; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.82rem; border: none; cursor: pointer;">Reject</button>
-                            <button
-                                onclick="let newTime=prompt('Enter new proposed time (e.g. 11 September at 5:00 PM):'); if(newTime) alert('Reschedule proposal sent to visitor: ' + newTime);"
-                                style="padding: 8px 18px; background: #0f2246; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.82rem; border: none; cursor: pointer;">Reschedule</button>
-                        </div>
-                    </div>
-
-                    <!-- Request Card 2 -->
-                    <div class="dash-card"
-                        style="margin-bottom: 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <span class="status active"
-                                style="background: #d1fae5; color: #065f46; font-weight: 800; font-size: 0.76rem; padding: 4px 12px; border-radius: 999px;">
-                                Confirmed Visit
-                            </span>
-                            <span style="font-size: 0.78rem; color: #64748b; font-weight: 700;">Yesterday</span>
-                        </div>
-
-                        <h4 style="margin: 0 0 6px 0; font-size: 1.1rem; color: #0f172a; font-weight: 800;">2 BHK Modern
-                            Apartment (Indiranagar)</h4>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Date: 12
-                            September 2026</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #0f172a; font-weight: 700;"> Time: 11:30
-                            AM</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;"> Visitor: Ananya Roy (+91
-                            98123 45678)</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.88rem; color: #475569;">‍‍ Attendees: 3 People</p>
-                        <p style="margin: 0 0 14px 0; font-size: 0.82rem; color: #64748b;"> Message: "Will visit with
-                            family for final inspection."</p>
-
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <button onclick="alert('Visit Completed!')"
-                                style="padding: 8px 18px; background: #065f46; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.82rem; border: none; cursor: pointer;">Mark
-                                Completed</button>
-                            <button
-                                onclick="let newTime=prompt('Enter new proposed time:'); if(newTime) alert('Reschedule proposal sent: ' + newTime);"
-                                style="padding: 8px 18px; background: #0f2246; color: #ffffff; border-radius: 999px; font-weight: 800; font-size: 0.82rem; border: none; cursor: pointer;">Reschedule</button>
-                        </div>
-                    </div>
+                    <button class="primary small" id="refreshAdminTours" style="box-shadow: 0 4px 12px rgba(37,99,235,0.25);">Refresh Requests</button>
                 </div>
             </div>
+
+            <!-- Two Separate Standalone Card Views -->
+            <div style="display: flex; flex-direction: column; gap: 20px;" id="agentVisitRequestsContainer">
+                
+                <!-- Card 1: New Site Visit Request (Separate Card View) -->
+                <div class="dash-card" style="margin-bottom: 0; background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid #f59e0b; border-radius: 16px; padding: 24px; box-shadow: 0 8px 24px rgba(15,23,42,0.06);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="status pending" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-weight: 800; font-size: 0.8rem; padding: 5px 14px; border-radius: 999px;">
+                                ● New Site Visit Request
+                            </span>
+                            <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800;">3 BHK Luxury Villa (Anna Nagar)</strong>
+                        </div>
+                        <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; background: #f8fafc; padding: 4px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">Received Today, 04:15 PM</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #f8fafc; padding: 16px 20px; border-radius: 12px; border: 1px solid #f1f5f9; margin-bottom: 16px;">
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">PROPOSED DATE & TIME</span>
+                            <strong style="font-size: 0.95rem; color: #0f172a; font-weight: 800;">10 Sept 2026 at 4:00 PM</strong>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">VISITOR & PARTY</span>
+                            <strong style="font-size: 0.95rem; color: #2563eb; font-weight: 800;">Rahul Sharma</strong>
+                            <span style="font-size: 0.85rem; color: #475569; font-weight: 600;"> (+91 98401 23456) · 2 People</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">TOUR TYPE</span>
+                            <strong style="font-size: 0.95rem; color: #0f172a; font-weight: 800;">In-Person Physical Visit</strong>
+                        </div>
+                    </div>
+
+                    <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px;">
+                        <span style="display: block; font-size: 0.74rem; font-weight: 800; color: #1e40af; margin-bottom: 2px;">CUSTOMER NOTE</span>
+                        <p style="margin: 0; font-size: 0.86rem; color: #1e3a8a; font-style: italic; font-weight: 600;">"Looking forward to inspecting the living room layout and balcony orientation."</p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="showToast('✓ Visit Request Accepted & Confirmed!')" class="btn-table-action" style="padding: 10px 24px; background: linear-gradient(135deg, #16a34a, #15803d) !important; color: #ffffff !important; border: 1px solid #15803d !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer; box-shadow: 0 4px 12px rgba(22,163,74,0.25);">Accept Request</button>
+                        <button onclick="showToast('Visit Request Rejected')" class="btn-table-action" style="padding: 10px 20px; background: linear-gradient(135deg, #dc2626, #991b1b) !important; color: #ffffff !important; border: 1px solid #991b1b !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer; box-shadow: 0 4px 12px rgba(220,38,38,0.25);">Reject</button>
+                        <button onclick="let newTime=prompt('Enter new proposed time (e.g. 11 September at 5:00 PM):'); if(newTime) showToast('Reschedule proposal sent to visitor: ' + newTime);" class="btn-table-action" style="padding: 10px 20px; background: linear-gradient(135deg, #1e293b, #0f172a) !important; color: #ffffff !important; border: 1px solid #0f172a !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer; box-shadow: 0 4px 12px rgba(15,23,42,0.25);">Reschedule</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Confirmed Visit (Separate Card View) -->
+                <div class="dash-card" style="margin-bottom: 0; background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid #16a34a; border-radius: 16px; padding: 24px; box-shadow: 0 8px 24px rgba(15,23,42,0.06);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="status active" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.8rem; padding: 5px 14px; border-radius: 999px;">
+                                ● Confirmed Visit
+                            </span>
+                            <strong style="color: #0f172a; font-size: 1.1rem; font-weight: 800;">2 BHK Modern Apartment (Indiranagar)</strong>
+                        </div>
+                        <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; background: #f8fafc; padding: 4px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">Confirmed Yesterday</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #f8fafc; padding: 16px 20px; border-radius: 12px; border: 1px solid #f1f5f9; margin-bottom: 16px;">
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">SCHEDULED DATE & TIME</span>
+                            <strong style="font-size: 0.95rem; color: #0f172a; font-weight: 800;">12 Sept 2026 at 11:30 AM</strong>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">VISITOR & PARTY</span>
+                            <strong style="font-size: 0.95rem; color: #2563eb; font-weight: 800;">Ananya Roy</strong>
+                            <span style="font-size: 0.85rem; color: #475569; font-weight: 600;"> (+91 98123 45678) · 3 People</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">TOUR TYPE</span>
+                            <strong style="font-size: 0.95rem; color: #0f172a; font-weight: 800;">Guided Property Walkthrough</strong>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px;">
+                        <span style="display: block; font-size: 0.74rem; font-weight: 800; color: #166534; margin-bottom: 2px;">CUSTOMER NOTE</span>
+                        <p style="margin: 0; font-size: 0.86rem; color: #14532d; font-style: italic; font-weight: 600;">"Will visit with family for final inspection."</p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="showToast('✓ Visit Marked as Completed!')" class="btn-table-action" style="padding: 10px 24px; background: linear-gradient(135deg, #065f46, #044e38) !important; color: #ffffff !important; border: 1px solid #044e38 !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer; box-shadow: 0 4px 12px rgba(6,95,70,0.25);">Mark Completed</button>
+                        <button onclick="let newTime=prompt('Enter new proposed time:'); if(newTime) showToast('Reschedule proposal sent: ' + newTime);" class="btn-table-action" style="padding: 10px 20px; background: linear-gradient(135deg, #1e293b, #0f172a) !important; color: #ffffff !important; border: 1px solid #0f172a !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer; box-shadow: 0 4px 12px rgba(15,23,42,0.25);">Reschedule</button>
+                    </div>
+                </div>
+
+            </div>
         </section>
+
         <section class="dash-panel hidden" data-view="kyc">
             <div class="dash-card">
                 <div class="card-head">
@@ -2178,7 +2695,7 @@
             </div>
         </section>
 
-        <section class="dash-panel hidden" data-view="reports">
+        <section class="dash-panel hidden" data-view="operations-performance">
             <div class="dash-card">
                 <div class="card-head">
                     <div>
@@ -2284,7 +2801,22 @@
         });
     </script>
     <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
-    <script src="/propertydirect/js/dashboard.js?v=20260903-sidebar-icon-v3"></script>
+    <script src="/propertydirect/js/dashboard.js?v=20260907-interactions-live-v2"></script>
+    <script src="/propertydirect/js/market-workflows.js?v=20260907-button-wiring-v1"></script>
+    <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const metrics = document.querySelectorAll('[data-summary-key]');
+            try {
+                const response = await fetch('/api/property/admin/summary', { headers: { Accept: 'application/json' } });
+                const summary = await response.json();
+                if (!response.ok) throw new Error(summary.message || 'Unable to load live metrics');
+                metrics.forEach(metric => { metric.textContent = Number(summary[metric.dataset.summaryKey] || 0).toLocaleString('en-IN'); });
+            } catch (_) {
+                metrics.forEach(metric => { metric.textContent = '—'; metric.title = 'Live metric is unavailable'; });
+            }
+        });
+    </script>
 
 
 
@@ -2301,6 +2833,180 @@
 
 
 
+    <div id="adminToast" style="position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; z-index: 9999;"></div>
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('adminToast');
+            if (toast) {
+                toast.textContent = msg;
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 3000);
+            }
+        }
+        function goToAddPropertyStep(stepNumber) {
+            const form = document.getElementById('postApartmentForm');
+            if (form && !form.reportValidity()) {
+                showToast('Please complete the required fields before continuing.');
+                return;
+            }
+            const target = document.getElementById('addPropertyStep' + stepNumber);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                showToast('Step ' + (stepNumber - 1) + ' saved. Continue with Step ' + stepNumber + '.');
+            }
+        }
+        function exportAnalyticsReportCSV() {
+            const csvContent = "data:text/csv;charset=utf-8,Metric,Value\nTotal Listings,124\nActive Leads,45\nSite Visits,18\nTransactions Closed,12";
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `PropertyDirect_Admin_Report.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("✓ Full Analytics Report exported as CSV!");
+        }
+
+        function editPropertyById(propId) {
+            if (window.PropertyDirectDashboardControls) {
+                window.PropertyDirectDashboardControls.setPanel('edit-property');
+            }
+            const select = document.getElementById('editPropertySelect');
+            if (select) {
+                select.value = propId;
+                loadPropertyForEditing(propId);
+            }
+        }
+
+        function loadPropertyForEditing(propId) {
+            const data = {
+                'p1': {
+                    title: '3 BHK Luxury Villa',
+                    type: 'Villa / Sale',
+                    price: '₹1.45 Cr',
+                    location: 'Anna Nagar, Chennai',
+                    status: 'Active',
+                    specs: '3 BHK | 3 Baths | 2,400 sq.ft',
+                    desc: 'Spacious 3 BHK Luxury Villa featuring modern architecture, private garden, modular kitchen, 24/7 security, and premium fittings in prime Anna Nagar location.',
+                    img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
+                    video: 'https://www.youtube.com/watch?v=demo-virtual-tour'
+                },
+                'p2': {
+                    title: '2 BHK Modern Apartment',
+                    type: 'Apartment / Rent',
+                    price: '₹42,000/mo',
+                    location: 'Indiranagar, Bangalore',
+                    status: 'Active',
+                    specs: '2 BHK | 2 Baths | 1,250 sq.ft',
+                    desc: 'Ultra-modern 2 BHK apartment in prime Indiranagar with high-speed internet, power backup, covered parking, and balcony view.',
+                    img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80',
+                    video: 'https://www.youtube.com/watch?v=demo-apartment-tour'
+                }
+            };
+            const p = data[propId] || data['p1'];
+            if (document.getElementById('editPropTitle')) document.getElementById('editPropTitle').value = p.title;
+            if (document.getElementById('editPropType')) document.getElementById('editPropType').value = p.type;
+            if (document.getElementById('editPropPrice')) document.getElementById('editPropPrice').value = p.price;
+            if (document.getElementById('editPropLocation')) document.getElementById('editPropLocation').value = p.location;
+            if (document.getElementById('editPropStatus')) {
+                document.getElementById('editPropStatus').value = p.status;
+                updatePropStatusBadge(p.status);
+            }
+            if (document.getElementById('editPropSpecs')) document.getElementById('editPropSpecs').value = p.specs;
+            if (document.getElementById('editPropDesc')) document.getElementById('editPropDesc').value = p.desc;
+            if (document.getElementById('editPropImage')) document.getElementById('editPropImage').value = p.img;
+            if (document.getElementById('editPropVideo')) document.getElementById('editPropVideo').value = p.video;
+        }
+
+        function updatePropStatusBadge(status) {
+            const badge = document.getElementById('editPropStatusBadge');
+            if (!badge) return;
+            if (status === 'Active') {
+                badge.className = 'status active';
+                badge.style.background = '#d1fae5';
+                badge.style.color = '#065f46';
+                badge.style.borderColor = '#a7f3d0';
+                badge.textContent = '● Active Listing';
+            } else if (status === 'Under Negotiation') {
+                badge.className = 'status pending';
+                badge.style.background = '#fef3c7';
+                badge.style.color = '#92400e';
+                badge.style.borderColor = '#fde68a';
+                badge.textContent = '● Under Negotiation';
+            } else if (status === 'Sold / Rented') {
+                badge.className = 'status closed';
+                badge.style.background = '#e0e7ff';
+                badge.style.color = '#3730a3';
+                badge.style.borderColor = '#c7d2fe';
+                badge.textContent = '● Sold / Rented';
+            } else {
+                badge.className = 'status inactive';
+                badge.style.background = '#f1f5f9';
+                badge.style.color = '#475569';
+                badge.style.borderColor = '#cbd5e1';
+                badge.textContent = '● Archived';
+            }
+        }
+
+        function savePropertyEdits(e) {
+            e.preventDefault();
+            const title = document.getElementById('editPropTitle').value;
+            showToast('✓ Property details updated: ' + title);
+            setTimeout(() => {
+                if (window.PropertyDirectDashboardControls) {
+                    window.PropertyDirectDashboardControls.setPanel('my-properties');
+                }
+            }, 1000);
+        }
+
+        // Client Messages Helper Functions
+        function filterClientMessages(category) {
+            const rows = document.querySelectorAll('#clientMessagesTable .msg-row');
+            rows.forEach(row => {
+                const types = row.getAttribute('data-type') || '';
+                if (category === 'all' || types.includes(category)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            showToast('Filter applied: ' + category.toUpperCase());
+        }
+
+        function searchClientMessages() {
+            const query = (document.getElementById('clientMessageSearch').value || '').toLowerCase();
+            const rows = document.querySelectorAll('#clientMessagesTable .msg-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        let currentReplyTarget = '';
+        function openReplyModal(clientName, phone, property) {
+            currentReplyTarget = clientName;
+            document.getElementById('replyModalTitle').textContent = 'Reply to ' + clientName;
+            document.getElementById('replyClientMeta').textContent = clientName + ' (' + phone + ') • ' + property;
+            document.getElementById('replyMessageText').value = '';
+            const modal = document.getElementById('replyModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').style.display = 'none';
+        }
+
+        function sendClientReply(e) {
+            e.preventDefault();
+            const msg = document.getElementById('replyMessageText').value;
+            if (!msg.trim()) return;
+            closeReplyModal();
+            showToast('✓ Message sent successfully to ' + currentReplyTarget + '!');
+        }
+    </script>
 </body>
 
 </html>
+
+
+

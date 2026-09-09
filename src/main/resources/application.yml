@@ -31,6 +31,10 @@ server:
         secure: ${SESSION_COOKIE_SECURE:false}
 
 app:
+  # Configure both PROPERTYDIRECT_CONTACT_EMAIL and SMTP settings in production
+  # to deliver contact-message notifications to the support team.
+  propertydirect:
+    contact-recipient: ${PROPERTYDIRECT_CONTACT_EMAIL:}
   jwt:
     secret: ${JWT_SECRET:this_is_a_very_secure_and_long_jwt_secret_for_local_dev_12345}
     expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}

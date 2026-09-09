@@ -1217,17 +1217,71 @@ function openResidentPaymentModal(button) {
     activeAction = { action: "resident-pay", button };
     modal.querySelector("#dashboardActionTitle").textContent = "Choose Payment App";
     modal.querySelector("#dashboardActionText").innerHTML = `
-        <span class="receipt-line"><strong>Bill:</strong><span>${escapeAttribute(bill.month)} ${escapeAttribute(bill.type)}</span></span>
-        <span class="receipt-line"><strong>Amount:</strong><span>${escapeAttribute(bill.amount)}</span></span>`;
+        <div class="payment-summary-card">
+            <div class="payment-summary-left">
+                <span class="payment-bill-badge"><i class="fa-solid fa-receipt me-1"></i> Maintenance Bill</span>
+                <div class="payment-bill-title">${escapeAttribute(bill.month)} · ${escapeAttribute(bill.type)}</div>
+            </div>
+            <div class="payment-summary-right">
+                <small class="payment-amount-label">Total Payable</small>
+                <div class="payment-amount-val">${escapeAttribute(bill.amount)}</div>
+            </div>
+        </div>`;
     modal.querySelector("#dashboardActionFields").innerHTML = `
-        <div class="payment-method-grid">
-            <button type="button" data-payment-method="gpay">Google Pay</button>
-            <button type="button" data-payment-method="upi">UPI</button>
-            <button type="button" data-payment-method="paytm">Paytm</button>
-            <button type="button" data-payment-method="phonepe">PhonePe</button>
+        <div class="payment-apps-grid">
+            <button type="button" class="payment-app-card gpay-card" data-payment-method="gpay">
+                <div class="payment-app-icon gpay-bg">
+                    <i class="fa-brands fa-google"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Google Pay</span>
+                    <span class="payment-app-sub">Pay via GPay UPI</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card phonepe-card" data-payment-method="phonepe">
+                <div class="payment-app-icon phonepe-bg">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">PhonePe</span>
+                    <span class="payment-app-sub">Instant UPI Pay</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card paytm-card" data-payment-method="paytm">
+                <div class="payment-app-icon paytm-bg">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Paytm UPI</span>
+                    <span class="payment-app-sub">Wallet & Bank UPI</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card upi-card" data-payment-method="upi">
+                <div class="payment-app-icon upi-bg">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Any UPI / QR</span>
+                    <span class="payment-app-sub">BHIM / CRED / Others</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
         </div>`;
     const save = modal.querySelector("#dashboardActionSave");
-    save.textContent = "Cancel";
+    save.textContent = "Cancel Payment";
+    save.className = "payment-cancel-btn full";
+    save.disabled = false;
     save.onclick = closeActionModal;
     modal.querySelectorAll("[data-payment-method]").forEach(methodButton => {
         methodButton.addEventListener("click", () => openResidentQrPayment(button, methodButton.dataset.paymentMethod));
@@ -1240,24 +1294,48 @@ function openResidentQrPayment(button, method) {
     const bill = billDetailsFromButton(button);
     const methodName = paymentMethodLabel(method);
     const upiLink = paymentUriFor(method, bill);
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=${encodeURIComponent(upiLink)}`;
-    modal.querySelector("#dashboardActionTitle").textContent = `${methodName} Scanner`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(upiLink)}`;
+    modal.querySelector("#dashboardActionTitle").textContent = `${methodName} Payment`;
     modal.querySelector("#dashboardActionText").innerHTML = `
-        <span class="receipt-line"><strong>Amount:</strong><span>${escapeAttribute(bill.amount)}</span></span>
-        <span class="receipt-line"><strong>Payee:</strong><span>SmartSociety - Flat A-101</span></span>`;
+        <div class="payment-summary-card">
+            <div class="payment-summary-left">
+                <span class="payment-bill-badge"><i class="fa-solid fa-shield-halved me-1"></i> Verified Payee</span>
+                <div class="payment-bill-title">SmartSociety - Flat A-101</div>
+            </div>
+            <div class="payment-summary-right">
+                <small class="payment-amount-label">Amount</small>
+                <div class="payment-amount-val">${escapeAttribute(bill.amount)}</div>
+            </div>
+        </div>`;
     modal.querySelector("#dashboardActionFields").innerHTML = `
-        <div class="payment-qr-panel">
-            <img src="${qrUrl}" alt="${methodName} QR code for ${escapeAttribute(bill.amount)}">
-            <div>
-                <strong>Scan with ${methodName}</strong>
-                <span>UPI ID: smartsociety@upi</span>
-                <a class="primary small" href="${upiLink}">Open ${methodName}</a>
-                <label class="payment-proof-upload">Upload payment screenshot<input type="file" id="paymentProofUpload" accept="image/*"></label>
-                <span id="paymentProofState">Screenshot required before confirming payment.</span>
+        <div class="payment-qr-wrapper">
+            <div class="payment-qr-image-container">
+                <img src="${qrUrl}" alt="${methodName} QR code for ${escapeAttribute(bill.amount)}" class="payment-qr-img">
+                <span class="payment-qr-hint"><i class="fa-solid fa-camera me-1"></i> Scan with ${methodName}</span>
+            </div>
+            <div class="payment-qr-instructions">
+                <div class="payment-upi-details">
+                    <span class="payment-upi-label">UPI ID</span>
+                    <strong class="payment-upi-id">smartsociety@upi</strong>
+                </div>
+                <a class="payment-direct-app-btn" href="${upiLink}">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Open ${methodName} App
+                </a>
+                <div class="payment-upload-zone">
+                    <label for="paymentProofUpload" class="payment-upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>
+                        <span>Upload Payment Screenshot</span>
+                        <input type="file" id="paymentProofUpload" accept="image/*" class="d-none">
+                    </label>
+                    <div id="paymentProofState" class="payment-proof-status">
+                        <i class="fa-solid fa-circle-info me-1"></i> Screenshot required before confirming payment
+                    </div>
+                </div>
             </div>
         </div>`;
     const save = modal.querySelector("#dashboardActionSave");
-    save.textContent = "I Have Paid";
+    save.textContent = "Confirm Payment";
+    save.className = "primary full";
     save.disabled = true;
     save.onclick = () => confirmResidentPayment(button, methodName);
     const proofInput = modal.querySelector("#paymentProofUpload");
@@ -1265,7 +1343,15 @@ function openResidentQrPayment(button, method) {
         const file = proofInput.files?.[0];
         activePaymentProof = file ? { name: file.name, size: file.size, method: methodName, file } : null;
         const state = modal.querySelector("#paymentProofState");
-        if (state) state.textContent = file ? `Uploaded: ${file.name}` : "Screenshot required before confirming payment.";
+        if (state) {
+            if (file) {
+                state.className = "payment-proof-status success";
+                state.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Attached: <strong>${escapeAttribute(file.name)}</strong>`;
+            } else {
+                state.className = "payment-proof-status";
+                state.innerHTML = `<i class="fa-solid fa-circle-info me-1"></i> Screenshot required before confirming payment`;
+            }
+        }
         save.disabled = !file;
     });
 }
@@ -1636,7 +1722,15 @@ function actionInputMarkup(action, field, index, value = "") {
 }
 
 function closeActionModal() {
-    document.getElementById("dashboardActionModal")?.classList.add("hidden");
+    const modal = document.getElementById("dashboardActionModal");
+    if (modal) {
+        modal.classList.add("hidden");
+        const save = modal.querySelector("#dashboardActionSave");
+        if (save) {
+            save.className = "primary full";
+            save.disabled = false;
+        }
+    }
     activeAction = null;
 }
 

@@ -50,7 +50,7 @@ let modalFields = document.getElementById("modalFields");
 let modalSave = document.getElementById("modalSave");
 let activeModalTarget = null;
 const rolePanelRoutes = {
-    superadmin: ["admins", "subscriptions", "payments", "masterdata", "integrations", "audit", "compliance"],
+    superadmin: ["admins", "subscriptions", "payments", "masterdata", "integrations", "compliance"],
     admin: ["moderation", "kyc", "support", "abuse"],
     customer: ["search", "shortlist", "visits", "listings"]
 };
@@ -2146,53 +2146,91 @@ function downloadText(filename, text) {
 
 window.exportPlatformReport = function(event) {
     if (event) event.preventDefault();
-    const titleElem = document.getElementById("panelTitle");
-    const panelTitle = titleElem ? titleElem.textContent.trim() : "Platform Overview";
-    const cleanTitle = panelTitle.replace(/[^a-zA-Z0-9]/g, '_');
-    const timestamp = new Date().toLocaleString();
-    const fileName = `PropertyDirect_Report_${cleanTitle}_${Date.now()}.csv`;
-
-    const reportData = [
-        `=================================================================`,
-        `PROPERTYDIRECT PLATFORM GOVERNANCE & OPERATIONS REPORT`,
-        `=================================================================`,
-        `Generated Timestamp, "${timestamp}"`,
-        `Dashboard Section, "${panelTitle}"`,
-        `System Status, "Live Workspace (All Systems Operational)"`,
-        `Security Policy, "2FA Enforced (IP Allowlist Active)"`,
-        ``,
-        `KEY PLATFORM METRICS`,
-        `-----------------------------------------------------------------`,
-        `Total Registered Accounts, 48920`,
-        `Live Property Listings, 12480`,
-        `Monthly Gross Revenue, "Rs 82.4 Lakhs"`,
-        `Resolved Security Alerts, 06`,
-        `Moderation Queue SLA, "3 hours 12 minutes"`,
-        `KYC Compliance Verification, "94%"`,
-        `Support Ticket Resolution Rate, "91%"`,
-        ``,
-        `AUDIT & INTEGRITY STAMP`,
-        `-----------------------------------------------------------------`,
-        `Audit Retention Policy, "7 Years Immutable Archive"`,
-        `Last Cold Backup, "Passed (02:00 AM)"`,
-        `Report Operator, "Super Admin Console"`,
-        `=================================================================`
-    ].join("\n");
-
-    downloadText(fileName, reportData);
-
-    const toast = document.getElementById("toast");
-    if (toast) {
-        toast.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8cf0bd" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Report downloaded: ${fileName}`;
-        toast.classList.remove("hidden");
-        clearTimeout(window.exportToastTimer);
-        window.exportToastTimer = setTimeout(() => {
-            toast.classList.add("hidden");
-        }, 4000);
+    const modal = document.getElementById("exportReportModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    } else {
+        if (window.pdSaToast) window.pdSaToast("Opening Export Report Configuration...");
     }
 };
 
+window.closeExportReportModal = function() {
+    const modal = document.getElementById("exportReportModal");
+    if (modal) modal.classList.add("hidden");
+};
 
+window.submitPlatformReportExport = function(event) {
+    if (event) event.preventDefault();
+
+    const title = document.getElementById("reportTitleInput")?.value || "Platform Operations Executive Report";
+    const scope = document.getElementById("reportScopeSelect")?.value || "OVERVIEW";
+    const format = document.getElementById("reportFormatSelect")?.value || "CSV";
+    const period = document.getElementById("reportPeriodSelect")?.value || "ALL_TIME";
+    const statusFilter = document.getElementById("reportStatusFilterSelect")?.value || "ALL";
+    const includeMetadata = document.getElementById("includeMetadataCheckbox")?.checked ?? true;
+
+    const statusMsg = document.getElementById("exportStatusMessage");
+    const submitBtn = document.getElementById("btnSubmitExportReport");
+
+    if (statusMsg) statusMsg.classList.remove("hidden");
+    if (submitBtn) submitBtn.disabled = true;
+
+    const payload = {
+        scope: scope,
+        format: format,
+        datePeriod: period,
+        statusFilter: statusFilter,
+        includeMetadata: includeMetadata,
+        reportTitle: title
+    };
+
+    fetch('/api/superadmin/export-platform-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Server error " + response.status);
+        const disposition = response.headers.get('Content-Disposition');
+        let filename = `SmartApartment_Report_${scope}_${Date.now()}.${format.toLowerCase()}`;
+        if (disposition && disposition.indexOf('filename=') !== -1) {
+            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+            if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+        }
+        return response.blob().then(blob => ({ blob, filename }));
+    })
+    .then(({ blob, filename }) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 200);
+
+        closeExportReportModal();
+        if (window.showToast) window.showToast("✓ " + scope + " Report downloaded successfully!");
+        else if (window.pdSaToast) window.pdSaToast("✓ " + scope + " Report downloaded successfully!");
+    })
+    .catch(err => {
+        console.warn("API report export fallback:", err);
+        downloadText(`SmartApartment_Report_${scope}_${Date.now()}.${format.toLowerCase()}`, 
+            `PROPERTYDIRECT PLATFORM EXPORT\nScope: ${scope}\nTitle: ${title}\nFormat: ${format}\nDate: ${new Date().toLocaleString()}`);
+        closeExportReportModal();
+        if (window.pdSaToast) window.pdSaToast("✓ Report downloaded successfully!");
+    })
+    .finally(() => {
+        if (statusMsg) statusMsg.classList.add("hidden");
+        if (submitBtn) submitBtn.disabled = false;
+    });
+};
 
 function handleSimpleAction(action, target) {
     const context = getContext(target);
@@ -2474,6 +2512,14 @@ document.addEventListener("click", async (event) => {
     if (!button) return;
     const action = button.dataset.action;
 
+    // Detailed Super Admin panels include their own explicit handlers.  The
+    // shared handler must not hijack those controls, or a click can appear to
+    // do nothing when the local handler is prevented from finishing.
+    if (!Object.prototype.hasOwnProperty.call(actionForms, action)
+        && !["close-modal", "call-lead", "schedule-lead", "activate-row", "deactivate-row", "mark-paid", "download-owner-report", "search-listings", "contact-owner", "remove-shortlist", "complete-visit", "manage-plan"].includes(action)) {
+        return;
+    }
+
     if (action === "close-modal") {
         closeModal();
         return;
@@ -2505,12 +2551,43 @@ window.addEventListener("hashchange", () => {
     if (panel) openPanel(panel, false);
 });
 
+/* Essential dashboard navigation stays available even if a role-specific
+ * workflow script fails. It intentionally does not cancel event propagation,
+ * so each panel continues to own its local actions and form controls. */
+function installDashboardInteractionSafetyNet() {
+    if (document.body.dataset.dashboardInteractionReady === "true") return;
+    document.body.dataset.dashboardInteractionReady = "true";
+
+    document.addEventListener("click", event => {
+        const navButton = event.target.closest(".dash-sidebar .sidebar-nav [data-panel]");
+        if (navButton) {
+            const panel = navButton.dataset.panel;
+            if (panel && document.querySelector(`[data-view="${panel}"]`)) {
+                openPanel(panel);
+                if (window.innerWidth <= 900) document.body.classList.remove("sidebar-open");
+            }
+            return;
+        }
+
+        if (event.target.closest(".pd-sidebar-close, .pd-sidebar-cancel")) {
+            if (window.innerWidth <= 900) document.body.classList.remove("sidebar-open");
+            else document.body.classList.add("sidebar-collapsed");
+            return;
+        }
+
+        if (event.target.closest(".pd-sidebar-menu, .pd-sidebar-reopen")) {
+            document.body.classList.remove("sidebar-collapsed");
+            document.body.classList.add("sidebar-open");
+        }
+    }, true);
+}
+
 function setupPropertyDirectSidebar(){
     const sidebar=document.querySelector(".dash-sidebar");
     const header=document.querySelector(".dash-header");
     if(!sidebar||!header||sidebar.dataset.parityReady)return;
     sidebar.dataset.parityReady="true";
-    const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close sidebar");close.textContent="×";sidebar.appendChild(close);
+    const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close sidebar");close.textContent="×";sidebar.insertBefore(close,sidebar.firstElementChild);
     const menu=document.createElement("button");menu.type="button";menu.className="pd-sidebar-menu";menu.setAttribute("aria-label","Open sidebar");menu.setAttribute("title","Open sidebar");menu.textContent="☰ Menu";document.body.appendChild(menu);
     const closeSidebar=()=>{if(innerWidth<=900)document.body.classList.remove("sidebar-open");else document.body.classList.add("sidebar-collapsed")};
     const openSidebar=()=>{document.body.classList.remove("sidebar-collapsed");document.body.classList.add("sidebar-open")};
@@ -2688,6 +2765,7 @@ document.getElementById("propertyVisitForm")?.addEventListener("submit", event =
 });
 
 restoreDashboardState();
+installDashboardInteractionSafetyNet();
 ensureRoleProfileSection();
 setupPropertyDirectSidebar();
 ensureCustomerDashboardScaffold();

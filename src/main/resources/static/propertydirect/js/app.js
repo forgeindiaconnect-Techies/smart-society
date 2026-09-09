@@ -1,4 +1,10 @@
-const listings = [
+/*
+ * The landing page currently uses the server-rendered PropertyDirect template.
+ * Keep this legacy script free of demo inventory so it cannot reintroduce
+ * listings that have not been approved in the backend.
+ */
+const listings = [];
+/*
     {
         title: "2 BHK Apartment in Whitefield",
         city: "Bangalore",
@@ -53,12 +59,12 @@ const listings = [
         image: "/shared/images/apartment-living-2.webp",
         meta: ["4 BHK", "Luxury Apartment", "Gated Society"]
     }
-];
+]; */
 
-const publishedListingsStorageKey = "propertydirect-published-listings:v1";
 const cityOptionsStorageKey = "propertydirect-city-options:v1";
 const defaultCityOptions = ["Bangalore", "Chennai", "Mumbai", "Pune", "Hyderabad", "Delhi NCR"];
 let activeMode = "Buy";
+let approvedLandingListings = [];
 
 const modeViews = {
     Buy: {
@@ -124,17 +130,10 @@ let activeModalKind = "contact";
 let dashboardAuthMode = "login";
 
 function readPublishedListings() {
-    try {
-        return JSON.parse(localStorage.getItem(publishedListingsStorageKey) || "[]");
-    } catch {
-        localStorage.removeItem(publishedListingsStorageKey);
-        return [];
-    }
+    return approvedLandingListings;
 }
 
-function writePublishedListings(items) {
-    localStorage.setItem(publishedListingsStorageKey, JSON.stringify(items.slice(0, 80)));
-}
+function writePublishedListings() { /* Approved listings are server-managed. */ }
 
 function titleCasePlace(value) {
     return String(value || "")
@@ -146,8 +145,7 @@ function titleCasePlace(value) {
 function readCityOptions() {
     try {
         const saved = JSON.parse(localStorage.getItem(cityOptionsStorageKey) || "[]");
-        const postedCities = readPublishedListings().map(item => item.city).filter(Boolean);
-        return [...new Set([...defaultCityOptions, ...saved, ...postedCities].map(titleCasePlace).filter(Boolean))];
+        return [...new Set([...defaultCityOptions, ...saved].map(titleCasePlace).filter(Boolean))];
     } catch {
         localStorage.removeItem(cityOptionsStorageKey);
         return defaultCityOptions;
@@ -191,12 +189,14 @@ function escapeListingText(value){return String(value??"").replace(/[&<>"']/g,ch
 function safeListingImage(value){const url=String(value||"");return /^(\/|https:\/\/)/i.test(url)?escapeListingText(url):"/shared/images/apartment-living-1.webp";}
 
 function allListings() {
-    const published = publicPublishedListings();
-    const publishedTitles = new Set(published.map(item => item.title));
-    return [...published, ...listings.filter(item => !publishedTitles.has(item.title))];
+    return publicPublishedListings();
 }
 
 function renderListings(items = allListings()) {
+    if (!items.length) {
+        grid.innerHTML = `<div class="empty-state" role="status"><h3>No approved properties are available yet</h3><p>New listings appear here after they are verified by the PropertyDirect team.</p></div>`;
+        return;
+    }
     grid.innerHTML = items.map((item, index) => `
         <article class="property-card">
             <div class="property-image property-image-${index % 4}">
@@ -622,9 +622,9 @@ if (requiredDashboardRole) {
 hydrateCityDropdowns();
 renderListings();
 fetch("/api/property/listings", {headers:{Accept:"application/json"}}).then(r=>r.ok?r.json():[]).then(items=>{
-    const mapped=items.map(x=>({id:x.id,title:x.title,society:x.society,locality:x.locality,city:x.city,type:x.listingType,price:`Rs. ${x.price}`,bhk:x.bhk,furnishing:x.furnishing,image:x.imageUrl,notes:x.notes}));
-    savePublishedListings(mapped); renderListings();
-}).catch(()=>{});
+    approvedLandingListings=items.map(x=>({id:x.id,title:x.title,society:x.society,locality:x.locality,city:x.city,type:String(x.listingType||"").toUpperCase()==="SALE"?"Buy":String(x.listingType||"").toUpperCase()==="RENT"?"Rent":"Premium",price:`Rs. ${x.price}`,bhk:x.bhk,furnishing:x.furnishing,image:x.imageUrl,notes:x.notes}));
+    renderListings();
+}).catch(()=>{ approvedLandingListings=[]; renderListings(); });
 
 setupMotion();
 

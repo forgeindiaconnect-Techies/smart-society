@@ -39,6 +39,8 @@ public class Visitor extends BaseEntity {
 
     private String entryType = "GUEST";
 
+    private String gateNumber;
+
     private String qrCode;
 
     private String approvalStatus;

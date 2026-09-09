@@ -156,6 +156,7 @@ let activeApartmentTitle = "Selected apartment";
 let activeApartmentDetails = null;
 let activeSearchMode = "";
 let approvedDiscoveryLoaded = false;
+let approvedDiscoveryListings = [];
 
 function titleCasePlace(value) {
     return String(value || "")
@@ -241,7 +242,7 @@ function hydrateCityDropdowns(selectedCity = "") {
 }
 
 function publishedApartments() {
-    return readPublishedListings().map((item) => ({
+    return approvedDiscoveryListings.map((item) => ({
         id: item.id,
         isPublished: true,
         listingMode: item.type || "Rent",
@@ -279,13 +280,10 @@ function allApartments() {
     try { suspended = JSON.parse(localStorage.getItem("propertydirect-suspended-apartments") || "[]"); } catch(e){}
     const suspendedSet = new Set(suspended.map(s => String(s).toLowerCase().trim()));
 
-    const published = publishedApartments();
-    const publishedTitles = new Set(published.map(item => item.title));
-    const combined = approvedDiscoveryLoaded
-        ? published
-        : [...published, ...apartments.filter(item => !publishedTitles.has(item.title))];
-
-    return combined.filter(apt => !suspendedSet.has(String(apt.title).toLowerCase().trim()));
+    // Search inventory must come exclusively from the approved public API.
+    // Demo cards and localStorage are never customer-visible inventory.
+    return publishedApartments()
+        .filter(apt => !suspendedSet.has(String(apt.title).toLowerCase().trim()));
 }
 
 function readOwnerContactRequests() {
@@ -414,22 +412,15 @@ function filteredApartments() {
         const queryOk = !query || text.includes(query);
         const cityOk = !city || String(apt.city || "").toLowerCase() === city || String(apt.locality || "").toLowerCase() === city;
 
-        const isBuyMode = mode === "buy";
-        const modeOk = !mode || 
-            String(apt.listingMode || "").toLowerCase() === mode || 
-            text.includes(mode) || 
-            apt.isPublished;
-
-        const budgetOk = isBuyMode ? true : (apt.rent >= minBudget && apt.rent <= budget);
+        const modeOk = !mode || String(apt.listingMode || "").toLowerCase() === mode;
+        const budgetOk = apt.rent >= minBudget && apt.rent <= budget;
 
         return cityOk && modeOk && budgetOk && filtersOk && queryOk;
     });
 }
 
 function matchingCityModeApartments() {
-    const items = filteredApartments();
-    if (items && items.length > 0) return items;
-    return allApartments();
+    return filteredApartments();
 }
 
 function renderApartments(items = filteredApartments()) {
@@ -451,7 +442,7 @@ function renderApartments(items = filteredApartments()) {
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-+|-+$/g, "");
-        const detailUrl = `/propertydirect/property/${rawSlug}?id=${encodeURIComponent(apt.id || (index+1))}&title=${encodeURIComponent(apt.title)}&price=${encodeURIComponent(money(apt.rent))}&location=${encodeURIComponent(`${apt.locality}, ${apt.city}`)}&bhk=${encodeURIComponent(apt.type)}&sqft=${encodeURIComponent(apt.sqft)}&image=${encodeURIComponent(apt.image)}`;
+        const detailUrl = `/propertydirect/apartment-detail?id=${encodeURIComponent(apt.id)}`;
         const bathroomsText = apt.bathrooms ? `${apt.bathrooms} Baths` : "2 Baths";
         const ownerAgentLabel = apt.isPublished ? "Owner Listed" : "Verified Agent";
         return `
@@ -1220,8 +1211,8 @@ function applyUrlSearch() {
     const params = new URLSearchParams(window.location.search);
     const city = params.get("city");
     const query = params.get("q");
-    const mode = params.get("mode");
-    if (mode) activeSearchMode = mode;
+    const mode = params.get("mode") || params.get("type");
+    if (mode) activeSearchMode = String(mode).toLowerCase();
     if (city) saveCityOption(city);
     if (city && document.getElementById("listingCity")) document.getElementById("listingCity").value = titleCasePlace(city);
     if (query && document.getElementById("listingSearch")) document.getElementById("listingSearch").value = query;
@@ -1244,6 +1235,11 @@ fetch("/api/properties/public?page=0&size=100", {headers:{Accept:"application/js
         available:x.availableFrom?new Date(x.availableFrom).toLocaleDateString("en-IN"):"Ready to Move",
         apartmentType:x.propertyType||"Apartment"
     }));
+    approvedDiscoveryListings = mapped;
     approvedDiscoveryLoaded = true;
-    localStorage.setItem(publishedListingsStorageKey,JSON.stringify(mapped)); renderSocieties(); updateFilterState();
-}).catch(()=>{});
+    renderSocieties(); updateFilterState();
+}).catch(()=>{
+    approvedDiscoveryListings = [];
+    approvedDiscoveryLoaded = true;
+    updateFilterState();
+});

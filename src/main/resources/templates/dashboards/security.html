@@ -376,7 +376,7 @@
                         <div class="card-body px-4 pb-4">
                             <form class="row security-compact-form" id="qrPassForm">
                                 <div class="col-lg-5"><label class="form-label" for="passCode">Pass code / OTP</label><input type="text" class="form-control shadow-none border-light-subtle fw-semibold" id="passCode" placeholder="e.g. SG-4921" required></div>
-                                <div class="col-lg-3"><label class="form-label" for="verificationGate">Verification point</label><select class="form-select shadow-none border-light-subtle" id="verificationGate" required><option>Main Gate</option><option>Service Gate</option><option>Parking Gate</option><option>Clubhouse Entry</option></select></div>
+                                <div class="col-lg-3"><label class="form-label" for="verificationGate">Verification gate</label><select class="form-select shadow-none border-light-subtle" id="verificationGate" name="gateNumber" required><option>Gate 1</option><option>Gate 2</option><option>Gate 3</option><option>Service Gate</option><option>Basement Gate</option></select></div>
                                 <div class="col-lg-4"><label class="form-label" for="identityMatch">Identity check</label><select class="form-select shadow-none border-light-subtle" id="identityMatch" required><option value="YES">Identity matches pass</option><option value="NO">Identity mismatch</option><option value="NOT_CHECKED">Not checked</option></select></div>
                                 <div class="col-lg-4"><label class="form-label" for="verificationVehicle">Vehicle number</label><input class="form-control shadow-none border-light-subtle" id="verificationVehicle" maxlength="20" placeholder="Optional vehicle number"></div>
                                 <div class="col-lg-8"><label class="form-label" for="verificationNotes">Security observations and entry instructions</label><textarea class="form-control shadow-none border-light-subtle" id="verificationNotes" maxlength="1000" placeholder="Optional notes for the entry record"></textarea></div>
@@ -398,7 +398,8 @@
                                     <div class="row g-2">
                                         <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinName">Visitor name</label><input id="walkinName" class="form-control" name="name" required></div>
                                         <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinPhone">Phone number</label><input id="walkinPhone" class="form-control" name="phone" type="number" inputmode="numeric" min="1000000" max="999999999999999" step="1" placeholder="Numbers only" required></div>
-                                        <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinFlat">Target flat</label><input id="walkinFlat" class="form-control" name="unitNo" type="number" inputmode="numeric" min="1" step="1" placeholder="Flat number" required></div>
+                                        <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinFlat">Flatmate / flat</label><select id="walkinFlat" class="form-select" name="unitNo" required><option value="">Select flatmate / flat</option></select></div>
+                                        <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinGate">Gate number</label><select id="walkinGate" class="form-select" name="gateNumber" required><option>Gate 1</option><option>Gate 2</option><option>Gate 3</option><option>Service Gate</option><option>Basement Gate</option></select></div>
                                         <div class="col-md-6"><label class="form-label small fw-semibold" for="walkinPurpose">Purpose</label><input id="walkinPurpose" class="form-control" name="purpose" required></div>
                                         <div class="col-md-8"><label class="form-label small fw-semibold" for="walkinVehicle">Vehicle number <span class="fw-normal text-muted">(optional)</span></label><input id="walkinVehicle" class="form-control" name="vehicleNumber"></div>
                                         <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit">Save walk-in entry</button></div>
@@ -474,8 +475,20 @@
                             <form class="row g-4 form-grid mb-4" id="deliveryForm">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control shadow-none border-light-subtle" id="targetFlat" name="unitNo" placeholder="e.g. A-101" required>
-                                        <label for="targetFlat">Target Flat Number</label>
+                                        <select class="form-select shadow-none border-light-subtle" id="targetFlat" name="unitNo" required><option value="">Select flatmate / flat</option></select>
+                                        <label for="targetFlat">Flatmate / Target Flat</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select shadow-none border-light-subtle" id="deliveryGate" name="gateNumber" required>
+                                            <option>Gate 1</option>
+                                            <option>Gate 2</option>
+                                            <option>Gate 3</option>
+                                            <option>Service Gate</option>
+                                            <option>Basement Gate</option>
+                                        </select>
+                                        <label for="deliveryGate">Arrival Gate Number</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -520,9 +533,9 @@
                             <div class="table-responsive mt-2">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
-                                        <tr><th>Flat</th><th>Provider</th><th>Agent</th><th>Package</th><th>Arrived</th><th>Status</th></tr>
+                                        <tr><th>Flat</th><th>Gate</th><th>Provider</th><th>Agent</th><th>Package</th><th>Arrived</th><th>Status</th><th>Action</th></tr>
                                     </thead>
-                                    <tbody id="deliveriesBody"><tr><td colspan="6" class="text-center text-muted py-4">No delivery records yet.</td></tr></tbody>
+                                    <tbody id="deliveriesBody"><tr><td colspan="8" class="text-center text-muted py-4">No delivery records yet.</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
@@ -809,7 +822,7 @@
             });
             document.getElementById("qrPassForm")?.addEventListener("submit", async event => {
                 event.preventDefault(); if (!event.currentTarget.reportValidity()) return; const qrCode = document.getElementById("passCode").value.trim();
-                const response = await fetch("/api/society/visitors/scan", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({qrCode})});
+                const response = await fetch("/api/society/visitors/scan", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"}, body: JSON.stringify({qrCode, gateNumber: document.getElementById("verificationGate").value})});
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok) return showToast(result.message || "Pass could not be verified");
                 await persistWorkflowAction("verify-pass", event.currentTarget.querySelector("button"), [qrCode, document.getElementById("verificationGate").value, document.getElementById("identityMatch").value, document.getElementById("verificationVehicle").value, document.getElementById("verificationNotes").value]);
@@ -854,7 +867,7 @@
                 dialog.id = "securityWalkInDialog";
                 dialog.className = "modal-backdrop";
                 dialog.style.cssText = "position:fixed;inset:0;z-index:1000010;display:grid;place-items:center;background:rgba(15,23,42,.48);padding:1rem";
-                dialog.innerHTML = `<div class="bg-white rounded-4 shadow-lg p-4 w-100" style="max-width:560px"><div class="d-flex justify-content-between align-items-start mb-3"><div><h4 class="fw-bold mb-1">New Walk-In Entry</h4><p class="text-muted mb-0">Record the visitor before allowing entry.</p></div><button type="button" class="btn-close" aria-label="Close"></button></div><form class="row g-3"><div class="col-md-6"><label class="form-label">Visitor name</label><input class="form-control" name="name" required></div><div class="col-md-6"><label class="form-label">Phone number</label><input class="form-control" name="phone" required></div><div class="col-md-6"><label class="form-label">Target flat</label><input class="form-control" name="unitNo" placeholder="A-101" required></div><div class="col-md-6"><label class="form-label">Visit purpose</label><input class="form-control" name="purpose" placeholder="Guest, delivery, service" required></div><div class="col-12 d-flex justify-content-end gap-2"><button type="button" class="btn btn-light" data-cancel>Cancel</button><button type="submit" class="btn btn-primary">Save walk-in</button></div></form></div>`;
+                dialog.innerHTML = `<div class="bg-white rounded-4 shadow-lg p-4 w-100" style="max-width:640px"><div class="d-flex justify-content-between align-items-start mb-3"><div><h4 class="fw-bold mb-1">New Walk-In Entry</h4><p class="text-muted mb-0">Record the visitor before allowing entry.</p></div><button type="button" class="btn-close" aria-label="Close"></button></div><form class="row g-3"><div class="col-md-6"><label class="form-label">Visitor name</label><input class="form-control" name="name" required></div><div class="col-md-6"><label class="form-label">Phone number</label><input class="form-control" name="phone" required></div><div class="col-md-6"><label class="form-label">Flatmate / flat</label><input class="form-control" name="unitNo" placeholder="Select flat" required></div><div class="col-md-6"><label class="form-label">Gate number</label><select class="form-select" name="gateNumber" required><option>Gate 1</option><option>Gate 2</option><option>Gate 3</option><option>Service Gate</option><option>Basement Gate</option></select></div><div class="col-md-6"><label class="form-label">Visit purpose</label><input class="form-control" name="purpose" placeholder="Guest, delivery, service" required></div><div class="col-12 d-flex justify-content-end gap-2"><button type="button" class="btn btn-light" data-cancel>Cancel</button><button type="submit" class="btn btn-primary">Save walk-in</button></div></form></div>`;
                 document.body.appendChild(dialog);
                 dialog.querySelector(".btn-close").addEventListener("click", closeWalkIn);
                 dialog.querySelector("[data-cancel]").addEventListener("click", closeWalkIn);
@@ -912,9 +925,10 @@
                 submit.textContent = "Saving…";
                 try {
                     const payload = isDelivery
-                        ? {name: values.agentName || values.provider, phone: values.phone || "Not provided", unitNo, purpose: `Delivery: ${values.provider}`, vehicleNumber: "", photoReference: values.photoReference || "", entryType: "DELIVERY", specialInstructions: values.deliveryNotes || "", expectedAt: new Date().toISOString().slice(0,19)}
-                        : {name: values.name, phone: values.phone, unitNo, purpose: values.serviceType || "Domestic staff", vehicleNumber: "", photoReference: values.addressProof || "", entryType: "DOMESTIC_STAFF", specialInstructions: values.notes || "", expectedAt: new Date().toISOString().slice(0,19)};
-                    const response = await fetch("/api/society/visitors", {method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
+                        ? {...values, gateNumber: values.gateNumber || "Gate 1"}
+                        : {name: values.name, phone: values.phone, unitNo, purpose: values.serviceType || "Domestic staff", vehicleNumber: "", photoReference: values.addressProof || "", entryType: "DOMESTIC_STAFF", specialInstructions: values.notes || "", gateNumber: values.gateNumber || "Gate 1", expectedAt: new Date().toISOString().slice(0,19)};
+                    const endpoint = isDelivery ? "/api/society/advanced/deliveries" : "/api/society/visitors";
+                    const response = await fetch(endpoint, {method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
                     const result = await response.json().catch(() => ({}));
                     if (!response.ok) throw new Error(result.message || "Unable to save the gate record");
                     form.reset(); await refreshVisitors(); notify(isDelivery ? "Delivery recorded and ready for resident notification." : "Daily staff entry registered successfully.");
@@ -923,5 +937,6 @@
             }, true);
         })();
     </script>
+    <script src="/smartapartment/js/security-gate-live.js?v=20260909-security-gate-live-v2"></script>
 </body>
 </html>

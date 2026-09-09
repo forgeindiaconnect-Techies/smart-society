@@ -25,7 +25,8 @@ const titles = {
     deliveries: "Delivery Management",
     polls: "Community Polls",
     assets: "Assets and Preventive Maintenance",
-    "audit-logs": "Granular Audit Trail"
+    "audit-logs": "Granular Audit Trail",
+    services: "NoBroker Carpentry & Home Services"
 };
 const securityPanelTitles = {
     overview: "Overview",
@@ -48,7 +49,7 @@ const residentPaymentProofsKey = "smartapartment-resident-payment-proofs:v1";
 const rolePanelRoutes = {
     superadmin: ["monitoring", "audit-logs", "societies", "subscriptions", "analytics"],
     admin: ["residents", "billing", "visitors", "complaints"],
-    resident: ["billing", "complaints", "amenities", "announcements"],
+    resident: ["billing", "pass", "services", "complaints", "amenities", "announcements", "deliveries", "profile"],
     security: ["entries", "pass", "visitors", "entries"],
     maintenance: ["tasks", "complaints", "tasks", "profile"]
 };
@@ -664,7 +665,7 @@ async function loadSocietyBackendData() {
             const label=card.querySelector("span")?.textContent.trim().toLowerCase(); const node=card.querySelector("strong");
             if (node && overviewByLabel[label] !== undefined) node.textContent = overviewByLabel[label];
         });
-        fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,a.unitNo);c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
+        fill('table[data-table="flats"]', apartments, (a,c,s) => { const r=document.createElement("tr");r.dataset.recordId=a.id;Object.entries(a).forEach(([k,v])=>r.dataset[k]=v??"");c(r,[a.unitNo,a.apartmentCode].filter(Boolean).join(" · "));c(r,a.ownerName);c(r,[a.ownerPhone,a.ownerEmail].filter(Boolean).join(" · ")||"—");c(r,`${a.block||"Block A"} · Floor ${a.floor??0}`);c(r,a.type);c(r,a.builtUpAreaSqFt?`${a.builtUpAreaSqFt} sq.ft`:"—");c(r,a.parkingSlot||"—");s(r,a.occupancy);const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="save";button.textContent="Edit";td.appendChild(button);r.appendChild(td);return r; });
         fill('table[data-table="residents"]', [...residents,...teamItems], (x,c,s) => { const r=document.createElement("tr");const team=Boolean(x.role);c(r,x.name);c(r,[x.phone,x.email].filter(Boolean).join(" · ")||"—");c(r,team?(x.employeeId||"—"):(x.unitNo||"—"));c(r,team?x.role.replaceAll("_"," "):x.residentType);c(r,team?([x.designation,x.workShift].filter(Boolean).join(" · ")||"Society team"):(x.vehicleNumber?`Vehicle: ${x.vehicleNumber}`:"Resident access"));s(r,x.accountLocked?"LOCKED":"ACTIVE");const td=document.createElement("td");const button=document.createElement("button");button.type="button";button.className="btn btn-sm btn-outline-primary";button.dataset.action="notify";button.textContent="Notify";td.appendChild(button);r.appendChild(td);return r; });
         if (typeof window.renderSmartApartmentResidents === "function") window.renderSmartApartmentResidents();
         fill('table[data-table="billing"]', bills, (b,c,s) => {
@@ -2741,16 +2742,14 @@ function updateBillingStats(scope = document) {
 
 function ensureResidentPortal() {
     if (dashboardRole !== "resident") return;
-    document.querySelector('[data-panel="pass"]')?.remove();
-    document.querySelector('[data-view="pass"]')?.remove();
     document.querySelectorAll('[data-view="overview"] .pill-row span').forEach(chip => {
         if (chip.textContent.trim().toLowerCase().includes("visitor")) {
-            chip.textContent = "Book amenities";
+            chip.textContent = "Visitor request";
         }
     });
     const overviewCopy = document.querySelector('[data-view="overview"] .card p');
     if (overviewCopy) {
-        overviewCopy.textContent = "Residents can pay bills, raise complaints, request amenities, read announcements, and update profile details. Society Admin approves complaint assignments, amenity approvals, billing corrections, and closures.";
+        overviewCopy.textContent = "Residents can pay bills, submit visitor requests to security, raise complaints, request amenities, read announcements, and update profile details.";
     }
 }
 
@@ -2790,17 +2789,71 @@ function openResidentPaymentModal(button) {
     activeAction = { action: "resident-pay", button };
     modal.querySelector("#dashboardActionTitle").textContent = "Choose Payment App";
     modal.querySelector("#dashboardActionText").innerHTML = `
-        <span class="receipt-line"><strong>Bill:</strong><span>${escapeAttribute(bill.month)} ${escapeAttribute(bill.type)}</span></span>
-        <span class="receipt-line"><strong>Amount:</strong><span>${escapeAttribute(bill.amount)}</span></span>`;
+        <div class="payment-summary-card">
+            <div class="payment-summary-left">
+                <span class="payment-bill-badge"><i class="fa-solid fa-receipt me-1"></i> Maintenance Bill</span>
+                <div class="payment-bill-title">${escapeAttribute(bill.month)} · ${escapeAttribute(bill.type)}</div>
+            </div>
+            <div class="payment-summary-right">
+                <small class="payment-amount-label">Total Payable</small>
+                <div class="payment-amount-val">${escapeAttribute(bill.amount)}</div>
+            </div>
+        </div>`;
     modal.querySelector("#dashboardActionFields").innerHTML = `
-        <div class="payment-method-grid">
-            <button type="button" data-payment-method="gpay">Google Pay</button>
-            <button type="button" data-payment-method="upi">UPI</button>
-            <button type="button" data-payment-method="paytm">Paytm</button>
-            <button type="button" data-payment-method="phonepe">PhonePe</button>
+        <div class="payment-apps-grid">
+            <button type="button" class="payment-app-card gpay-card" data-payment-method="gpay">
+                <div class="payment-app-icon gpay-bg">
+                    <i class="fa-brands fa-google"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Google Pay</span>
+                    <span class="payment-app-sub">Pay via GPay UPI</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card phonepe-card" data-payment-method="phonepe">
+                <div class="payment-app-icon phonepe-bg">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">PhonePe</span>
+                    <span class="payment-app-sub">Instant UPI Pay</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card paytm-card" data-payment-method="paytm">
+                <div class="payment-app-icon paytm-bg">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Paytm UPI</span>
+                    <span class="payment-app-sub">Wallet & Bank UPI</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+            <button type="button" class="payment-app-card upi-card" data-payment-method="upi">
+                <div class="payment-app-icon upi-bg">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <div class="payment-app-details">
+                    <span class="payment-app-title">Any UPI / QR</span>
+                    <span class="payment-app-sub">BHIM / CRED / Others</span>
+                </div>
+                <div class="payment-app-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
         </div>`;
     const save = modal.querySelector("#dashboardActionSave");
-    save.textContent = "Cancel";
+    save.textContent = "Cancel Payment";
+    save.className = "payment-cancel-btn full";
+    save.disabled = false;
     save.onclick = closeActionModal;
     modal.querySelectorAll("[data-payment-method]").forEach(methodButton => {
         methodButton.addEventListener("click", () => openResidentQrPayment(button, methodButton.dataset.paymentMethod));
@@ -2813,24 +2866,48 @@ function openResidentQrPayment(button, method) {
     const bill = billDetailsFromButton(button);
     const methodName = paymentMethodLabel(method);
     const upiLink = paymentUriFor(method, bill);
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=${encodeURIComponent(upiLink)}`;
-    modal.querySelector("#dashboardActionTitle").textContent = `${methodName} Scanner`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(upiLink)}`;
+    modal.querySelector("#dashboardActionTitle").textContent = `${methodName} Payment`;
     modal.querySelector("#dashboardActionText").innerHTML = `
-        <span class="receipt-line"><strong>Amount:</strong><span>${escapeAttribute(bill.amount)}</span></span>
-        <span class="receipt-line"><strong>Payee:</strong><span>SmartApartment - Flat A-101</span></span>`;
+        <div class="payment-summary-card">
+            <div class="payment-summary-left">
+                <span class="payment-bill-badge"><i class="fa-solid fa-shield-halved me-1"></i> Verified Payee</span>
+                <div class="payment-bill-title">SmartApartment - Flat A-101</div>
+            </div>
+            <div class="payment-summary-right">
+                <small class="payment-amount-label">Amount</small>
+                <div class="payment-amount-val">${escapeAttribute(bill.amount)}</div>
+            </div>
+        </div>`;
     modal.querySelector("#dashboardActionFields").innerHTML = `
-        <div class="payment-qr-panel">
-            <img src="${qrUrl}" alt="${methodName} QR code for ${escapeAttribute(bill.amount)}">
-            <div>
-                <strong>Scan with ${methodName}</strong>
-                <span>UPI ID: smartapartment@upi</span>
-                <a class="primary small" href="${upiLink}">Open ${methodName}</a>
-                <label class="payment-proof-upload">Upload payment screenshot<input type="file" id="paymentProofUpload" accept="image/*"></label>
-                <span id="paymentProofState">Screenshot required before confirming payment.</span>
+        <div class="payment-qr-wrapper">
+            <div class="payment-qr-image-container">
+                <img src="${qrUrl}" alt="${methodName} QR code for ${escapeAttribute(bill.amount)}" class="payment-qr-img">
+                <span class="payment-qr-hint"><i class="fa-solid fa-camera me-1"></i> Scan with ${methodName}</span>
+            </div>
+            <div class="payment-qr-instructions">
+                <div class="payment-upi-details">
+                    <span class="payment-upi-label">UPI ID</span>
+                    <strong class="payment-upi-id">smartapartment@upi</strong>
+                </div>
+                <a class="payment-direct-app-btn" href="${upiLink}">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Open ${methodName} App
+                </a>
+                <div class="payment-upload-zone">
+                    <label for="paymentProofUpload" class="payment-upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>
+                        <span>Upload Payment Screenshot</span>
+                        <input type="file" id="paymentProofUpload" accept="image/*" class="d-none">
+                    </label>
+                    <div id="paymentProofState" class="payment-proof-status">
+                        <i class="fa-solid fa-circle-info me-1"></i> Screenshot required before confirming payment
+                    </div>
+                </div>
             </div>
         </div>`;
     const save = modal.querySelector("#dashboardActionSave");
-    save.textContent = "I Have Paid";
+    save.textContent = "Confirm Payment";
+    save.className = "primary full";
     save.disabled = true;
     save.onclick = () => confirmResidentPayment(button, methodName);
     const proofInput = modal.querySelector("#paymentProofUpload");
@@ -2838,7 +2915,15 @@ function openResidentQrPayment(button, method) {
         const file = proofInput.files?.[0];
         activePaymentProof = file ? { name: file.name, size: file.size, method: methodName, file } : null;
         const state = modal.querySelector("#paymentProofState");
-        if (state) state.textContent = file ? `Uploaded: ${file.name}` : "Screenshot required before confirming payment.";
+        if (state) {
+            if (file) {
+                state.className = "payment-proof-status success";
+                state.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Attached: <strong>${escapeAttribute(file.name)}</strong>`;
+            } else {
+                state.className = "payment-proof-status";
+                state.innerHTML = `<i class="fa-solid fa-circle-info me-1"></i> Screenshot required before confirming payment`;
+            }
+        }
         save.disabled = !file;
     });
 }
@@ -4472,4 +4557,3 @@ document.addEventListener("input", (e) => {
         target.value = target.value.replace(/[^0-9]/g, "");
     }
 });
-

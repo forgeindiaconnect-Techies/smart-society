@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
-  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
+  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
+  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
   <style>
     :root {
       --pd-navy: #0a1834;
@@ -155,18 +156,34 @@
     /* MAIN CONTENT */
     .agent-main {
       margin-left: 260px;
-      padding: 30px;
+      padding: 0 32px 36px 0;
+      width: calc(100% - 260px);
+      max-width: calc(100% - 260px);
+      box-sizing: border-box;
       min-height: 100vh;
+      background: var(--pd-bg);
     }
 
     .agent-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 26px;
+      gap: 16px;
+      margin: 0 0 24px 0;
+      background: #ffffff;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--pd-border);
+      border-radius: 0 0 14px 0;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .dash-panel {
+      margin-left: 32px;
+      width: calc(100% - 32px);
+      max-width: calc(100% - 32px);
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -267,14 +284,207 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+      transition: background 0.2s ease;
     }
 
     .btn-primary:hover {
       background: #1d4ed8;
     }
+
+    .btn-secondary {
+      padding: 8px 14px;
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    body[data-dashboard-role="agent"] .agent-shell {
+      display: block !important;
+      width: 100% !important;
+      min-height: 100vh !important;
+      background: var(--pd-bg) !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-main {
+      margin-left: 260px !important;
+      width: calc(100vw - 260px) !important;
+      max-width: calc(100vw - 260px) !important;
+      min-width: 0 !important;
+      padding: 0 32px 40px 0 !important;
+      overflow-x: hidden !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-header {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 24px !important;
+      padding: 24px 32px !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-header > div:first-child {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-header h1 {
+      white-space: normal !important;
+      line-height: 1.15 !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-header > div:last-child {
+      flex: 0 0 auto !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      gap: 12px !important;
+      min-width: max-content !important;
+    }
+
+    body[data-dashboard-role="agent"] .dash-panel {
+      margin: 0 0 0 32px !important;
+      width: calc(100% - 32px) !important;
+      max-width: calc(100% - 32px) !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 24px !important;
+    }
+
+    body[data-dashboard-role="agent"] .dash-panel.hidden {
+      display: none !important;
+    }
+
+    body[data-dashboard-role="agent"] .stats-grid {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
+      gap: 18px !important;
+      align-items: stretch !important;
+    }
+
+    body[data-dashboard-role="agent"] .stat-card {
+      min-height: 128px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
+      gap: 8px !important;
+    }
+
+    body[data-dashboard-role="agent"] .stat-card .label,
+    body[data-dashboard-role="agent"] .stat-card .val {
+      display: block !important;
+      width: 100% !important;
+      white-space: normal !important;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+      line-height: 1.25 !important;
+    }
+
+    body[data-dashboard-role="agent"] .dash-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+    }
+
+    body[data-dashboard-role="agent"] .card-head {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 16px !important;
+      flex-wrap: wrap !important;
+    }
+
+    body[data-dashboard-role="agent"] .data-table {
+      min-width: 920px !important;
+    }
+
+    body[data-dashboard-role="agent"] .dash-card:has(.data-table) {
+      overflow-x: auto !important;
+    }
+
+    body[data-dashboard-role="agent"] button,
+    body[data-dashboard-role="agent"] .btn-primary,
+    body[data-dashboard-role="agent"] .btn-secondary {
+      min-width: max-content !important;
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      writing-mode: horizontal-tb !important;
+      text-orientation: mixed !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-nav button {
+      min-width: 0 !important;
+      justify-content: flex-start !important;
+    }
+
+    body[data-dashboard-role="agent"] .agent-nav button span {
+      width: 22px !important;
+      min-width: 22px !important;
+      height: 22px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 7px !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: currentColor !important;
+      font-size: 0.72rem !important;
+      font-weight: 900 !important;
+      line-height: 1 !important;
+    }
+
+    @media (max-width: 1100px) {
+      body[data-dashboard-role="agent"] .stats-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body[data-dashboard-role="agent"] .agent-sidebar {
+        position: relative !important;
+        width: 100% !important;
+        min-height: auto !important;
+      }
+
+      body[data-dashboard-role="agent"] .agent-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 16px 32px !important;
+      }
+
+      body[data-dashboard-role="agent"] .agent-header,
+      body[data-dashboard-role="agent"] .agent-header > div:last-child {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+
+      body[data-dashboard-role="agent"] .dash-panel {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      body[data-dashboard-role="agent"] .stats-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="agent">
   <div class="agent-shell">
     <!-- Agent Sidebar -->
     <aside class="agent-sidebar">
@@ -284,24 +494,24 @@
           <div class="agent-brand-text">Property<span>Direct</span></div>
         </a>
 
-        <nav class="agent-nav">
+        <nav class="agent-nav sidebar-nav">
           <button class="active" data-panel="overview" onclick="switchTab('overview')">
-            <span></span> Dashboard Overview
+            <span>OV</span> Dashboard Overview
           </button>
           <button data-panel="listings" onclick="switchTab('listings')">
-            <span></span> My Property Listings
+            <span>PR</span> My Property Listings
           </button>
           <button data-panel="leads" onclick="switchTab('leads')">
-            <span></span> Client Leads & Inquiries
+            <span>LD</span> Client Leads & Inquiries
           </button>
           <button data-panel="tours" onclick="switchTab('tours')">
-            <span></span> Scheduled Site Tours
+            <span>TR</span> Scheduled Site Tours
           </button>
           <button data-panel="earnings" onclick="switchTab('earnings')">
-            <span></span> Commissions & Earnings
+            <span>₹</span> Commissions & Earnings
           </button>
           <button data-panel="profile" onclick="switchTab('profile')">
-            <span>️</span> Agent Profile & RERA
+            <span>PF</span> Agent Profile & RERA
           </button>
         </nav>
       </div>
@@ -309,8 +519,8 @@
       <div class="agent-user-badge">
         <div class="agent-avatar">AG</div>
         <div>
-          <strong style="display: block; font-size: 0.88rem; color: #fff; font-weight: 800;">Agent / Broker</strong>
-          <span style="font-size: 0.75rem; color: #94a3b8;">agent@propertydirect.in</span>
+          <strong id="sidebarAgentName" style="display: block; font-size: 0.88rem; color: #fff; font-weight: 800;">Agent / Broker</strong>
+          <span id="sidebarAgentEmail" style="font-size: 0.75rem; color: #94a3b8;">agent@propertydirect.in</span>
         </div>
       </div>
     </aside>
@@ -325,7 +535,7 @@
         </div>
         <div style="display: flex; gap: 12px; align-items: center;">
           <span class="status-badge active" style="font-size: 0.8rem; padding: 6px 14px;">● Verified RERA Agent</span>
-          <button class="btn-primary" onclick="alert('Add New Property Listing Form Opened!')">+ Add New Listing</button>
+          <button class="btn-primary" onclick="showAgentToast('New Property Listing Wizard opened.')">+ Add New Listing</button>
         </div>
       </header>
 
@@ -334,27 +544,27 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="label">Assigned Listings</div>
-            <div class="val">14 Active</div>
+            <div class="val">14</div>
           </div>
           <div class="stat-card">
             <div class="label">Client Leads</div>
-            <div class="val">28 Enquiries</div>
+            <div class="val">38</div>
           </div>
           <div class="stat-card">
             <div class="label">Scheduled Tours</div>
-            <div class="val">6 Visits</div>
+            <div class="val">6</div>
           </div>
           <div class="stat-card">
             <div class="label">Total Commission Earned</div>
-            <div class="val" style="color: #16a34a;">₹1.85 Lakhs</div>
+            <div class="val" style="color: #16a34a;">₹4,85,000</div>
           </div>
         </div>
 
-        <!-- Recent Client Enquiries Card -->
+        <!-- Recent Client Enquiries Overview Card -->
         <div class="dash-card">
           <div class="card-head">
-            <h3> Active Property Enquiries & Leads</h3>
-            <button style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;" onclick="switchTab('leads')">View All Leads ›</button>
+            <h3>Recent Client Enquiries & Leads</h3>
+            <button class="btn-secondary" onclick="switchTab('leads')">View All Leads ›</button>
           </div>
           <table class="data-table">
             <thead>
@@ -374,7 +584,7 @@
                 <td><strong>Prestige Green Gables (3 BHK)</strong><br><small style="color: #64748b;">Kadubeesanahalli, Bengaluru</small></td>
                 <td>₹1.65 Cr - ₹1.80 Cr</td>
                 <td><span class="status-badge pending">Tour Scheduled</span></td>
-                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Contact Client Initiated!')"> Call Lead</button></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="callAgentLead('Rohan Sharma', '+91 98112 34567')">Call Lead</button></td>
               </tr>
               <tr>
                 <td><strong>#LD-9040</strong></td>
@@ -382,7 +592,7 @@
                 <td><strong>Sobha Dream Acres (2 BHK)</strong><br><small style="color: #64748b;">Balagere, Panathur Road</small></td>
                 <td>₹95 Lakhs - ₹1.10 Cr</td>
                 <td><span class="status-badge active">Negotiation</span></td>
-                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Contact Client Initiated!')"> Call Lead</button></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="callAgentLead('Priya Venkatesh', '+91 98450 12345')">Call Lead</button></td>
               </tr>
               <tr>
                 <td><strong>#LD-9039</strong></td>
@@ -390,7 +600,7 @@
                 <td><strong>Brigade Utopia (3 BHK Luxury)</strong><br><small style="color: #64748b;">Varthur Road, Bengaluru</small></td>
                 <td>₹1.90 Cr</td>
                 <td><span class="status-badge closed">Deal Closed</span></td>
-                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700;" onclick="alert('Commission Invoice Generated!')"> View Invoice</button></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="showAgentToast('Commission Invoice #INV-8821 generated.')">View Invoice</button></td>
               </tr>
             </tbody>
           </table>
@@ -401,8 +611,8 @@
       <section class="dash-panel hidden" data-view="listings">
         <div class="dash-card">
           <div class="card-head">
-            <h3> Managed Property Listings</h3>
-            <button class="btn-primary" onclick="alert('New Listing Wizard Opened!')">+ Create New Listing</button>
+            <h3>PR Managed Property Listings</h3>
+            <button class="btn-primary" onclick="showAgentToast('New Property Listing Form opened.')">+ Create New Listing</button>
           </div>
           <table class="data-table">
             <thead>
@@ -422,69 +632,100 @@
                 <td><strong>Prestige Green Gables</strong><br><small style="color: #64748b;">Kadubeesanahalli, Outer Ring Road</small></td>
                 <td>3 BHK Apartment</td>
                 <td>₹1.72 Cr</td>
-                <td><span style="color: #16a34a; font-weight: 700;"> PRM/KA/RERA/1251</span></td>
+                <td><span style="color: #16a34a; font-weight: 700;">PRM/KA/RERA/1251</span></td>
                 <td><span class="status-badge active">● Live on Portal</span></td>
-                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px;" onclick="alert('Edit Listing Details')">️ Edit</button></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer;" onclick="showAgentToast('Editing listing #PD-PROP-1082')">Edit</button></td>
               </tr>
               <tr>
                 <td><strong>PD-PROP-1081</strong></td>
                 <td><strong>Sobha Dream Acres</strong><br><small style="color: #64748b;">Balagere, Panathur Road</small></td>
                 <td>2 BHK Luxury</td>
                 <td>₹1.05 Cr</td>
-                <td><span style="color: #16a34a; font-weight: 700;"> PRM/KA/RERA/0922</span></td>
+                <td><span style="color: #16a34a; font-weight: 700;">PRM/KA/RERA/0922</span></td>
                 <td><span class="status-badge active">● Live on Portal</span></td>
-                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px;" onclick="alert('Edit Listing Details')">️ Edit</button></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer;" onclick="showAgentToast('Editing listing #PD-PROP-1081')">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>PD-PROP-1079</strong></td>
+                <td><strong>Godrej Ananda</strong><br><small style="color: #64748b;">Aerospace Park, Bagalur</small></td>
+                <td>2 BHK Smart Home</td>
+                <td>₹68 Lakhs</td>
+                <td><span style="color: #16a34a; font-weight: 700;">PRM/KA/RERA/3041</span></td>
+                <td><span class="status-badge pending">● Under Review</span></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer;" onclick="showAgentToast('Editing listing #PD-PROP-1079')">Edit</button></td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- Panel 3: Leads -->
+      <!-- Panel 3: Leads & Inquiries -->
       <section class="dash-panel hidden" data-view="leads">
         <div class="dash-card">
           <div class="card-head">
-            <h3> All Client Enquiries & Lead Pipeline</h3>
-            <input type="text" placeholder=" Search leads..." style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.84rem;">
+            <h3>LD Client Leads & Inquiries</h3>
+            <button class="btn-primary" onclick="showAgentToast('Manual Lead Registration Form opened.')">+ Record New Lead</button>
           </div>
           <table class="data-table">
             <thead>
               <tr>
-                <th>Lead ID</th>
-                <th>Client Name</th>
-                <th>Contact Phone</th>
-                <th>Preference</th>
+                <th>Lead Ref</th>
+                <th>Client Name & Contact</th>
+                <th>Interested Property</th>
+                <th>Budget Range</th>
                 <th>Assigned Date</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>LD-9041</strong></td>
-                <td>Rohan Sharma</td>
-                <td>+91 98112 34567</td>
-                <td>3 BHK Buy (Kadubeesanahalli)</td>
-                <td>Today, 10:30 AM</td>
+                <td><strong>#LD-9041</strong></td>
+                <td><strong>Rohan Sharma</strong><br><small style="color: #64748b;">+91 98112 34567 · rohan@gmail.com</small></td>
+                <td><strong>Prestige Green Gables (3 BHK)</strong><br><small style="color: #64748b;">Kadubeesanahalli, Bengaluru</small></td>
+                <td>₹1.65 Cr - ₹1.80 Cr</td>
+                <td>06 Sep 2026</td>
                 <td><span class="status-badge pending">Tour Scheduled</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="callAgentLead('Rohan Sharma', '+91 98112 34567')">Call Lead</button></td>
               </tr>
               <tr>
-                <td><strong>LD-9040</strong></td>
-                <td>Priya Venkatesh</td>
-                <td>+91 98450 12345</td>
-                <td>2 BHK Buy (Panathur Road)</td>
-                <td>Yesterday</td>
-                <td><span class="status-badge active">In Followup</span></td>
+                <td><strong>#LD-9040</strong></td>
+                <td><strong>Priya Venkatesh</strong><br><small style="color: #64748b;">+91 98450 12345 · priya@tech.io</small></td>
+                <td><strong>Sobha Dream Acres (2 BHK)</strong><br><small style="color: #64748b;">Balagere, Panathur Road</small></td>
+                <td>₹95 Lakhs - ₹1.10 Cr</td>
+                <td>05 Sep 2026</td>
+                <td><span class="status-badge active">Negotiation</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="callAgentLead('Priya Venkatesh', '+91 98450 12345')">Call Lead</button></td>
+              </tr>
+              <tr>
+                <td><strong>#LD-9039</strong></td>
+                <td><strong>Anil Kulkarni</strong><br><small style="color: #64748b;">+91 97312 88990 · anil.k@infra.com</small></td>
+                <td><strong>Brigade Utopia (3 BHK Luxury)</strong><br><small style="color: #64748b;">Varthur Road, Bengaluru</small></td>
+                <td>₹1.90 Cr</td>
+                <td>01 Sep 2026</td>
+                <td><span class="status-badge closed">Deal Closed</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="showAgentToast('Commission Invoice #INV-8821 generated.')">View Invoice</button></td>
+              </tr>
+              <tr>
+                <td><strong>#LD-9038</strong></td>
+                <td><strong>Kavita Nair</strong><br><small style="color: #64748b;">+91 96111 22334 · kavita.n@gmail.com</small></td>
+                <td><strong>Godrej Ananda (2 BHK)</strong><br><small style="color: #64748b;">Aerospace Park, Bagalur</small></td>
+                <td>₹65 Lakhs - ₹70 Lakhs</td>
+                <td>28 Aug 2026</td>
+                <td><span class="status-badge active">New Enquiry</span></td>
+                <td><button style="padding: 5px 12px; font-size: 0.78rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="callAgentLead('Kavita Nair', '+91 96111 22334')">Call Lead</button></td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- Panel 4: Tours -->
+      <!-- Panel 4: Tour Schedule -->
       <section class="dash-panel hidden" data-view="tours">
         <div class="dash-card">
           <div class="card-head">
-            <h3> Scheduled Property Site Tours</h3>
+            <h3>TR Scheduled Site Visit Tours</h3>
+            <button class="btn-primary" onclick="showAgentToast('TR New Site Tour Booking Dialog Opened!')">+ Schedule Site Tour</button>
           </div>
           <table class="data-table">
             <thead>
@@ -504,7 +745,15 @@
                 <td>Rohan Sharma (+91 98112 34567)</td>
                 <td><strong>Tomorrow, 11:00 AM</strong></td>
                 <td><span class="status-badge pending">Confirmed</span></td>
-                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px;" onclick="alert('Tour Completed!')"> Mark Done</button></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; cursor: pointer;" onclick="markAgentTourDone(this)">Mark Done</button></td>
+              </tr>
+              <tr>
+                <td><strong>TOUR-4020</strong></td>
+                <td>Sobha Dream Acres (2 BHK)</td>
+                <td>Priya Venkatesh (+91 98450 12345)</td>
+                <td><strong>08 Sep 2026, 03:30 PM</strong></td>
+                <td><span class="status-badge pending">Confirmed</span></td>
+                <td><button style="padding: 5px 10px; font-size: 0.78rem; background: #16a34a; color: #fff; border: none; border-radius: 6px; cursor: pointer;" onclick="markAgentTourDone(this)">Mark Done</button></td>
               </tr>
             </tbody>
           </table>
@@ -513,9 +762,28 @@
 
       <!-- Panel 5: Earnings -->
       <section class="dash-panel hidden" data-view="earnings">
+        <div class="stats-grid" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="label">Total Earned</div>
+            <div class="val" style="color: #16a34a;">₹4,85,000</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Pending Payouts</div>
+            <div class="val" style="color: #d97706;">₹95,000</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Closed Deals</div>
+            <div class="val">12</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Average Commission Rate</div>
+            <div class="val">1.25%</div>
+          </div>
+        </div>
+
         <div class="dash-card">
           <div class="card-head">
-            <h3> Brokerage Commission & Payout History</h3>
+            <h3>₹ Brokerage Commission & Payout History</h3>
           </div>
           <table class="data-table">
             <thead>
@@ -537,6 +805,14 @@
                 <td><strong>₹1,90,000</strong></td>
                 <td><span class="status-badge active">Paid to Bank</span></td>
               </tr>
+              <tr>
+                <td><strong>TXN-8790</strong></td>
+                <td>Salarpuria Sattva Magnificia</td>
+                <td>₹2.40 Cr</td>
+                <td>1.25%</td>
+                <td><strong>₹3,00,000</strong></td>
+                <td><span class="status-badge active">Paid to Bank</span></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -546,47 +822,134 @@
       <section class="dash-panel hidden" data-view="profile">
         <div class="dash-card">
           <div class="card-head">
-            <h3>️ Agent Profile & RERA License Details</h3>
-            <button class="btn-primary" onclick="alert('Agent Profile Saved!')">Save Changes</button>
+            <h3>PF Registered Agent Profile & RERA License Details</h3>
+            <button class="btn-primary" onclick="saveAgentProfile()">Save Changes</button>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+          <form id="agentProfileForm" onsubmit="event.preventDefault(); saveAgentProfile();" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
             <div>
-              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Agent Name</label>
-              <input type="text" value="PropertyDirect Partner Agent" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Agent / Broker Name</label>
+              <input type="text" id="agentNameInput" value="PropertyDirect Partner Agent" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
             </div>
             <div>
-              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">RERA License Number</label>
-              <input type="text" value="PRM/KA/RERA/1251/310/AG/2026" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">RERA Registration Number</label>
+              <input type="text" id="agentReraInput" value="PRM/KA/RERA/1251/310/AG/2026" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
             </div>
             <div>
               <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Official Email</label>
-              <input type="email" value="agent@propertydirect.in" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+              <input type="email" id="agentEmailInput" value="agent@propertydirect.in" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
             </div>
             <div>
-              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Contact Phone</label>
-              <input type="tel" value="+91 98765 00112" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #f8fafc;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Contact Phone Number</label>
+              <input type="tel" id="agentPhoneInput" value="+91 98765 00112" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
             </div>
-          </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Agency / Brokerage Firm</label>
+              <input type="text" value="Apex Real Estate Advisors" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">Primary Specialization Region</label>
+              <input type="text" value="East Bengaluru (Whitefield, Bellandur, Marathahalli)" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; background: #ffffff;">
+            </div>
+          </form>
         </div>
       </section>
-
     </main>
   </div>
 
+  <div id="agentToast" style="position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: none; z-index: 9999;"></div>
+
   <script>
+    function showAgentToast(msg) {
+      const toast = document.getElementById('agentToast');
+      if (toast) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+      }
+    }
+
+    function callAgentLead(name, phone) {
+      window.location.href = 'tel:' + phone.replace(/\s+/g, '');
+      showAgentToast('Dialing client ' + name + ' (' + phone + ')...');
+    }
+
+    function markAgentTourDone(btn) {
+      const row = btn.closest('tr');
+      if (row) {
+        const badge = row.querySelector('.status-badge');
+        if (badge) {
+          badge.textContent = 'Completed';
+          badge.className = 'status-badge closed';
+        }
+        btn.disabled = true;
+        btn.textContent = 'Done';
+        btn.style.background = '#64748b';
+      }
+      showAgentToast('Site tour marked as completed!');
+    }
+
+    function saveAgentProfile() {
+      const name = document.getElementById('agentNameInput')?.value || 'Agent / Broker';
+      const email = document.getElementById('agentEmailInput')?.value || 'agent@propertydirect.in';
+      
+      const badgeName = document.getElementById('sidebarAgentName');
+      const badgeEmail = document.getElementById('sidebarAgentEmail');
+      if (badgeName) badgeName.textContent = name;
+      if (badgeEmail) badgeEmail.textContent = email;
+
+      showAgentToast('Agent Profile saved successfully.');
+    }
+
     function switchTab(panelId) {
+      if (!panelId) return;
+
+      // 1. Hide all panels
       document.querySelectorAll('.dash-panel').forEach(panel => {
         panel.classList.add('hidden');
+        panel.style.display = 'none';
       });
-      document.querySelectorAll('.agent-nav button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      const activePanel = document.querySelector(`.dash-panel[data-view="${panelId}"]`);
-      if (activePanel) activePanel.classList.remove('hidden');
 
-      const activeBtn = document.querySelector(`.agent-nav button[data-panel="${panelId}"]`);
-      if (activeBtn) activeBtn.classList.add('active');
+      // 2. Remove active state from all navigation buttons
+      document.querySelectorAll('.agent-nav button, [data-panel]').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+
+      // 3. Show target panel
+      const activePanel = document.querySelector(`.dash-panel[data-view="${panelId}"]`);
+      if (activePanel) {
+        activePanel.classList.remove('hidden');
+        activePanel.style.display = 'flex';
+      }
+
+      // 4. Highlight target navigation button
+      const activeBtns = document.querySelectorAll(`[data-panel="${panelId}"]`);
+      activeBtns.forEach(btn => {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+      });
+
+      // 5. Sync location hash
+      if (window.location.hash !== '#' + panelId) {
+        history.replaceState(null, '', '#' + panelId);
+      }
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const initialTab = window.location.hash ? window.location.hash.slice(1) : 'overview';
+      switchTab(initialTab);
+    });
+
+    window.addEventListener('hashchange', () => {
+      const tab = window.location.hash ? window.location.hash.slice(1) : 'overview';
+      switchTab(tab);
+    });
   </script>
+  <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
 </body>
 </html>
+
+
+
+
+

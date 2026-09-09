@@ -559,3 +559,100 @@ body.dashboard-body .sidebar .sidebar-footer { flex:0 0 auto !important; }
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 .sidebar-home-mark svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Custom Form Floating Enhancements & Label Alignment Fix */
+.form-floating {
+    position: relative !important;
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-control,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-select {
+    min-height: 56px !important;
+    height: 56px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 0.4rem !important;
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.25 !important;
+    border-radius: 12px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.form-floating > textarea.form-control,
+body.dashboard-body .dashboard-container [data-view] .form-floating > textarea.form-control {
+    min-height: 110px !important;
+    height: auto !important;
+    padding-top: 1.6rem !important;
+}
+
+.form-floating > .form-control:focus,
+.form-floating > .form-select:focus,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-control:focus,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-select:focus {
+    border-color: #3b82f6 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+.form-floating > label,
+body.dashboard-body .dashboard-container [data-view] .form-floating > label {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0.85rem 0.85rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    border: 1px solid transparent !important;
+    transform-origin: 0 0 !important;
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out !important;
+    color: #64748b !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-control:focus ~ label,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+body.dashboard-body .dashboard-container [data-view] .form-floating > .form-select ~ label {
+    opacity: 0.85 !important;
+    transform: scale(0.78) translateY(-0.55rem) translateX(0.15rem) !important;
+    color: #2563eb !important;
+    font-weight: 700 !important;
+}
+
+/* Premium Stat Cards Format Overrides */
+body.dashboard-body .dashboard-container [data-view] .stats article.card,
+body.dashboard-body .dashboard-container [data-view] .stats .card {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+body.dashboard-body .dashboard-container [data-view] .stats article.card:hover,
+body.dashboard-body .dashboard-container [data-view] .stats .card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1), 0 3px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.dashboard-body .dashboard-container [data-view] .stats .stat-icon-wrapper {
+    width: 40px !important;
+    height: 40px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+}

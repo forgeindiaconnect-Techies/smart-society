@@ -41,6 +41,7 @@ public class SocietyApiController {
     private final BookingRepository bookings;
     private final BlockRepository blocks;
     private final AppUserRepository users;
+    private final SecurityGuardAssignmentRepository securityGuardAssignments;
     private final TenantRepository tenants;
     private final SubscriptionPlanRepository subscriptionPlans;
     private final PasswordEncoder passwordEncoder;
@@ -50,7 +51,7 @@ public class SocietyApiController {
                                 ComplaintRepository complaints, VisitorRepository visitors,
                                 AnnouncementRepository announcements, MaintenanceBillRepository bills,
                                 AmenityRepository amenities, BookingRepository bookings, BlockRepository blocks,
-                                AppUserRepository users, TenantRepository tenants,
+                                AppUserRepository users, SecurityGuardAssignmentRepository securityGuardAssignments, TenantRepository tenants,
                                 SubscriptionPlanRepository subscriptionPlans, PasswordEncoder passwordEncoder) {
         this.currentUser = currentUser;
         this.dashboards = dashboards;
@@ -64,6 +65,7 @@ public class SocietyApiController {
         this.bookings = bookings;
         this.blocks = blocks;
         this.users = users;
+        this.securityGuardAssignments = securityGuardAssignments;
         this.tenants = tenants;
         this.subscriptionPlans = subscriptionPlans;
         this.passwordEncoder = passwordEncoder;
@@ -216,6 +218,63 @@ public class SocietyApiController {
         return residents.findByTenantIdOrderByIdAsc(currentUser.requireTenantId()).stream().map(this::residentView).toList();
     }
 
+    @GetMapping("/security/resident-options")
+    @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SECURITY_STAFF')")
+    public List<Map<String, Object>> securityResidentOptions() {
+        AppUser user = currentUser.requireUser();
+        Set<String> allowedUnits = allowedSecurityUnits(user);
+        return residents.findByTenantIdOrderByIdAsc(user.getTenantId()).stream()
+                .filter(resident -> allowedUnits.isEmpty() || allowedUnits.contains(resident.getApartment().getUnitNo().toUpperCase(Locale.ROOT)))
+                .map(resident -> {
+                    Apartment apartment = resident.getApartment();
+                    return map("residentId", resident.getId(), "residentName", resident.getUser().getFullName(),
+                            "phone", clean(resident.getUser().getPhone()), "unitNo", apartment.getUnitNo(),
+                            "block", apartment.getBlock() == null ? "" : apartment.getBlock().getName(),
+                            "label", apartment.getUnitNo() + " · " + resident.getUser().getFullName());
+                }).toList();
+    }
+
+    @GetMapping("/security/assignments")
+    @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SECURITY_STAFF')")
+    public List<Map<String, Object>> securityAssignments() {
+        AppUser user = currentUser.requireUser();
+        return securityGuardAssignments.findByTenantIdOrderByCreatedAtDesc(user.getTenantId()).stream()
+                .filter(assignment -> user.getRole() == UserRole.SOCIETY_ADMIN || assignment.getSecurityGuard().getId().equals(user.getId()))
+                .map(this::securityAssignmentView).toList();
+    }
+
+    @GetMapping("/security/gates")
+    @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SECURITY_STAFF')")
+    public List<Map<String, Object>> securityGates() {
+        return List.of(
+                map("value", "Gate 1", "label", "Gate 1 · Main Entrance"),
+                map("value", "Gate 2", "label", "Gate 2 · Resident Entry"),
+                map("value", "Gate 3", "label", "Gate 3 · Visitor Entry"),
+                map("value", "Service Gate", "label", "Service Gate · Vendors & Deliveries"),
+                map("value", "Basement Gate", "label", "Basement Gate · Parking Access")
+        );
+    }
+
+    @PostMapping("/security/assignments")
+    @PreAuthorize("hasRole('SOCIETY_ADMIN')")
+    @Transactional
+    public Map<String, Object> createSecurityAssignment(@Valid @RequestBody SecurityAssignmentRequest request) {
+        String tenant = currentUser.requireTenantId();
+        AppUser guard = users.findById(request.securityGuardId())
+                .filter(user -> tenant.equals(user.getTenantId()) && user.getRole() == UserRole.SECURITY_STAFF)
+                .orElseThrow(() -> new IllegalArgumentException("Security guard was not found"));
+        String type = request.assignmentType().trim().toUpperCase(Locale.ROOT);
+        if (!Set.of("FLAT", "BLOCK", "COMMON_AREA").contains(type)) throw new IllegalArgumentException("Assignment type must be FLAT, BLOCK, or COMMON_AREA");
+        SecurityGuardAssignment assignment = new SecurityGuardAssignment();
+        assignment.setTenantId(tenant);
+        assignment.setSecurityGuard(guard);
+        assignment.setAssignmentType(type);
+        assignment.setAssignmentValue(request.assignmentValue().trim());
+        assignment.setShiftName(clean(request.shiftName()));
+        assignment.setNotes(clean(request.notes()));
+        return securityAssignmentView(securityGuardAssignments.save(assignment));
+    }
+
     @GetMapping("/complaints")
     public List<Map<String, Object>> complaints() {
         AppUser user = currentUser.requireUser();
@@ -295,9 +354,12 @@ public class SocietyApiController {
     @GetMapping("/visitors")
     public List<Map<String, Object>> visitors() {
         AppUser user = currentUser.requireUser();
+        Set<String> allowedUnits = allowedSecurityUnits(user);
         return visitors.findByTenantIdOrderByExpectedAtDesc(user.getTenantId()).stream()
                 .filter(item -> user.getRole() != UserRole.RESIDENT ||
                         (item.getResident() != null && item.getResident().getUser().getId().equals(user.getId())))
+                .filter(item -> user.getRole() != UserRole.SECURITY_STAFF || allowedUnits.isEmpty()
+                        || allowedUnits.contains(item.getResident().getApartment().getUnitNo().toUpperCase(Locale.ROOT)))
                 .map(this::visitorView).toList();
     }
 
@@ -307,7 +369,9 @@ public class SocietyApiController {
         AppUser user = currentUser.requireUser();
         Visitor visitor = new Visitor();
         visitor.setTenantId(user.getTenantId());
-        visitor.setResident(residentFor(user, request.residentId(), request.unitNo()));
+        Resident destinationResident = residentFor(user, request.residentId(), request.unitNo());
+        ensureSecurityCanAccess(user, destinationResident);
+        visitor.setResident(destinationResident);
         visitor.setVisitorName(request.name().trim());
         visitor.setVisitorPhone(request.phone().trim());
         visitor.setVisitorEmail(clean(request.email()));
@@ -315,6 +379,7 @@ public class SocietyApiController {
         visitor.setVehicleNumber(clean(request.vehicleNumber()));
         visitor.setPhotoReference(clean(request.photoReference()));
         visitor.setEntryType(clean(request.entryType()).isBlank() ? "GUEST" : request.entryType().toUpperCase(Locale.ROOT));
+        visitor.setGateNumber(clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim());
         visitor.setIdProofType(clean(request.idProofType()));
         visitor.setIdProofNumber(clean(request.idProofNumber()));
         visitor.setPersonsCount(request.personsCount() == null ? 1 : request.personsCount());
@@ -338,6 +403,7 @@ public class SocietyApiController {
                                                            @RequestParam String phone,
                                                            @RequestParam String unitNo,
                                                            @RequestParam String purpose,
+                                                           @RequestParam(required = false) String gateNumber,
                                                            @RequestParam(required = false) String vehicleNumber) {
         AppUser user = currentUser.requireUser();
         String cleanName = clean(name).trim();
@@ -350,17 +416,20 @@ public class SocietyApiController {
         if (!cleanPhone.matches("\\d{7,15}")) {
             throw new IllegalArgumentException("Phone number must contain 7 to 15 digits only");
         }
-        if (!cleanUnit.matches("\\d+")) {
-            throw new IllegalArgumentException("Target flat must contain numbers only");
+        if (!cleanUnit.matches("[A-Za-z0-9\\-\\s]{1,30}")) {
+            throw new IllegalArgumentException("Choose a valid target flat");
         }
         Visitor visitor = new Visitor();
         visitor.setTenantId(user.getTenantId());
-        visitor.setResident(residentFor(user, null, cleanUnit));
+        Resident destinationResident = residentFor(user, null, cleanUnit);
+        ensureSecurityCanAccess(user, destinationResident);
+        visitor.setResident(destinationResident);
         visitor.setVisitorName(cleanName);
         visitor.setVisitorPhone(cleanPhone);
         visitor.setPurpose(cleanPurpose);
         visitor.setVehicleNumber(clean(vehicleNumber));
         visitor.setEntryType("WALK_IN");
+        visitor.setGateNumber(clean(gateNumber).isBlank() ? "Gate 1" : clean(gateNumber).trim());
         visitor.setExpectedAt(LocalDateTime.now());
         visitor.setApprovalStatus("APPROVED");
         visitor.setQrCode(UUID.randomUUID().toString());
@@ -375,6 +444,7 @@ public class SocietyApiController {
     public Map<String, Object> visitorAction(@PathVariable Long id, @PathVariable String action) {
         Visitor visitor = visitors.findByIdAndTenantId(id, currentUser.requireTenantId())
                 .orElseThrow(() -> new IllegalArgumentException("Visitor was not found"));
+        ensureSecurityCanAccess(currentUser.requireUser(), visitor.getResident());
         if ("checkin".equalsIgnoreCase(action)) {
             if (visitor.getCheckInAt() != null) throw new IllegalArgumentException("Visitor is already checked in");
             visitor.setCheckInAt(LocalDateTime.now());
@@ -403,6 +473,8 @@ public class SocietyApiController {
         List<Visitor> tenantVisitors = visitors.findByTenantIdOrderByExpectedAtDesc(currentUser.requireTenantId());
         Visitor visitor = tenantVisitors.stream()
                 .filter(item -> clean(item.getVisitorName()).equalsIgnoreCase(clean(visitorName).trim()))
+                .filter(item -> allowedSecurityUnits(currentUser.requireUser()).isEmpty()
+                        || allowedSecurityUnits(currentUser.requireUser()).contains(item.getResident().getApartment().getUnitNo().toUpperCase(Locale.ROOT)))
                 .filter(item -> "checkout".equals(requestedAction) ? item.getCheckInAt() != null && item.getCheckOutAt() == null : item.getCheckInAt() == null)
                 .findFirst()
                 .orElseGet(() -> createGateFallbackVisitor(clean(visitorName).trim(), requestedAction));
@@ -426,6 +498,7 @@ public class SocietyApiController {
                 .orElseThrow(() -> new IllegalArgumentException("Visitor pass was not found"));
         if (!"EXPECTED".equals(visitor.getStatus())) throw new IllegalArgumentException("This visitor pass is no longer valid for entry");
         if (visitor.getExpectedAt().isBefore(LocalDateTime.now().minusHours(24))) throw new IllegalArgumentException("This visitor pass has expired");
+        visitor.setGateNumber(clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim());
         visitor.setCheckInAt(LocalDateTime.now());
         visitor.setStatus("CHECKED_IN");
         return visitorView(visitors.save(visitor));
@@ -619,7 +692,16 @@ public class SocietyApiController {
     private Resident residentFor(AppUser user, Long requestedId, String unitNo) {
         if (user.getRole() == UserRole.RESIDENT) {
             return residents.findFirstByUserOrderByIdAsc(user)
-                    .orElseThrow(() -> new IllegalArgumentException("Resident profile is not configured"));
+                    .orElseGet(() -> {
+                        Apartment apartment = apartments.findByTenantId(user.getTenantId()).stream().findFirst()
+                                .orElseThrow(() -> new IllegalArgumentException("Add an apartment before creating visitor requests"));
+                        Resident resident = new Resident();
+                        resident.setTenantId(user.getTenantId());
+                        resident.setUser(user);
+                        resident.setApartment(apartment);
+                        resident.setResidentType("RESIDENT");
+                        return residents.save(resident);
+                    });
         }
         if (requestedId == null && clean(unitNo).isBlank()) throw new IllegalArgumentException("Resident is required");
         if (requestedId == null) return residents.findByTenantIdOrderByIdAsc(user.getTenantId()).stream()
@@ -635,7 +717,7 @@ public class SocietyApiController {
     }
 
     private Map<String, Object> apartmentView(Apartment a) {
-        return map("id", a.getId(), "unitNo", a.getUnitNo(), "block", a.getBlock() == null ? "" : a.getBlock().getName(),
+        return map("id", a.getId(), "apartmentCode", a.getApartmentCode(), "unitNo", a.getUnitNo(), "block", a.getBlock() == null ? "" : a.getBlock().getName(),
                 "floor", a.getFloorNo(), "type", a.getUnitType(), "occupancy", a.getOccupancyStatus(),
                 "ownerName", clean(a.getOwnerName()), "ownerPhone", clean(a.getOwnerPhone()), "ownerEmail", clean(a.getOwnerEmail()),
                 "builtUpAreaSqFt", a.getBuiltUpAreaSqFt(), "parkingSlot", clean(a.getParkingSlot()),
@@ -649,6 +731,45 @@ public class SocietyApiController {
     }
 
     private Map<String,Object> teamUserView(AppUser u){return map("id",u.getId(),"name",u.getFullName(),"email",u.getEmail(),"phone",clean(u.getPhone()),"role",u.getRole().name(),"designation",clean(u.getDesignation()),"employeeId",clean(u.getEmployeeId()),"joiningDate",u.getJoiningDate(),"workShift",clean(u.getWorkShift()),"accountLocked",u.isAccountLocked());}
+
+    private Map<String, Object> securityAssignmentView(SecurityGuardAssignment assignment) {
+        AppUser guard = assignment.getSecurityGuard();
+        return map("id", assignment.getId(), "securityGuardId", guard.getId(), "securityGuardName", guard.getFullName(),
+                "securityGuardEmail", guard.getEmail(), "assignmentType", assignment.getAssignmentType(),
+                "assignmentValue", assignment.getAssignmentValue(), "shiftName", clean(assignment.getShiftName()),
+                "notes", clean(assignment.getNotes()), "createdAt", assignment.getCreatedAt());
+    }
+
+    private Set<String> allowedSecurityUnits(AppUser user) {
+        if (user.getRole() != UserRole.SECURITY_STAFF) return Set.of();
+        List<SecurityGuardAssignment> assignments = securityGuardAssignments.findByTenantIdAndSecurityGuardIdOrderByCreatedAtDesc(user.getTenantId(), user.getId());
+        if (assignments.isEmpty()) return Set.of();
+        Set<String> units = new LinkedHashSet<>();
+        List<Resident> tenantResidents = residents.findByTenantIdOrderByIdAsc(user.getTenantId());
+        for (SecurityGuardAssignment assignment : assignments) {
+            String type = clean(assignment.getAssignmentType()).toUpperCase(Locale.ROOT);
+            String value = clean(assignment.getAssignmentValue()).trim();
+            if (value.isBlank()) continue;
+            if ("FLAT".equals(type)) {
+                units.add(value.toUpperCase(Locale.ROOT));
+            } else if ("BLOCK".equals(type)) {
+                tenantResidents.stream()
+                        .filter(resident -> resident.getApartment().getBlock() != null)
+                        .filter(resident -> value.equalsIgnoreCase(resident.getApartment().getBlock().getName()))
+                        .map(resident -> resident.getApartment().getUnitNo().toUpperCase(Locale.ROOT))
+                        .forEach(units::add);
+            }
+        }
+        return units;
+    }
+
+    private void ensureSecurityCanAccess(AppUser user, Resident resident) {
+        if (user.getRole() != UserRole.SECURITY_STAFF || resident == null || resident.getApartment() == null) return;
+        Set<String> allowedUnits = allowedSecurityUnits(user);
+        if (!allowedUnits.isEmpty() && !allowedUnits.contains(resident.getApartment().getUnitNo().toUpperCase(Locale.ROOT))) {
+            throw new IllegalArgumentException("This security guard is not assigned to the selected flat");
+        }
+    }
 
     private Map<String, Object> complaintView(Complaint c) {
         return map("id", c.getId(), "title", c.getTitle(), "category", c.getCategory(), "priority", c.getPriority(),
@@ -667,6 +788,7 @@ public class SocietyApiController {
                 "expectedAt", v.getExpectedAt(), "checkInAt", v.getCheckInAt(), "checkOutAt", v.getCheckOutAt(),
                 "approvalStatus", v.getApprovalStatus(), "status", v.getStatus(), "qrCode", v.getQrCode(),
                 "vehicleNumber", clean(v.getVehicleNumber()), "photoReference", clean(v.getPhotoReference()),
+                "gateNumber", clean(v.getGateNumber()).isBlank() ? "Gate 1" : clean(v.getGateNumber()),
                 "entryType", clean(v.getEntryType()), "idProofType", clean(v.getIdProofType()), "idProofNumber", clean(v.getIdProofNumber()),
                 "personsCount", v.getPersonsCount(), "specialInstructions", clean(v.getSpecialInstructions()));
     }
@@ -722,6 +844,7 @@ public class SocietyApiController {
         visitor.setVisitorPhone("Not recorded");
         visitor.setPurpose("Gate entry");
         visitor.setEntryType("WALK_IN");
+        visitor.setGateNumber("Gate 1");
         visitor.setExpectedAt(LocalDateTime.now());
         visitor.setApprovalStatus("APPROVED");
         visitor.setQrCode(UUID.randomUUID().toString());
@@ -767,8 +890,8 @@ public class SocietyApiController {
     public record VisitorRequest(@NotBlank String name,@NotBlank String phone,@Email String email,@NotBlank String purpose,
                                  @NotNull @FutureOrPresent LocalDateTime expectedAt,Long residentId,String unitNo,
                                  String vehicleNumber,String photoReference,String entryType,String idProofType,String idProofNumber,
-                                 @Positive Integer personsCount,String specialInstructions) {}
-    public record VisitorScanRequest(@NotBlank String qrCode) {}
+                                 @Positive Integer personsCount,String specialInstructions,String gateNumber) {}
+    public record VisitorScanRequest(@NotBlank String qrCode,String gateNumber) {}
     public record AnnouncementRequest(@NotBlank @Size(max=120) String title, @NotBlank @Size(max=3000) String message,
                                       @NotBlank String audience, boolean emergency,String category,
                                       LocalDateTime effectiveFrom,LocalDateTime validUntil,boolean actionRequired,
@@ -801,5 +924,7 @@ public class SocietyApiController {
                                   @NotBlank String designation,String employeeId,LocalDate joiningDate,String workShift,
                                   String address,String emergencyContactName,String emergencyContactPhone,String notes,
                                   @NotBlank @Size(min=8,max=72) String temporaryPassword){}
+    public record SecurityAssignmentRequest(@NotNull Long securityGuardId,@NotBlank String assignmentType,
+                                            @NotBlank String assignmentValue,String shiftName,String notes){}
     public record AmenityRequest(@NotBlank String name,@Positive int capacity,@NotNull @PositiveOrZero BigDecimal bookingFee,boolean approvalRequired){}
 }

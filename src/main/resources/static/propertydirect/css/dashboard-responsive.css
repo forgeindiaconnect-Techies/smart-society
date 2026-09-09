@@ -1,0 +1,1433 @@
+/*
+ * PropertyDirect dashboard consistency layer
+ * Loaded after role-specific styles so every workspace shares the same
+ * readable alignment, responsive grids and form controls.
+ */
+
+html body.app-dashboard[data-platform="propertydirect"],
+html body[data-dashboard-role="vendor"] {
+  --pd-responsive-gap: clamp(16px, 2vw, 28px);
+  --pd-control-height: 44px;
+  --pd-control-border: #d8e1f0;
+  --pd-control-focus: #4361ee;
+  --pd-surface: #ffffff;
+  --pd-canvas: #f6f8fc;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-main, .dash-panel, .dashboard-content, .main-content),
+html body[data-dashboard-role="vendor"] :is(.vendor-main, .vendor-content) {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Keep the application surface above decorative legacy layers. A hidden
+   dialog must never capture the pointer, while all real controls remain
+   tappable in both full and compact-sidebar layouts. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-sidebar, .dash-main, .dash-header, .dash-panel),
+html body[data-dashboard-role="vendor"] :is(.vendor-sidebar, .vendor-main, .vendor-top) {
+  pointer-events: auto;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main,
+html body[data-dashboard-role="vendor"] .vendor-main {
+  position: relative;
+  z-index: 1;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-header,
+html body[data-dashboard-role="vendor"] .vendor-top {
+  position: relative;
+  z-index: 2;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar,
+html body[data-dashboard-role="vendor"] .vendor-sidebar {
+  z-index: 20;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.modal.hidden, #dashboardModal.hidden),
+html body[data-dashboard-role="vendor"] :is(.modal.hidden, #dashboardModal.hidden) {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(button, [role="button"], a[href]),
+html body[data-dashboard-role="vendor"] :is(button, [role="button"], a[href]) {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-panel, .dashboard-content),
+html body[data-dashboard-role="vendor"] :is(.vendor-main, .vendor-content) {
+  background: var(--pd-canvas);
+}
+
+/* Titles, controls and status actions retain a reliable baseline at every width. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header, .page-header, .section-heading),
+html body[data-dashboard-role="vendor"] :is(.vendor-top, .page-header, .section-heading) {
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.header-actions, .page-actions, .section-actions),
+html body[data-dashboard-role="vendor"] :is(.header-actions, .vendor-actions, .page-actions) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.card-head, .section-header, .panel-heading),
+html body[data-dashboard-role="vendor"] :is(.card-head, .section-header, .panel-heading) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.card-head, .section-header, .panel-heading) > *,
+html body[data-dashboard-role="vendor"] :is(.card-head, .section-header, .panel-heading) > * {
+  min-width: 0;
+}
+
+/* Compact metric and information grids that can contract instead of overflowing. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats-grid, .metric-grid),
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .stats-grid, .metric-grid) {
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card),
+html body[data-dashboard-role="vendor"] :is(.vendor-card, .dash-card, .metric-card, .stats-card) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Forms: predictable two-column rhythm, full-width controls, readable focus and error space. */
+html body.app-dashboard[data-platform="propertydirect"] form,
+html body[data-dashboard-role="vendor"] form {
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.form-grid, .dashboard-form-grid, .field-grid, .form-row),
+html body[data-dashboard-role="vendor"] :is(.form-grid, .dashboard-form-grid, .field-grid, .form-row) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.form-group, .field, .input-group),
+html body[data-dashboard-role="vendor"] :is(.form-group, .field, .input-group) {
+  min-width: 0;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.form-group, .field) > label,
+html body[data-dashboard-role="vendor"] :is(.form-group, .field) > label {
+  display: block;
+  margin-bottom: 7px;
+  color: #293854;
+  font-size: .82rem;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: .015em;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+html body[data-dashboard-role="vendor"] :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: var(--pd-control-height);
+  padding: 10px 12px;
+  border: 1px solid var(--pd-control-border);
+  border-radius: 10px;
+  background: var(--pd-surface);
+  color: #17233d;
+  font: inherit;
+  line-height: 1.35;
+  box-shadow: none;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] textarea,
+html body[data-dashboard-role="vendor"] textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(input, select, textarea):focus,
+html body[data-dashboard-role="vendor"] :is(input, select, textarea):focus {
+  outline: none;
+  border-color: var(--pd-control-focus);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, .14);
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.form-help, .field-help, .help-text, .error-message, .field-error),
+html body[data-dashboard-role="vendor"] :is(.form-help, .field-help, .help-text, .error-message, .field-error) {
+  display: block;
+  margin-top: 6px;
+  font-size: .78rem;
+  line-height: 1.35;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.form-actions, .modal-actions, .form-footer),
+html body[data-dashboard-role="vendor"] :is(.form-actions, .modal-actions, .form-footer) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* Tables stay legible on narrow screens: their parent scrolls, never the dashboard itself. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dashboard-table-scroll, .table-wrap, .table-responsive),
+html body[data-dashboard-role="vendor"] :is(.dashboard-table-scroll, .table-wrap, .table-responsive) {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dashboard-table-scroll, .table-wrap, .table-responsive) > table,
+html body[data-dashboard-role="vendor"] :is(.dashboard-table-scroll, .table-wrap, .table-responsive) > table {
+  min-width: 680px;
+}
+
+/* Scope to the directory itself: legacy markup can place panels outside main. */
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtTable button,
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtTable button *,
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtCityFilter ~ button {
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  height: 38px !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtTable td:last-child > div {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
+  gap: 8px !important;
+}
+
+/* Agent metrics share a compact baseline and never show empty icon blocks. */
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel[data-view="agent-mgmt"] .dash-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel[data-view="agent-mgmt"] .dash-grid > article {
+  max-width: none !important;
+  padding: 16px !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-view="agent-mgmt"] .stat-icon-badge:empty {
+  display: none !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-view="agent-mgmt"] .stat-card-top > span {
+  font-weight: 800 !important;
+  color: #334155 !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-view="agent-mgmt"] .stat-trend {
+  margin: 4px 0 0 !important;
+  font-size: .76rem !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+@media (max-width: 1100px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel[data-view="agent-mgmt"] .dash-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 480px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel[data-view="agent-mgmt"] .dash-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* All directory actions must retain their intrinsic label width. */
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel table button,
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel .pd-btn-reset {
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  writing-mode: horizontal-tb !important;
+  flex-shrink: 0 !important;
+  min-width: 92px !important;
+  width: auto !important;
+  max-width: none !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main #agentMgmtTable {
+  width: 100% !important;
+  min-width: 1120px !important;
+  table-layout: auto !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main #agentMgmtTable :is(th, td):last-child {
+  min-width: 320px !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main #agentMgmtTable td:last-child > div {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  width: max-content !important;
+  justify-content: flex-start !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main #agentMgmtTable button {
+  width: auto !important;
+  height: 38px !important;
+  padding: 0 12px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] div:has(> #agentMgmtStatusFilter) {
+  flex-wrap: wrap !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] div:has(> #userMgmtRoleFilter),
+html body.app-dashboard[data-platform="propertydirect"] div:has(> #agentMgmtStatusFilter) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtStatusFilter,
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtCityFilter {
+  width: auto !important;
+  min-width: 140px !important;
+  flex: 1 1 140px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtRoleFilter,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter {
+  width: auto !important;
+  min-width: 150px !important;
+  flex: 0 0 150px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter + .pd-btn-reset,
+html body.app-dashboard[data-platform="propertydirect"] #agentMgmtCityFilter + .pd-btn-reset {
+  flex: 0 0 104px !important;
+  min-width: 104px !important;
+  width: 104px !important;
+  height: 38px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  writing-mode: horizontal-tb !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+}
+
+@media (max-width: 520px) {
+  html body.app-dashboard[data-platform="propertydirect"] div:has(> #userMgmtRoleFilter),
+  html body.app-dashboard[data-platform="propertydirect"] div:has(> #agentMgmtStatusFilter) {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] #userMgmtRoleFilter,
+  html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter,
+  html body.app-dashboard[data-platform="propertydirect"] #agentMgmtStatusFilter,
+  html body.app-dashboard[data-platform="propertydirect"] #agentMgmtCityFilter {
+    min-width: 150px !important;
+    width: 150px !important;
+    flex: 0 0 150px !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter + .pd-btn-reset,
+  html body.app-dashboard[data-platform="propertydirect"] #agentMgmtCityFilter + .pd-btn-reset {
+    align-self: center !important;
+    height: 38px !important;
+    min-width: 104px !important;
+    width: 104px !important;
+    flex: 0 0 104px !important;
+    writing-mode: horizontal-tb !important;
+    white-space: nowrap !important;
+  }
+}
+
+html body.app-dashboard[data-platform="propertydirect"] div:has(> #agentMgmtSearchInput) {
+  min-width: 0 !important;
+  flex-basis: 240px !important;
+}
+
+/* User management has four controls in its final column. Keep that column intact
+   at desktop widths too; the surrounding table container owns the overflow. */
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable {
+  width: 1120px !important;
+  min-width: 1120px !important;
+  table-layout: auto !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable th:last-child,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child {
+  min-width: 340px;
+  white-space: nowrap;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable th:nth-child(3),
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable .user-phone {
+  min-width: 142px;
+  white-space: nowrap !important;
+  word-break: keep-all;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child div,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child button,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter + .pd-btn-reset {
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+}
+
+/* User-directory actions have fixed tracks so "Block" and "Unblock" do not
+   shift the rest of the row. Every control begins on the same vertical line. */
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable th:last-child,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child {
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child > div {
+  display: grid !important;
+  grid-template-columns: 92px 66px 76px 84px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 342px !important;
+  min-width: 342px !important;
+  justify-content: start !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child > div > button {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding-inline: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* Keep the directory as a data table, not a collection of mini cards. */
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll:has(#userMgmtTable) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable {
+  border-collapse: collapse !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable :is(th, td) {
+  background: transparent !important;
+  border-inline: 0 !important;
+  border-radius: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable tbody tr {
+  background: transparent !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable .user-role,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable .user-status {
+  display: inline !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable .user-role::before,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable .user-status::before {
+  content: "•";
+  margin-right: 6px;
+  color: currentColor;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtRoleFilter,
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter {
+  min-width: 154px;
+}
+
+/* Owner management uses three descriptive actions. Never let a phone-sized
+   viewport compress those labels into one-character columns; the table scrolls
+   horizontally instead. */
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable {
+  width: 1120px !important;
+  min-width: 1120px !important;
+  table-layout: auto !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable th:last-child,
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable td:last-child {
+  min-width: 324px !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable td:last-child > div {
+  display: grid !important;
+  grid-template-columns: 142px 82px 76px !important;
+  align-items: center !important;
+  justify-content: start !important;
+  gap: 8px !important;
+  width: 316px !important;
+  min-width: 316px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable td:last-child button {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding-inline: 8px !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtCityFilter,
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtKycFilter {
+  min-width: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtCityFilter + button {
+  flex: 0 0 auto !important;
+  min-width: 88px !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1100px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats-grid, .metric-grid),
+  html body[data-dashboard-role="vendor"] :is(.vendor-grid, .stats-grid, .metric-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-main, .dash-panel, .dashboard-content, .main-content),
+  html body[data-dashboard-role="vendor"] :is(.vendor-main, .vendor-content) {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header, .page-header, .section-heading),
+  html body[data-dashboard-role="vendor"] :is(.vendor-top, .page-header, .section-heading) {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.header-actions, .page-actions, .section-actions),
+  html body[data-dashboard-role="vendor"] :is(.header-actions, .vendor-actions, .page-actions) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats-grid, .metric-grid),
+  html body[data-dashboard-role="vendor"] :is(.vendor-grid, .stats-grid, .metric-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.form-grid, .dashboard-form-grid, .field-grid, .form-row),
+  html body[data-dashboard-role="vendor"] :is(.form-grid, .dashboard-form-grid, .field-grid, .form-row) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.form-actions, .modal-actions, .form-footer),
+  html body[data-dashboard-role="vendor"] :is(.form-actions, .modal-actions, .form-footer) {
+    justify-content: stretch;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.form-actions, .modal-actions, .form-footer) > button,
+  html body[data-dashboard-role="vendor"] :is(.form-actions, .modal-actions, .form-footer) > button {
+    flex: 1 1 140px;
+  }
+
+  /* Super Admin user directory: preserve readable columns and scroll the table. */
+  html body.app-dashboard[data-platform="propertydirect"] #userMgmtSearchInput {
+    min-width: 0;
+  }
+
+  /* Keep the owner filters usable in one row without allowing Reset to be
+     squeezed into vertical letters. */
+  html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtKycFilter,
+  html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtCityFilter {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-main, .dash-panel, .dashboard-content, .main-content),
+  html body[data-dashboard-role="vendor"] :is(.vendor-main, .vendor-content) {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card),
+  html body[data-dashboard-role="vendor"] :is(.vendor-card, .dash-card, .metric-card, .stats-card) {
+    padding: 16px !important;
+  }
+}
+
+/* Final hard guard: dashboard Reset controls must remain horizontal pills.
+   If the viewport is too narrow, the filter row scrolls instead of crushing text. */
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel :is(.pd-btn-reset, button[onclick*="filter"][onclick*="value=''"], button[onclick*="reset"][onclick*="Filters"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 38px !important;
+  min-width: 104px !important;
+  width: 104px !important;
+  max-width: 104px !important;
+  flex: 0 0 104px !important;
+  padding: 0 10px !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  writing-mode: horizontal-tb !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel div:has(> select):has(> :is(.pd-btn-reset, button[onclick*="filter"][onclick*="value=''"], button[onclick*="reset"][onclick*="Filters"])) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel div:has(> select):has(> :is(.pd-btn-reset, button[onclick*="filter"][onclick*="value=''"], button[onclick*="reset"][onclick*="Filters"])) > select {
+  flex: 0 0 150px !important;
+  min-width: 150px !important;
+  width: 150px !important;
+  max-width: none !important;
+}
+
+/* PropertyDirect dashboards: attach the top header directly flush to the fixed sidebar and top edge.
+   Both .dash-brand and .dash-header are locked to 80px height with 0 top margin so their bottom border lines align seamlessly on the exact same horizontal axis. */
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main {
+  margin-left: 275px !important;
+  width: calc(100% - 275px) !important;
+  max-width: calc(100% - 275px) !important;
+  padding: 0 24px 36px 0 !important;
+  margin-top: 0 !important;
+  background: #f6f8fc !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-brand {
+  height: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+  padding: 0 20px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.15) !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+  margin: 0 0 24px 0 !important;
+  padding: 0 28px !important;
+  top: 0 !important;
+  position: sticky !important;
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel {
+  margin-left: 24px !important;
+  width: calc(100% - 24px) !important;
+  max-width: calc(100% - 24px) !important;
+}
+
+/* Vendor Dashboard Attached Header & Sidebar */
+html body[data-dashboard-role="vendor"] main.vendor-main {
+  margin-left: 260px !important;
+  width: calc(100% - 260px) !important;
+  max-width: calc(100% - 260px) !important;
+  padding: 0 32px 36px 0 !important;
+  background: #f8fafc !important;
+}
+
+html body[data-dashboard-role="vendor"] main.vendor-main > header.vendor-top {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 24px 0 !important;
+  padding: 18px 32px !important;
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 0 14px 0 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+}
+
+html body[data-dashboard-role="vendor"] main.vendor-main > .vendor-panel {
+  margin-left: 32px !important;
+  width: calc(100% - 32px) !important;
+  max-width: calc(100% - 32px) !important;
+}
+
+/* Agent Dashboard Attached Header & Sidebar */
+html body[data-dashboard-role="agent"] main.agent-main {
+  margin-left: 260px !important;
+  width: calc(100% - 260px) !important;
+  max-width: calc(100% - 260px) !important;
+  padding: 0 32px 36px 0 !important;
+  background: #f8fafc !important;
+}
+
+html body[data-dashboard-role="agent"] main.agent-main > header.agent-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 24px 0 !important;
+  padding: 18px 32px !important;
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 0 14px 0 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+}
+
+html body[data-dashboard-role="agent"] main.agent-main > .dash-panel {
+  margin-left: 32px !important;
+  width: calc(100% - 32px) !important;
+  max-width: calc(100% - 32px) !important;
+}
+
+/* Global PropertyDirect button health: no vertical text, no invisible overlay,
+   no squeezed controls. Buttons stay clickable and align in readable rows. */
+html body[data-platform="propertydirect"] :is(button, a.button, .primary, [role="button"]) {
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  writing-mode: horizontal-tb !important;
+  text-align: center !important;
+  cursor: pointer;
+}
+
+html body[data-platform="propertydirect"] :is(.header-actions, .page-actions, .form-actions, .modal-actions, .card-head, td:last-child > div) {
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+html body[data-platform="propertydirect"] :is(.header-actions, .page-actions, .form-actions, .modal-actions) > button,
+html body[data-platform="propertydirect"] :is(.header-actions, .page-actions, .form-actions, .modal-actions) > .primary {
+  flex: 0 0 auto !important;
+}
+
+html body[data-platform="propertydirect"] .dashboard-table-scroll {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html body[data-platform="propertydirect"] .dashboard-table-scroll td button {
+  min-width: max-content !important;
+  width: auto !important;
+  max-width: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.15 !important;
+  min-height: 38px !important;
+  padding: 9px 16px !important;
+}
+
+html body[data-platform="propertydirect"] :is(
+  .dashboard-table-scroll td:last-child,
+  .dashboard-table-scroll th:last-child,
+  td[class*="action"],
+  th[class*="action"]
+) {
+  min-width: 320px !important;
+}
+
+html body[data-platform="propertydirect"] :is(
+  .dashboard-table-scroll td:last-child > div,
+  .dashboard-table-scroll td:last-child .action-buttons,
+  .dashboard-table-scroll td:last-child .controls,
+  .dashboard-table-scroll td:last-child .table-actions
+) {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+html body[data-platform="propertydirect"] :is(.pd-form-step-btn, #postApartmentForm button) {
+  min-height: 44px !important;
+  min-width: 164px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is([data-profile-action], .property-profile-actions button, .profile-cancel) {
+  min-height: 42px !important;
+  min-width: 118px !important;
+  padding: 9px 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+/* Admin reports dashboard: balanced cards with clear label/value separation. */
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel > .dash-card {
+  padding: 28px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel .card-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+  margin-bottom: 22px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel .card-head h3 {
+  margin: 0 0 6px !important;
+  line-height: 1.15 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel .card-head p {
+  margin: 0 !important;
+  max-width: 780px !important;
+  line-height: 1.55 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-download {
+  min-width: 174px !important;
+  min-height: 48px !important;
+  flex: 0 0 auto !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-section {
+  margin-top: 26px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-section:first-of-type {
+  margin-top: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-section h4 {
+  margin: 0 0 16px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  color: #3154f4 !important;
+  font-size: 1.05rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 16px !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid-five {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid article {
+  min-height: 132px !important;
+  padding: 22px 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: 14px !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid-five article {
+  min-height: 96px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid article span {
+  display: block !important;
+  margin: 0 !important;
+  color: #586b86 !important;
+  font-size: 0.86rem !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid article strong {
+  display: block !important;
+  margin: 0 !important;
+  color: #020b20 !important;
+  font-size: clamp(1.55rem, 2.1vw, 2rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.04em !important;
+  max-width: 100% !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid article small {
+  display: block !important;
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 0.86rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid .pd-positive-card {
+  background: #f0fdf4 !important;
+  border-color: #86efac !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid .pd-positive-card span,
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid .pd-positive-card strong {
+  color: #15803d !important;
+}
+
+/* Whole PropertyDirect dashboard alignment pass. This keeps metric cards,
+   table cards and action cards consistent across all roles. */
+html body.app-dashboard[data-platform="propertydirect"] .dash-main {
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, .dashboard-card) {
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats, .metrics-grid, .dashboard-grid) {
+  align-items: stretch !important;
+  grid-auto-rows: 1fr !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats, .metrics-grid, .dashboard-grid) > article,
+html body.app-dashboard[data-platform="propertydirect"] :is(.metric-card, .stats-card) {
+  min-height: 112px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 20px 22px !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats, .metrics-grid, .dashboard-grid) > article span,
+html body.app-dashboard[data-platform="propertydirect"] :is(.metric-card, .stats-card) span {
+  display: block !important;
+  margin: 0 !important;
+  color: #586b86 !important;
+  font-size: 0.86rem !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats, .metrics-grid, .dashboard-grid) > article strong,
+html body.app-dashboard[data-platform="propertydirect"] :is(.metric-card, .stats-card) strong {
+  display: block !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  color: #020b20 !important;
+  font-size: clamp(1.35rem, 2vw, 1.95rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.035em !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats, .metrics-grid, .dashboard-grid) > article small,
+html body.app-dashboard[data-platform="propertydirect"] :is(.metric-card, .stats-card) small {
+  display: block !important;
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .stat-icon-badge:empty {
+  display: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel :is(button, .primary, .secondary, .danger, a.button) {
+  min-width: max-content !important;
+  width: auto !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel :is(.toolbar, .filters, .filter-row, .table-actions, .action-buttons),
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel div:has(> input):has(> select),
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel div:has(> select):has(> button) {
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scrollbar-width: thin !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel table td:last-child {
+  min-width: 260px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+  flex-wrap: wrap !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head > div {
+  min-width: 240px !important;
+  flex: 1 1 420px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .card-head > :is(button, .primary, a.button) {
+  flex: 0 0 auto !important;
+  min-height: 42px !important;
+  align-self: flex-start !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .form-grid {
+  align-items: start !important;
+  gap: 18px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .form-grid label {
+  min-width: 0 !important;
+}
+
+/* Super Admin: User Management top summary cards.
+   Keeps the four cards equal, removes the boxed/cropped trend labels,
+   and aligns the title, icon, count and helper line cleanly. */
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(220px, 1fr)) !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+  margin-bottom: 36px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child > article {
+  min-height: 132px !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 18px 20px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-card-top {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-card-top > span {
+  display: block !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  color: #475569 !important;
+  font-size: 0.9rem !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-icon-badge {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  flex: 0 0 36px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child > article > strong {
+  display: block !important;
+  margin: 0 !important;
+  color: #020b20 !important;
+  font-size: 1.72rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-trend,
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-trend.up,
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child .stat-trend.neutral {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: auto !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #586b86 !important;
+  font-size: 0.83rem !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child > article:nth-child(3) .stat-trend {
+  color: #b45309 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #pdDashboardActionModal,
+html body[data-platform="propertydirect"] #pdDashboardActionModal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+  background: rgba(15, 23, 42, 0.58) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] #pdDashboardActionModal.hidden,
+html body[data-platform="propertydirect"] #pdDashboardActionModal.hidden {
+  display: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-card,
+html body[data-platform="propertydirect"] .pd-dashboard-action-card {
+  position: relative !important;
+  width: min(720px, 94vw) !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 28px !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.32) !important;
+  box-sizing: border-box !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-card .close,
+html body[data-platform="propertydirect"] .pd-dashboard-action-card .close {
+  position: absolute !important;
+  top: 18px !important;
+  right: 18px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.2rem !important;
+  cursor: pointer !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-card h3,
+html body[data-platform="propertydirect"] .pd-dashboard-action-card h3 {
+  margin: 0 48px 6px 0 !important;
+  color: #0f172a !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-subtitle,
+html body[data-platform="propertydirect"] .pd-dashboard-action-subtitle {
+  margin: 0 48px 22px 0 !important;
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  line-height: 1.45 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-fields,
+html body[data-platform="propertydirect"] .pd-dashboard-action-fields {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-fields label:has(textarea),
+html body[data-platform="propertydirect"] .pd-dashboard-action-fields label:has(textarea) {
+  grid-column: 1 / -1 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-fields label span,
+html body[data-platform="propertydirect"] .pd-dashboard-action-fields label span {
+  display: block !important;
+  margin-bottom: 7px !important;
+  color: #334155 !important;
+  font-size: 0.84rem !important;
+  font-weight: 850 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-card .modal-actions,
+html body[data-platform="propertydirect"] .pd-dashboard-action-card .modal-actions {
+  margin-top: 22px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+@media (max-width: 1180px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child {
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="user-mgmt"] > .dash-grid:first-child {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] .pd-dashboard-action-fields,
+  html body[data-platform="propertydirect"] .pd-dashboard-action-fields {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 900px) {
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 14px 28px 0 !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-header {
+    padding: 14px 18px !important;
+    border-radius: 0 0 14px 0 !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel {
+    margin-left: 14px !important;
+    width: calc(100% - 14px) !important;
+    max-width: calc(100% - 14px) !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel .card-head {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-download {
+    width: 100% !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid,
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid-five {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-reports-panel > .dash-card {
+    padding: 18px !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid,
+  html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .pd-report-grid-five {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   SIDEBAR & BRAND LOGO HEADER PERFECT ALIGNMENT & CLOSE BUTTON OVERLAP FIX
+   ========================================================================== */
+
+/* 1. Sidebar Brand Container Layout */
+html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand,
+html body.app-dashboard[data-platform="propertydirect"] .dash-brand {
+  height: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+  padding: 0 20px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  margin: 0 !important;
+  position: relative !important;
+  text-decoration: none !important;
+}
+
+/* 2. Sidebar Home Icon Mark */
+html body.app-dashboard[data-platform="propertydirect"] .dash-brand .sidebar-home-mark {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  background: rgba(59, 130, 246, 0.16) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-brand .sidebar-home-mark svg {
+  width: 22px !important;
+  height: 22px !important;
+  fill: #3b82f6 !important;
+}
+
+/* 3. Sidebar Brand Text Header */
+html body.app-dashboard[data-platform="propertydirect"] .dash-brand h4 {
+  margin: 0 !important;
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 4. Desktop Screens (> 900px): Hide the mobile close [x] button so it never overlaps text */
+@media (min-width: 901px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close,
+  html body.app-dashboard .dash-sidebar > .dashboard-sidebar-close,
+  body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* 5. Mobile Screens (<= 900px): Position close button safely with padding clearance */
+@media (max-width: 900px) {
+  html body.app-dashboard[data-platform="propertydirect"] .dash-brand {
+    padding-right: 56px !important;
+  }
+  html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar > .dashboard-sidebar-close,
+  html body.app-dashboard .dash-sidebar > .dashboard-sidebar-close {
+    position: absolute !important;
+    top: 22px !important;
+    right: 14px !important;
+    z-index: 99 !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+}
+
+/* 6. Sidebar Navigation Link Buttons */
+html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button {
+  padding: 11px 16px !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 2px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}

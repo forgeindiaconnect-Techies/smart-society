@@ -18,6 +18,8 @@ import com.smartapartment.service.AuthService;
 import com.smartapartment.security.JwtService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -47,8 +49,9 @@ public class AuthController {
     private final TenantRepository tenantRepository;
     private final ResidentRepository residentRepository;
     private final ApartmentRepository apartmentRepository;
+    private final com.smartapartment.service.MailService mailService;
 
-    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository) {
+    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository, com.smartapartment.service.MailService mailService) {
         this.authService = authService;
         this.dashboardCredentials = DashboardCredential.load(environment);
         this.propertyDirectCustomers = propertyDirectCustomers;
@@ -58,6 +61,7 @@ public class AuthController {
         this.tenantRepository = tenantRepository;
         this.residentRepository = residentRepository;
         this.apartmentRepository = apartmentRepository;
+        this.mailService = mailService;
     }
 
     @PostMapping("/register-tenant")
@@ -74,6 +78,10 @@ public class AuthController {
         String email = safe(request.email()).toLowerCase(Locale.ROOT);
         if (email.endsWith("@smartsociety")) {
             email = email.replace("@smartsociety", "@smartapartment");
+        }
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            return ResponseEntity.status(409).body(Map.of("message", "User already exists. Contact your admin."));
         }
 
         String password = safe(request.password());
@@ -184,8 +192,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerPropertyDirect(@Valid @RequestBody PropertyDirectRegisterRequest request) {
         String email = safe(request.email()).toLowerCase();
-        if (propertyDirectCustomers.findByEmailIgnoreCase(email).isPresent()) {
-            return ResponseEntity.status(409).body(Map.of("message", "An account with this email already exists"));
+        if (propertyDirectCustomers.existsByUsernameIgnoreCaseOrEmailIgnoreCase(email, email)) {
+            return ResponseEntity.status(409).body(Map.of("message", "User already exists. Contact your admin."));
         }
         PropertyCustomer user = new PropertyCustomer();
         user.setTenantId("propertydirect");
@@ -300,18 +308,29 @@ public class AuthController {
 
         session.setAttribute("dashboard:" + credential.platform() + ":" + credential.role(), Boolean.TRUE);
         if ("propertydirect".equalsIgnoreCase(credential.platform())
-                && ("admin".equalsIgnoreCase(credential.role()) || "vendor".equalsIgnoreCase(credential.role()) || "agent".equalsIgnoreCase(credential.role()))) {
+                && ("admin".equalsIgnoreCase(credential.role())
+                    || "vendor".equalsIgnoreCase(credential.role())
+                    || "agent".equalsIgnoreCase(credential.role())
+                    || "customer".equalsIgnoreCase(credential.role()))) {
             String username = safe(credential.username()).toLowerCase();
             final DashboardCredential activeCred = credential;
             PropertyCustomer owner = propertyDirectCustomers.findByUsernameIgnoreCase(username).orElseGet(() -> {
                 PropertyCustomer customer = new PropertyCustomer();
                 customer.setTenantId("propertydirect");
-                customer.setName("agent".equalsIgnoreCase(activeCred.role()) ? "Verified RERA Agent" : "vendor".equalsIgnoreCase(activeCred.role()) ? "Verified Property Vendor" : "Property Owner Admin");
+                customer.setName("agent".equalsIgnoreCase(activeCred.role()) ? "Verified RERA Agent"
+                        : "vendor".equalsIgnoreCase(activeCred.role()) ? "Verified Property Vendor"
+                        : "customer".equalsIgnoreCase(activeCred.role()) ? "PropertyDirect Customer"
+                        : "Property Owner Admin");
                 customer.setPhone("Not provided");
                 customer.setEmail(username.contains("@") ? username : username + "@propertydirect.local");
                 customer.setUsername(username);
                 customer.setPasswordHash(passwordEncoder.encode(activeCred.password()));
-                customer.setRole("agent".equalsIgnoreCase(activeCred.role()) ? "AGENT" : "vendor".equalsIgnoreCase(activeCred.role()) ? "VENDOR" : "ADMIN");
+                customer.setRole("agent".equalsIgnoreCase(activeCred.role()) ? "AGENT"
+                        : "vendor".equalsIgnoreCase(activeCred.role()) ? "VENDOR"
+                        : "customer".equalsIgnoreCase(activeCred.role()) ? "CUSTOMER"
+                        : "ADMIN");
+                customer.setActive(true);
+                customer.setStatus("ACTIVE");
                 return propertyDirectCustomers.save(customer);
             });
             session.setAttribute("propertydirect:customerId", owner.getId());
@@ -339,12 +358,15 @@ public class AuthController {
         String password = safe(request.password());
 
         if (propertyDirectCustomers.existsByUsernameIgnoreCaseOrEmailIgnoreCase(username, email)) {
-            return ResponseEntity.status(409).body(Map.of("message", "This username or email already exists"));
+            return ResponseEntity.status(409).body(Map.of("message", "User already exists. Contact your admin."));
         }
 
         PropertyCustomer customer = new PropertyCustomer();
         customer.setTenantId("propertydirect"); customer.setName(name); customer.setPhone(phone);
         customer.setEmail(email); customer.setUsername(username); customer.setPasswordHash(passwordEncoder.encode(password));
+        customer.setRole("CUSTOMER");
+        customer.setActive(true);
+        customer.setStatus("ACTIVE");
         propertyDirectCustomers.save(customer);
         session.setAttribute("dashboard:propertydirect:customer", Boolean.TRUE);
         session.setAttribute("propertydirect:customerId", customer.getId());
@@ -501,5 +523,140 @@ public class AuthController {
             }
             return new DefaultCredential("", "");
         }
+    }
+
+    // --- FORGOT PASSWORD & RESET PASSWORD SYSTEM ---
+    private static final Map<String, ResetTokenInfo> resetTokens = new ConcurrentHashMap<>();
+
+    public record ResetTokenInfo(String email, String otp, LocalDateTime expiryTime, String userType) {}
+
+    public record ForgotPasswordRequest(String email, String platform) {}
+    public record VerifyResetOtpRequest(String email, String otp) {}
+    public record ResetPasswordRequest(String email, String otp, String newPassword) {}
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> handleForgotPassword(@RequestBody ForgotPasswordRequest request) {
+        if (request == null || safe(request.email()).isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Please enter your registered email address"));
+        }
+
+        String normalizedEmail = safe(request.email()).toLowerCase(Locale.ROOT).trim();
+        if (!normalizedEmail.contains("@") || !normalizedEmail.contains(".")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Please enter a valid email address"));
+        }
+
+        boolean foundInAppUser = userRepository.existsByEmailIgnoreCase(normalizedEmail);
+        boolean foundInCustomer = propertyDirectCustomers.findByEmailIgnoreCase(normalizedEmail).isPresent();
+
+        // Generate 6-digit OTP
+        String otp = String.format(Locale.ROOT, "%06d", new java.util.Random().nextInt(900000) + 100000);
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(15);
+        String userType = foundInCustomer ? "CUSTOMER" : (foundInAppUser ? "APP_USER" : "NEW_CUSTOMER");
+
+        resetTokens.put(normalizedEmail, new ResetTokenInfo(normalizedEmail, otp, expiry, userType));
+
+        // Dispatch real-time OTP email via MailService
+        Map<String, Object> mailResult = mailService.sendPasswordResetOtp(normalizedEmail, otp);
+        boolean sentRealMail = Boolean.TRUE.equals(mailResult.get("sent"));
+
+        if (sentRealMail) {
+            return ResponseEntity.ok(Map.of(
+                "message", "Verification code (OTP) sent to " + normalizedEmail + ". Please check your email inbox.",
+                "email", normalizedEmail,
+                "emailSent", true
+            ));
+        } else {
+            return ResponseEntity.ok(Map.of(
+                "message", "Verification code (OTP) generated for " + normalizedEmail + ". (Valid for 15 minutes)",
+                "email", normalizedEmail,
+                "otpPreview", otp,
+                "emailSent", false
+            ));
+        }
+    }
+
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<?> verifyResetOtp(@RequestBody VerifyResetOtpRequest request) {
+        if (request == null || safe(request.email()).isBlank() || safe(request.otp()).isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and OTP code are required"));
+        }
+
+        String normalizedEmail = safe(request.email()).toLowerCase(Locale.ROOT).trim();
+        String otp = safe(request.otp()).trim();
+
+        ResetTokenInfo tokenInfo = resetTokens.get(normalizedEmail);
+        if (tokenInfo == null || !tokenInfo.otp().equals(otp)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid verification OTP code. Please check and try again."));
+        }
+
+        if (LocalDateTime.now().isAfter(tokenInfo.expiryTime())) {
+            resetTokens.remove(normalizedEmail);
+            return ResponseEntity.badRequest().body(Map.of("message", "Verification OTP has expired. Please request a new code."));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "OTP verified successfully. Please enter your new password.", "valid", true));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        if (request == null || safe(request.email()).isBlank() || safe(request.newPassword()).isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email, OTP, and new password are required"));
+        }
+
+        if (safe(request.newPassword()).length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("message", "New password must be at least 6 characters long"));
+        }
+
+        String normalizedEmail = safe(request.email()).toLowerCase(Locale.ROOT).trim();
+        String otp = safe(request.otp()).trim();
+        String newPassword = safe(request.newPassword());
+
+        ResetTokenInfo tokenInfo = resetTokens.get(normalizedEmail);
+        if (tokenInfo == null || !tokenInfo.otp().equals(otp)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid verification OTP code or session expired."));
+        }
+
+        if (LocalDateTime.now().isAfter(tokenInfo.expiryTime())) {
+            resetTokens.remove(normalizedEmail);
+            return ResponseEntity.badRequest().body(Map.of("message", "Verification OTP has expired. Please request a new code."));
+        }
+
+        // Encode and update in database
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        boolean accountUpdated = false;
+
+        // Update PropertyCustomer if exists
+        var customerOpt = propertyDirectCustomers.findByEmailIgnoreCase(normalizedEmail);
+        if (customerOpt.isPresent()) {
+            PropertyCustomer customer = customerOpt.get();
+            customer.setPasswordHash(encodedPassword);
+            propertyDirectCustomers.save(customer);
+            accountUpdated = true;
+        }
+
+        // Update AppUser if exists
+        var userOpt = userRepository.findByEmail(normalizedEmail);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            user.setPasswordHash(encodedPassword);
+            userRepository.save(user);
+            accountUpdated = true;
+        }
+
+        // If no existing account was found, create a new PropertyCustomer account so user can log in immediately
+        if (!accountUpdated) {
+            PropertyCustomer newCustomer = new PropertyCustomer();
+            String defaultName = normalizedEmail.contains("@") ? normalizedEmail.substring(0, normalizedEmail.indexOf("@")) : normalizedEmail;
+            newCustomer.setName(defaultName);
+            newCustomer.setEmail(normalizedEmail);
+            newCustomer.setUsername(normalizedEmail);
+            newCustomer.setPasswordHash(encodedPassword);
+            propertyDirectCustomers.save(newCustomer);
+        }
+
+        // Invalidate token
+        resetTokens.remove(normalizedEmail);
+
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully! You can now sign in with your new password."));
     }
 }
