@@ -64,5 +64,5 @@ document.addEventListener('click', function (event) {
 
 
 
-// PropertyDirect keeps its header fixed at the top. The original Homeverse
+// PropertyDirect keeps its header fixed at the top. The original Homiee
 // scroll animation moved the header upward, which made it appear to jump.
