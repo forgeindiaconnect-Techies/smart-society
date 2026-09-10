@@ -1323,7 +1323,7 @@
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260903-header-baseline-v11">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
     <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="admin">
@@ -2121,7 +2121,7 @@
                         <button type="button" onclick="filterClientMessages('buyer')" class="btn-table-action" style="background: #ffffff; color: #334155 !important; border: 1px solid #cbd5e1; font-weight: 700; padding: 6px 14px; border-radius: 999px;">Buyer Inquiries</button>
                         <button type="button" onclick="filterClientMessages('tenant')" class="btn-table-action" style="background: #ffffff; color: #334155 !important; border: 1px solid #cbd5e1; font-weight: 700; padding: 6px 14px; border-radius: 999px;">Tenant Requests</button>
                     </div>
-                    <input type="text" id="clientMessageSearch" onkeyup="searchClientMessages()" placeholder="🔍 Search client or property..." style="padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; width: 280px; background: #ffffff;">
+                    <input type="text" id="clientMessageSearch" onkeyup="searchClientMessages()" placeholder="Search client or property..." style="padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; width: 280px; background: #ffffff;">
                 </div>
 
                 <!-- Messages Table -->
@@ -2327,7 +2327,7 @@
             <!-- 1. Property Reports Section -->
             <div class="pd-report-section" style="margin-bottom: 32px;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #2563eb;">
-                    <span style="font-size: 1.1rem;">🏢</span>
+                    <span style="font-size: 0.82rem; font-weight: 900;">PD</span>
                     <h4 style="margin: 0; color: #1e3a8a; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;">Property Analytics Reports</h4>
                 </div>
                 <div class="dash-grid three pd-report-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
@@ -2803,7 +2803,7 @@
     <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
     <script src="/propertydirect/js/dashboard.js?v=20260907-interactions-live-v2"></script>
     <script src="/propertydirect/js/market-workflows.js?v=20260907-button-wiring-v1"></script>
-    <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
+    <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
             const metrics = document.querySelectorAll('[data-summary-key]');

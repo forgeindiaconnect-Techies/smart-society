@@ -33,7 +33,8 @@ const panelTitles = {
     shortlist: "Shortlisted Apartments",
     contacts: "Owner Contacts",
     rentpay: "Rent Pay",
-    "saved-searches": "Saved Searches and Alerts"
+    "saved-searches": "Saved Searches and Alerts",
+    "service-requests": "Service & Maintenance Requests"
 };
 
 const toast = document.getElementById("toast");
@@ -50,7 +51,7 @@ let modalFields = document.getElementById("modalFields");
 let modalSave = document.getElementById("modalSave");
 let activeModalTarget = null;
 const rolePanelRoutes = {
-    superadmin: ["admins", "subscriptions", "payments", "masterdata", "integrations", "compliance"],
+    superadmin: ["admins", "subscriptions", "payments", "masterdata", "integrations", "compliance", "service-requests"],
     admin: ["moderation", "kyc", "support", "abuse"],
     customer: ["search", "shortlist", "visits", "listings"]
 };
@@ -145,7 +146,7 @@ function setPropertyProfileEditing(editing) {
 
 function savePropertyProfile() {
     const form = document.getElementById("propertyProfileForm"); if (!form || !form.reportValidity()) return;
-    const saved = { ...readPropertyProfile(), ...Object.fromEntries(new FormData(form).entries()) }; localStorage.setItem(propertyProfileStorageKey, JSON.stringify(saved)); ensureRoleProfileSection(); showToast("✓ Profile changes saved");
+    const saved = { ...readPropertyProfile(), ...Object.fromEntries(new FormData(form).entries()) }; localStorage.setItem(propertyProfileStorageKey, JSON.stringify(saved)); ensureRoleProfileSection(); showToast("Profile changes saved");
 }
 
 function readPublishedListings() {
@@ -1528,9 +1529,9 @@ function writeOwnerPlan(planName) {
 }
 
 function planButton(planName, activePlan) {
-    if (planName === activePlan) return '<button data-action="current-plan" data-plan-name="' + planName + '">Current</button>';
-    if (planName === "Assisted") return '<button data-action="upgrade" data-plan-name="Assisted">Upgrade</button>';
-    return '<button data-action="select-plan" data-plan-name="' + planName + '">Select</button>';
+    if (planName === activePlan) return '<button type="button" class="btn btn-success rounded-pill w-100 fw-bold py-2 mt-auto d-flex align-items-center justify-content-center gap-2 shadow-sm" data-action="current-plan" data-plan-name="' + planName + '" style="background: #10b981; border: none;"><i class="fa-solid fa-circle-check"></i> Current Plan</button>';
+    if (planName === "Assisted") return '<button type="button" class="btn btn-primary rounded-pill w-100 fw-bold py-2 mt-auto" data-action="upgrade" data-plan-name="Assisted">Upgrade Plan</button>';
+    return '<button type="button" class="btn btn-outline-primary rounded-pill w-100 fw-bold py-2 mt-auto" data-action="select-plan" data-plan-name="' + planName + '">Select Plan</button>';
 }
 
 function ownerPlanModuleMarkup() {
@@ -2588,7 +2589,7 @@ function setupPropertyDirectSidebar(){
     if(!sidebar||!header||sidebar.dataset.parityReady)return;
     sidebar.dataset.parityReady="true";
     const close=document.createElement("button");close.type="button";close.className="pd-sidebar-close";close.setAttribute("aria-label","Close sidebar");close.textContent="×";sidebar.insertBefore(close,sidebar.firstElementChild);
-    const menu=document.createElement("button");menu.type="button";menu.className="pd-sidebar-menu";menu.setAttribute("aria-label","Open sidebar");menu.setAttribute("title","Open sidebar");menu.textContent="☰ Menu";document.body.appendChild(menu);
+    const menu=document.createElement("button");menu.type="button";menu.className="pd-sidebar-menu";menu.setAttribute("aria-label","Open sidebar");menu.setAttribute("title","Open sidebar");menu.textContent="Menu";document.body.appendChild(menu);
     const closeSidebar=()=>{if(innerWidth<=900)document.body.classList.remove("sidebar-open");else document.body.classList.add("sidebar-collapsed")};
     const openSidebar=()=>{document.body.classList.remove("sidebar-collapsed");document.body.classList.add("sidebar-open")};
     close.addEventListener("click",closeSidebar);menu.addEventListener("click",openSidebar);
@@ -2680,12 +2681,12 @@ function syncAdminTours() {
                 <td><strong style="color:#0f172a; display:block;">${v.apartment || 'Apartment Visit'}</strong><small style="color:#64748b;">${v.createdAt || 'Recent'}</small></td>
                 <td><strong style="color:#0f3460; font-size:0.9rem;">${v.visitorName || v.name || 'Rahul Sharma'}</strong></td>
                 <td>
-                    <div style="font-weight:700; color:#1e293b;">📞 ${v.visitorPhone || v.phone || '+91 98765 43210'}</div>
-                    <div style="font-size:0.78rem; color:#64748b;">✉️ ${v.visitorEmail || v.email || 'visitor@example.com'}</div>
+                    <div style="font-weight:700; color:#1e293b;">Phone: ${v.visitorPhone || v.phone || '+91 98765 43210'}</div>
+                    <div style="font-size:0.78rem; color:#64748b;">Email: ${v.visitorEmail || v.email || 'visitor@example.com'}</div>
                 </td>
                 <td>
                     <span style="display:inline-block; padding:2px 8px; border-radius:6px; background:#f1f5f9; font-weight:700; font-size:0.78rem; color:#0f3460;">${v.visitMode || 'In-person'}</span>
-                    <div style="font-weight:600; font-size:0.82rem; margin-top:3px; color:#1e293b;">🗓️ ${v.date || 'Scheduled'}</div>
+                    <div style="font-weight:600; font-size:0.82rem; margin-top:3px; color:#1e293b;">Date: ${v.date || 'Scheduled'}</div>
                 </td>
                 <td style="max-width:180px; font-size:0.8rem; color:#475569;">${v.instructions || v.notes || 'No special requests'}</td>
                 <td><span class="pd-tour-badge ${String(v.status || 'REQUESTED').toLowerCase()}">${v.status || 'REQUESTED'}</span></td>

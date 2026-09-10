@@ -18,6 +18,21 @@ const dashboardLoginHelp = document.getElementById("dashboardLoginHelp");
 const dashboardUsername = document.getElementById("dashboardUsername");
 const dashboardPassword = document.getElementById("dashboardPassword");
 const toggleDashboardPassword = document.getElementById("toggleDashboardPassword");
+const smartForgotPasswordTrigger = document.getElementById("smartForgotPasswordTrigger");
+const smartForgotPasswordForm = document.getElementById("smartForgotPasswordForm");
+const smartForgotStepEmail = document.getElementById("smartForgotStepEmail");
+const smartForgotStepOtp = document.getElementById("smartForgotStepOtp");
+const smartForgotStepPassword = document.getElementById("smartForgotStepPassword");
+const smartForgotEmail = document.getElementById("smartForgotEmail");
+const smartResetOtp = document.getElementById("smartResetOtp");
+const smartResetNewPassword = document.getElementById("smartResetNewPassword");
+const smartResetConfirmPassword = document.getElementById("smartResetConfirmPassword");
+const smartForgotPasswordState = document.getElementById("smartForgotPasswordState");
+const smartSendOtpBtn = document.getElementById("smartSendOtpBtn");
+const smartVerifyOtpBtn = document.getElementById("smartVerifyOtpBtn");
+const smartResetPasswordBtn = document.getElementById("smartResetPasswordBtn");
+const smartBackToLoginBtn = document.getElementById("smartBackToLoginBtn");
+const toggleSmartResetPassword = document.getElementById("toggleSmartResetPassword");
 const roleExperience = document.getElementById("roleExperience");
 const roleSearchButton = document.getElementById("roleSearchButton");
 const roleFilters = document.getElementById("roleFilters");
@@ -109,6 +124,7 @@ const roleSearchPanels = {
 let activeRole = "Admin";
 let pendingDashboardLogin = null;
 let dashboardLoginSubmitting = false;
+let smartForgotOtpVerified = false;
 
 const roleAuth = {
     Admin: "admin",
@@ -242,6 +258,7 @@ function openRoleSearch() {
 
 function openDashboardLogin({ platform, role, target }) {
     pendingDashboardLogin = { platform, role, target };
+    setSmartForgotMode(false);
     const [title, help] = role
         ? dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."]
         : ["Login", "Enter your credentials to open your workspace."];
@@ -258,6 +275,146 @@ function openDashboardLogin({ platform, role, target }) {
     }
     dashboardLoginModal?.classList.remove("hidden");
     window.setTimeout(() => dashboardUsername?.focus(), 80);
+}
+
+function setSmartForgotMode(enabled) {
+    smartForgotOtpVerified = false;
+    smartForgotPasswordForm?.classList.toggle("hidden", !enabled);
+    submitDashboardLogin?.classList.toggle("hidden", enabled);
+    smartForgotPasswordTrigger?.classList.toggle("hidden", enabled);
+    if (dashboardUsername) dashboardUsername.disabled = enabled;
+    if (dashboardPassword) dashboardPassword.disabled = enabled;
+    if (toggleDashboardPassword) toggleDashboardPassword.disabled = enabled;
+    if (smartForgotStepEmail) smartForgotStepEmail.classList.remove("hidden");
+    if (smartForgotStepOtp) smartForgotStepOtp.classList.add("hidden");
+    if (smartForgotStepPassword) smartForgotStepPassword.classList.add("hidden");
+    if (smartForgotPasswordState) smartForgotPasswordState.textContent = "";
+    if (enabled) {
+        if (smartForgotEmail && dashboardUsername?.value) smartForgotEmail.value = dashboardUsername.value;
+        if (dashboardLoginTitle) dashboardLoginTitle.textContent = "Reset Password";
+        if (dashboardLoginHelp) dashboardLoginHelp.textContent = "Enter your registered SmartSociety email. We will send an OTP to your mailbox.";
+        window.setTimeout(() => smartForgotEmail?.focus(), 80);
+    } else {
+        const role = pendingDashboardLogin?.role;
+        const [title, help] = role
+            ? dashboardLoginHints[role] || ["Dashboard Login", "Sign in to open this dashboard."]
+            : ["Login", "Enter your credentials to open your workspace."];
+        if (dashboardLoginTitle) dashboardLoginTitle.textContent = title;
+        if (dashboardLoginHelp) dashboardLoginHelp.textContent = help;
+        smartForgotPasswordForm?.reset?.();
+    }
+}
+
+function setSmartForgotState(message, isError = false) {
+    if (!smartForgotPasswordState) return;
+    smartForgotPasswordState.textContent = message;
+    smartForgotPasswordState.style.color = isError ? "#dc2626" : "#047857";
+}
+
+async function requestSmartForgotOtp() {
+    const email = smartForgotEmail?.value.trim() || "";
+    if (!email) {
+        setSmartForgotState("Please enter your registered email address.", true);
+        return;
+    }
+    smartSendOtpBtn.disabled = true;
+    smartSendOtpBtn.textContent = "Sending OTP...";
+    try {
+        const response = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ email, platform: "smartsociety" })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            setSmartForgotState(data.message || "Unable to send OTP. Please check the email address.", true);
+            return;
+        }
+        setSmartForgotState(data.message || "OTP sent to your email address.");
+        if (data.otpPreview && smartResetOtp) smartResetOtp.value = data.otpPreview;
+        smartForgotStepOtp?.classList.remove("hidden");
+        window.setTimeout(() => smartResetOtp?.focus(), 80);
+    } catch (error) {
+        setSmartForgotState("Network error. Please try again.", true);
+    } finally {
+        smartSendOtpBtn.disabled = false;
+        smartSendOtpBtn.textContent = "Send OTP to Email";
+    }
+}
+
+async function verifySmartForgotOtp() {
+    const email = smartForgotEmail?.value.trim() || "";
+    const otp = smartResetOtp?.value.trim() || "";
+    if (otp.length !== 6) {
+        setSmartForgotState("Please enter the 6-digit OTP sent to your email.", true);
+        return;
+    }
+    smartVerifyOtpBtn.disabled = true;
+    smartVerifyOtpBtn.textContent = "Verifying...";
+    try {
+        const response = await fetch("/api/auth/verify-reset-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ email, otp })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            setSmartForgotState(data.message || "Invalid or expired OTP.", true);
+            return;
+        }
+        smartForgotOtpVerified = true;
+        setSmartForgotState("OTP verified. Now create your new password.");
+        smartForgotStepPassword?.classList.remove("hidden");
+        window.setTimeout(() => smartResetNewPassword?.focus(), 80);
+    } catch (error) {
+        setSmartForgotState("Network error. Please try again.", true);
+    } finally {
+        smartVerifyOtpBtn.disabled = false;
+        smartVerifyOtpBtn.textContent = "Verify OTP";
+    }
+}
+
+async function saveSmartForgotPassword(event) {
+    event.preventDefault();
+    const email = smartForgotEmail?.value.trim() || "";
+    const otp = smartResetOtp?.value.trim() || "";
+    const newPassword = smartResetNewPassword?.value || "";
+    const confirmPassword = smartResetConfirmPassword?.value || "";
+    if (!smartForgotOtpVerified) {
+        setSmartForgotState("Please verify the OTP first.", true);
+        return;
+    }
+    if (newPassword.length < 6) {
+        setSmartForgotState("New password must be at least 6 characters.", true);
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        setSmartForgotState("Passwords do not match.", true);
+        return;
+    }
+    smartResetPasswordBtn.disabled = true;
+    smartResetPasswordBtn.textContent = "Saving...";
+    try {
+        const response = await fetch("/api/auth/reset-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ email, otp, newPassword })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            setSmartForgotState(data.message || "Password reset failed.", true);
+            return;
+        }
+        if (dashboardUsername) dashboardUsername.value = email;
+        if (dashboardPassword) dashboardPassword.value = "";
+        setSmartForgotMode(false);
+        showToast(data.message || "Password reset successfully. Please login.");
+    } catch (error) {
+        setSmartForgotState("Network error. Please try again.", true);
+    } finally {
+        smartResetPasswordBtn.disabled = false;
+        smartResetPasswordBtn.textContent = "Save New Password";
+    }
 }
 
 async function submitDashboardCredentials() {
@@ -388,6 +545,18 @@ dashboardLoginModal?.addEventListener("click", (event) => {
     if (event.target === dashboardLoginModal) dashboardLoginModal.classList.add("hidden");
 });
 submitDashboardLogin?.addEventListener("click", submitDashboardCredentials);
+smartForgotPasswordTrigger?.addEventListener("click", () => setSmartForgotMode(true));
+smartBackToLoginBtn?.addEventListener("click", () => setSmartForgotMode(false));
+smartSendOtpBtn?.addEventListener("click", requestSmartForgotOtp);
+smartVerifyOtpBtn?.addEventListener("click", verifySmartForgotOtp);
+smartForgotPasswordForm?.addEventListener("submit", saveSmartForgotPassword);
+toggleSmartResetPassword?.addEventListener("click", () => {
+    if (!smartResetNewPassword) return;
+    const reveal = smartResetNewPassword.type === "password";
+    smartResetNewPassword.type = reveal ? "text" : "password";
+    toggleSmartResetPassword.textContent = reveal ? "Hide" : "Show";
+    smartResetNewPassword.focus();
+});
 toggleDashboardPassword?.addEventListener("click", () => {
     if (!dashboardPassword) return;
     const reveal = dashboardPassword.type === "password";

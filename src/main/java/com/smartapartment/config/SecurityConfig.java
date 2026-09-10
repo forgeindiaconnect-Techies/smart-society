@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/properties/public").permitAll()
                         .requestMatchers("/api/admin/properties/**").permitAll()
                         .requestMatchers("/api/property/**").permitAll()
+                        .requestMatchers("/api/common-maintenance/**").permitAll()
                         .requestMatchers("/api/maintenance/**").permitAll()
                         .requestMatchers("/api/workflows/**").permitAll()
                         .requestMatchers("/api/billing/**").hasAnyRole("SOCIETY_ADMIN", "ACCOUNTANT")

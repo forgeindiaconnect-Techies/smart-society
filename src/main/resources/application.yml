@@ -3,6 +3,17 @@ spring:
     cache: false
   application:
     name: smartapartment
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS:true}
   datasource:
     # Stored on disk so society, subscription, billing and notice updates survive restarts.
     url: ${DB_URL:jdbc:h2:file:./data/smartsociety;AUTO_SERVER=TRUE}
@@ -31,6 +42,8 @@ server:
         secure: ${SESSION_COOKIE_SECURE:false}
 
 app:
+  mail:
+    from: ${APP_MAIL_FROM:${SMTP_USERNAME:no-reply@smartapartment.local}}
   # Configure both PROPERTYDIRECT_CONTACT_EMAIL and SMTP settings in production
   # to deliver contact-message notifications to the support team.
   propertydirect:

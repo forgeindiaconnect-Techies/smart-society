@@ -1,6 +1,38 @@
 (() => {
     "use strict";
     if (document.getElementById("nobrokerServicesSection") || document.getElementById("customerNoBrokerServicesSection") || document.querySelector('#nobrokerHubSearchInput')) return;
+
+    const categoryPhotoMap = {
+        "door-open": "/shared/images/services/service-door.svg",
+        "screwdriver-wrench": "/shared/images/services/service-drill.svg",
+        "box": "/shared/images/services/service-cupboard.svg",
+        "table-cells-large": "/shared/images/services/service-window.svg",
+        "bed": "/shared/images/services/service-bed.svg",
+        "chair": "/shared/images/services/service-furniture.svg",
+        "archway": "/shared/images/services/service-wardrobe.svg",
+        "user-gear": "/shared/images/services/service-carpenter.svg",
+        "tv": "/shared/images/services/service-tv.svg",
+        "house": "/shared/images/services/service-balcony.svg"
+    };
+
+    function getCategoryPhoto(icon) {
+        return categoryPhotoMap[icon] || "/shared/images/services/furniture.jpg";
+    }
+
+    function getServiceRealPhoto(serviceName, categoryIcon) {
+        const s = String(serviceName ?? "").toLowerCase().trim();
+
+        if (s.includes("lock") || s.includes("bolt") || s.includes("latch")) return "/shared/images/services/service-door.svg";
+        if (s.includes("drill") || s.includes("hole")) return "/shared/images/services/service-drill.svg";
+        if (s.includes("accessory") || s.includes("stopper") || s.includes("hinge") || s.includes("hanger")) return "/shared/images/services/service-window.svg";
+        if (s.includes("bed") || s.includes("cot") || s.includes("bunk") || s.includes("hydraulic")) return "/shared/images/services/service-bed.svg";
+        if (s.includes("wardrobe") || s.includes("cabinet") || s.includes("shelf") || s.includes("rack") || s.includes("bookcase")) return "/shared/images/services/service-wardrobe.svg";
+        if (s.includes("tv")) return "/shared/images/services/service-tv.svg";
+        if (s.includes("table") || s.includes("chair") || s.includes("sofa") || s.includes("desk") || s.includes("bench") || s.includes("furniture")) return "/shared/images/services/service-furniture.svg";
+        
+        return getCategoryPhoto(categoryIcon);
+    }
+
     // Shared presentation; existing booking forms and their persistence handlers remain in place.
     const groups = [
         ["Door", "door-open", [["Door Lock",174],["Wooden Door Repair",193],["Accessory Installation",96],["Sliding Door Repair",290],["Door Hinge Installation",237],["Overhead Door Closure",174],["Door Dismantling",248],["Wooden Door Installation",775],["Wall Mounted Door Closure",174],["Stopper Repair",67],["Tower Bolt Repair",128],["Mesh Door Services",290]]],
@@ -11,7 +43,6 @@
         ["Furniture Assembly", "chair", [["Study / Workspace Table Assembly",436],["Table / Chair Wheel Fitting",48],["Plastic Buffer Installation",48],["Magazine / Newspaper Rack Assembly",290],["Utensil Rack Assembly",261],["Wall Cabinet Assembly",242],["Shoe Cabinet Assembly",290],["Office Chair Assembly",242],["Bookcase Assembly",242],["Cabinet Assembly",484],["Sofa Assembly",436],["Shelving Unit Assembly",193],["TV Unit Bench Assembly",678],["Modular Sofa Assembly",533],["Dining Table with Chairs Assembly",678],["Swing Chair Assembly",436],["TV Bench Assembly",436],["Wooden Dining Table Assembly",339],["Recliner Assembly",387],["Dining Chair Assembly",193],["Extendable Dining Table Assembly",484],["Bar Table with Chairs Assembly",678],["Coffee Table Assembly",261],["Mandir Assembly",193]]],
         ["Wardrobe", "archway", [["Single Door Wardrobe Assembly",581],["Double Door Wardrobe Assembly",824],["Three Door Wardrobe Assembly",921],["Four Door Wardrobe Assembly",1018],["Sliding Door Wardrobe Assembly",775]]],
         ["Book a Carpenter", "user-gear", [["Carpenter Inspection",48]]],
-        ["IKEA Furniture Assembly", "couch", [["IKEA Wardrobe Assembly",581],["IKEA Beds Assembly",484],["IKEA Tables / Drawers Assembly",193],["IKEA Sofa Assembly",436]]],
         ["TV", "tv", [["TV Installation",727],["TV Uninstallation",339]]],
         ["Balcony", "house", [["Ceiling Mounted Hanger Installation",624],["Wall / Door Hanger Installation",115]]]
     ];
@@ -29,9 +60,9 @@
         }
         const resident = !!panel.querySelector('#noBrokerBookingForm');
         const style = document.createElement("link");
-        style.rel = "stylesheet"; style.href = "/shared/css/carpentry-catalogue.css?v=2"; document.head.appendChild(style);
+        style.rel = "stylesheet"; style.href = "/shared/css/carpentry-catalogue.css?v=8"; document.head.appendChild(style);
         root = document.createElement("div"); root.id = "carpentryCatalogue";
-        root.innerHTML = `<div class="cc-hero"><label class="cc-search"><span>Search services</span><input type="search" placeholder="Search door, curtain, furniture…" aria-label="Search carpentry services"></label><div class="cc-intro"><div><p class="cc-eyebrow">HOME SERVICES · BANGALORE</p><h2>Carpenter services at your doorstep</h2><p>Choose a repair, installation or furniture assembly service.</p><div class="cc-categories">${groups.map(([name,icon],i)=>`<button type="button" data-category="${i}" ${i>6?'hidden':''}><i aria-hidden="true" class="fa-solid fa-${icon}"></i><span>${escape(name)}</span></button>`).join("")}<button type="button" data-more aria-expanded="false"><b>⌄</b><span>Show more</span></button></div></div><aside class="cc-promo"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><h3>Small repairs.<br>Comfortable homes.</h3><p>Select your service, share your address and choose a visit time.</p><button type="button" data-bookings>My bookings</button></aside></div></div><div class="cc-content"><div class="cc-service-list">${groups.map(([name,icon,services],i)=>`<section class="cc-group" id="cc-group-${i}"><header><i class="fa-solid fa-${icon}" aria-hidden="true"></i><h3>${escape(name)}</h3></header>${services.map(([service,price],j)=>`<article data-search="${escape((name+' '+service).toLowerCase())}"><div><h4>${escape(service)}</h4><strong>${variants[service]?'Starts at ':''}${money(price)}</strong><p>${escape(name)} service. Materials and additional work are quoted separately.</p><button type="button" class="cc-details" data-details="${i}:${j}">View details ›</button></div><div class="cc-item-action"><i class="fa-solid fa-${icon}" aria-hidden="true"></i><button type="button" data-add="${i}:${j}">Add</button>${variants[service]?`<small>${variants[service].length} options</small>`:''}</div></article>`).join('')}</section>`).join('')}<p class="cc-empty" hidden>No services match your search.</p></div><aside class="cc-cart"><h3>Your services</h3><div data-cart></div><p class="cc-price-note">Indicative labour prices. Your vendor confirms the final quote before work starts.</p><button type="button" class="cc-primary" data-checkout disabled>Continue to booking</button><p role="status" data-feedback></p></aside></div><section class="cc-faq"><h3>Frequently asked questions</h3>${[
+        root.innerHTML = `<div class="cc-hero"><label class="cc-search"><span>Search services</span><input type="search" placeholder="Search door, curtain, furniture…" aria-label="Search carpentry services"></label><div class="cc-intro"><div><p class="cc-eyebrow">HOME SERVICES · BANGALORE</p><h2>Carpenter services at your doorstep</h2><p>Choose a repair, installation or furniture assembly service.</p><div class="cc-categories">${groups.map(([name,icon],i)=>`<button type="button" data-category="${i}" ${i>6?'hidden':''}><span class="cc-img-tile"><img class="cc-real-img" src="${getCategoryPhoto(icon)}" alt="${escape(name)}" loading="lazy" /></span><span>${escape(name)}</span></button>`).join("")}<button type="button" data-more aria-expanded="false"><b>⌄</b><span>Show more</span></button></div></div><aside class="cc-promo"><span class="cc-promo-img-tile"><img class="cc-real-img" src="${getCategoryPhoto('screwdriver-wrench')}" alt="Carpenter services" loading="lazy" /></span><h3>Small repairs.<br>Comfortable homes.</h3><p>Select your service, share your address and choose a visit time.</p><button type="button" data-bookings>My bookings</button></aside></div></div><div class="cc-content"><div class="cc-service-list">${groups.map(([name,icon,services],i)=>`<section class="cc-group" id="cc-group-${i}"><header><span class="cc-header-img-tile"><img class="cc-real-img" src="${getCategoryPhoto(icon)}" alt="${escape(name)}" loading="lazy" /></span><h3>${escape(name)}</h3></header>${services.map(([service,price],j)=>`<article data-search="${escape((name+' '+service).toLowerCase())}"><div><h4>${escape(service)}</h4><strong>${variants[service]?'Starts at ':''}${money(price)}</strong><p>${escape(name)} service. Materials and additional work are quoted separately.</p><button type="button" class="cc-details" data-details="${i}:${j}">View details ›</button></div><div class="cc-item-action"><span class="cc-item-img-tile"><img class="cc-real-img" src="${getServiceRealPhoto(service, icon)}" alt="${escape(service)}" loading="lazy" /></span><button type="button" data-add="${i}:${j}">Add</button>${variants[service]?`<small>${variants[service].length} options</small>`:''}</div></article>`).join('')}</section>`).join('')}<p class="cc-empty" hidden>No services match your search.</p></div><aside class="cc-cart"><h3>Your services</h3><div data-cart></div><p class="cc-price-note">Indicative labour prices. Your vendor confirms the final quote before work starts.</p><button type="button" class="cc-primary" data-checkout disabled>Continue to booking</button><p role="status" data-feedback></p></aside></div><section class="cc-faq"><h3>Frequently asked questions</h3>${[
             ['How do I book?','Add the services you need, review your selection and complete the contact, address and visit details below.'],
             ['Are materials included?','Spare parts and materials are separate. Ask your assigned vendor to confirm any additional costs before starting.'],
             ['Is my selected time confirmed?','Your selected time is a request. Availability must be confirmed by the assigned vendor.'],

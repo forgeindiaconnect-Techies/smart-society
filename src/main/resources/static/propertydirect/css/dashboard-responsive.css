@@ -647,12 +647,13 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel d
 
 /* PropertyDirect dashboards: attach the top header directly flush to the fixed sidebar and top edge.
    Both .dash-brand and .dash-header are locked to 80px height with 0 top margin so their bottom border lines align seamlessly on the exact same horizontal axis. */
-html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main {
+html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role="admin"], [data-dashboard-role="customer"]) main.dash-main {
   margin-left: 275px !important;
   width: calc(100% - 275px) !important;
   max-width: calc(100% - 275px) !important;
   padding: 0 24px 36px 0 !important;
   margin-top: 0 !important;
+  padding-top: 0 !important;
   background: #f6f8fc !important;
 }
 
@@ -670,7 +671,7 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-brand {
   margin: 0 !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-header {
+html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role="admin"], [data-dashboard-role="customer"]) main.dash-main > .dash-header {
   width: 100% !important;
   max-width: 100% !important;
   height: 80px !important;
@@ -692,7 +693,7 @@ html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="adm
   justify-content: space-between !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel {
+html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role="admin"], [data-dashboard-role="customer"]) main.dash-main > .dash-panel {
   margin-left: 24px !important;
   width: calc(100% - 24px) !important;
   max-width: calc(100% - 24px) !important;
@@ -1349,8 +1350,8 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-brand .sidebar-hom
   width: 38px !important;
   height: 38px !important;
   border-radius: 10px !important;
-  background: rgba(59, 130, 246, 0.16) !important;
-  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  background: rgba(67, 97, 238, 0.16) !important;
+  border: 1px solid rgba(67, 97, 238, 0.3) !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
 }
@@ -1358,7 +1359,7 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-brand .sidebar-hom
 html body.app-dashboard[data-platform="propertydirect"] .dash-brand .sidebar-home-mark svg {
   width: 22px !important;
   height: 22px !important;
-  fill: #3b82f6 !important;
+  fill: #4361ee !important;
 }
 
 /* 3. Sidebar Brand Text Header */
@@ -1421,13 +1422,223 @@ html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button {
 }
 
 html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, #2547c7, #4361ee) !important;
   color: #ffffff !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(67, 97, 238, 0.35) !important;
 }
 
 html body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button:hover:not(.active) {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
+}
+
+/* Final PropertyDirect dashboard polish: keep cards, counters and buttons readable.
+   These rules are intentionally broad because every role dashboard reuses slightly
+   different legacy class names. They prevent the exact issues seen in screenshots:
+   clipped helper text, oversized metric labels overlapping, and vertical button text. */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats-grid, .metric-grid, .pd-report-grid, .pd-report-grid-five),
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .stats-grid, .metric-grid) {
+  align-items: stretch !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, article),
+html body[data-dashboard-role="vendor"] :is(.dash-card, .metric-card, .stats-card, article) {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, article) :is(h1, h2, h3, h4, strong, p, span, small),
+html body[data-dashboard-role="vendor"] :is(.dash-card, .metric-card, .stats-card, article) :is(h1, h2, h3, h4, strong, p, span, small) {
+  max-width: 100% !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.stat-trend, .card-subtitle, .metric-subtitle, .helper-text),
+html body[data-dashboard-role="vendor"] :is(.stat-trend, .card-subtitle, .metric-subtitle, .helper-text) {
+  display: block !important;
+  width: 100% !important;
+  min-height: 22px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(button, .primary, .ghost, .btn, .btn-table-action),
+html body[data-dashboard-role="vendor"] :is(button, .primary, .ghost, .btn, .btn-table-action) {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+/* 2026-09-10 end-to-end dashboard hardening.
+   This layer is deliberately guarded to PropertyDirect dashboards only. It keeps
+   labels horizontal, cards aligned to the same visual rhythm, and controls inside
+   their own rows instead of spilling over neighbouring dashboard sections. */
+html body.app-dashboard[data-platform="propertydirect"] :is(button, [role="button"], .primary, .secondary, .ghost, .btn, .pd-btn-reset, .btn-table-action, .action-btn),
+html body[data-dashboard-role="vendor"] :is(button, [role="button"], .primary, .secondary, .ghost, .btn, .pd-btn-reset, .btn-table-action, .action-btn) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 38px !important;
+  width: auto;
+  max-width: 100% !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  vertical-align: middle !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.header-actions, .page-actions, .section-actions, .table-actions, td:last-child > div),
+html body[data-dashboard-role="vendor"] :is(.header-actions, .page-actions, .section-actions, .table-actions, td:last-child > div) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header, .page-header, .panel-header, .section-header),
+html body[data-dashboard-role="vendor"] :is(.vendor-top, .page-header, .panel-header, .section-header) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, .summary-card, .kpi-card, article),
+html body[data-dashboard-role="vendor"] :is(.dash-card, .metric-card, .stats-card, .summary-card, .kpi-card, article) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  min-height: 118px;
+  overflow: hidden !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, .summary-card, .kpi-card, article) :is(h1, h2, h3, h4, strong) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  line-height: 1.14 !important;
+  letter-spacing: -0.04em !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .metric-card, .stats-card, .summary-card, .kpi-card, article) :is(p, small, .stat-trend, .card-subtitle, .metric-subtitle, .helper-text) {
+  margin: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats-grid, .metric-grid, .summary-grid, .kpi-grid, .pd-report-grid, .pd-report-grid-five),
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .stats-grid, .metric-grid, .summary-grid, .kpi-grid) {
+  display: grid !important;
+  gap: 18px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-panel, .dashboard-content, .dash-main, main),
+html body[data-dashboard-role="vendor"] :is(.vendor-main, .vendor-content, main) {
+  min-width: 0 !important;
+  overflow-x: hidden;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-sidebar, .sidebar-nav),
+html body[data-dashboard-role="vendor"] :is(.vendor-sidebar, .vendor-nav) {
+  overflow-x: hidden !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-sidebar, .sidebar-nav, .vendor-nav) :is(button, a),
+html body[data-dashboard-role="vendor"] :is(.vendor-sidebar, .vendor-nav) :is(button, a) {
+  width: 100% !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  min-width: 0 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(input, select, textarea),
+html body[data-dashboard-role="vendor"] :is(input, select, textarea) {
+  min-width: 0 !important;
+}
+
+@media (max-width: 900px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header, .page-header, .panel-header, .section-header),
+  html body[data-dashboard-role="vendor"] :is(.vendor-top, .page-header, .panel-header, .section-header) {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  html body.app-dashboard[data-platform="propertydirect"] :is(.header-actions, .page-actions, .section-actions),
+  html body[data-dashboard-role="vendor"] :is(.header-actions, .page-actions, .section-actions) {
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+}
+
+/* Final colour parity with SmartSociety dashboards.
+   SmartSociety uses #4361ee / #2547c7 as the core dashboard accent. Keep
+   PropertyDirect on the same accent family so both modules look connected. */
+html body.app-dashboard[data-platform="propertydirect"],
+html body[data-dashboard-role="vendor"] {
+  --pd-blue: #4361ee !important;
+  --pd-blue-hover: #2547c7 !important;
+  --pd-control-focus: #4361ee !important;
+  --role-accent: #4361ee !important;
+  --role-accent-dark: #2547c7 !important;
+  --role-soft: rgba(67, 97, 238, 0.10) !important;
+  --pd-page: #f8fafc !important;
+  --pd-card: #ffffff !important;
+  --pd-text: #0f172a !important;
+  --pd-muted: #475569 !important;
+  --pd-line: rgba(226, 232, 240, 0.86) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-sidebar, .dash-brand),
+html body[data-dashboard-role="vendor"] :is(.vendor-sidebar, .vendor-brand) {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.24), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.18), transparent 50%),
+    linear-gradient(180deg, #0f172a 0%, #030712 100%) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.sidebar-nav button.active, .sidebar-nav .nav-link.active, .primary, button.primary, .pd-auth-submit),
+html body[data-dashboard-role="vendor"] :is(.vendor-nav button.active, .primary, button.primary, .vendor-badge) {
+  background: linear-gradient(135deg, #2547c7 0%, #4361ee 55%, #3a86ff 100%) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(67, 97, 238, 0.26) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.primary, button.primary, .pd-auth-submit):hover,
+html body[data-dashboard-role="vendor"] :is(.primary, button.primary):hover {
+  background: linear-gradient(135deg, #1f3faa 0%, #2547c7 55%, #4361ee 100%) !important;
+  box-shadow: 0 14px 32px rgba(67, 97, 238, 0.34) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header h1, .dash-header #panelTitle, .dash-grid > article strong, .propertydirect-console-eyebrow, .propertydirect-section-eyebrow, .eyebrow, .panel-title-accent),
+html body[data-dashboard-role="vendor"] :is(.vendor-top h1, .vendor-top h2, .vendor-card strong, .eyebrow) {
+  color: #4361ee !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(input, select, textarea):focus,
+html body[data-dashboard-role="vendor"] :is(input, select, textarea):focus {
+  border-color: #4361ee !important;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.14) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card, .dashboard-table-scroll, .dash-grid > article, .metric-card, .stats-card),
+html body[data-dashboard-role="vendor"] :is(.vendor-card, .dash-card, .dashboard-table-scroll, .metric-card, .stats-card) {
+  border-color: rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06) !important;
 }

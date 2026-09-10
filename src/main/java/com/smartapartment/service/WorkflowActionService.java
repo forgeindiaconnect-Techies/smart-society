@@ -67,6 +67,10 @@ public class WorkflowActionService {
             return new Actor("propertydirect", "propertydirect:superadmin");
         if (Boolean.TRUE.equals(session.getAttribute("dashboard:propertydirect:admin")))
             return new Actor("propertydirect", "propertydirect:admin");
+        if (Boolean.TRUE.equals(session.getAttribute("dashboard:propertydirect:agent")))
+            return new Actor("propertydirect", "propertydirect:agent");
+        if (Boolean.TRUE.equals(session.getAttribute("dashboard:propertydirect:vendor")))
+            return new Actor("propertydirect", "propertydirect:vendor");
         Object customerId = session.getAttribute("propertydirect:customerId");
         if (customerId instanceof Long id) return new Actor("propertydirect", "propertydirect:customer:" + id);
         if (authentication != null && authentication.isAuthenticated()

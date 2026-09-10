@@ -132,6 +132,7 @@
                 <a href="#access-roles" class="nav-link btn btn-link text-start text-decoration-none" data-panel="access-roles" onclick="openPanel('access-roles'); return false;"><i class="fa-solid fa-user-shield me-2"></i> Roles & Access</a>
                 <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data" onclick="openPanel('privacy-data'); return false;"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
                 <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup" onclick="openPanel('finance-setup'); return false;"><i class="fa-solid fa-receipt me-2"></i> Subscription Payments</a>
+                <a href="#service-requests" class="nav-link btn btn-link text-start text-decoration-none" data-panel="service-requests" onclick="openPanel('service-requests'); return false;"><i class="fa-solid fa-screwdriver-wrench me-2"></i> Service Requests</a>
                 <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings" onclick="openPanel('settings'); return false;"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
@@ -432,6 +433,90 @@
                                 <thead><tr><th>Society</th><th>Subscription plan</th><th>Billing cycle</th><th>Plan charge</th><th>Payment status</th><th>Subscription started</th><th>Next renewal</th></tr></thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Service Requests Section -->
+                <section class="d-none animate__animated animate__fadeIn" data-view="service-requests">
+                    <div class="row g-3 mb-4 stats">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Total Service Requests</span>
+                                <strong class="fs-4 fw-bold text-primary d-block" id="ssTotalServiceRequests">0</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Pending / Requested</span>
+                                <strong class="fs-4 fw-bold text-warning d-block" id="ssPendingServiceRequests">0</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">In Progress</span>
+                                <strong class="fs-4 fw-bold text-info d-block" id="ssInProgressServiceRequests">0</strong>
+                            </article>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">
+                                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Resolved</span>
+                                <strong class="fs-4 fw-bold text-success d-block" id="ssResolvedServiceRequests">0</strong>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                            <div>
+                                <h4 class="fw-bold mb-1"><i class="fa-solid fa-screwdriver-wrench text-primary me-2"></i>Service & Maintenance Requests</h4>
+                                <p class="text-muted small mb-0">Live service requests submitted across SmartSociety and PropertyDirect platforms.</p>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="loadSmartSocietySuperAdminServiceRequests()"><i class="fa-solid fa-rotate me-1"></i> Refresh</button>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-3 mb-4 form-grid">
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Platform Source</label>
+                                    <select id="ssServicePlatformFilter" class="form-select shadow-none border-light-subtle" onchange="filterSmartSocietyServiceRequests()">
+                                        <option value="ALL">All Platforms</option>
+                                        <option value="smartsociety">SmartSociety</option>
+                                        <option value="propertydirect">PropertyDirect</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Status Filter</label>
+                                    <select id="ssServiceStatusFilter" class="form-select shadow-none border-light-subtle" onchange="filterSmartSocietyServiceRequests()">
+                                        <option value="ALL">All Statuses</option>
+                                        <option value="PENDING">Pending / Requested</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="RESOLVED">Resolved</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small fw-bold">Search</label>
+                                    <input type="text" id="ssServiceSearchInput" class="form-control shadow-none border-light-subtle" placeholder="Search name, phone, service, address..." oninput="filterSmartSocietyServiceRequests()">
+                                </div>
+                            </div>
+                            <div class="table-responsive dashboard-table-scroll">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Ticket ID</th>
+                                            <th>Platform</th>
+                                            <th>Requester</th>
+                                            <th>Service Details</th>
+                                            <th>Service Address</th>
+                                            <th>Schedule & Priority</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="smartSocietyServiceRequestsTable">
+                                        <tr><td colspan="8" class="text-center text-muted py-4">Loading service requests...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -849,8 +934,129 @@
             overview: "Overview", monitoring: "Apartment Command Watch", "audit-logs": "Granular Audit Logs",
             societies: "Societies", subscriptions: "Subscriptions", users: "Users", analytics: "Analytics",
             "access-roles": "Roles & Access", "privacy-data": "Database & Privacy",
-            "finance-setup": "Subscription Payments", settings: "Settings"
+            "finance-setup": "Subscription Payments", "service-requests": "Service & Maintenance Requests", settings: "Settings"
         };
+        
+        let allSmartSocietyServiceRequests = [];
+
+        async function loadSmartSocietySuperAdminServiceRequests() {
+            const table = document.getElementById("smartSocietyServiceRequestsTable");
+            if (!table) return;
+            try {
+                const response = await fetch("/api/maintenance");
+                if (!response.ok) throw new Error("Failed to load service requests");
+                allSmartSocietyServiceRequests = await response.json();
+                
+                const openCount = allSmartSocietyServiceRequests.filter(t => !/RESOLVED|CLOSED/i.test(t.ticketStatus || "")).length;
+                const openTicketsEl = document.getElementById("overviewOpenTickets");
+                if (openTicketsEl) openTicketsEl.textContent = openCount;
+
+                filterSmartSocietyServiceRequests();
+            } catch (error) {
+                table.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">Unable to load service requests: ${error.message}</td></tr>`;
+            }
+        }
+
+        function renderSmartSocietyServiceRequests(tickets) {
+            const table = document.getElementById("smartSocietyServiceRequestsTable");
+            if (!table) return;
+
+            document.getElementById("ssTotalServiceRequests").textContent = allSmartSocietyServiceRequests.length;
+            document.getElementById("ssPendingServiceRequests").textContent = allSmartSocietyServiceRequests.filter(t => /PENDING|REQUESTED|OPEN/i.test(t.ticketStatus || "")).length;
+            document.getElementById("ssInProgressServiceRequests").textContent = allSmartSocietyServiceRequests.filter(t => /IN_PROGRESS|ASSIGNED/i.test(t.ticketStatus || "")).length;
+            document.getElementById("ssResolvedServiceRequests").textContent = allSmartSocietyServiceRequests.filter(t => /RESOLVED|CLOSED/i.test(t.ticketStatus || "")).length;
+
+            if (!tickets.length) {
+                table.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">No service requests found.</td></tr>`;
+                return;
+            }
+
+            const escapeText = text => String(text || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+            table.innerHTML = tickets.map(ticket => {
+                const status = String(ticket.ticketStatus || "PENDING").toUpperCase();
+                const badgeCls = /RESOLVED|CLOSED/.test(status) ? "bg-success" : /IN_PROGRESS|ASSIGNED/.test(status) ? "bg-info text-dark" : "bg-warning text-dark";
+                const platformBadge = ticket.sourcePlatform === "propertydirect" ? '<span class="badge bg-warning text-dark">PropertyDirect</span>' : '<span class="badge bg-primary">SmartSociety</span>';
+                const createdDate = ticket.createdAt ? new Date(ticket.createdAt).toLocaleString("en-IN") : "—";
+                const preferredDate = ticket.preferredAt ? new Date(ticket.preferredAt).toLocaleString("en-IN") : "Flexible";
+                
+                return `
+                    <tr>
+                        <td><strong>#${ticket.id}</strong><br><small class="text-muted">${createdDate}</small></td>
+                        <td>${platformBadge}</td>
+                        <td>
+                            <strong>${escapeText(ticket.requesterName || "—")}</strong><br>
+                            <small class="text-muted"><i class="fa-solid fa-phone me-1"></i>${escapeText(ticket.requesterPhone || "—")}</small><br>
+                            <small class="text-muted">${escapeText(ticket.requesterEmail || "")}</small>
+                        </td>
+                        <td>
+                            <strong class="text-primary">${escapeText(ticket.serviceCategory || "—")}</strong><br>
+                            <span class="small fw-semibold">${escapeText(ticket.serviceType || "—")}</span><br>
+                            <small class="text-muted">${escapeText(ticket.serviceOption || "Standard")}</small>
+                        </td>
+                        <td>
+                            <span class="small">${escapeText(ticket.serviceAddress || "—")}</span><br>
+                            <small class="text-muted">Ref: ${escapeText(ticket.externalReference || ticket.title || "—")}</small>
+                        </td>
+                        <td>
+                            <span class="small"><i class="fa-regular fa-clock me-1"></i>${preferredDate}</span><br>
+                            <span class="badge bg-secondary-subtle text-secondary small">${escapeText(ticket.priority || "MEDIUM")}</span>
+                        </td>
+                        <td><span class="badge ${badgeCls}">${status.replace("_", " ")}</span></td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Update
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li><a class="dropdown-item small" href="#" onclick="updateSmartSocietyServiceRequestStatus(${ticket.id}, 'IN_PROGRESS'); return false;"><i class="fa-solid fa-spinner me-2 text-info"></i>In Progress</a></li>
+                                    <li><a class="dropdown-item small" href="#" onclick="updateSmartSocietyServiceRequestStatus(${ticket.id}, 'RESOLVED'); return false;"><i class="fa-solid fa-check me-2 text-success"></i>Mark Resolved</a></li>
+                                    <li><a class="dropdown-item small" href="#" onclick="updateSmartSocietyServiceRequestStatus(${ticket.id}, 'PENDING'); return false;"><i class="fa-solid fa-clock me-2 text-warning"></i>Set Pending</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    ${ticket.description ? `<tr class="table-light"><td colspan="8" class="small text-muted py-2 px-4"><i class="fa-solid fa-quote-left me-2"></i><strong>Requirement:</strong> ${escapeText(ticket.description)}</td></tr>` : ''}
+                `;
+            }).join("");
+        }
+
+        function filterSmartSocietyServiceRequests() {
+            const platform = document.getElementById("ssServicePlatformFilter")?.value || "ALL";
+            const status = document.getElementById("ssServiceStatusFilter")?.value || "ALL";
+            const query = (document.getElementById("ssServiceSearchInput")?.value || "").toLowerCase().trim();
+
+            const filtered = allSmartSocietyServiceRequests.filter(ticket => {
+                const matchPlatform = platform === "ALL" || (ticket.sourcePlatform || "").toLowerCase() === platform.toLowerCase();
+                const ticketStatus = String(ticket.ticketStatus || "PENDING").toUpperCase();
+                const matchStatus = status === "ALL" || 
+                    (status === "PENDING" && /PENDING|REQUESTED|OPEN/i.test(ticketStatus)) ||
+                    (status === "IN_PROGRESS" && /IN_PROGRESS|ASSIGNED/i.test(ticketStatus)) ||
+                    (status === "RESOLVED" && /RESOLVED|CLOSED/i.test(ticketStatus));
+                
+                const fullText = `${ticket.id} ${ticket.requesterName} ${ticket.requesterPhone} ${ticket.requesterEmail} ${ticket.serviceCategory} ${ticket.serviceType} ${ticket.serviceAddress} ${ticket.description}`.toLowerCase();
+                const matchQuery = !query || fullText.includes(query);
+
+                return matchPlatform && matchStatus && matchQuery;
+            });
+
+            renderSmartSocietyServiceRequests(filtered);
+        }
+
+        async function updateSmartSocietyServiceRequestStatus(id, newStatus) {
+            try {
+                const response = await fetch(`/api/maintenance/${id}/status`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json", Accept: "application/json" },
+                    body: JSON.stringify({ ticketStatus: newStatus, vendorNotes: `Status updated to ${newStatus} by SuperAdmin.` })
+                });
+                if (!response.ok) throw new Error("Could not update status");
+                showToast(`✓ Ticket #${id} status updated to ${newStatus}.`);
+                await loadSmartSocietySuperAdminServiceRequests();
+            } catch (error) {
+                showToast(error.message || "Failed to update status.");
+            }
+        }
         
         window.forceOpenPanel = function(panel) {
             if (!document.querySelector(`[data-view="${panel}"]`)) panel = "overview";
@@ -880,6 +1086,10 @@
             const titleEl = document.getElementById("title");
             if (titleEl) {
                 titleEl.textContent = dashboardTitles[panel] || "Dashboard";
+            }
+
+            if (panel === "service-requests") {
+                loadSmartSocietySuperAdminServiceRequests();
             }
 
             // Overview-only platform identity and communication controls.
@@ -1546,5 +1756,6 @@
 
         });
     </script>
+<script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
 </body>
 </html>

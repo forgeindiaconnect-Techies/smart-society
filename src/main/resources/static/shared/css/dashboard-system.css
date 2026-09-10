@@ -947,7 +947,7 @@ html[data-theme="dark"] .switch-rocker {
 }
 
 .label-off {
-    color: #2563eb !important;
+    color: #4361ee !important;
     font-weight: 900 !important;
     text-shadow: 0 0 3px rgba(37, 99, 235, 0.3) !important;
 }
@@ -1133,7 +1133,7 @@ html[data-theme="dark"] .app-dashboard .dash-header {
     border: 0 !important;
     border-radius: 9px !important;
     color: #ffffff !important;
-    background: #3a86ff !important;
+    background: #4361ee !important;
     box-shadow: 0 4px 12px rgba(58, 134, 255, 0.25) !important;
     font-weight: 700 !important;
     cursor: pointer !important;
@@ -1148,7 +1148,7 @@ html[data-theme="dark"] .app-dashboard .dash-header {
 .app-dashboard .dash-header button:not(.dashboard-menu-toggle):hover,
 .dashboard-body .card-head button:hover,
 .app-dashboard .card-head button:hover {
-    background: #2563eb !important;
+    background: #4361ee !important;
     transform: translateY(-1px) !important;
 }
 
@@ -1184,7 +1184,7 @@ html[data-theme="dark"] .app-dashboard textarea {
 .app-dashboard input:focus,
 .app-dashboard select:focus,
 .app-dashboard textarea:focus {
-    border-color: #3a86ff !important;
+    border-color: #4361ee !important;
     box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.15) !important;
     outline: 0 !important;
 }
@@ -1459,3 +1459,80 @@ html[data-theme="dark"] .modern-theme-switch .switch-thumb {
     line-height: 1.2 !important;
 }
 
+/* 2026-09-10 SmartSociety + shared dashboard alignment guard.
+   Protects resident, security, society-admin, maintenance and superadmin pages
+   from squeezed text, detached sidebars, non-horizontal buttons and overflowing
+   card labels without changing page-specific business logic. */
+body.dashboard-body :is(button, [role="button"], .btn, .primary, .secondary, .ghost, .action-btn),
+body.app-dashboard :is(button, [role="button"], .btn, .primary, .secondary, .ghost, .action-btn) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 38px !important;
+    max-width: 100% !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+}
+
+body.dashboard-body :is(.sidebar, .sidebar-nav, .nav-menu),
+body.app-dashboard :is(.dash-sidebar, .sidebar-nav, .nav-menu) {
+    overflow-x: hidden !important;
+}
+
+body.dashboard-body :is(.sidebar, .sidebar-nav, .nav-menu) :is(button, a),
+body.app-dashboard :is(.dash-sidebar, .sidebar-nav, .nav-menu) :is(button, a) {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    min-width: 0 !important;
+}
+
+body.dashboard-body :is(.header, .dash-header, .page-header, .section-header),
+body.app-dashboard :is(.header, .dash-header, .page-header, .section-header) {
+    min-width: 0 !important;
+}
+
+body.dashboard-body :is(.header-actions, .page-actions, .section-actions, .form-actions, .modal-actions),
+body.app-dashboard :is(.header-actions, .page-actions, .section-actions, .form-actions, .modal-actions) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+body.dashboard-body :is(.stats, .stats-grid, .dash-grid, .metric-grid, .summary-grid, .kpi-grid),
+body.app-dashboard :is(.stats, .stats-grid, .dash-grid, .metric-grid, .summary-grid, .kpi-grid) {
+    align-items: stretch !important;
+    gap: clamp(14px, 2vw, 22px) !important;
+    min-width: 0 !important;
+}
+
+body.dashboard-body :is(.card, .dash-card, .metric-card, .stats-card, .summary-card, article),
+body.app-dashboard :is(.card, .dash-card, .metric-card, .stats-card, .summary-card, article) {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+body.dashboard-body :is(.card, .dash-card, .metric-card, .stats-card, .summary-card, article) :is(h1, h2, h3, h4, strong, p, span, small),
+body.app-dashboard :is(.card, .dash-card, .metric-card, .stats-card, .summary-card, article) :is(h1, h2, h3, h4, strong, p, span, small) {
+    max-width: 100% !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+}
+
+body.dashboard-body :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+body.app-dashboard :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+body.dashboard-body :is(.form-grid, .dashboard-form-grid, .field-grid),
+body.app-dashboard :is(.form-grid, .dashboard-form-grid, .field-grid) {
+    min-width: 0 !important;
+}

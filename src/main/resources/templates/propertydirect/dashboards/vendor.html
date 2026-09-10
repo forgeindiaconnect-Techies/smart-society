@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
   <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
-  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260908-dashboard-buttons-v6">
+  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
   <style>
     :root {
       --pd-navy: #0a1834;
@@ -712,7 +712,7 @@
           </button>
           <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="builder-projects">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v8h4"/><path d="M18 9h2a2 2 0 0 1 2 2v11h-4"/></svg>
-            🏢 Builder Projects
+            Builder Projects
           </button>
           <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel(this.dataset.panel); return false; }" data-panel="post-listing">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
@@ -871,7 +871,7 @@
         <div class="dash-card">
           <div class="card-head">
             <div>
-              <h2>🏢 Builder Projects & Multi-Tower Enclaves</h2>
+              <h2>Builder Projects & Multi-Tower Enclaves</h2>
               <p>Promote township launches, master floor plans, and direct builder sales contacts.</p>
             </div>
             <button class="primary" onclick="openLaunchProjectModal()">+ Launch New Project</button>
@@ -889,8 +889,8 @@
                 <span style="color: #2563eb; font-weight: 800; font-size: 0.95rem;">Starting ₹1.15 Cr</span>
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button onclick="openProjectGallery('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">🖼️ Gallery</button>
-                <button onclick="openFloorPlans('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">📐 Floor Plans</button>
+                <button onclick="openProjectGallery('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">Gallery</button>
+                <button onclick="openFloorPlans('Prestige Grand Palms')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700;">Floor Plans</button>
                 <button onclick="openSalesHotline('Prestige Grand Palms', '+91 98000 11223', 'sales@prestige.com')" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 700; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; cursor: pointer;">Sales Hotline</button>
               </div>
             </div>
@@ -1051,7 +1051,7 @@
     <div style="background: #ffffff; width: 100%; max-width: 700px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
       <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-          <h3 id="galleryTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">🖼️ Project Architectural Renders</h3>
+          <h3 id="galleryTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">Project Architectural Renders</h3>
           <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">High-resolution elevation photos and 3D walkthrough views</p>
         </div>
         <button onclick="document.getElementById('projectGalleryModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -1059,7 +1059,7 @@
       <div style="padding: 24px;">
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;">
-            <div style="height: 140px; background: linear-gradient(135deg, #1e293b, #334155); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: 800; font-size: 1.1rem; margin-bottom: 8px;">🏢 Master Tower Elevation</div>
+            <div style="height: 140px; background: linear-gradient(135deg, #1e293b, #334155); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: 800; font-size: 1.1rem; margin-bottom: 8px;">Master Tower Elevation</div>
             <strong style="font-size: 0.84rem; color: #0f172a;">Front Facade Render</strong>
           </div>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;">
@@ -1078,7 +1078,7 @@
     <div style="background: #ffffff; width: 100%; max-width: 650px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
       <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-          <h3 id="floorTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">📐 Master Floor Plans & Layout Blueprint</h3>
+          <h3 id="floorTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">Master Floor Plans & Layout Blueprint</h3>
           <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Architectural unit blueprints, carpet area, and balcony orientation</p>
         </div>
         <button onclick="document.getElementById('floorPlansModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -1096,7 +1096,7 @@
           </pre>
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
-          <button onclick="downloadFloorPlanPDF()" style="padding: 9px 16px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">📥 Download Floor Plan PDF</button>
+          <button onclick="downloadFloorPlanPDF()" style="padding: 9px 16px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Download Floor Plan PDF</button>
           <button onclick="document.getElementById('floorPlansModal').classList.add('hidden')" style="padding: 9px 18px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; cursor: pointer;">Close</button>
         </div>
       </div>
@@ -1107,7 +1107,7 @@
     <div style="background: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; font-family: 'Manrope', sans-serif;">
       <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-          <h3 id="hotlineTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">📞 Builder Direct Sales Desk</h3>
+          <h3 id="hotlineTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">Builder Direct Sales Desk</h3>
           <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Connect with direct relationship manager and sales team</p>
         </div>
         <button onclick="document.getElementById('salesHotlineModal').classList.add('hidden')" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -1122,8 +1122,8 @@
           <strong id="hotlineEmail" style="font-size: 1.05rem; color: #0f172a;">sales@prestige.com</strong>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button onclick="triggerHotlineCall()" style="flex: 1; padding: 10px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">📞 Call Sales Desk</button>
-          <button onclick="triggerHotlineEmail()" style="flex: 1; padding: 10px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">✉️ Send Inquiry</button>
+          <button onclick="triggerHotlineCall()" style="flex: 1; padding: 10px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Call Sales Desk</button>
+          <button onclick="triggerHotlineEmail()" style="flex: 1; padding: 10px; background: #16a34a; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Send Inquiry</button>
         </div>
       </div>
     </div>
@@ -1144,15 +1144,15 @@
       document.getElementById('launchProjectModal').classList.remove('hidden');
     }
     function openProjectGallery(projectName) {
-      document.getElementById('galleryTitle').textContent = '🖼️ ' + (projectName || 'Project Renders');
+      document.getElementById('galleryTitle').textContent = projectName || 'Project Renders';
       document.getElementById('projectGalleryModal').classList.remove('hidden');
     }
     function openFloorPlans(projectName) {
-      document.getElementById('floorTitle').textContent = '📐 ' + (projectName || 'Floor Plans');
+      document.getElementById('floorTitle').textContent = projectName || 'Floor Plans';
       document.getElementById('floorPlansModal').classList.remove('hidden');
     }
     function openSalesHotline(projectName, phone, email) {
-      document.getElementById('hotlineTitle').textContent = '📞 Sales Desk — ' + (projectName || 'Project');
+      document.getElementById('hotlineTitle').textContent = 'Sales Desk - ' + (projectName || 'Project');
       document.getElementById('hotlinePhone').textContent = phone || '+91 98000 11223';
       document.getElementById('hotlineEmail').textContent = email || 'sales@prestige.com';
       document.getElementById('salesHotlineModal').classList.remove('hidden');
@@ -1161,10 +1161,10 @@
       e.preventDefault();
       const name = document.getElementById('newProjName').value;
       document.getElementById('launchProjectModal').classList.add('hidden');
-      showVendorToast('🎉 Builder Project "' + name + '" launched and registered successfully!');
+      showVendorToast('Builder Project "' + name + '" launched and registered successfully!');
     }
     function downloadFloorPlanPDF() {
-      showVendorToast('📥 Master Floor Plan PDF downloaded!');
+      showVendorToast('Master Floor Plan PDF downloaded!');
     }
     function triggerHotlineCall() {
       const phone = document.getElementById('hotlinePhone').textContent;
@@ -1176,7 +1176,7 @@
     }
   </script>
   <script src="/propertydirect/js/market-workflows.js?v=20260905-vendor-only-v1"></script>
-  <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
+  <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
 </body>
 </html>
 

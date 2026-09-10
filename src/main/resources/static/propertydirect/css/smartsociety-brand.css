@@ -47,7 +47,7 @@ body :is(h1, h2, h3, h4, h5, h6) { color: var(--ss-ink) !important; letter-spaci
 /* Soft blue canvas, restrained borders and the same rounded SmartSociety surfaces. */
 .hero { background: linear-gradient(135deg, #fbfcff 0%, #f2f6ff 58%, #eef3ff 100%) !important; }
 .hero::before { background: radial-gradient(circle at 74% 24%, rgba(58,134,255,.11), transparent 30%), radial-gradient(circle at 22% 80%, rgba(245,158,11,.07), transparent 24%) !important; }
-.hero-subtitle { color: var(--ss-indigo) !important; background: rgba(67, 97, 238, .09) !important; }
+.hero-subtitle { color: var(--ss-indigo) !important; background: transparent !important; }
 .hero-title { color: var(--ss-ink) !important; }
 .hero-text, .hero p, .section-text, .property-item-text p { color: var(--ss-copy) !important; }
 .service-card, .property-card, .blog-card, .contact-card, .about-card {
@@ -65,8 +65,8 @@ body.app-dashboard[data-platform="propertydirect"] {
   color: var(--ss-ink) !important;
 }
 body.app-dashboard[data-platform="propertydirect"] :is(h1,h2,h3,h4,h5,h6,strong,b) { font-family:var(--app-font-family) !important; }
-body.app-dashboard[data-platform="propertydirect"] .dash-sidebar { background: linear-gradient(165deg, #233c9d, #173078 82%) !important; }
-body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active { background: var(--ss-indigo) !important; }
+body.app-dashboard[data-platform="propertydirect"] .dash-sidebar { background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important; border-right: 1px solid #334155 !important; }
+body.app-dashboard[data-platform="propertydirect"] .sidebar-nav button.active { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important; }
 body.app-dashboard[data-platform="propertydirect"] :is(.primary, button.primary) { background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; border:1px solid rgba(255,255,255,0.18) !important; color:#ffffff !important; box-shadow:0 4px 14px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.2) !important; -webkit-font-smoothing:antialiased !important; -moz-osx-font-smoothing:grayscale !important; text-shadow:none !important; }
 body.app-dashboard[data-platform="propertydirect"] .dash-grid > article,
 body.app-dashboard[data-platform="propertydirect"] .dash-card { border-color:var(--ss-line) !important; box-shadow:0 8px 22px rgba(31,61,140,.06) !important; }
@@ -75,8 +75,8 @@ body.app-dashboard[data-platform="propertydirect"] .dash-header :is(h1,#panelTit
 
 /* Vendor dashboard uses the same system even though its markup is standalone. */
 body[data-dashboard-role="vendor"] { font-family:var(--app-font-family) !important; background:#fff !important; color:var(--ss-ink) !important; }
-body[data-dashboard-role="vendor"] .vendor-sidebar { background:linear-gradient(165deg,#233c9d,#173078 82%) !important; }
-body[data-dashboard-role="vendor"] .vendor-nav button.active { background:var(--ss-indigo) !important; }
+body[data-dashboard-role="vendor"] .vendor-sidebar { background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important; border-right: 1px solid #334155 !important; }
+body[data-dashboard-role="vendor"] .vendor-nav button.active { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important; }
 body[data-dashboard-role="vendor"] :is(.primary,.vendor-badge) { background:linear-gradient(135deg,var(--ss-indigo-dark),var(--ss-indigo),var(--ss-sky)) !important; color:#fff !important; }
 body[data-dashboard-role="vendor"] :is(.vendor-card,.dash-card) { border-color:var(--ss-line) !important; box-shadow:0 8px 22px rgba(31,61,140,.06) !important; }
 
@@ -93,7 +93,7 @@ body {
 .pd-auth-field input, .pd-auth-field select { background:rgba(255,255,255,.92) !important; border-color:rgba(30,58,138,.18) !important; }
 .hero { border-bottom-color:rgba(67,97,238,.12) !important; }
 .hero-title { text-shadow:0 2px 0 rgba(255,255,255,.85) !important; }
-.hero-subtitle { border:1px solid rgba(67,97,238,.16) !important; box-shadow:0 8px 20px rgba(67,97,238,.08) !important; }
+.hero-subtitle { border: none !important; box-shadow: none !important; }
 .service-card, .property-card, .blog-card, .contact-card, .about-card { background:rgba(255,255,255,.92) !important; }
 
 body.app-dashboard[data-platform="propertydirect"] .dash-header { box-shadow:0 6px 22px rgba(23,43,94,.035) !important; }

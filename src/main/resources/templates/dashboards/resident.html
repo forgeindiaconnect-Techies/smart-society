@@ -1104,7 +1104,7 @@
     <script>
         const dashboardTitles = {
             overview: "Overview", billing: "My Maintenance Dues", pass: "Visitor Pre-Approval",
-            services: "NoBroker Carpentry & Home Services", "home-services": "Maintenance Services", complaints: "Helpdesk & Complaints", amenities: "Amenity Booking", announcements: "Notice Board",
+            services: "Home Services", "home-services": "Maintenance Services", complaints: "Helpdesk & Complaints", amenities: "Amenity Booking", announcements: "Notice Board",
             deliveries: "Parcel & Deliveries", profile: "My Profile"
         };
         
@@ -1235,11 +1235,16 @@
     </script>
     <script>
         function selectNoBrokerService(serviceName, price) {
+            const parts = String(serviceName).split('|');
+            serviceName = parts[0];
+            price = Number(price ?? parts[1]);
+            if (!Number.isFinite(price) || price < 0) return;
             const sel = document.getElementById('nbSelectedService');
             if (sel) {
                 let matchedOption = false;
                 for (let i = 0; i < sel.options.length; i++) {
-                    if (sel.options[i].text.includes(serviceName) || sel.options[i].value.includes(serviceName)) {
+                    if (sel.options[i].value.split('|')[0] === serviceName) {
+                        sel.options[i].value = `${serviceName}|${price}`;
                         sel.selectedIndex = i;
                         matchedOption = true;
                         break;
@@ -1371,6 +1376,7 @@
 
         async function handleNoBrokerSubmit(e) {
             e.preventDefault();
+            if (!e.target.reportValidity()) return;
             const selectedValue = document.getElementById('nbSelectedService')?.value || 'General Inspection|49';
             const service = selectedValue.split('|')[0] || 'Carpentry Inspection';
             const price = selectedValue.split('|')[1] || '49';
@@ -1441,7 +1447,7 @@
                 overview: "Overview",
                 billing: "My Maintenance Dues",
                 pass: "Visitor Pre-Approval",
-                services: "NoBroker Carpentry & Home Services",
+                services: "Home Services",
                 complaints: "Helpdesk & Complaints",
                 amenities: "Amenity Booking",
                 announcements: "Notice Board",
@@ -1499,5 +1505,7 @@
         })();
     </script>
 <script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
+<script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
+<script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
 </body>
 </html>

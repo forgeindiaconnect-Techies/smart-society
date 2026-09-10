@@ -6,7 +6,7 @@
     <meta name="description" content="SmartApartment is a multi-tenant apartment community platform for billing, residents, visitors, complaints, amenities, expenses and reports.">
     <title>SmartApartment - Society Management, Simplified</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260818-readable-type-v1">
+    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260910-shared-alignment-v1">
     <link rel="stylesheet" href="/smartapartment/css/styles.css?v=20260826-static-footer-v2">
 <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 </head>
@@ -337,7 +337,25 @@
         <p id="dashboardLoginHelp">Enter your credentials to open your workspace.</p>
         <label>Email ID<input id="dashboardUsername" type="email" autocomplete="username" placeholder="name@example.com" required></label>
         <label>Password<div class="password-field"><input id="dashboardPassword" type="password" autocomplete="current-password" placeholder="password" required><button id="toggleDashboardPassword" type="button" aria-label="Show password">Show</button></div></label>
+        <button type="button" id="smartForgotPasswordTrigger" style="align-self:flex-start;background:none;border:0;color:#2563eb;font-weight:800;cursor:pointer;padding:0 0 4px;">Forgot password?</button>
         <button class="button-primary full" type="button" id="submitDashboardLogin" data-required-submit>Login & Open Dashboard</button>
+        <form id="smartForgotPasswordForm" class="hidden" style="margin-top:16px;border-top:1px solid #e2e8f0;padding-top:16px;display:flex;flex-direction:column;gap:12px;">
+            <div id="smartForgotStepEmail" style="display:flex;flex-direction:column;gap:12px;">
+                <label>Registered Email<input id="smartForgotEmail" type="email" autocomplete="email" placeholder="name@example.com" maxlength="160"></label>
+                <button class="button-primary full" type="button" id="smartSendOtpBtn">Send OTP to Email</button>
+            </div>
+            <div id="smartForgotStepOtp" class="hidden" style="display:flex;flex-direction:column;gap:12px;">
+                <label>Email OTP<input id="smartResetOtp" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit OTP" style="letter-spacing:.16em;text-align:center;font-weight:900;"></label>
+                <button class="button-primary full" type="button" id="smartVerifyOtpBtn">Verify OTP</button>
+            </div>
+            <div id="smartForgotStepPassword" class="hidden" style="display:flex;flex-direction:column;gap:12px;">
+                <label>New Password<div class="password-field"><input id="smartResetNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Minimum 6 characters"><button type="button" id="toggleSmartResetPassword">Show</button></div></label>
+                <label>Confirm Password<input id="smartResetConfirmPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Re-enter password"></label>
+                <button class="button-primary full" type="submit" id="smartResetPasswordBtn">Save New Password</button>
+            </div>
+            <p id="smartForgotPasswordState" class="registration-state" role="status" aria-live="polite" style="margin:0;"></p>
+            <button type="button" id="smartBackToLoginBtn" style="background:none;border:0;color:#64748b;font-weight:800;cursor:pointer;">Back to login</button>
+        </form>
     </div>
 </div>
 
@@ -362,6 +380,6 @@
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <script src="/smartapartment/js/landing.js?v=20260828-community-hero-v1"></script>
 <script src="/shared/js/required-fields.js?v=20260826-no-login-star-v5"></script>
-<script src="/smartapartment/js/app.js?v=20260827-login-guard-v2"></script>
+<script src="/smartapartment/js/app.js?v=20260910-mail-otp-reset-v1"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Customer Dashboard — PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
     <style>
         /* -------------------------------------------------------------
@@ -36,6 +37,254 @@
         html,
         body {
             overflow-x: hidden !important;
+        }
+        /* PROPERTYDIRECT MODERN PRICING CARD SYSTEM */
+        .pd-plans-wrapper {
+            background: #ffffff !important;
+            border-radius: 20px !important;
+            padding: 32px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+            margin-bottom: 30px !important;
+            box-sizing: border-box !important;
+        }
+
+        .pd-plans-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding-bottom: 20px !important;
+            margin-bottom: 28px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+        }
+
+        .pd-plans-title-group h4 {
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin: 0 0 6px 0 !important;
+            font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif !important;
+        }
+
+        .pd-plans-title-group p {
+            font-size: 0.9rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+        }
+
+        .pd-guarantee-pill {
+            background: #eff6ff !important;
+            color: #2563eb !important;
+            border: 1px solid #bfdbfe !important;
+            font-weight: 800 !important;
+            font-size: 0.82rem !important;
+            padding: 8px 18px !important;
+            border-radius: 999px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .pd-section-subhead {
+            font-size: 1.15rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            margin-bottom: 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+
+        .pd-plans-grid-3 {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 24px !important;
+            margin-bottom: 36px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        @media (max-width: 992px) {
+            .pd-plans-grid-3, .pd-plans-grid-2 {
+                grid-template-columns: repeat(1, 1fr) !important;
+            }
+        }
+
+        .pd-plan-card {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            padding: 28px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+            box-sizing: border-box !important;
+        }
+
+        .pd-plan-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.12) !important;
+        }
+
+        .pd-plan-card.featured {
+            border: 2px solid #2563eb !important;
+            background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%) !important;
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.15) !important;
+        }
+
+        .pd-plan-card-tag {
+            position: absolute !important;
+            top: -14px !important;
+            right: 24px !important;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+            color: #ffffff !important;
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            padding: 4px 14px !important;
+            border-radius: 999px !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+        }
+
+        .pd-plan-type-badge {
+            align-self: flex-start !important;
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            padding: 4px 12px !important;
+            border-radius: 999px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            margin-bottom: 14px !important;
+        }
+
+        .pd-plan-type-badge.starter {
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+        }
+
+        .pd-plan-type-badge.popular {
+            background: #dbeafe !important;
+            color: #1d4ed8 !important;
+        }
+
+        .pd-plan-type-badge.vip {
+            background: #f3e8ff !important;
+            color: #7c3aed !important;
+        }
+
+        .pd-plan-name {
+            font-size: 1.25rem !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin: 0 0 6px 0 !important;
+        }
+
+        .pd-plan-subtitle {
+            font-size: 0.85rem !important;
+            color: #64748b !important;
+            margin: 0 0 20px 0 !important;
+        }
+
+        .pd-plan-price-wrap {
+            margin-bottom: 24px !important;
+            padding-bottom: 18px !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            display: flex !important;
+            align-items: baseline !important;
+            gap: 8px !important;
+        }
+
+        .pd-plan-price {
+            font-size: 2.2rem !important;
+            font-weight: 900 !important;
+            color: #2563eb !important;
+        }
+
+        .pd-plan-period {
+            font-size: 0.85rem !important;
+            color: #64748b !important;
+            font-weight: 600 !important;
+        }
+
+        .pd-plan-feature-list {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 0 28px 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            flex-grow: 1 !important;
+        }
+
+        .pd-plan-feature-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            font-size: 0.88rem !important;
+            color: #334155 !important;
+            font-weight: 500 !important;
+            line-height: 1.4 !important;
+        }
+
+        .pd-plan-feature-item i.check {
+            color: #16a34a !important;
+            font-size: 1rem !important;
+            flex-shrink: 0 !important;
+        }
+
+        .pd-plan-feature-item i.cross {
+            color: #cbd5e1 !important;
+            font-size: 1rem !important;
+            flex-shrink: 0 !important;
+        }
+
+        .pd-plan-feature-item.muted {
+            color: #94a3b8 !important;
+        }
+
+        .pd-plan-btn {
+            width: 100% !important;
+            padding: 12px 20px !important;
+            border-radius: 999px !important;
+            font-size: 0.9rem !important;
+            font-weight: 800 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center !important;
+            border: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            text-decoration: none !important;
+            box-sizing: border-box !important;
+            margin-top: auto !important;
+        }
+
+        .pd-plan-btn-outline {
+            background: #ffffff !important;
+            color: #2563eb !important;
+            border: 2px solid #2563eb !important;
+        }
+
+        .pd-plan-btn-outline:hover {
+            background: #2563eb !important;
+            color: #ffffff !important;
+        }
+
+        .pd-plan-btn-current {
+            background: #10b981 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+        }
+
+        .pd-plan-btn-current:hover {
+            background: #059669 !important;
         }
 
         /* TAB SHOW / HIDE RESET - CRITICAL */
@@ -1184,19 +1433,23 @@
         body[data-dashboard-role="customer"] .dash-sidebar {
             width: 275px !important;
             min-width: 275px !important;
-            padding: 18px 14px 84px !important;
+            padding: 0 14px 84px !important;
             overflow: hidden !important;
         }
 
         body[data-dashboard-role="customer"] .dash-brand {
-            height: auto !important;
-            min-height: 62px !important;
-            padding: 0 52px 16px 12px !important;
-            margin-bottom: 12px !important;
+            height: 80px !important;
+            min-height: 80px !important;
+            max-height: 80px !important;
+            padding: 0 20px !important;
+            margin: 0 0 12px 0 !important;
             display: flex !important;
             align-items: center !important;
+            justify-content: flex-start !important;
             gap: 12px !important;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.15) !important;
             color: #ffffff !important;
+            box-sizing: border-box !important;
         }
 
         body[data-dashboard-role="customer"] .dash-brand .brand-mark {
@@ -1274,28 +1527,35 @@
 
         body[data-dashboard-role="customer"] .dash-main {
             margin-left: 275px !important;
-            width: calc(100vw - 275px) !important;
-            max-width: calc(100vw - 275px) !important;
+            width: calc(100% - 275px) !important;
+            max-width: calc(100% - 275px) !important;
             min-height: 100vh !important;
             padding: 0 32px 40px 0 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
             background: #f8fafc !important;
             overflow-x: hidden !important;
         }
 
         body[data-dashboard-role="customer"] .dash-header {
-            height: auto !important;
-            min-height: 104px !important;
-            max-height: none !important;
+            height: 80px !important;
+            min-height: 80px !important;
+            max-height: 80px !important;
             width: 100% !important;
-            margin: 0 0 28px !important;
-            padding: 22px 32px !important;
-            border-radius: 0 0 16px 0 !important;
+            margin: 0 0 24px 0 !important;
+            padding: 0 32px !important;
+            border-radius: 0 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
             gap: 24px !important;
             background: #ffffff !important;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04) !important;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            box-sizing: border-box !important;
         }
 
         body[data-dashboard-role="customer"] .dash-header>div:first-child {
@@ -1589,7 +1849,7 @@
     </style>
     <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260909-customer-sidebar-close-v10">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
@@ -2659,20 +2919,114 @@
         </section>
 
         <section class="dash-panel hidden" data-view="plans">
-            <div class="dash-card">
-                <h3>Buyer / Tenant Plans</h3>
-                <div class="dash-grid three">
-                    <article><span>Basic</span><strong>Rs. 999</strong><button data-action="select-plan">Select
-                            Plan</button></article>
-                    <article><span>Relax</span><strong>Rs. 1,999</strong><button data-action="current-plan">Current
-                            Plan</button></article>
-                    <article><span>Assisted</span><strong>Rs. 4,999</strong><button data-action="select-plan">Select
-                            Plan</button></article>
+            <div class="pd-plans-wrapper">
+                <div class="pd-plans-header">
+                    <div class="pd-plans-title-group">
+                        <h4>Membership & Assistance Plans</h4>
+                        <p>Direct owner contacts, zero brokerage guarantee, legal agreement support, and dedicated property manager assistance.</p>
+                    </div>
+                    <div class="pd-guarantee-pill">
+                        <i class="fa-solid fa-shield-halved"></i> 100% Money-Back Guarantee*
+                    </div>
                 </div>
-            </div>
+
+                <!-- Buyer / Tenant Plans Header -->
+                <div class="pd-section-subhead">
+                    <i class="fa-solid fa-user-check" style="color: #2563eb;"></i>
+                    <span>Buyer & Tenant Plans</span>
+                </div>
+
+                <div class="pd-plans-grid-3">
+                    <!-- Basic Plan Card -->
+                    <div class="pd-plan-card">
+                        <span class="pd-plan-type-badge starter">Starter</span>
+                        <h5 class="pd-plan-name">Basic Plan</h5>
+                        <p class="pd-plan-subtitle">For fast, direct owner search</p>
+                        <div class="pd-plan-price-wrap">
+                            <span class="pd-plan-price">₹999</span>
+                            <span class="pd-plan-period">/ 45 days access</span>
+                        </div>
+                        <ul class="pd-plan-feature-list">
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> <strong>9 Direct Owner Contacts</strong></li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Instant SMS & WhatsApp Alerts</li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Property Verification Checklist</li>
+                            <li class="pd-plan-feature-item muted"><i class="fa-solid fa-circle-xmark cross"></i> Relationship Manager</li>
+                            <li class="pd-plan-feature-item muted"><i class="fa-solid fa-circle-xmark cross"></i> Free Rental Agreement Draft</li>
+                        </ul>
+                        <button type="button" class="pd-plan-btn pd-plan-btn-outline" data-action="select-plan" data-plan-name="Basic">Select Basic Plan</button>
+                    </div>
+
+                    <!-- Relax Plan Card (Featured) -->
+                    <div class="pd-plan-card featured">
+                        <span class="pd-plan-card-tag">Most Popular</span>
+                        <span class="pd-plan-type-badge popular">Recommended</span>
+                        <h5 class="pd-plan-name">Relax Plan</h5>
+                        <p class="pd-plan-subtitle">Zero-hassle complete tenant support</p>
+                        <div class="pd-plan-price-wrap">
+                            <span class="pd-plan-price">₹1,999</span>
+                            <span class="pd-plan-period">/ 90 days access</span>
+                        </div>
+                        <ul class="pd-plan-feature-list">
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> <strong>25 Direct Owner Contacts</strong></li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Instant SMS & WhatsApp Alerts</li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> <strong>Dedicated Relationship Manager</strong></li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Free Rental Agreement Draft (Save ₹299)</li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Home Cleaning & Move-in Support</li>
+                        </ul>
+                        <button type="button" class="pd-plan-btn pd-plan-btn-current" data-action="current-plan" data-plan-name="Relax">
+                            <i class="fa-solid fa-circle-check"></i> Current Plan
+                        </button>
+                    </div>
+
+                    <!-- Assisted Plan Card -->
+                    <div class="pd-plan-card">
+                        <span class="pd-plan-type-badge vip">VIP Care</span>
+                        <h5 class="pd-plan-name">Assisted Plan</h5>
+                        <p class="pd-plan-subtitle">Full concierge & field officer service</p>
+                        <div class="pd-plan-price-wrap">
+                            <span class="pd-plan-price">₹4,999</span>
+                            <span class="pd-plan-period">/ 90 days access</span>
+                        </div>
+                        <ul class="pd-plan-feature-list">
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> <strong>Unlimited Owner Contacts</strong></li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> <strong>Field Executive for Site Visits</strong></li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Rent Negotiation with Landlord</li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Doorstep E-Stamp & Legal Delivery</li>
+                            <li class="pd-plan-feature-item"><i class="fa-solid fa-circle-check check"></i> Priority Vendor Inspection Visit</li>
+                        </ul>
+                        <button type="button" class="pd-plan-btn pd-plan-btn-outline" data-action="select-plan" data-plan-name="Assisted">Select Assisted Plan</button>
+                    </div>
+                </div>
+
+                <!-- Owner / Landlord Plans Header -->
+                <div class="pd-section-subhead" style="padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                    <i class="fa-solid fa-building-user" style="color: #d97706;"></i>
+                    <span>Owner & Landlord Listing Plans</span>
+                </div>
+
+                <div class="pd-plans-grid-2" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                    <!-- Owner Freedom -->
+                    <div class="pd-plan-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h5 class="pd-plan-name" style="margin: 0;">Owner Freedom Plan</h5>
+                            <span style="background: #fef3c7; color: #d97706; font-size: 0.85rem; font-weight: 800; padding: 4px 14px; border-radius: 999px;">₹1,499</span>
+                        </div>
+                        <p class="pd-plan-subtitle" style="margin-bottom: 20px;">Rent out your house 3x faster with verified tenant matches.</p>
+                        <button type="button" class="pd-plan-btn pd-plan-btn-outline" data-action="select-plan" data-plan-name="OwnerFreedom" style="max-width: 220px;">Select Owner Plan</button>
+                    </div>
+
+                    <!-- Owner Concierge -->
+                    <div class="pd-plan-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h5 class="pd-plan-name" style="margin: 0;">Owner Concierge Plan</h5>
+                            <span style="background: #dcfce7; color: #166534; font-size: 0.85rem; font-weight: 800; padding: 4px 14px; border-radius: 999px;">₹3,999</span>
+                        </div>
+                        <p class="pd-plan-subtitle" style="margin-bottom: 20px;">End-to-end property manager, professional photo shoot & tenant screening.</p>
+                        <button type="button" class="pd-plan-btn pd-plan-btn-outline" data-action="select-plan" data-plan-name="OwnerConcierge" style="max-width: 220px;">Select Concierge Plan</button>
+                    </div>
+                </div>
         </section>
 
-        <section class="dash-panel hidden" data-view="support">
             <div class="dash-card">
                 <div class="card-head">
                     <div>
@@ -2770,7 +3124,7 @@
     </script>
     <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
     <script src="/propertydirect/js/dashboard.js?v=20260909-sidebar-close-top-v3"></script>
-    <script src="/propertydirect/js/dashboard-controls.js?v=20260908-dashboard-buttons-v7"></script>
+    <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
     <script src="/propertydirect/js/market-workflows.js?v=20260905-vendor-only-v1"></script>
     <script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
     <script>
@@ -2895,8 +3249,8 @@
                 discRow.style.display = 'flex';
             }
             updateNoBrokerCheckoutPrice();
-            if (typeof showToast === 'function') showToast('🎉 VIP Pass Applied! ₹49 Inspection Fee is now 100% FREE!');
-            else alert('🎉 VIP Pass Applied! ₹49 Inspection Fee is now 100% FREE!');
+            if (typeof showToast === 'function') showToast('VIP Pass Applied! Rs. 49 inspection fee is now free.');
+            else alert('VIP Pass Applied! Rs. 49 inspection fee is now free.');
         }
 
         function updateNoBrokerCheckoutPrice() {
@@ -2919,6 +3273,7 @@
 
         async function handleNoBrokerSubmit(e) {
             e.preventDefault();
+            if (!e.target.reportValidity()) return;
             const selectedValue = document.getElementById('nbSelectedService')?.value || 'General Inspection|49';
             const service = selectedValue.split('|')[0] || 'Carpentry Inspection';
             const price = selectedValue.split('|')[1] || '49';
@@ -2983,24 +3338,6 @@
             loadNoBrokerMaintenanceTickets();
         });
     </script>
+    <script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</body>
-
 </html>

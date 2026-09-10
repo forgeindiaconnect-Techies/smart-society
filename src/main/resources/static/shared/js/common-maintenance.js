@@ -11,7 +11,7 @@
     const sourcePlatform = isPropertyDirectCustomer ? "propertydirect" : "smartsociety";
     if (!document.getElementById("nobrokerServicesSection") && !document.getElementById("customerNoBrokerServicesSection")) {
         const catalogueScript = document.createElement("script");
-        catalogueScript.src = "/shared/js/carpentry-catalogue.js?v=20260909-v4";
+        catalogueScript.src = "/shared/js/carpentry-catalogue.js?v=20260910-inline-service-images-v1";
         document.head.appendChild(catalogueScript);
     }
     const panelId = "services";
@@ -161,7 +161,7 @@
                 <label>Selected option *<select name="serviceOption" required><option>Standard service visit</option><option>Repair only</option><option>Installation / replacement support</option><option>Inspection and quote</option><option>Move-in priority service</option></select></label>
                 <label>${isPropertyDirectCustomer ? "Listing / property ID" : "Flat / apartment number"}<input name="targetReference" placeholder="${isPropertyDirectCustomer ? "e.g. PDT-2042 or listing ID" : "e.g. A-204"}"></label>
                 <label>Contact person *<input name="requesterName" required maxlength="120" placeholder="Full name"></label>
-                <label>Contact phone *<input name="requesterPhone" required type="tel" maxlength="40" pattern="[0-9+ ]{7,20}" placeholder="+91 98765 43210"></label>
+                <label>Contact phone *<input name="requesterPhone" required type="tel" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}" title="Please enter a 10-digit mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" placeholder="10-digit mobile number"></label>
                 <label>Email<input name="requesterEmail" type="email" maxlength="160" placeholder="name@example.com"></label>
                 <label>Preferred date/time *<input name="preferredAt" required type="datetime-local"></label>
                 <label>Alternate date/time<input name="alternateAt" type="datetime-local"></label>

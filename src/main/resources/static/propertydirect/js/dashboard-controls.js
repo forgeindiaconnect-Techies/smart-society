@@ -109,6 +109,7 @@
                     }
                 })
             });
+            if (!response.ok) throw new Error('Workflow save failed');
             return await response.json().catch(function () { return {}; });
         } catch (error) {
             return null;
@@ -165,9 +166,9 @@
             ['Email / contact', 'text', 'Enter email, phone, or contact reference'],
             ['Role / category', 'text', 'Enter role, property type, package, or category'],
             ['Location / market', 'text', 'Enter city, locality, or service area'],
-            ['📷 Property Images (Upload Photos)', 'file-image', 'Select property photo files (JPG, PNG, WebP)'],
+            ['Property Images (Upload Photos)', 'file-image', 'Select property photo files (JPG, PNG, WebP)'],
             ['Image URLs (Optional photo links)', 'text', 'Enter photo URL (e.g. /propertydirect/assets/images/property-1.jpg or https://...)'],
-            ['🎬 Property Video (Upload Walkthrough)', 'file-video', 'Select video file (MP4, WebM)'],
+            ['Property Video (Upload Walkthrough)', 'file-video', 'Select video file (MP4, WebM)'],
             ['Virtual Tour Video URL (YouTube / Vimeo / MP4)', 'url', 'e.g. https://www.youtube.com/watch?v=... or MP4 video link'],
             ['Admin note', 'textarea', 'Add verification note or instructions']
         ];
@@ -175,8 +176,8 @@
             ['Updated title / name', 'text', 'Enter updated name or title'],
             ['Updated status', 'text', 'Enter active, pending, blocked, approved, etc.'],
             ['Updated contact / price / plan', 'text', 'Enter changed contact, price, package, or limit'],
-            ['📷 Property Images (Upload Photos)', 'file-image', 'Select property photo files (JPG, PNG, WebP)'],
-            ['🎬 Property Video (Upload Walkthrough)', 'file-video', 'Select video file (MP4, WebM)'],
+            ['Property Images (Upload Photos)', 'file-image', 'Select property photo files (JPG, PNG, WebP)'],
+            ['Property Video (Upload Walkthrough)', 'file-video', 'Select video file (MP4, WebM)'],
             ['Reason for change', 'textarea', 'Explain what was changed and why']
         ];
         if (['approve', 'reject', 'suspend', 'delete'].indexOf(actionType) !== -1) return [
@@ -260,12 +261,12 @@
                 control = '<textarea id="' + id + '" rows="3" placeholder="' + placeholder + '"></textarea>';
             } else if (fieldType === 'file-image') {
                 control = '<div style="display:flex; flex-direction:column; gap:6px; background:#f8fafc; padding:10px; border-radius:8px; border:1px dashed #cbd5e1;">' +
-                          '<input id="' + id + '" type="file" accept="image/*" multiple style="font-size:0.82rem; cursor:pointer;" onchange="var feedback = this.nextElementSibling; if (this.files.length > 0) { feedback.textContent = \'✓ \' + this.files.length + \' photo file(s) selected\'; feedback.style.display = \'block\'; } else { feedback.style.display = \'none\'; }">' +
+                          '<input id="' + id + '" type="file" accept="image/*" multiple style="font-size:0.82rem; cursor:pointer;" onchange="var feedback = this.nextElementSibling; if (this.files.length > 0) { feedback.textContent = this.files.length + \' photo file(s) selected\'; feedback.style.display = \'block\'; } else { feedback.style.display = \'none\'; }">' +
                           '<span style="color:#059669; font-size:0.78rem; font-weight:700; display:none;"></span>' +
                           '</div>';
             } else if (fieldType === 'file-video') {
                 control = '<div style="display:flex; flex-direction:column; gap:6px; background:#eff6ff; padding:10px; border-radius:8px; border:1px dashed #93c5fd;">' +
-                          '<input id="' + id + '" type="file" accept="video/*" style="font-size:0.82rem; cursor:pointer;" onchange="var feedback = this.nextElementSibling; if (this.files.length > 0) { feedback.textContent = \'🎥 Video walkthrough selected: \' + this.files[0].name; feedback.style.display = \'block\'; } else { feedback.style.display = \'none\'; }">' +
+                          '<input id="' + id + '" type="file" accept="video/*" style="font-size:0.82rem; cursor:pointer;" onchange="var feedback = this.nextElementSibling; if (this.files.length > 0) { feedback.textContent = \'Video walkthrough selected: \' + this.files[0].name; feedback.style.display = \'block\'; } else { feedback.style.display = \'none\'; }">' +
                           '<span style="color:#1d4ed8; font-size:0.78rem; font-weight:700; display:none;"></span>' +
                           '</div>';
             } else {
@@ -297,7 +298,7 @@
         submit.disabled = true;
         submit.textContent = 'Saving...';
         try {
-            await fetch('/api/workflows', {
+            var response = await fetch('/api/workflows', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -314,6 +315,7 @@
                     }
                 })
             });
+            if (!response.ok) throw new Error('Workflow save failed');
             if (button) applyVisualActionResult(button, type);
             showFallbackToast('Action saved to backend.');
             closeActionModal();
@@ -470,7 +472,7 @@
             submit.textContent = 'Saving...';
         }
         try {
-            await fetch('/api/workflows', {
+            var response = await fetch('/api/workflows', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -483,6 +485,7 @@
                     details: { fields: fields }
                 })
             });
+            if (!response.ok) throw new Error('Workflow save failed');
             showFallbackToast(title + ' saved to backend.');
         } catch (error) {
             showFallbackToast(title + ' saved locally. Backend was not reachable.');

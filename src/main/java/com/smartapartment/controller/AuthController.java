@@ -547,11 +547,14 @@ public class AuthController {
 
         boolean foundInAppUser = userRepository.existsByEmailIgnoreCase(normalizedEmail);
         boolean foundInCustomer = propertyDirectCustomers.findByEmailIgnoreCase(normalizedEmail).isPresent();
+        if (!foundInAppUser && !foundInCustomer) {
+            return ResponseEntity.status(404).body(Map.of("message", "No account found with this email address."));
+        }
 
         // Generate 6-digit OTP
         String otp = String.format(Locale.ROOT, "%06d", new java.util.Random().nextInt(900000) + 100000);
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(15);
-        String userType = foundInCustomer ? "CUSTOMER" : (foundInAppUser ? "APP_USER" : "NEW_CUSTOMER");
+        String userType = foundInCustomer ? "CUSTOMER" : "APP_USER";
 
         resetTokens.put(normalizedEmail, new ResetTokenInfo(normalizedEmail, otp, expiry, userType));
 
@@ -635,7 +638,7 @@ public class AuthController {
         }
 
         // Update AppUser if exists
-        var userOpt = userRepository.findByEmail(normalizedEmail);
+        var userOpt = userRepository.findByEmailIgnoreCase(normalizedEmail);
         if (userOpt.isPresent()) {
             AppUser user = userOpt.get();
             user.setPasswordHash(encodedPassword);
@@ -643,15 +646,9 @@ public class AuthController {
             accountUpdated = true;
         }
 
-        // If no existing account was found, create a new PropertyCustomer account so user can log in immediately
         if (!accountUpdated) {
-            PropertyCustomer newCustomer = new PropertyCustomer();
-            String defaultName = normalizedEmail.contains("@") ? normalizedEmail.substring(0, normalizedEmail.indexOf("@")) : normalizedEmail;
-            newCustomer.setName(defaultName);
-            newCustomer.setEmail(normalizedEmail);
-            newCustomer.setUsername(normalizedEmail);
-            newCustomer.setPasswordHash(encodedPassword);
-            propertyDirectCustomers.save(newCustomer);
+            resetTokens.remove(normalizedEmail);
+            return ResponseEntity.status(404).body(Map.of("message", "No account found with this email address."));
         }
 
         // Invalidate token
