@@ -2780,21 +2780,21 @@
                                     <p class="text-muted mb-0">Create a worker login account with skill, shift and emergency details.</p>
                                 </div>
                                 <div class="card-body px-4 pb-4">
-                                    <form id="maintenanceWorkerForm" class="maintenance-worker-form row g-3">
+                                    <form id="maintenanceWorkerForm" class="maintenance-worker-form row g-3" onsubmit="window.submitMaintenanceWorkerForm(event); return false;">
                                         <div class="col-md-6">
-                                            <label class="form-label" for="workerName">Full name</label>
-                                            <input class="form-control" id="workerName" name="name" autocomplete="name" required>
+                                            <label class="form-label" for="workerName">Full name *</label>
+                                            <input class="form-control" id="workerName" name="name" autocomplete="name" required placeholder="e.g. Ramesh Kumar">
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label" for="workerEmail">Work email</label>
-                                            <input type="email" class="form-control" id="workerEmail" name="email" autocomplete="email" required>
+                                            <label class="form-label" for="workerEmail">Work email *</label>
+                                            <input type="email" class="form-control" id="workerEmail" name="email" autocomplete="email" required placeholder="ramesh@greenheights.com">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="workerPhone">Phone number</label>
-                                            <input class="form-control" id="workerPhone" name="phone" autocomplete="tel">
+                                            <input class="form-control" id="workerPhone" name="phone" autocomplete="tel" placeholder="9876543210">
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label" for="workerDesignation">Skill / designation</label>
+                                            <label class="form-label" for="workerDesignation">Skill / designation *</label>
                                             <select class="form-select" id="workerDesignation" name="designation" required>
                                                 <option value="Maintenance Technician">Maintenance Technician</option>
                                                 <option value="Plumber">Plumber</option>
@@ -2823,27 +2823,30 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label" for="workerPassword">Temporary password</label>
-                                            <input type="password" minlength="8" class="form-control" id="workerPassword" name="temporaryPassword" required>
+                                            <label class="form-label" for="workerPassword">Temporary password *</label>
+                                            <input type="password" minlength="8" class="form-control" id="workerPassword" name="temporaryPassword" required placeholder="Min. 8 characters">
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label" for="workerAddress">Address</label>
-                                            <textarea class="form-control" id="workerAddress" name="address" rows="2"></textarea>
+                                            <textarea class="form-control" id="workerAddress" name="address" rows="2" placeholder="Local residential address"></textarea>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="workerEmergencyName">Emergency contact name</label>
-                                            <input class="form-control" id="workerEmergencyName" name="emergencyContactName">
+                                            <input class="form-control" id="workerEmergencyName" name="emergencyContactName" placeholder="Contact person name">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="workerEmergencyPhone">Emergency contact phone</label>
-                                            <input class="form-control" id="workerEmergencyPhone" name="emergencyContactPhone">
+                                            <input class="form-control" id="workerEmergencyPhone" name="emergencyContactPhone" placeholder="Emergency phone">
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label" for="workerNotes">Notes</label>
                                             <textarea class="form-control" id="workerNotes" name="notes" rows="2" placeholder="Assigned block, special skill, weekly off, or escalation note"></textarea>
                                         </div>
+                                        <div class="col-12" id="workerFeedbackContainer" style="display:none;">
+                                            <div class="alert mb-0 py-2 px-3 fw-semibold small" id="workerFeedbackAlert"></div>
+                                        </div>
                                         <div class="col-12 d-grid">
-                                            <button class="btn btn-primary btn-lg rounded-3" type="submit">
+                                            <button class="btn btn-primary btn-lg rounded-3" id="createMaintenanceWorkerBtn" type="button" onclick="window.submitMaintenanceWorkerForm(event)">
                                                 <i class="fa-solid fa-user-plus me-2"></i>Create Maintenance Worker
                                             </button>
                                         </div>
@@ -2942,6 +2945,32 @@
     
     <div th:replace="~{fragments/layout :: scripts}"></div>
     <script>
+        // Global visual toast notification
+        window.showToast = function(message, type = "success") {
+            let container = document.getElementById("maintenanceGlobalToastContainer");
+            if (!container) {
+                container = document.createElement("div");
+                container.id = "maintenanceGlobalToastContainer";
+                container.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:999999;display:flex;flex-direction:column;gap:10px;pointer-events:none;";
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement("div");
+            const bg = (type === "danger" || type === "error") ? "#ef4444" : (type === "warning" ? "#f59e0b" : (type === "info" ? "#3b82f6" : "#10b981"));
+            toast.style.cssText = `background:${bg};color:#ffffff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:0.9rem;box-shadow:0 10px 25px rgba(0,0,0,0.25);pointer-events:auto;opacity:0;transform:translateY(10px);transition:all 0.3s ease;display:flex;align-items:center;gap:8px;max-width:420px;`;
+            const icon = (type === "danger" || type === "error") ? "fa-circle-exclamation" : (type === "warning" ? "fa-triangle-exclamation" : (type === "info" ? "fa-circle-info" : "fa-circle-check"));
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.style.opacity = "1";
+                toast.style.transform = "translateY(0)";
+            });
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(10px)";
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        };
+
         window.__lastEmergencyEscalationToneAt = 0;
         window.maybePlayEmergencyEscalationTone = function() {
             const now = Date.now();
@@ -6889,6 +6918,7 @@
         });
     </script>
     <script th:if="${maintenanceSuperAdmin}">
+
         const maintenanceWorkerEscape = (value = "") => String(value)
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -6960,45 +6990,99 @@
 
         async function loadMaintenanceWorkers() {
             const table = document.getElementById("maintenanceWorkersTable");
-            if (table) table.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Loading workers...</td></tr>`;
-            const users = await maintenanceWorkerRequest("/api/society/team-users");
-            renderMaintenanceWorkers(users.filter(user => user.role === "MAINTENANCE_STAFF"));
+            if (table) table.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm text-primary me-2"></span>Loading workers...</td></tr>`;
+            try {
+                const users = await maintenanceWorkerRequest("/api/society/team-users");
+                renderMaintenanceWorkers(users.filter(user => user.role === "MAINTENANCE_STAFF"));
+            } catch (error) {
+                if (table) {
+                    table.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4"><i class="fa-solid fa-triangle-exclamation me-2"></i>Failed to load workers: ${maintenanceWorkerEscape(error.message)} <button type="button" class="btn btn-sm btn-outline-danger ms-2 rounded-pill" onclick="loadMaintenanceWorkers()">Retry</button></td></tr>`;
+                }
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        window.submitMaintenanceWorkerForm = async function(event) {
+            if (event && event.preventDefault) event.preventDefault();
             const form = document.getElementById("maintenanceWorkerForm");
-            const refreshButton = document.getElementById("refreshMaintenanceWorkers");
+            if (!form) return;
 
-            refreshButton?.addEventListener("click", () => loadMaintenanceWorkers().catch(error => window.showToast?.(error.message, "danger")));
+            const submitButton = document.getElementById("createMaintenanceWorkerBtn") || form.querySelector('button[type="submit"], button');
+            const feedbackContainer = document.getElementById("workerFeedbackContainer");
+            const feedbackAlert = document.getElementById("workerFeedbackAlert");
 
-            form?.addEventListener("submit", async (event) => {
-                event.preventDefault();
-                const submitButton = form.querySelector('button[type="submit"]');
+            const setFeedback = (msg, type = "danger") => {
+                if (feedbackContainer && feedbackAlert) {
+                    feedbackAlert.className = `alert mb-0 py-2 px-3 fw-semibold small alert-${type}`;
+                    feedbackAlert.innerHTML = msg;
+                    feedbackContainer.style.display = "block";
+                }
+                window.showToast(msg.replace(/<[^>]*>?/gm, ""), type);
+            };
+
+            const data = Object.fromEntries(new FormData(form).entries());
+            const name = (data.name || "").trim();
+            const email = (data.email || "").trim();
+            const password = (data.temporaryPassword || "").trim();
+
+            if (!name) {
+                setFeedback("Please enter the worker's full name.", "danger");
+                form.elements["name"]?.focus();
+                return;
+            }
+            if (!email || !email.includes("@")) {
+                setFeedback("Please enter a valid work email address.", "danger");
+                form.elements["email"]?.focus();
+                return;
+            }
+            if (!password || password.length < 8) {
+                setFeedback("Temporary password must be at least 8 characters long.", "danger");
+                form.elements["temporaryPassword"]?.focus();
+                return;
+            }
+
+            if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating worker...';
-                const data = Object.fromEntries(new FormData(form).entries());
-                const payload = {
-                    ...data,
-                    role: "MAINTENANCE_STAFF",
-                    joiningDate: data.joiningDate || null
-                };
-                try {
-                    const worker = await maintenanceWorkerRequest("/api/society/team-users", {
-                        method: "POST",
-                        body: JSON.stringify(payload)
-                    });
-                    form.reset();
-                    document.getElementById("workerDesignation").value = "Maintenance Technician";
-                    document.getElementById("workerShift").value = "General Shift";
-                    await loadMaintenanceWorkers();
-                    window.showToast?.(`${worker.name || "Maintenance worker"} created. They can sign in with their email and temporary password.`, "success");
-                } catch (error) {
-                    window.showToast?.(error.message, "danger");
-                } finally {
+            }
+
+            const payload = {
+                ...data,
+                name: name,
+                email: email,
+                role: "MAINTENANCE_STAFF",
+                temporaryPassword: password,
+                joiningDate: data.joiningDate || null
+            };
+
+            try {
+                const worker = await maintenanceWorkerRequest("/api/society/team-users", {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                });
+                form.reset();
+                const desig = document.getElementById("workerDesignation");
+                if (desig) desig.value = "Maintenance Technician";
+                const shift = document.getElementById("workerShift");
+                if (shift) shift.value = "General Shift";
+                setFeedback(`✓ Worker <strong>${maintenanceWorkerEscape(worker.name || name)}</strong> created successfully! Sign in with <code>${maintenanceWorkerEscape(worker.email || email)}</code> and the temporary password.`, "success");
+                await loadMaintenanceWorkers();
+            } catch (error) {
+                setFeedback(`❌ ${maintenanceWorkerEscape(error.message || "Failed to create maintenance worker")}`, "danger");
+            } finally {
+                if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.innerHTML = '<i class="fa-solid fa-user-plus me-2"></i>Create Maintenance Worker';
                 }
-            });
+            }
+        };
+
+        function initMaintenanceWorkerSection() {
+            const form = document.getElementById("maintenanceWorkerForm");
+            const refreshButton = document.getElementById("refreshMaintenanceWorkers");
+
+            refreshButton?.addEventListener("click", () => loadMaintenanceWorkers().catch(error => window.showToast(error.message, "danger")));
+
+            form?.addEventListener("submit", (event) => window.submitMaintenanceWorkerForm(event));
 
             document.addEventListener("click", async (event) => {
                 const copyButton = event.target.closest(".copy-worker-login");
@@ -7006,11 +7090,17 @@
                 const email = copyButton.dataset.email || "";
                 const text = `SmartSociety maintenance login\nEmail: ${email}\nDashboard: ${location.origin}/dashboards/maintenance`;
                 await navigator.clipboard?.writeText(text);
-                window.showToast?.("Maintenance worker login details copied.", "success");
+                window.showToast("Maintenance worker login details copied.", "success");
             });
 
-            loadMaintenanceWorkers().catch(error => window.showToast?.(error.message, "danger"));
-        });
+            loadMaintenanceWorkers().catch(error => window.showToast(error.message, "danger"));
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initMaintenanceWorkerSection);
+        } else {
+            initMaintenanceWorkerSection();
+        }
     </script>
 
     <!-- Side-by-Side Before & After Photo Comparison Modal Overlay -->
