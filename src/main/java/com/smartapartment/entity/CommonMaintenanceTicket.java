@@ -17,6 +17,9 @@ public class CommonMaintenanceTicket extends BaseEntity {
     @Column(nullable = false, length = 40)
     private String sourcePlatform;
 
+    @Column(name = "ticket_code", length = 32, unique = true)
+    private String ticketCode;
+
     @Column(nullable = false, length = 80)
     private String targetEntityType;
 
@@ -104,4 +107,18 @@ public class CommonMaintenanceTicket extends BaseEntity {
 
     @Column(length = 120)
     private String attachmentReference;
+
+
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getTicketId() {
+        if (ticketCode != null && !ticketCode.isBlank()) return ticketCode;
+        if (getId() == null) return null;
+        int year = getCreatedAt() != null ? getCreatedAt().getYear() : java.time.LocalDate.now().getYear();
+        return String.format(java.util.Locale.ROOT, "TCK-%04d-%04d", year, getId());
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getTicketReference() {
+        return getId() == null ? null : String.format(java.util.Locale.ROOT, "TKT-%05d", getId());
+    }
 }

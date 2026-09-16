@@ -198,7 +198,7 @@
     async function loadResidentsAndHydrate() {
         const [residentOptions, gateOptions] = await Promise.all([
             api("/api/society/security/resident-options"),
-            api("/api/society/security/gates").catch(() => gates)
+            api("/api/society/gates").catch(() => gates)
         ]);
         residents = Array.isArray(residentOptions) ? residentOptions : [];
         gates = Array.isArray(gateOptions) && gateOptions.length ? gateOptions : gates;

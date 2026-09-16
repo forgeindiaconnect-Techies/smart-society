@@ -4,10 +4,17 @@ spring:
   application:
     name: smartapartment
   mail:
-    host: ${SMTP_HOST:}
+    # Brevo SMTP configuration for live forgot-password OTP emails.
+    # Set these environment variables before running the app:
+    # SMTP_HOST=smtp-relay.brevo.com
+    # SMTP_PORT=587
+    # SMTP_USERNAME=<your Brevo SMTP login>
+    # SMTP_PASSWORD=<your Brevo SMTP key>
+    # APP_MAIL_FROM=<verified Brevo sender email>
+    host: ${SMTP_HOST:${BREVO_SMTP_HOST:}}
     port: ${SMTP_PORT:587}
-    username: ${SMTP_USERNAME:}
-    password: ${SMTP_PASSWORD:}
+    username: ${SMTP_USERNAME:${BREVO_SMTP_USERNAME:}}
+    password: ${SMTP_PASSWORD:${BREVO_SMTP_PASSWORD:}}
     properties:
       mail:
         smtp:
@@ -44,6 +51,7 @@ server:
 app:
   mail:
     from: ${APP_MAIL_FROM:${SMTP_USERNAME:no-reply@smartapartment.local}}
+    expose-otp-preview: ${APP_MAIL_EXPOSE_OTP_PREVIEW:false}
   # Configure both PROPERTYDIRECT_CONTACT_EMAIL and SMTP settings in production
   # to deliver contact-message notifications to the support team.
   propertydirect:
@@ -51,3 +59,9 @@ app:
   jwt:
     secret: ${JWT_SECRET:this_is_a_very_secure_and_long_jwt_secret_for_local_dev_12345}
     expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+  emergency:
+    # Emergency dispatch contract from the dual-track maintenance specification.
+    offer-timeout-seconds: ${EMERGENCY_OFFER_TIMEOUT_SECONDS:45}
+    max-dispatch-cycles: ${EMERGENCY_MAX_DISPATCH_CYCLES:2}
+    geofence-arrival-radius-km: ${EMERGENCY_GEOFENCE_RADIUS_KM:1.0}
+    enforce-geofence: ${EMERGENCY_ENFORCE_GEOFENCE:false}

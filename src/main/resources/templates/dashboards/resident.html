@@ -28,19 +28,15 @@
         body[data-dashboard-role="resident"] .dashboard-container .btn.btn-sm { min-height: 30px; padding: .3rem .65rem !important; font-size: .78rem; }
         body[data-dashboard-role="resident"] .header-actions .btn { min-height: 38px; padding: .5rem 1rem !important; font-size: .88rem; }
         @media (max-width: 767.98px) { body[data-dashboard-role="resident"] .stats .card { min-height: 94px; } }
-        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
         #sidebar {
-            position: relative !important;
-            z-index: 9999 !important;
             pointer-events: auto !important;
         }
         #sidebar .nav-link {
-            position: relative !important;
-            z-index: 10000 !important;
             pointer-events: auto !important;
             cursor: pointer !important;
         }
     </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
     <div class="dashboard-layout">
         
         <!-- Sidebar Navigation -->
@@ -756,6 +752,23 @@
                                 
                                 <form id="noBrokerBookingForm" onsubmit="handleNoBrokerSubmit(event)">
                                     <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="p-3 rounded-4 bg-light border border-light-subtle">
+                                                <label class="form-label fw-bold text-dark small mb-2 d-block">Request Type & SLA Priority *</label>
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 py-2 fw-bold flex-fill" id="btnTypeNormal" onclick="selectRequestType('NORMAL')">
+                                                        <i class="fa-solid fa-ticket me-1"></i> Standard Maintenance Ticket
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-bold flex-fill" id="btnTypeEmergency" onclick="selectRequestType('EMERGENCY')">
+                                                        <i class="fa-solid fa-bolt me-1"></i> Emergency Dispatch
+                                                    </button>
+                                                </div>
+                                                <input type="hidden" id="selectedRequestType" value="NORMAL">
+                                                <div class="mt-2 small text-muted" id="requestTypeNotice">
+                                                    <i class="fa-solid fa-circle-info text-primary me-1"></i> <strong>Standard Ticket:</strong> For normal repairs that can follow scheduling and SLA review.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-12">
                                             <label class="form-label fw-bold text-dark small">Selected Service / Category *</label>
                                             <select class="form-select shadow-none border-light-subtle rounded-3" id="nbSelectedService" required onchange="updateNoBrokerCheckoutPrice()">
@@ -1374,9 +1387,27 @@
             }
         }
 
+        function selectRequestType(type) {
+            const hiddenInput = document.getElementById('selectedRequestType');
+            const btnNormal = document.getElementById('btnTypeNormal');
+            const btnEmergency = document.getElementById('btnTypeEmergency');
+            const notice = document.getElementById('requestTypeNotice');
+            if (hiddenInput) hiddenInput.value = type;
+            if (type === 'EMERGENCY') {
+                if (btnNormal) { btnNormal.classList.remove('btn-primary'); btnNormal.classList.add('btn-outline-primary'); }
+                if (btnEmergency) { btnEmergency.classList.remove('btn-outline-danger'); btnEmergency.classList.add('btn-danger'); }
+                if (notice) notice.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger me-1"></i> <strong>Emergency Dispatch:</strong> For urgent issues such as burst pipes, severe leaks, or electrical hazards. This creates a live booking for immediate partner dispatch.';
+            } else {
+                if (btnNormal) { btnNormal.classList.remove('btn-outline-primary'); btnNormal.classList.add('btn-primary'); }
+                if (btnEmergency) { btnEmergency.classList.remove('btn-danger'); btnEmergency.classList.add('btn-outline-danger'); }
+                if (notice) notice.innerHTML = '<i class="fa-solid fa-circle-info text-primary me-1"></i> <strong>Standard Ticket:</strong> For normal repairs that can follow scheduling and SLA review.';
+            }
+        }
+
         async function handleNoBrokerSubmit(e) {
             e.preventDefault();
             if (!e.target.reportValidity()) return;
+            const requestType = document.getElementById('selectedRequestType')?.value || 'NORMAL';
             const selectedValue = document.getElementById('nbSelectedService')?.value || 'General Inspection|49';
             const service = selectedValue.split('|')[0] || 'Carpentry Inspection';
             const price = selectedValue.split('|')[1] || '49';
@@ -1391,40 +1422,68 @@
             const preferredAt = `${date}T${slot === "MORNING" ? "09:00" : slot === "AFTERNOON" ? "12:00" : slot === "EVENING" ? "16:00" : "10:00"}`;
 
             try {
-                const saved = await noBrokerMaintenanceApi("", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        sourcePlatform: "smartsociety",
-                        targetEntityType: "APARTMENT_UNIT",
-                        requesterName: name,
-                        requesterPhone: phone,
-                        serviceType: service,
-                        serviceCategory: meta.category,
-                        serviceOption: meta.option,
-                        priceLabel: price === "0" ? "Free inspection pass" : `Rs. ${price}`,
-                        warrantyLabel: meta.warranty,
-                        title: `${service} - ${address || name}`,
-                        description: [
-                            `NoBroker-style resident service booking`,
-                            `Selected slot: ${slot}`,
-                            `Inspection fee / starting price: Rs. ${price}`,
-                            notes && `Resident instructions: ${notes}`,
-                            "Material and spare costs are separate unless approved in final vendor estimate."
-                        ].filter(Boolean).join("\n"),
-                        serviceAddress: address,
-                        priority: slot === "EXPRESS_60MIN" ? "HIGH" : "MEDIUM",
-                        preferredAt,
-                        vendorName: "External NoBroker-style vendor",
-                        vendorPhone: "",
-                        accessType: "Resident will be present",
-                        contactMethod: "Phone",
-                        externalReference: bookingId
-                    })
-                });
+                let saved;
+                if (requestType === "EMERGENCY") {
+                    const addressParts = address.split(',').map(v => v.trim()).filter(Boolean);
+                    saved = await fetch("/api/maintenance/book", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json", Accept: "application/json"},
+                        body: JSON.stringify({
+                            residentName: name,
+                            unitNumber: addressParts[0] || "Resident Unit",
+                            contactNumber: phone,
+                            tradeCategory: service.toLowerCase().includes("plumb") ? "PLUMBING" : service.toLowerCase().includes("electric") ? "ELECTRICAL" : "CARPENTRY",
+                            hub: addressParts.length > 1 ? addressParts[1] : "Whitefield",
+                            serviceAddress: address,
+                            city: addressParts.length > 2 ? addressParts[addressParts.length - 1] : "Bangalore",
+                            description: [
+                                `${service} emergency request`,
+                                `Preferred slot: ${slot}`,
+                                notes && `Resident instructions: ${notes}`
+                            ].filter(Boolean).join("\n")
+                        })
+                    }).then(r => r.ok ? r.json() : r.json().then(err => { throw new Error(err.message || "Failed to place emergency booking"); }));
+                } else {
+                    saved = await noBrokerMaintenanceApi("", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            sourcePlatform: "smartsociety",
+                            targetEntityType: "APARTMENT_UNIT",
+                            requesterName: name,
+                            requesterPhone: phone,
+                            serviceType: service,
+                            serviceCategory: meta.category,
+                            serviceOption: meta.option,
+                            priceLabel: price === "0" ? "Free inspection pass" : `Rs. ${price}`,
+                            warrantyLabel: meta.warranty,
+                            title: `${service} - ${address || name}`,
+                            description: [
+                                `NoBroker-style resident service booking`,
+                                `Selected slot: ${slot}`,
+                                `Inspection fee / starting price: Rs. ${price}`,
+                                notes && `Resident instructions: ${notes}`,
+                                "Material and spare costs are separate unless approved in final vendor estimate."
+                            ].filter(Boolean).join("\n"),
+                            serviceAddress: address,
+                            priority: slot === "EXPRESS_60MIN" ? "HIGH" : "MEDIUM",
+                            preferredAt,
+                            vendorName: "External NoBroker-style vendor",
+                            vendorPhone: "",
+                            accessType: "Resident will be present",
+                            contactMethod: "Phone",
+                            externalReference: bookingId
+                        })
+                    });
+                }
                 e.currentTarget.reset();
                 updateNoBrokerCheckoutPrice();
                 await loadNoBrokerMaintenanceTickets();
-                if (typeof showToast === 'function') showToast(`Service booking #${saved.id} saved. Reference: ${bookingId}`);
+                if (requestType === "EMERGENCY") {
+                    const ref = saved.orderId || saved.orderReference || saved.bookingReference || ('EMG-' + String(saved.id || 0).padStart(5, '0'));
+                    if (typeof showToast === 'function') showToast(`Emergency booking ${ref} created. Opening live tracking...`);
+                    else alert(`Emergency booking ${ref} created. Opening live tracking...`);
+                    window.location.href = `/dashboards/resident-maintenance?orderId=${encodeURIComponent(ref)}`;
+                } else if (typeof showToast === 'function') showToast(`Service booking #${saved.id} saved. Reference: ${bookingId}`);
                 else alert(`Service booking saved. Reference: ${bookingId}`);
             } catch (error) {
                 if (typeof showToast === 'function') showToast(error.message);
@@ -1507,5 +1566,6 @@
 <script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
 <script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
 <script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
+<script src="/smartapartment/js/resident-gate-approvals.js?v=20260916-multigate-v1"></script>
 </body>
 </html>

@@ -3,15 +3,10 @@
 <head th:replace="~{fragments/layout :: head('Accountant Dashboard')}"></head>
 <body class="dashboard-body bg-light" data-platform="smartsociety" data-dashboard-role="accountant">
     <style>
-        /* Force sidebar to the very front to prevent any invisible overlays from blocking clicks */
         #sidebar {
-            position: relative !important;
-            z-index: 9999 !important;
             pointer-events: auto !important;
         }
         #sidebar .nav-link {
-            position: relative !important;
-            z-index: 10000 !important;
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -50,6 +45,7 @@
             .billing-section-header > div:last-child { width: 100%; justify-content: flex-start; }
         }
     </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
     <div class="dashboard-layout">
         
         <!-- Sidebar Navigation -->

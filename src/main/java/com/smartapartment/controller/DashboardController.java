@@ -77,6 +77,12 @@ public class DashboardController {
         return "dashboards/resident";
     }
 
+    @GetMapping("/dashboards/resident-maintenance")
+    public String residentMaintenanceTracking(HttpSession session) {
+        if (!isLoggedIn(session, "smartapartment", "resident")) return "redirect:/?loginRequired=true";
+        return "dashboards/resident-maintenance";
+    }
+
     @GetMapping("/dashboards/security")
     public String securityDashboard(HttpSession session, Model model, @RequestParam(required = false) String notice) {
         if (!isLoggedIn(session, "smartapartment", "security")) return "redirect:/?loginRequired=true";
@@ -90,8 +96,26 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboards/maintenance")
-    public String maintenanceDashboard(HttpSession session) {
-        if (!isLoggedIn(session, "smartapartment", "maintenance")) return "redirect:/?loginRequired=true";
+    public String maintenanceDashboard(HttpSession session, Model model) {
+        boolean isSuperAdmin = isLoggedIn(session, "smartapartment", "superadmin")
+                || isLoggedIn(session, "propertydirect", "superadmin");
+        boolean isMaintenance = isLoggedIn(session, "smartapartment", "maintenance");
+
+        if (!isSuperAdmin && !isMaintenance) {
+            return "redirect:/?loginRequired=true";
+        }
+        boolean isMaintenanceAdmin = false;
+        if (isMaintenance) {
+            try {
+                AppUser user = currentUser.requireUser();
+                String email = user.getEmail() == null ? "" : user.getEmail().trim().toLowerCase();
+                isMaintenanceAdmin = "maintenance@smartapartment".equals(email)
+                        || "maintenance@smartsociety".equals(email);
+            } catch (RuntimeException ignored) {
+                isMaintenanceAdmin = false;
+            }
+        }
+        model.addAttribute("maintenanceSuperAdmin", isSuperAdmin || isMaintenanceAdmin);
         return "dashboards/maintenance";
     }
 

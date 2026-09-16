@@ -27,13 +27,14 @@ public class CommonMaintenanceController {
     @GetMapping
     public List<CommonMaintenanceTicket> list(@RequestParam(required = false) String sourcePlatform,
                                               @RequestParam(required = false) String status) {
+        var stream = tickets.findAll().stream();
         if (sourcePlatform != null && !sourcePlatform.isBlank()) {
-            return tickets.findBySourcePlatformIgnoreCaseOrderByCreatedAtDesc(sourcePlatform);
+            stream = stream.filter(t -> sourcePlatform.equalsIgnoreCase(t.getSourcePlatform()));
         }
         if (status != null && !status.isBlank()) {
-            return tickets.findByTicketStatusIgnoreCaseOrderByCreatedAtDesc(status);
+            stream = stream.filter(t -> status.equalsIgnoreCase(t.getTicketStatus()));
         }
-        return tickets.findAll().stream()
+        return stream
                 .sorted((left, right) -> String.valueOf(right.getCreatedAt()).compareTo(String.valueOf(left.getCreatedAt())))
                 .toList();
     }

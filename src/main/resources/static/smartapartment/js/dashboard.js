@@ -202,7 +202,7 @@ function setupDetailedProfileSettings() {
             <dl><div><dt>Workspace</dt><dd id="profileWorkspace">—</dd></div><div><dt>Account</dt><dd id="profileAccountStatus">—</dd></div><div><dt>MFA</dt><dd id="profileMfaStatus">—</dd></div></dl>
         </div>
         <form id="dashboardProfileForm" class="profile-settings__section">
-            <div class="profile-settings__section-title"><i class="fa-solid fa-address-card"></i><div><h3>Personal information</h3><p>These details identify you to the people and workflows you manage.</p></div></div>
+            <div class="profile-settings__section-title"><span class="profile-settings__icon-box"><i class="fa-solid fa-address-card"></i></span><div><h3>Personal information</h3><p>These details identify you to the people and workflows you manage.</p></div></div>
             <div class="profile-form-grid">
                 <label><span>Full name *</span><input id="profileFullName" autocomplete="name" maxlength="120" required></label>
                 <label><span>Email address</span><input id="profileEmail" type="email" readonly><small>Your login email is protected from profile edits.</small></label>
@@ -214,7 +214,7 @@ function setupDetailedProfileSettings() {
             <div class="profile-settings__actions"><button type="reset" class="btn profile-secondary-button">Discard changes</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save profile</button></div>
         </form>
         <form id="dashboardPreferencesForm" class="profile-settings__section">
-            <div class="profile-settings__section-title"><i class="fa-solid fa-bell"></i><div><h3>Notifications & display</h3><p>Choose how this dashboard should keep you informed.</p></div></div>
+            <div class="profile-settings__section-title"><span class="profile-settings__icon-box"><i class="fa-solid fa-bell"></i></span><div><h3>Notifications & display</h3><p>Choose how this dashboard should keep you informed.</p></div></div>
             <div class="profile-preference-grid">
                 <label><input type="checkbox" name="emailAlerts"><span><strong>Email notifications</strong><small>Approvals, assignments, reports, and important updates.</small></span></label>
                 <label><input type="checkbox" name="browserAlerts"><span><strong>Dashboard notifications</strong><small>Show timely alerts while you are signed in.</small></span></label>
@@ -226,7 +226,7 @@ function setupDetailedProfileSettings() {
             <div class="profile-settings__actions"><button type="submit" class="btn btn-primary" data-preferences-save><i class="fa-solid fa-check"></i><span>Save preferences</span></button></div>
         </form>
         <form id="dashboardPasswordForm" class="profile-settings__section">
-            <div class="profile-settings__section-title"><i class="fa-solid fa-shield-halved"></i><div><h3>Password & security</h3><p>Use at least 8 characters with a number and symbol.</p></div></div>
+            <div class="profile-settings__section-title"><span class="profile-settings__icon-box"><i class="fa-solid fa-shield-halved"></i></span><div><h3>Password & security</h3><p>Use at least 8 characters with a number and symbol.</p></div></div>
             <div class="profile-form-grid profile-password-grid">
                 <label><span>Current password</span><div class="profile-password"><input name="currentPassword" type="password" autocomplete="current-password" required><button type="button" data-password-toggle aria-label="Show current password"><i class="fa-regular fa-eye"></i></button></div></label>
                 <label><span>New password</span><div class="profile-password"><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required><button type="button" data-password-toggle aria-label="Show new password"><i class="fa-regular fa-eye"></i></button></div></label>

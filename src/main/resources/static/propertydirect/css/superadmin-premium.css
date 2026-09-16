@@ -1,9 +1,9 @@
 /* Super Admin overview: concise operational hierarchy. */
 html body.app-dashboard[data-platform="propertydirect"] main.dash-main {
   padding: 0 !important;
-  margin-left: 275px !important;
-  width: calc(100% - 275px) !important;
-  max-width: calc(100% - 275px) !important;
+  margin-left: var(--dashboard-sidebar-width) !important;
+  width: calc(100% - var(--dashboard-sidebar-width)) !important;
+  max-width: calc(100% - var(--dashboard-sidebar-width)) !important;
   background: #f8fafc !important;
 }
 
@@ -88,12 +88,21 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="o
 .superadmin-live-empty { padding:24px 0; color:#64748b; font-size:.84rem; text-align:center; }
 
 /* Sidebar close/reopen controls. */
-html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-cancel {
-  position:absolute; top:20px; right:16px; z-index:8; display:inline-flex; align-items:center; justify-content:center; gap:5px;
-  width:34px; min-width:34px; height:34px; min-height:34px; padding:0; border:1px solid rgba(203,213,225,.42); border-radius:8px;
-  color:#dbe5f5; background:transparent; font:800 .72rem var(--app-font-family); cursor:pointer;
+@media (min-width: 901px) {
+  html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-cancel {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
-html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-cancel:hover { color:#fff; border-color:#fff; background:rgba(255,255,255,.09); }
+@media (max-width: 900px) {
+  html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-cancel {
+    position:absolute; top:20px; right:16px; z-index:8; display:inline-flex; align-items:center; justify-content:center; gap:5px;
+    width:34px; min-width:34px; height:34px; min-height:34px; padding:0; border:1px solid rgba(203,213,225,.42); border-radius:8px;
+    color:#dbe5f5; background:transparent; font:800 .72rem var(--app-font-family); cursor:pointer;
+  }
+  html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-cancel:hover { color:#fff; border-color:#fff; background:rgba(255,255,255,.09); }
+}
 html body.app-dashboard[data-platform="propertydirect"] .pd-sidebar-reopen {
   position:fixed; top:18px; left:18px; z-index:10010; display:none; width:36px; min-width:36px; height:36px; min-height:36px; padding:0;
   border:1px solid #bfdbfe; border-radius:9px; color:#1d4ed8; background:#fff; font:800 .78rem var(--app-font-family); box-shadow:0 8px 20px rgba(15,23,42,.13); cursor:pointer;

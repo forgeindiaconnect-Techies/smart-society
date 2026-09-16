@@ -104,15 +104,14 @@ public class SuperAdminRoleController {
     }
 
     private String permissionsFor(UserRole role) {
-        return switch (role) {
-            case SUPER_ADMIN -> "Platform-wide access";
-            case SOCIETY_ADMIN -> "Full society administration";
-            case ACCOUNTANT -> "Finance and billing";
-            case SECURITY_STAFF -> "Gate, visitor and security operations";
-            case MAINTENANCE_STAFF -> "Assigned maintenance operations";
-            case RESIDENT -> "Own resident services";
-            case FACILITY_MANAGER -> "Facilities and maintenance management";
-        };
+        if (role == null) return "Own resident services";
+        if (role == UserRole.SUPER_ADMIN) return "Platform-wide access";
+        if (role == UserRole.SOCIETY_ADMIN) return "Full society administration";
+        if (role == UserRole.ACCOUNTANT) return "Finance and billing";
+        if (role == UserRole.SECURITY_STAFF) return "Gate, visitor and security operations";
+        if (role == UserRole.MAINTENANCE_STAFF) return "Assigned maintenance operations";
+        if (role == UserRole.FACILITY_MANAGER) return "Facilities and maintenance management";
+        return "Own resident services";
     }
 
     private Map<String, Object> policyResponse(RoleAccessPolicy policy) {

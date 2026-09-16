@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,8 +51,9 @@ public class AuthController {
     private final ResidentRepository residentRepository;
     private final ApartmentRepository apartmentRepository;
     private final com.smartapartment.service.MailService mailService;
+    private final boolean exposeOtpPreview;
 
-    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository, com.smartapartment.service.MailService mailService) {
+    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository, com.smartapartment.service.MailService mailService, @Value("${app.mail.expose-otp-preview:false}") boolean exposeOtpPreview) {
         this.authService = authService;
         this.dashboardCredentials = DashboardCredential.load(environment);
         this.propertyDirectCustomers = propertyDirectCustomers;
@@ -62,6 +64,7 @@ public class AuthController {
         this.residentRepository = residentRepository;
         this.apartmentRepository = apartmentRepository;
         this.mailService = mailService;
+        this.exposeOtpPreview = exposeOtpPreview;
     }
 
     @PostMapping("/register-tenant")
@@ -222,9 +225,9 @@ public class AuthController {
             try {
                 AppUser user = authService.authenticate(request.username(), request.password());
                 String dashboardRole = dashboardRole(user.getRole());
-                if (!safe(request.role()).isBlank() && !dashboardRole.equalsIgnoreCase(safe(request.role()))) {
-                    return ResponseEntity.status(403).body(Map.of("message", "This account does not have the selected role"));
-                }
+                boolean isSuperAdmin = (user.getRole() == UserRole.SUPER_ADMIN);
+                boolean requestedMaintenance = "maintenance".equalsIgnoreCase(safe(request.role()));
+
 
                 var authentication = new UsernamePasswordAuthenticationToken(
                         user.getEmail(), null, java.util.List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
@@ -233,11 +236,18 @@ public class AuthController {
                 SecurityContextHolder.setContext(context);
                 session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
                 session.setAttribute("dashboard:smartapartment:" + dashboardRole, Boolean.TRUE);
+                if (isSuperAdmin) {
+                    session.setAttribute("dashboard:smartapartment:maintenance", Boolean.TRUE);
+                    session.setAttribute("dashboard:propertydirect:superadmin", Boolean.TRUE);
+                }
+
+                String redirectTarget = (isSuperAdmin && requestedMaintenance) ? "/dashboards/maintenance" : dashboardRedirect(user.getRole());
+                String effectiveRole = (isSuperAdmin && requestedMaintenance) ? "maintenance" : dashboardRole;
 
                 return ResponseEntity.ok(Map.of(
                         "message", "Login successful",
-                        "redirect", dashboardRedirect(user.getRole()),
-                        "role", dashboardRole,
+                        "redirect", redirectTarget,
+                        "role", effectiveRole,
                         "name", user.getFullName()
                 ));
             } catch (IllegalArgumentException exception) {
@@ -282,6 +292,10 @@ public class AuthController {
                 SecurityContextHolder.setContext(context);
                 session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
                 session.setAttribute("dashboard:smartapartment:" + dashboardRole, Boolean.TRUE);
+                if (user.getRole() == UserRole.SUPER_ADMIN) {
+                    session.setAttribute("dashboard:smartapartment:maintenance", Boolean.TRUE);
+                    session.setAttribute("dashboard:propertydirect:superadmin", Boolean.TRUE);
+                }
 
                 return ResponseEntity.ok(Map.of(
                         "message", "Login successful",
@@ -307,6 +321,10 @@ public class AuthController {
         }
 
         session.setAttribute("dashboard:" + credential.platform() + ":" + credential.role(), Boolean.TRUE);
+        if ("superadmin".equalsIgnoreCase(credential.role())) {
+            session.setAttribute("dashboard:smartapartment:superadmin", Boolean.TRUE);
+            session.setAttribute("dashboard:smartapartment:maintenance", Boolean.TRUE);
+        }
         if ("propertydirect".equalsIgnoreCase(credential.platform())
                 && ("admin".equalsIgnoreCase(credential.role())
                     || "vendor".equalsIgnoreCase(credential.role())
@@ -433,26 +451,22 @@ public class AuthController {
 
     private String dashboardRole(UserRole role) {
         if (role == null) return "resident";
-        return switch (role) {
-            case SUPER_ADMIN -> "superadmin";
-            case SOCIETY_ADMIN, FACILITY_MANAGER -> "admin";
-            case ACCOUNTANT -> "accountant";
-            case RESIDENT -> "resident";
-            case SECURITY_STAFF -> "security";
-            case MAINTENANCE_STAFF -> "maintenance";
-        };
+        if (role == UserRole.SUPER_ADMIN) return "superadmin";
+        if (role == UserRole.SOCIETY_ADMIN || role == UserRole.FACILITY_MANAGER) return "admin";
+        if (role == UserRole.ACCOUNTANT) return "accountant";
+        if (role == UserRole.SECURITY_STAFF) return "security";
+        if (role == UserRole.MAINTENANCE_STAFF) return "maintenance";
+        return "resident";
     }
 
     private String dashboardRedirect(UserRole role) {
         if (role == null) return "/dashboards/resident";
-        return switch (role) {
-            case SUPER_ADMIN -> "/dashboards/superadmin";
-            case SOCIETY_ADMIN, FACILITY_MANAGER -> "/dashboards/society-admin";
-            case ACCOUNTANT -> "/dashboards/accountant";
-            case RESIDENT -> "/dashboards/resident";
-            case SECURITY_STAFF -> "/dashboards/security";
-            case MAINTENANCE_STAFF -> "/dashboards/maintenance";
-        };
+        if (role == UserRole.SUPER_ADMIN) return "/dashboards/superadmin";
+        if (role == UserRole.SOCIETY_ADMIN || role == UserRole.FACILITY_MANAGER) return "/dashboards/society-admin";
+        if (role == UserRole.ACCOUNTANT) return "/dashboards/accountant";
+        if (role == UserRole.SECURITY_STAFF) return "/dashboards/security";
+        if (role == UserRole.MAINTENANCE_STAFF) return "/dashboards/maintenance";
+        return "/dashboards/resident";
     }
 
     public record DashboardLoginRequest(String platform, String role, String username, String password) {
@@ -568,14 +582,25 @@ public class AuthController {
                 "email", normalizedEmail,
                 "emailSent", true
             ));
-        } else {
+        }
+
+        if (exposeOtpPreview) {
             return ResponseEntity.ok(Map.of(
-                "message", "Verification code (OTP) generated for " + normalizedEmail + ". (Valid for 15 minutes)",
+                "message", "Developer OTP preview is enabled. Configure Brevo SMTP to send real mail.",
                 "email", normalizedEmail,
                 "otpPreview", otp,
-                "emailSent", false
+                "emailSent", false,
+                "deliveryMessage", String.valueOf(mailResult.getOrDefault("message", "Mail delivery was not configured."))
             ));
         }
+
+        resetTokens.remove(normalizedEmail);
+        return ResponseEntity.status(503).body(Map.of(
+            "message", "OTP email could not be sent. Configure Brevo SMTP credentials and a verified sender email, then try again.",
+            "email", normalizedEmail,
+            "emailSent", false,
+            "deliveryMessage", String.valueOf(mailResult.getOrDefault("message", "Mail delivery failed."))
+        ));
     }
 
     @PostMapping("/verify-reset-otp")

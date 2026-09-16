@@ -568,9 +568,9 @@
             bottom: 0 !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            width: 275px !important;
-            min-width: 275px !important;
-            max-width: 275px !important;
+            width: var(--dashboard-sidebar-width) !important;
+            min-width: var(--dashboard-sidebar-width) !important;
+            max-width: var(--dashboard-sidebar-width) !important;
             margin: 0 !important;
             padding: 16px 14px 115px 14px !important;
             border-radius: 0 !important;
@@ -776,10 +776,10 @@
         /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
         main.dash-main,
         .dash-main {
-            margin: 0 0 0 275px !important;
+            margin: 0 0 0 var(--dashboard-sidebar-width) !important;
             padding: 20px 24px !important;
-            width: calc(100% - 275px) !important;
-            max-width: calc(100% - 275px) !important;
+            width: calc(100% - var(--dashboard-sidebar-width)) !important;
+            max-width: calc(100% - var(--dashboard-sidebar-width)) !important;
             min-height: 100vh !important;
             height: auto !important;
             box-sizing: border-box !important;
@@ -1848,8 +1848,10 @@
         }
     </style>
     <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
+    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260912-global-alignment-v3">
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
@@ -2755,6 +2757,23 @@
                                 <p class="text-muted small mb-4">Select your service, choose a time slot, and our verified professional will arrive at your doorstep.</p>
                                 
                                 <form id="noBrokerBookingForm" onsubmit="handleNoBrokerSubmit(event)">
+                                    <!-- Explicit Request Workflow Type Selector -->
+                                    <div class="mb-4 p-3 rounded-4 bg-light border border-light-subtle">
+                                        <label class="form-label fw-bold text-dark small mb-2 d-block"><i class="fa-solid fa-sliders text-primary me-1"></i> Request Type & SLA Priority *</label>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 py-2 fw-bold w-50" id="btnTypeNormal" onclick="selectRequestType('NORMAL')">
+                                                <i class="fa-solid fa-ticket me-1"></i> Standard Maintenance Ticket
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-bold w-50" id="btnTypeEmergency" onclick="selectRequestType('EMERGENCY')">
+                                                <i class="fa-solid fa-bolt text-danger me-1"></i> Emergency Dispatch (Live Booking)
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="selectedRequestType" value="NORMAL">
+                                        <div class="mt-2 small text-muted" id="requestTypeNotice">
+                                            <i class="fa-solid fa-circle-info text-primary me-1"></i> <strong>Standard Ticket:</strong> For low/medium priority repairs (chipped paint, door alignment, regular electrical/plumbing maintenance). Scheduled within SLA (24h–72h).
+                                        </div>
+                                    </div>
+
                                     <div class="row g-3">
                                         <div class="col-md-12">
                                             <label class="form-label fw-bold text-dark small">Selected Service / Category *</label>
@@ -3271,9 +3290,28 @@
             }
         }
 
+        function selectRequestType(type) {
+            const hiddenInput = document.getElementById('selectedRequestType');
+            const btnNormal = document.getElementById('btnTypeNormal');
+            const btnEmergency = document.getElementById('btnTypeEmergency');
+            const notice = document.getElementById('requestTypeNotice');
+            
+            if (hiddenInput) hiddenInput.value = type;
+            if (type === 'EMERGENCY') {
+                if (btnNormal) { btnNormal.classList.remove('btn-primary'); btnNormal.classList.add('btn-outline-primary'); }
+                if (btnEmergency) { btnEmergency.classList.remove('btn-outline-danger'); btnEmergency.classList.add('btn-danger'); }
+                if (notice) notice.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger me-1"></i> <strong>Emergency Dispatch:</strong> For urgent calls (burst pipe, electrical hazard, severe leakage). Bypasses ticket triage for immediate hub/partner dispatch.';
+            } else {
+                if (btnNormal) { btnNormal.classList.remove('btn-outline-primary'); btnNormal.classList.add('btn-primary'); }
+                if (btnEmergency) { btnEmergency.classList.remove('btn-danger'); btnEmergency.classList.add('btn-outline-danger'); }
+                if (notice) notice.innerHTML = '<i class="fa-solid fa-circle-info text-primary me-1"></i> <strong>Standard Ticket:</strong> For low/medium priority repairs (chipped paint, door alignment, regular electrical/plumbing maintenance). Scheduled within SLA (24h–72h).';
+            }
+        }
+
         async function handleNoBrokerSubmit(e) {
             e.preventDefault();
             if (!e.target.reportValidity()) return;
+            const requestType = document.getElementById('selectedRequestType')?.value || 'NORMAL';
             const selectedValue = document.getElementById('nbSelectedService')?.value || 'General Inspection|49';
             const service = selectedValue.split('|')[0] || 'Carpentry Inspection';
             const price = selectedValue.split('|')[1] || '49';
@@ -3288,41 +3326,78 @@
             const preferredAt = `${date}T${slot === "MORNING" ? "09:00" : slot === "AFTERNOON" ? "12:00" : slot === "EVENING" ? "16:00" : "10:00"}`;
 
             try {
-                const saved = await noBrokerMaintenanceApi("", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        sourcePlatform: "propertydirect",
-                        targetEntityType: "PROPERTY_LISTING",
-                        requesterName: name,
-                        requesterPhone: phone,
-                        serviceType: service,
-                        serviceCategory: meta.category,
-                        serviceOption: meta.option,
-                        priceLabel: price === "0" ? "Free inspection pass" : `Rs. ${price}`,
-                        warrantyLabel: meta.warranty,
-                        title: `${service} - ${address || name}`,
-                        description: [
-                            `NoBroker-style customer service booking`,
-                            `Selected slot: ${slot}`,
-                            `Inspection fee / starting price: Rs. ${price}`,
-                            notes && `Customer instructions: ${notes}`,
-                            "Material and spare costs are separate unless approved in final vendor estimate."
-                        ].filter(Boolean).join("\n"),
-                        serviceAddress: address,
-                        priority: slot === "EXPRESS_60MIN" ? "HIGH" : "MEDIUM",
-                        preferredAt,
-                        vendorName: "External NoBroker-style vendor",
-                        vendorPhone: "",
-                        accessType: "Customer will be present",
-                        contactMethod: "Phone",
-                        externalReference: bookingId
-                    })
-                });
+                let saved;
+                if (requestType === "EMERGENCY") {
+                    // Emergency Live Booking Dispatch Engine (Flow B)
+                    saved = await fetch("/api/maintenance/dispatch/bookings?platform=propertydirect", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            requesterPhone: phone,
+                            serviceAddress: address,
+                            city: address.split(',').pop()?.trim() || "Bangalore",
+                            area: address.split(',')[1]?.trim() || "Whitefield",
+                            category: service.toLowerCase().includes("plumb") ? "Plumbing" : service.toLowerCase().includes("electric") ? "Electrical" : "Carpentry",
+                            description: `${service} - ${notes || 'Emergency Service Request'} (Slot: ${slot})`
+                        })
+                    }).then(r => r.ok ? r.json() : r.json().then(err => { throw new Error(err.message || "Failed to place emergency booking"); }));
+                } else {
+                    // Non-Emergency Maintenance Ticket Engine (Flow A)
+                    saved = await noBrokerMaintenanceApi("", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            sourcePlatform: "propertydirect",
+                            targetEntityType: "PROPERTY_LISTING",
+                            requesterName: name,
+                            requesterPhone: phone,
+                            serviceType: service,
+                            serviceCategory: meta.category,
+                            serviceOption: meta.option,
+                            priceLabel: price === "0" ? "Free inspection pass" : `Rs. ${price}`,
+                            warrantyLabel: meta.warranty,
+                            title: `${service} - ${address || name}`,
+                            description: [
+                                `NoBroker-style customer service booking`,
+                                `Selected slot: ${slot}`,
+                                `Inspection fee / starting price: Rs. ${price}`,
+                                notes && `Customer instructions: ${notes}`,
+                                "Material and spare costs are separate unless approved in final vendor estimate."
+                            ].filter(Boolean).join("\n"),
+                            serviceAddress: address,
+                            priority: "MEDIUM",
+                            preferredAt,
+                            vendorName: "External NoBroker-style vendor",
+                            vendorPhone: "",
+                            accessType: "Customer will be present",
+                            contactMethod: "Phone",
+                            externalReference: bookingId
+                        })
+                    });
+                }
                 e.currentTarget.reset();
                 updateNoBrokerCheckoutPrice();
                 await loadNoBrokerMaintenanceTickets();
-                if (typeof showToast === 'function') showToast(`Service booking #${saved.id} saved. Reference: ${bookingId}`);
-                else alert(`Service booking saved. Reference: ${bookingId}`);
+
+                if (requestType === "EMERGENCY") {
+                    const ref = saved.bookingReference || ('EMG-' + String(saved.id || 0).padStart(5, '0'));
+                    const category = saved.category || service;
+                    const addr = saved.serviceAddress || address;
+
+                    const refEl = document.getElementById('emgRefNum');
+                    const catEl = document.getElementById('emgIssueCategory');
+                    const addrEl = document.getElementById('emgServiceAddress');
+                    if (refEl) refEl.textContent = ref;
+                    if (catEl) catEl.textContent = category;
+                    if (addrEl) addrEl.textContent = addr;
+
+                    const modal = document.getElementById('emergencyConfirmationModal');
+                    if (modal) modal.classList.remove('hidden');
+                    if (typeof showToast === 'function') showToast(`🚨 Emergency Request ${ref} Received`);
+                } else {
+                    const ref = saved.ticketReference || saved.externalReference || bookingId;
+                    if (typeof showToast === 'function') showToast(`Standard Ticket #${saved.id || ''} saved. Reference: ${ref}`);
+                    else alert(`Standard Ticket saved. Reference: ${ref}`);
+                }
             } catch (error) {
                 if (typeof showToast === 'function') showToast(error.message);
                 else alert(error.message);
@@ -3336,8 +3411,65 @@
                 dateInput.value = today;
             }
             loadNoBrokerMaintenanceTickets();
+
+            // Auto-fill customer profile details if available to avoid re-typing
+            fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(user => {
+                if (!user) return;
+                const nameEl = document.getElementById('nbCustomerName');
+                const phoneEl = document.getElementById('nbCustomerPhone');
+                const addrEl = document.getElementById('nbAddress');
+                if (nameEl && !nameEl.value && (user.name || user.fullName)) nameEl.value = user.name || user.fullName;
+                if (phoneEl && !phoneEl.value && user.phone) phoneEl.value = user.phone;
+                if (addrEl && !addrEl.value && user.address) addrEl.value = user.address;
+            }).catch(() => {});
         });
     </script>
+
+    <!-- ULTRA-PREMIUM EMERGENCY CONFIRMATION MODAL -->
+    <div id="emergencyConfirmationModal" class="hidden" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #ffffff; border-radius: 24px; max-width: 520px; width: 100%; padding: 32px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.3); border: 1px solid #e2e8f0; font-family: 'Manrope', sans-serif;">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="width: 64px; height: 64px; background: #fef2f2; border-radius: 50%; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 14px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 style="font-weight: 800; color: #0f172a; margin: 0 0 6px 0; font-size: 1.4rem;">Emergency Request Received</h3>
+                <p style="color: #64748b; font-size: 0.88rem; margin: 0;">Your high-priority emergency request is logged into our live dispatch pipeline.</p>
+            </div>
+            
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: #64748b; font-size: 0.85rem; font-weight: 600;">Booking Reference:</span>
+                    <strong id="emgRefNum" style="color: #ef4444; font-size: 0.95rem; font-family: monospace;">EMG-00001</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: #64748b; font-size: 0.85rem; font-weight: 600;">Issue Type:</span>
+                    <strong id="emgIssueCategory" style="color: #0f172a; font-size: 0.88rem;">Plumbing</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: #64748b; font-size: 0.85rem; font-weight: 600;">Service Location:</span>
+                    <strong id="emgServiceAddress" style="color: #0f172a; font-size: 0.88rem; text-align: right; max-width: var(--dashboard-sidebar-width);">123 Main Street</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+                    <span style="color: #64748b; font-size: 0.85rem; font-weight: 600;">Dispatch Status:</span>
+                    <span style="background: #e0f2fe; color: #0284c7; padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Searching / Preparing Dispatch
+                    </span>
+                </div>
+            </div>
+
+            <div style="background: #f1f5f9; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; font-size: 0.84rem; color: #334155; line-height: 1.45;">
+                <i class="fa-solid fa-circle-info text-primary me-1"></i>
+                <strong>Dispatch Roster:</strong> Searching active service partner technicians in your hub. Verified technician details will appear as soon as a partner accepts your request.
+            </div>
+
+            <button onclick="document.getElementById('emergencyConfirmationModal').classList.add('hidden')" style="width: 100%; padding: 14px; border-radius: 12px; background: #0f172a; color: #ffffff; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.2s ease;">
+                Got it, Track Dispatch Queue
+            </button>
+        </div>
+    </div>
+
+    <script src="/shared/js/dashboard-system.js?v=20260916-universal-sidebar-v3"></script>
     <script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
 </body>
 </html>
+

@@ -10,15 +10,10 @@
         body.dashboard-body .dashboard-layout { height: 100dvh; min-height: 0; overflow: hidden; }
         body.dashboard-body .sidebar { height: 100dvh; min-height: 0; overflow-y: auto; }
         body.dashboard-body .main-content { height: 100dvh; min-height: 0; overflow-x: hidden; overflow-y: auto !important; }
-        /* Force sidebar to the very front */
         #sidebar {
-            position: relative !important;
-            z-index: 9999 !important;
             pointer-events: auto !important;
         }
         #sidebar .nav-link {
-            position: relative !important;
-            z-index: 10000 !important;
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -323,6 +318,7 @@
             .society-sync-dialog .modal-card { padding: 28px 20px; max-height: calc(100vh - 24px); }
         }
     </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
     <div class="dashboard-layout">
         
         <!-- Sidebar Navigation -->
@@ -1190,5 +1186,6 @@
     </script>
 <script src="/shared/js/common-maintenance.js?v=20260908-common-maintenance-v1"></script>
 <script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
+<script src="/smartapartment/js/gate-management.js?v=20260916-multigate-v1"></script>
 </body>
 </html>

@@ -1,0 +1,6 @@
+{
+  "description": "Illustrative data only. No mock records are inserted into the live dashboard.",
+  "Gate": {"id": 3, "number": "GATE-03", "name": "Service entrance", "type": "SERVICE_DELIVERY", "status": "OPEN", "barrierStatus": "NOT_CONNECTED", "guard": "Assigned guard", "throughput": 12},
+  "EntryPass": {"pass_id": 42, "assigned_gate_number": "GATE-03", "direction": "ENTRY", "passcode_pin": "123456", "dynamic_qr_token": "<signed JWT, expires after five minutes>", "valid_until": "2026-09-16T18:00:00"},
+  "SecurityIncident": {"id": 8, "gateId": 1, "gate": "GATE-01", "type": "DENIED", "severity": "HIGH", "details": "GATE_MISMATCH_ERROR: Re-route to GATE-03", "at": "2026-09-16T14:10:00", "guard": "Assigned guard", "hasPhoto": false}
+}

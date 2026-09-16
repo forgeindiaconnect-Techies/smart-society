@@ -9,9 +9,12 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class MailService {
+    private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private final JavaMailSender mailSender;
     private final String fromAddress;
@@ -122,18 +125,32 @@ public class MailService {
         if (!StringUtils.hasText(email)) {
             return Map.of("sent", false, "message", "Email address is required.");
         }
+        if (!StringUtils.hasText(mailHost) || mailSender == null) {
+            return Map.of(
+                    "sent", false,
+                    "message", "SMTP is not configured. Set SMTP_HOST=smtp-relay.brevo.com, SMTP_USERNAME, SMTP_PASSWORD and APP_MAIL_FROM."
+            );
+        }
+        if (!StringUtils.hasText(fromAddress) || fromAddress.endsWith(".local")) {
+            return Map.of(
+                    "sent", false,
+                    "message", "APP_MAIL_FROM must be a verified Brevo sender email, not a local placeholder."
+            );
+        }
         if (StringUtils.hasText(mailHost) && mailSender != null) {
             try {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setFrom(fromAddress);
                 message.setTo(email.trim());
-                message.setSubject("[SmartApartment] Your Password Reset Verification Code: " + otp);
+                message.setSubject("Your SmartApartment / PropertyDirect password reset code");
                 message.setText("""
                         Hello,
 
                         You requested a password reset for your account on SmartApartment / PropertyDirect.
 
-                        Your 6-Digit Verification Code (OTP) is: %s
+                        Your 6-digit verification code is:
+
+                        %s
 
                         This code is valid for 15 minutes. Please do not share this OTP with anyone.
 
@@ -145,10 +162,11 @@ public class MailService {
                 mailSender.send(message);
                 return Map.of("sent", true, "message", "Real-time OTP email dispatched to " + email);
             } catch (MailException ex) {
+                log.warn("Password reset OTP email delivery failed for {}", email, ex);
                 return Map.of("sent", false, "message", "Mail sending failed: " + ex.getMessage());
             }
         }
-        return Map.of("sent", false, "message", "SMTP is not configured. Local fallback active.");
+        return Map.of("sent", false, "message", "SMTP is not configured.");
     }
 
     private static String safe(String value, String fallback) {

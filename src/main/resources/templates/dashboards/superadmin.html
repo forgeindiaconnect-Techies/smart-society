@@ -3,15 +3,10 @@
 <head th:replace="~{fragments/layout :: head('Super Admin Dashboard')}"></head>
 <body class="dashboard-body bg-light" data-platform="smartapartment" data-dashboard-role="superadmin">
     <style>
-        /* Force sidebar to the front */
         #sidebar {
-            position: relative !important;
-            z-index: 9999 !important;
             pointer-events: auto !important;
         }
         #sidebar .nav-link {
-            position: relative !important;
-            z-index: 10000 !important;
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -19,10 +14,10 @@
             background: #f8fafc !important;
         }
         .main-content .topbar {
-            height: 72px !important;
-            min-height: 72px !important;
-            max-height: 72px !important;
-            padding: 0 32px !important;
+            height: var(--dashboard-topbar-height, 88px) !important;
+            min-height: var(--dashboard-topbar-height, 88px) !important;
+            max-height: var(--dashboard-topbar-height, 88px) !important;
+            padding: 16px 32px !important;
             border-bottom: 1px solid #e2e8f0 !important;
             background: #ffffff !important;
             display: flex !important;
@@ -113,6 +108,7 @@
             .dashboard-container { padding: 16px !important; }
         }
     </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
     <div class="dashboard-layout">
         
         <!-- Sidebar Navigation -->
@@ -133,6 +129,7 @@
                 <a href="#privacy-data" class="nav-link btn btn-link text-start text-decoration-none" data-panel="privacy-data" onclick="openPanel('privacy-data'); return false;"><i class="fa-solid fa-database me-2"></i> Database & Privacy</a>
                 <a href="#finance-setup" class="nav-link btn btn-link text-start text-decoration-none" data-panel="finance-setup" onclick="openPanel('finance-setup'); return false;"><i class="fa-solid fa-receipt me-2"></i> Subscription Payments</a>
                 <a href="#service-requests" class="nav-link btn btn-link text-start text-decoration-none" data-panel="service-requests" onclick="openPanel('service-requests'); return false;"><i class="fa-solid fa-screwdriver-wrench me-2"></i> Service Requests</a>
+                <a href="/dashboards/maintenance" class="nav-link btn btn-link text-start text-decoration-none text-warning fw-semibold" id="sidebarMaintenanceOpsLink"><i class="fa-solid fa-truck-fast me-2"></i> Maintenance Operations <span class="badge bg-warning text-dark rounded-pill ms-auto" style="font-size: 0.65rem;">Stage 5</span></a>
                 <a href="#settings" class="nav-link btn btn-link text-start text-decoration-none" data-panel="settings" onclick="openPanel('settings'); return false;"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </nav>
             <div class="sidebar-footer p-3 mt-auto border-top border-secondary text-center">
@@ -439,6 +436,25 @@
 
                 <!-- Service Requests Section -->
                 <section class="d-none animate__animated animate__fadeIn" data-view="service-requests">
+                    <!-- Stage 5 Emergency Maintenance Operations Banner -->
+                    <div class="alert alert-warning border-0 rounded-4 shadow-sm p-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3" style="background: linear-gradient(135deg, #fef3c7, #fffbeb); border-left: 5px solid #f59e0b !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-warning text-dark p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 46px; height: 46px;">
+                                <i class="fa-solid fa-truck-fast fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h6 class="fw-bold mb-0 text-dark">Stage 5: Maintenance Admin Live Emergency Operations</h6>
+                                    <span class="badge bg-danger rounded-pill px-2.5 py-1 text-uppercase fw-bold" style="font-size: 0.65rem;">Live Queue</span>
+                                </div>
+                                <p class="text-muted small mb-0 mt-1">Supervise dual operational pipelines (Track 1 Non-Emergency Tickets &amp; Track 2 Live Emergency Dispatch) with real-time geofence matching and SLA monitoring.</p>
+                            </div>
+                        </div>
+                        <a href="/dashboards/maintenance#dispatch" class="btn btn-warning rounded-pill px-4 fw-bold text-dark shadow-sm">
+                            <i class="fa-solid fa-truck-fast me-2"></i>Open Maintenance Operations (Stage 5)
+                        </a>
+                    </div>
+
                     <div class="row g-3 mb-4 stats">
                         <div class="col-12 col-sm-6 col-md-3">
                             <article class="card p-3 text-center h-100 shadow-sm border-0 rounded-4">

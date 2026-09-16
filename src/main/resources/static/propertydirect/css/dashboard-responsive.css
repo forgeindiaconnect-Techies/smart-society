@@ -701,9 +701,9 @@ html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role=
 
 /* Vendor Dashboard Attached Header & Sidebar */
 html body[data-dashboard-role="vendor"] main.vendor-main {
-  margin-left: 260px !important;
-  width: calc(100% - 260px) !important;
-  max-width: calc(100% - 260px) !important;
+  margin-left: var(--dashboard-sidebar-width) !important;
+  width: calc(100% - var(--dashboard-sidebar-width)) !important;
+  max-width: calc(100% - var(--dashboard-sidebar-width)) !important;
   padding: 0 32px 36px 0 !important;
   background: #f8fafc !important;
 }
@@ -730,9 +730,9 @@ html body[data-dashboard-role="vendor"] main.vendor-main > .vendor-panel {
 
 /* Agent Dashboard Attached Header & Sidebar */
 html body[data-dashboard-role="agent"] main.agent-main {
-  margin-left: 260px !important;
-  width: calc(100% - 260px) !important;
-  max-width: calc(100% - 260px) !important;
+  margin-left: var(--dashboard-sidebar-width) !important;
+  width: calc(100% - var(--dashboard-sidebar-width)) !important;
+  max-width: calc(100% - var(--dashboard-sidebar-width)) !important;
   padding: 0 32px 36px 0 !important;
   background: #f8fafc !important;
 }
@@ -1045,7 +1045,7 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel d
 }
 
 html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel table td:last-child {
-  min-width: 260px !important;
+  min-width: var(--dashboard-sidebar-width) !important;
 }
 
 html body.app-dashboard[data-platform="propertydirect"] .card-head {
@@ -1642,3 +1642,192 @@ html body[data-dashboard-role="vendor"] :is(.vendor-card, .dash-card, .dashboard
   border-color: rgba(226, 232, 240, 0.9) !important;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06) !important;
 }
+
+/* =====================================================================
+   DEFINITIVE ALIGNMENT SYSTEM FOR ALL PROPERTYDIRECT DASHBOARDS
+   ===================================================================== */
+html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar,
+html body[data-dashboard-role="vendor"] .vendor-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  inset: 0 auto 0 0 !important;
+  width: var(--dashboard-sidebar-width) !important;
+  min-width: var(--dashboard-sidebar-width) !important;
+  max-width: var(--dashboard-sidebar-width) !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  z-index: 1040 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Hide close button on desktop */
+@media (min-width: 901px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dashboard-sidebar-close, .pd-sidebar-cancel),
+  html body[data-dashboard-role="vendor"] :is(.dashboard-sidebar-close, .pd-sidebar-cancel) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Main content flush dock */
+html body.app-dashboard[data-platform="propertydirect"] :is(main.dash-main, .dash-main),
+html body[data-dashboard-role="vendor"] :is(main.vendor-main, .vendor-main) {
+  margin: 0 0 0 var(--dashboard-sidebar-width) !important;
+  width: calc(100% - var(--dashboard-sidebar-width)) !important;
+  max-width: calc(100% - var(--dashboard-sidebar-width)) !important;
+  min-height: 100vh !important;
+  background: #f8fafc !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+}
+
+/* Topbar Sticky Flush */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-header, .dash-main > .dash-header),
+html body[data-dashboard-role="vendor"] :is(.vendor-top, .vendor-main > .vendor-top) {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1020 !important;
+  height: 70px !important;
+  min-height: 70px !important;
+  max-height: 70px !important;
+  margin: 0 0 24px 0 !important;
+  padding: 0 32px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+}
+
+/* Panels */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-panel, .dashboard-content),
+html body[data-dashboard-role="vendor"] :is(.vendor-main > .dash-panel, .vendor-content) {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 32px 40px 32px !important;
+  box-sizing: border-box !important;
+}
+
+/* Core Stat Grids */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats),
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .dash-grid) {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+  width: 100% !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.three,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid[data-cols="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="overview"] .dash-grid,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid.five,
+html body.app-dashboard[data-platform="propertydirect"] .dash-grid[data-cols="5"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1200px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats),
+  html body[data-dashboard-role="vendor"] :is(.vendor-grid, .dash-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 576px) {
+  html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats),
+  html body[data-dashboard-role="vendor"] :is(.vendor-grid, .dash-grid) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Reset Bootstrap and generic column wrappers */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) > [class*="col-"],
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Stat Card Rectangular Tiles */
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article,
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) .card,
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .dash-grid) article {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 100px !important;
+  height: auto !important;
+  padding: 18px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  box-sizing: border-box !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article:hover,
+html body[data-dashboard-role="vendor"] :is(.vendor-grid, .dash-grid) article:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08) !important;
+  border-color: #cbd5e1 !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article::before,
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article::after {
+  display: none !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article :is(span, small, .stat-label, .metric-label) {
+  order: 1 !important;
+  color: #64748b !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  line-height: 1.25 !important;
+  margin-bottom: 6px !important;
+  margin-top: 0 !important;
+  display: block !important;
+  white-space: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-grid, .stats) article :is(strong, h3, h4, .stat-value) {
+  order: 2 !important;
+  color: #0f172a !important;
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  display: block !important;
+}
+

@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/propertydirect/**",
                                 "/dashboards/**",
                                 "/resident/**",
+                                "/feedback/**",
                                 "/terms/**",
                                 "/error",
                                 "/api/auth/**"

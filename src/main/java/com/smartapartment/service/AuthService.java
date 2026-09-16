@@ -87,7 +87,10 @@ public class AuthService {
     }
 
     public AppUser authenticate(String email, String password) {
-        AppUser user = userRepository.findByEmail(normalizeEmail(email))
+        String cleanEmail = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        String normalized = normalizeEmail(cleanEmail);
+        AppUser user = userRepository.findByEmail(normalized)
+                .or(() -> userRepository.findByEmail(cleanEmail))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         if (password == null || !passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new IllegalArgumentException("Invalid email or password");
@@ -95,7 +98,7 @@ public class AuthService {
         if (user.isAccountLocked() || !"ACTIVE".equalsIgnoreCase(user.getStatus())) {
             throw new IllegalArgumentException("This account is not active");
         }
-        if (user.getRole() != UserRole.SUPER_ADMIN) {
+        if (user.getRole() != UserRole.SUPER_ADMIN && !"platform".equalsIgnoreCase(user.getTenantId())) {
             Tenant tenant = tenantRepository.findByCode(user.getTenantId())
                     .orElseThrow(() -> new IllegalArgumentException("Society account was not found"));
             if (!tenant.isApproved()) {

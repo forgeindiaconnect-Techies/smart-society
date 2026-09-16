@@ -2,6 +2,7 @@ package com.smartapartment.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +40,28 @@ public class Visitor extends BaseEntity {
 
     private String entryType = "GUEST";
 
+    // Legacy display field retained for backward compatibility. New code uses entryGate/exitGate.
     private String gateNumber;
+
+    @Column(length = 40, unique = true)
+    private String passNumber;
+
+    @Column(length = 40)
+    private String visitorCategory;
+
+    @ManyToOne
+    private Gate entryGate;
+
+    @ManyToOne
+    private Gate exitGate;
+
+    @ManyToOne
+    private AppUser entrySecurity;
+
+    @ManyToOne
+    private AppUser exitSecurity;
+
+    private LocalDateTime exitTime;
 
     private String qrCode;
 

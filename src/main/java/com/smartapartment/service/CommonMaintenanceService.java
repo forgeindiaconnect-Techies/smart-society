@@ -43,7 +43,18 @@ public class CommonMaintenanceService {
         ticket.setTicketStatus("REQUESTED");
         ticket.setPreferredAt(request.preferredAt());
         ticket.setAlternateAt(request.alternateAt());
-        ticket.setDueAt(request.dueAt());
+        LocalDateTime calculatedDueAt = request.dueAt();
+        if (calculatedDueAt == null) {
+            // Non-emergency track SLA policy: first operational action is expected within 4-24 hours.
+            long hours = switch (ticket.getPriority()) {
+                case "EMERGENCY", "URGENT" -> 4;
+                case "HIGH" -> 8;
+                case "LOW" -> 24;
+                default -> 16;
+            };
+            calculatedDueAt = LocalDateTime.now().plusHours(hours);
+        }
+        ticket.setDueAt(calculatedDueAt);
         ticket.setVendorId(request.vendorId());
         ticket.setVendorName(request.vendorName());
         ticket.setVendorPhone(request.vendorPhone());
@@ -52,7 +63,13 @@ public class CommonMaintenanceService {
         ticket.setAccessType(request.accessType());
         ticket.setContactMethod(request.contactMethod());
         ticket.setAttachmentReference(request.attachmentReference());
-        return tickets.save(ticket);
+        CommonMaintenanceTicket saved = tickets.save(ticket);
+        if (saved.getTicketCode() == null || saved.getTicketCode().isBlank()) {
+            int year = saved.getCreatedAt() != null ? saved.getCreatedAt().getYear() : java.time.LocalDate.now().getYear();
+            saved.setTicketCode(String.format(Locale.ROOT, "TCK-%04d-%04d", year, saved.getId()));
+            saved = tickets.save(saved);
+        }
+        return saved;
     }
 
     @Transactional

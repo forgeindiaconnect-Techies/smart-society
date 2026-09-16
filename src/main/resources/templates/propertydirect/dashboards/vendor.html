@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
-  <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
-  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
+  <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
+  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260912-global-alignment-v3">
   <style>
     :root {
       --pd-navy: #0a1834;
@@ -49,7 +49,7 @@
       top: 0;
       left: 0;
       bottom: 0;
-      width: 260px;
+      width: var(--dashboard-sidebar-width);
       padding: 24px 18px 24px;
       background: linear-gradient(180deg, var(--pd-navy) 0%, var(--pd-navy-light) 100%);
       color: #e2e8f0;
@@ -208,10 +208,10 @@
 
     /* MAIN CONTENT CANVAS */
     .vendor-main {
-      margin-left: 260px;
+      margin-left: var(--dashboard-sidebar-width);
       padding: 0 32px 36px 0;
-      width: calc(100% - 260px);
-      max-width: calc(100% - 260px);
+      width: calc(100% - var(--dashboard-sidebar-width));
+      max-width: calc(100% - var(--dashboard-sidebar-width));
       box-sizing: border-box;
       min-height: 100vh;
       background: var(--pd-bg);
@@ -676,7 +676,7 @@
     @media (max-width: 992px) {
       .vendor-shell { display: block; }
       .vendor-sidebar { display: none; }
-      .vendor-sidebar.open { display: flex; width: 280px; }
+      .vendor-sidebar.open { display: flex; width: var(--dashboard-sidebar-width); }
       .vendor-main { margin-left: 0; width: 100%; max-width: 100%; padding: 20px; }
       .vendor-sidebar-toggle { display: inline-flex; align-items: center; gap: 6px; }
       .vendor-grid { grid-template-columns: repeat(2, 1fr); }
@@ -690,8 +690,9 @@
       .property-submit-row { flex-direction: column; align-items: stretch; }
     }
   </style>
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
 </head>
-<body data-platform="propertydirect" data-dashboard-role="vendor">
+<body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="vendor">
   <div class="vendor-shell">
     <aside class="vendor-sidebar" id="vendorSidebar">
       <div>
@@ -1177,8 +1178,6 @@
   </script>
   <script src="/propertydirect/js/market-workflows.js?v=20260905-vendor-only-v1"></script>
   <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
+  <script src="/shared/js/dashboard-system.js?v=20260916-universal-sidebar-v4"></script>
 </body>
 </html>
-
-
-

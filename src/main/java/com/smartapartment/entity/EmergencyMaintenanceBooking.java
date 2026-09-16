@@ -1,0 +1,81 @@
+package com.smartapartment.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDateTime;
+
+@Entity @Getter @Setter
+@Table(name = "emergency_maintenance_bookings")
+public class EmergencyMaintenanceBooking extends BaseEntity {
+    private String sourcePlatform;
+    @Column(name = "order_reference", length = 32, unique = true) private String orderReference;
+    private Long requesterId;
+    private String requesterName;
+    private String requesterPhone;
+    @Column(length = 600) private String serviceAddress;
+    @Column(length = 120) private String unitNumber;
+    private String city;
+    private String area;
+    private String category;
+    @Column(length = 3000) private String description;
+    private Double latitude;
+    private Double longitude;
+    private Long hubId;
+    private Long partnerId;
+    private String assignmentType = "Auto"; // Auto or Manual
+    private String assignedBy;
+    private LocalDateTime assignedAt;
+    private String jobStatus = "UNASSIGNED";
+    private String dispatchReason;
+    @Column(length = 4000) private String declinedPartnerIds = ",";
+    @Column(length = 8000) private String assignmentAuditLog = "";
+    private Double distanceKm;
+    private LocalDateTime offeredAt;
+    private LocalDateTime acceptanceDueAt;
+    private Integer dispatchCycleCount = 1;
+    private Integer offerSequence = 0;
+    private LocalDateTime escalatedAt;
+    @Column(length = 1000) private String escalationReason;
+    private LocalDateTime acceptedAt;
+    private LocalDateTime arrivalDueAt;
+    private LocalDateTime reachedAt;
+    private Double arrivalDistanceKm;
+    private Boolean arrivalGeofenceVerified;
+    private LocalDateTime photoStartAt;
+    private Double beforePhotoLatitude;
+    private Double beforePhotoLongitude;
+    private LocalDateTime photoEndAt;
+    private Double afterPhotoLatitude;
+    private Double afterPhotoLongitude;
+    private LocalDateTime startedAt;
+    private LocalDateTime completedAt;
+    private LocalDateTime cancelledAt;
+    private LocalDateTime customerSignedOffAt;
+    private LocalDateTime reviewRequestedAt;
+    private LocalDateTime reviewLinkSentAt;
+    @Column(length = 1000) private String beforePhotoUrl;
+    @Column(length = 1000) private String afterPhotoUrl;
+    @Column(length = 1000) private String customerReviewUrl;
+    @Column(length = 64, unique = true) private String feedbackToken;
+    private Integer rating;
+    @Column(length = 1000) private String review;
+    @Column(length = 500) private String reviewTags;
+    @Column(length = 2000) private String completionNotes;
+    private String reviewNotificationChannels; // IN_APP,SMS,WHATSAPP,PUSH
+    private String reviewNotificationStatus;   // PREPARED, SENT, COMPLETED
+    @Column(length = 3000) private String reviewRequestPayload;
+    @Lob @com.fasterxml.jackson.annotation.JsonIgnore private byte[] beforePhoto;
+    @Lob @com.fasterxml.jackson.annotation.JsonIgnore private byte[] afterPhoto;
+
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getBookingReference() {
+        return getId() == null ? null : String.format(java.util.Locale.ROOT, "EMG-%05d", getId());
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
+    public String getOrderReference() {
+        if (orderReference != null && !orderReference.isBlank()) return orderReference;
+        return getId() == null ? null : String.format(java.util.Locale.ROOT, "ORD-EMG-%04d", getId());
+    }
+}

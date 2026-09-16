@@ -42,6 +42,7 @@ public class SocietyApiController {
     private final BlockRepository blocks;
     private final AppUserRepository users;
     private final SecurityGuardAssignmentRepository securityGuardAssignments;
+    private final GateRepository gates;
     private final TenantRepository tenants;
     private final SubscriptionPlanRepository subscriptionPlans;
     private final PasswordEncoder passwordEncoder;
@@ -51,7 +52,7 @@ public class SocietyApiController {
                                 ComplaintRepository complaints, VisitorRepository visitors,
                                 AnnouncementRepository announcements, MaintenanceBillRepository bills,
                                 AmenityRepository amenities, BookingRepository bookings, BlockRepository blocks,
-                                AppUserRepository users, SecurityGuardAssignmentRepository securityGuardAssignments, TenantRepository tenants,
+                                AppUserRepository users, SecurityGuardAssignmentRepository securityGuardAssignments, GateRepository gates, TenantRepository tenants,
                                 SubscriptionPlanRepository subscriptionPlans, PasswordEncoder passwordEncoder) {
         this.currentUser = currentUser;
         this.dashboards = dashboards;
@@ -66,6 +67,7 @@ public class SocietyApiController {
         this.blocks = blocks;
         this.users = users;
         this.securityGuardAssignments = securityGuardAssignments;
+        this.gates = gates;
         this.tenants = tenants;
         this.subscriptionPlans = subscriptionPlans;
         this.passwordEncoder = passwordEncoder;
@@ -206,11 +208,70 @@ public class SocietyApiController {
     @PostMapping("/residents") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
     public Map<String,Object> resident(@Valid @RequestBody ResidentRequest request){String tenant=currentUser.requireTenantId();String email=request.email().trim().toLowerCase(Locale.ROOT);if(users.findByEmail(email).isPresent())throw new IllegalArgumentException("Email already exists");Apartment apartment=apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc(tenant,request.unitNo()).orElseThrow(()->new IllegalArgumentException("Apartment was not found"));AppUser user=new AppUser();user.setTenantId(tenant);user.setFullName(request.name().trim());user.setEmail(email);user.setPhone(request.phone());user.setAddress(request.address());user.setEmergencyContactName(request.emergencyContactName());user.setEmergencyContactPhone(request.emergencyContactPhone());user.setProfileNotes(request.notes());user.setRole(UserRole.RESIDENT);user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));user=users.save(user);Resident resident=new Resident();resident.setTenantId(tenant);resident.setUser(user);resident.setApartment(apartment);resident.setResidentType(request.residentType().toUpperCase(Locale.ROOT));resident.setMoveInDate(request.moveInDate());resident.setVehicleNumber(request.vehicleNumber());return residentView(residents.save(resident));}
 
-    @GetMapping("/team-users") @PreAuthorize("hasRole('SOCIETY_ADMIN')")
-    public List<Map<String,Object>> teamUsers(){return users.findByTenantId(currentUser.requireTenantId()).stream().filter(u->List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(u.getRole())).map(this::teamUserView).toList();}
+    @GetMapping("/team-users")
+    @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SUPER_ADMIN','MAINTENANCE_STAFF')")
+    public List<Map<String,Object>> teamUsers(){
+        AppUser current = currentUser.requireUser();
+        String tenant = currentUser.requireTenantId();
+        List<AppUser> userList;
+        if (tenant == null || "platform".equalsIgnoreCase(tenant)) {
+            userList = users.findAll();
+        } else {
+            userList = users.findByTenantId(tenant);
+        }
+        if (current.getRole() == UserRole.MAINTENANCE_STAFF) {
+            return userList.stream().filter(u -> u.getRole() == UserRole.MAINTENANCE_STAFF).map(this::teamUserView).toList();
+        }
+        return userList.stream().filter(u->List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(u.getRole())).map(this::teamUserView).toList();
+    }
 
-    @PostMapping("/team-users") @PreAuthorize("hasRole('SOCIETY_ADMIN')") @Transactional
-    public Map<String,Object> teamUser(@Valid @RequestBody TeamUserRequest request){String tenant=currentUser.requireTenantId();UserRole role;try{role=UserRole.valueOf(request.role().toUpperCase(Locale.ROOT));}catch(Exception e){throw new IllegalArgumentException("Invalid society team role");}if(!List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(role))throw new IllegalArgumentException("Only security, maintenance and accountant accounts can be created here");String email=request.email().trim().toLowerCase(Locale.ROOT);if(users.findByEmail(email).isPresent())throw new IllegalArgumentException("Email already exists");AppUser user=new AppUser();user.setTenantId(tenant);user.setFullName(request.name().trim());user.setEmail(email);user.setPhone(request.phone());user.setDesignation(request.designation());user.setEmployeeId(request.employeeId());user.setJoiningDate(request.joiningDate());user.setWorkShift(request.workShift());user.setAddress(request.address());user.setEmergencyContactName(request.emergencyContactName());user.setEmergencyContactPhone(request.emergencyContactPhone());user.setProfileNotes(request.notes());user.setRole(role);user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));return teamUserView(users.save(user));}
+    @PostMapping("/team-users")
+    @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SUPER_ADMIN','MAINTENANCE_STAFF')")
+    @Transactional
+    public Map<String,Object> teamUser(@Valid @RequestBody TeamUserRequest request){
+        AppUser current = currentUser.requireUser();
+        String tenant = currentUser.requireTenantId();
+        if (tenant == null || "platform".equalsIgnoreCase(tenant)) {
+            tenant = tenants.findAll().stream()
+                    .filter(Tenant::isApproved)
+                    .map(Tenant::getCode)
+                    .findFirst()
+                    .orElse("green-heights");
+        }
+        UserRole role;
+        try {
+            role = UserRole.valueOf(request.role().toUpperCase(Locale.ROOT));
+        } catch(Exception e) {
+            throw new IllegalArgumentException("Invalid society team role");
+        }
+        if (current.getRole() == UserRole.MAINTENANCE_STAFF && role != UserRole.MAINTENANCE_STAFF) {
+            throw new IllegalArgumentException("Maintenance staff can only create maintenance worker accounts");
+        }
+        if (!List.of(UserRole.SECURITY_STAFF,UserRole.MAINTENANCE_STAFF,UserRole.ACCOUNTANT).contains(role)) {
+            throw new IllegalArgumentException("Only security, maintenance and accountant accounts can be created here");
+        }
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        if (users.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        AppUser user = new AppUser();
+        user.setTenantId(tenant);
+        user.setFullName(request.name().trim());
+        user.setEmail(email);
+        user.setPhone(request.phone());
+        user.setDesignation(request.designation());
+        user.setEmployeeId(request.employeeId());
+        user.setJoiningDate(request.joiningDate());
+        user.setWorkShift(request.workShift());
+        user.setAddress(request.address());
+        user.setEmergencyContactName(request.emergencyContactName());
+        user.setEmergencyContactPhone(request.emergencyContactPhone());
+        user.setProfileNotes(request.notes());
+        user.setRole(role);
+        user.setStatus("ACTIVE");
+        user.setPasswordHash(passwordEncoder.encode(request.temporaryPassword()));
+        return teamUserView(users.save(user));
+    }
 
     @GetMapping("/residents")
     @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','ACCOUNTANT','SECURITY_STAFF','MAINTENANCE_STAFF')")
@@ -250,6 +311,7 @@ public class SocietyApiController {
                 map("value", "Gate 1", "label", "Gate 1 · Main Entrance"),
                 map("value", "Gate 2", "label", "Gate 2 · Resident Entry"),
                 map("value", "Gate 3", "label", "Gate 3 · Visitor Entry"),
+                map("value", "Gate 4", "label", "Gate 4 · North / Emergency Access"),
                 map("value", "Service Gate", "label", "Service Gate · Vendors & Deliveries"),
                 map("value", "Basement Gate", "label", "Basement Gate · Parking Access")
         );
@@ -379,16 +441,26 @@ public class SocietyApiController {
         visitor.setVehicleNumber(clean(request.vehicleNumber()));
         visitor.setPhotoReference(clean(request.photoReference()));
         visitor.setEntryType(clean(request.entryType()).isBlank() ? "GUEST" : request.entryType().toUpperCase(Locale.ROOT));
-        visitor.setGateNumber(clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim());
+        visitor.setVisitorCategory(visitor.getEntryType());
+        String requestedGate = clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim();
+        visitor.setGateNumber(requestedGate);
+        resolveGateByNumber(user.getTenantId(), requestedGate).ifPresent(visitor::setEntryGate);
+        if (user.getRole() == UserRole.SECURITY_STAFF) visitor.setEntrySecurity(user);
         visitor.setIdProofType(clean(request.idProofType()));
         visitor.setIdProofNumber(clean(request.idProofNumber()));
         visitor.setPersonsCount(request.personsCount() == null ? 1 : request.personsCount());
         visitor.setSpecialInstructions(clean(request.specialInstructions()));
         visitor.setExpectedAt(request.expectedAt());
-        visitor.setApprovalStatus("APPROVED");
+        boolean preApproved = user.getRole() == UserRole.RESIDENT || user.getRole() == UserRole.SOCIETY_ADMIN;
+        visitor.setApprovalStatus(preApproved ? "APPROVED" : "PENDING");
         visitor.setQrCode(UUID.randomUUID().toString());
-        visitor.setStatus("EXPECTED");
-        return visitorView(visitors.save(visitor));
+        visitor.setStatus(preApproved ? "EXPECTED" : "PENDING_APPROVAL");
+        visitor = visitors.save(visitor);
+        if (clean(visitor.getPassNumber()).isBlank()) {
+            visitor.setPassNumber("PASS-" + LocalDate.now().getYear() + "-" + String.format("%06d", visitor.getId()));
+            visitor = visitors.save(visitor);
+        }
+        return visitorView(visitor);
     }
 
     /**
@@ -429,11 +501,17 @@ public class SocietyApiController {
         visitor.setPurpose(cleanPurpose);
         visitor.setVehicleNumber(clean(vehicleNumber));
         visitor.setEntryType("WALK_IN");
-        visitor.setGateNumber(clean(gateNumber).isBlank() ? "Gate 1" : clean(gateNumber).trim());
+        visitor.setVisitorCategory("GUEST");
+        String requestedGate = clean(gateNumber).isBlank() ? "Gate 1" : clean(gateNumber).trim();
+        visitor.setGateNumber(requestedGate);
+        resolveGateByNumber(user.getTenantId(), requestedGate).ifPresent(visitor::setEntryGate);
+        visitor.setEntrySecurity(user);
         visitor.setExpectedAt(LocalDateTime.now());
-        visitor.setApprovalStatus("APPROVED");
+        visitor.setApprovalStatus("PENDING");
         visitor.setQrCode(UUID.randomUUID().toString());
-        visitor.setStatus("EXPECTED");
+        visitor.setStatus("PENDING_APPROVAL");
+        visitor = visitors.save(visitor);
+        visitor.setPassNumber("PASS-" + LocalDate.now().getYear() + "-" + String.format("%06d", visitor.getId()));
         visitors.save(visitor);
         return redirectToSecurity("entries");
     }
@@ -441,17 +519,27 @@ public class SocietyApiController {
     @PatchMapping("/visitors/{id}/{action}")
     @PreAuthorize("hasAnyRole('SOCIETY_ADMIN','SECURITY_STAFF')")
     @Transactional
-    public Map<String, Object> visitorAction(@PathVariable Long id, @PathVariable String action) {
+    public Map<String, Object> visitorAction(@PathVariable Long id, @PathVariable String action, @RequestParam(required = false) String gateNumber) {
         Visitor visitor = visitors.findByIdAndTenantId(id, currentUser.requireTenantId())
                 .orElseThrow(() -> new IllegalArgumentException("Visitor was not found"));
         ensureSecurityCanAccess(currentUser.requireUser(), visitor.getResident());
         if ("checkin".equalsIgnoreCase(action)) {
+            if (!"APPROVED".equalsIgnoreCase(visitor.getApprovalStatus())) throw new IllegalArgumentException("Resident approval is required before entry");
             if (visitor.getCheckInAt() != null) throw new IllegalArgumentException("Visitor is already checked in");
+            Gate selectedGate = resolveGateByNumber(currentUser.requireTenantId(), clean(gateNumber).isBlank() ? visitor.getGateNumber() : gateNumber).orElse(visitor.getEntryGate());
+            if (selectedGate != null) visitor.setEntryGate(selectedGate);
+            visitor.setEntrySecurity(currentUser.requireUser());
             visitor.setCheckInAt(LocalDateTime.now());
             visitor.setStatus("CHECKED_IN");
         } else if ("checkout".equalsIgnoreCase(action)) {
             if (visitor.getCheckInAt() == null) throw new IllegalArgumentException("Visitor must check in first");
-            visitor.setCheckOutAt(LocalDateTime.now());
+            if (visitor.getCheckOutAt() != null) throw new IllegalArgumentException("Visitor is already checked out");
+            Gate selectedGate = resolveGateByNumber(currentUser.requireTenantId(), clean(gateNumber).isBlank() ? visitor.getGateNumber() : gateNumber).orElse(visitor.getEntryGate());
+            visitor.setExitGate(selectedGate);
+            visitor.setExitSecurity(currentUser.requireUser());
+            LocalDateTime exitAt = LocalDateTime.now();
+            visitor.setExitTime(exitAt);
+            visitor.setCheckOutAt(exitAt);
             visitor.setStatus("CHECKED_OUT");
         } else {
             throw new IllegalArgumentException("Unsupported visitor action");
@@ -479,10 +567,16 @@ public class SocietyApiController {
                 .findFirst()
                 .orElseGet(() -> createGateFallbackVisitor(clean(visitorName).trim(), requestedAction));
         if ("checkin".equals(requestedAction)) {
+            if (!"APPROVED".equalsIgnoreCase(visitor.getApprovalStatus())) throw new IllegalArgumentException("Resident approval is required before entry");
+            visitor.setEntrySecurity(currentUser.requireUser());
             visitor.setCheckInAt(LocalDateTime.now());
             visitor.setStatus("CHECKED_IN");
         } else {
-            visitor.setCheckOutAt(LocalDateTime.now());
+            LocalDateTime exitAt = LocalDateTime.now();
+            visitor.setExitGate(visitor.getEntryGate());
+            visitor.setExitSecurity(currentUser.requireUser());
+            visitor.setExitTime(exitAt);
+            visitor.setCheckOutAt(exitAt);
             visitor.setStatus("CHECKED_OUT");
         }
         visitors.save(visitor);
@@ -498,7 +592,10 @@ public class SocietyApiController {
                 .orElseThrow(() -> new IllegalArgumentException("Visitor pass was not found"));
         if (!"EXPECTED".equals(visitor.getStatus())) throw new IllegalArgumentException("This visitor pass is no longer valid for entry");
         if (visitor.getExpectedAt().isBefore(LocalDateTime.now().minusHours(24))) throw new IllegalArgumentException("This visitor pass has expired");
-        visitor.setGateNumber(clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim());
+        String scanGate = clean(request.gateNumber()).isBlank() ? "Gate 1" : clean(request.gateNumber()).trim();
+        visitor.setGateNumber(scanGate);
+        resolveGateByNumber(currentUser.requireTenantId(), scanGate).ifPresent(visitor::setEntryGate);
+        visitor.setEntrySecurity(currentUser.requireUser());
         visitor.setCheckInAt(LocalDateTime.now());
         visitor.setStatus("CHECKED_IN");
         return visitorView(visitors.save(visitor));
@@ -789,8 +886,21 @@ public class SocietyApiController {
                 "approvalStatus", v.getApprovalStatus(), "status", v.getStatus(), "qrCode", v.getQrCode(),
                 "vehicleNumber", clean(v.getVehicleNumber()), "photoReference", clean(v.getPhotoReference()),
                 "gateNumber", clean(v.getGateNumber()).isBlank() ? "Gate 1" : clean(v.getGateNumber()),
+                "passNumber", clean(v.getPassNumber()), "visitorCategory", clean(v.getVisitorCategory()),
+                "entryGateId", v.getEntryGate() == null ? null : v.getEntryGate().getId(),
+                "entryGateNumber", v.getEntryGate() == null ? clean(v.getGateNumber()) : v.getEntryGate().getGateNumber(),
+                "exitGateId", v.getExitGate() == null ? null : v.getExitGate().getId(),
+                "exitGateNumber", v.getExitGate() == null ? "" : v.getExitGate().getGateNumber(),
+                "exitTime", v.getExitTime() == null ? v.getCheckOutAt() : v.getExitTime(),
                 "entryType", clean(v.getEntryType()), "idProofType", clean(v.getIdProofType()), "idProofNumber", clean(v.getIdProofNumber()),
                 "personsCount", v.getPersonsCount(), "specialInstructions", clean(v.getSpecialInstructions()));
+    }
+
+    private Optional<Gate> resolveGateByNumber(String tenantId, String gateNumber) {
+        String value = clean(gateNumber);
+        if (value.isBlank()) return Optional.empty();
+        return gates.findFirstByTenantIdAndGateNumberIgnoreCase(tenantId, value)
+                .filter(gate -> "ACTIVE".equalsIgnoreCase(gate.getStatus()));
     }
 
     private Map<String, Object> billView(MaintenanceBill b) {

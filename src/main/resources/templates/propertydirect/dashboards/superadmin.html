@@ -7,6 +7,7 @@
     <title>Super Admin Console — PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
+    <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
     <style>
         /* -------------------------------------------------------------
            PROPERTYDIRECT BRANDING & DESIGN SYSTEM FOR DASHBOARDS
@@ -653,8 +654,6 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 22px !important;
             margin-bottom: 28px !important;
-        }
-
         }
 
 
@@ -1425,8 +1424,9 @@
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-parity.css?v=20260903-header-baseline-v11">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260903-premium-v3">
     <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260910-end-to-end-alignment-v1">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260912-global-alignment-v3">
     <link rel="stylesheet" href="/propertydirect/css/superadmin-premium.css?v=20260908-attached-header-v1">
+    <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
@@ -6428,14 +6428,22 @@
                         <p style="margin: 4px 0 0 0; font-size: 0.84rem; color: #64748b;">Live requests submitted across
                             PropertyDirect and SmartSociety service request forms.</p>
                     </div>
-                    <button class="primary" onclick="loadPropertyDirectSuperAdminServiceRequests()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.2">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                        </svg>
-                        Refresh Requests
-                    </button>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <a href="/dashboards/maintenance#dispatch" class="primary text-decoration-none" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: #d97706; color: #fff; font-weight: 700; font-size: 0.82rem; text-decoration: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                            </svg>
+                            Open Maintenance Operations (Stage 5)
+                        </a>
+                        <button class="primary" onclick="loadPropertyDirectSuperAdminServiceRequests()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            Refresh Requests
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-grid"
@@ -10204,8 +10212,10 @@
             </form>
         </div>
     </div>
+    <script src="/shared/js/dashboard-system.js?v=20260916-universal-sidebar-v3"></script>
     <script src="/propertydirect/js/superadmin-actions.js?v=20260908-actions-v3"></script>
     <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
 </body>
 
 </html>
+

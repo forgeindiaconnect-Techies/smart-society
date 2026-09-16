@@ -95,10 +95,7 @@ body.app-dashboard *::after { box-sizing:border-box; }
     border:1px solid rgba(255,255,255,.14);
     border-radius:24px;
     color:#fff;
-    background:
-        radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.25), transparent 50%),
-        radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.2), transparent 50%),
-        linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(3, 7, 18, 0.98) 100%) !important;
+    background: #0f172a !important;
     backdrop-filter: blur(20px) saturate(1.8);
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
@@ -652,10 +649,10 @@ body.app-dashboard .dash-sidebar > .dashboard-sidebar-close:hover { background:r
 
 @media (max-width:900px){
     body.dashboard-body,body.app-dashboard{background:radial-gradient(circle at 90% 3%,rgba(67,97,238,.14),transparent 22rem),var(--ds-bg)}
-    body.dashboard-body .sidebar,body.app-dashboard .dash-sidebar{position:fixed!important;z-index:40!important;inset:10px auto 10px 10px!important;width:min(286px,calc(100vw - 44px))!important;height:auto!important;min-height:0!important;margin:0!important;transform:translateX(calc(-100% - 24px))!important;transition:transform .38s var(--ds-ease)!important;box-shadow:0 28px 90px rgba(8,18,50,.42)!important}
-    body.dashboard-menu-open .sidebar,body.dashboard-menu-open .dash-sidebar{transform:none!important}
-    .dashboard-body .main,.app-dashboard .dash-main{margin:0 !important;padding:12px 14px 42px !important}
-    .dashboard-body .header,.app-dashboard .dash-header{top:8px;min-height:70px;margin-bottom:16px;padding:11px 12px}
+    body.dashboard-body :is(.sidebar, #sidebar),body.app-dashboard :is(.dash-sidebar, .vendor-sidebar, .agent-sidebar, .sidebar, #sidebar){position:fixed!important;z-index:40!important;inset:10px auto 10px 10px!important;width:min(286px,calc(100vw - 44px))!important;height:auto!important;min-height:0!important;margin:0!important;transform:translateX(calc(-100% - 24px))!important;transition:transform .38s var(--ds-ease)!important;box-shadow:0 28px 90px rgba(8,18,50,.42)!important}
+    body.dashboard-menu-open :is(.sidebar, #sidebar, .dash-sidebar, .vendor-sidebar, .agent-sidebar),body.sidebar-open :is(.sidebar, #sidebar, .dash-sidebar, .vendor-sidebar, .agent-sidebar){transform:none!important}
+    .dashboard-body :is(.main, .main-content),.app-dashboard :is(.dash-main, .vendor-main, .agent-main, .main-content){margin:0 !important;padding:12px 14px 42px !important}
+    .dashboard-body :is(.header, .topbar),.app-dashboard :is(.dash-header, .vendor-top, .agent-top, .agent-header){top:8px;min-height:70px;margin-bottom:16px;padding:11px 12px}
     .dashboard-menu-toggle{display:grid}
     .dashboard-body .header > div:first-of-type,.app-dashboard .dash-header > div:first-of-type{min-width:0}
     .dashboard-body .header h1,.app-dashboard .dash-header h1{font-size:1.27rem}
@@ -1088,37 +1085,47 @@ html[data-theme="dark"] .app-dashboard .dash-header {
     background: rgba(20, 27, 45, 0.95) !important;
 }
 
-/* Landing Page Signature Royal Blue & Deep Navy Sidebar */
+/* Unified Dark Slate Sidebar (Matching Maintenance Dashboard #0f172a) */
 .dashboard-body .sidebar,
 .app-dashboard .dash-sidebar,
 .dashboard-body[data-dashboard-role] .sidebar,
 .app-dashboard[data-dashboard-role] .dash-sidebar {
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    border-radius: 20px !important;
-    background: radial-gradient(circle at 20% 0, rgba(93, 129, 255, 0.55), transparent 14rem),
-                linear-gradient(165deg, #2448bd 0%, #18388f 44%, #102558 100%) !important;
-    box-shadow: 0 20px 60px rgba(18, 45, 112, 0.28) !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 !important;
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+    background-image: none !important;
+    color: #f8fafc !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
 }
 
 .dashboard-body .sidebar button,
-.app-dashboard .dash-sidebar button {
-    border-radius: 9px !important;
-    color: rgba(255, 255, 255, 0.78) !important;
+.app-dashboard .dash-sidebar button,
+.dashboard-body .sidebar .nav-link,
+.app-dashboard .dash-sidebar .nav-link {
+    border-radius: 0.5rem !important;
+    color: #94a3b8 !important;
+    background: transparent !important;
 }
 
 .dashboard-body .sidebar button:hover,
-.app-dashboard .dash-sidebar button:hover {
-    background: rgba(255, 255, 255, 0.12) !important;
+.app-dashboard .dash-sidebar button:hover,
+.dashboard-body .sidebar .nav-link:hover,
+.app-dashboard .dash-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
     color: #ffffff !important;
     transform: none !important;
 }
 
 .dashboard-body .sidebar button.active,
-.app-dashboard .dash-sidebar button.active {
-    background: #ffffff !important;
-    color: #17388f !important;
-    font-weight: 800 !important;
-    box-shadow: 0 8px 22px rgba(3, 12, 37, 0.25) !important;
+.app-dashboard .dash-sidebar button.active,
+.dashboard-body .sidebar .nav-link.active,
+.app-dashboard .dash-sidebar .nav-link.active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
 }
 
 /* Sleek Minimalist Primary Buttons */

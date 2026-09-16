@@ -42,17 +42,27 @@ public class DataLoader {
                                 PasswordEncoder encoder,
                                 Environment environment) {
         return args -> {
-            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "false"));
-            String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "superadmin@smartsociety");
+            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
+            String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "superadmin@smartapartment");
             String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", "superadmin123");
-            String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@smartsociety");
+            String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@smartapartment");
             String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", "resident123");
 
-            users.findByEmail(superAdminEmail).orElseGet(() -> {
+            users.findByEmail("superadmin@smartapartment").orElseGet(() -> {
                 AppUser superAdmin = new AppUser();
                 superAdmin.setTenantId("platform");
                 superAdmin.setFullName("Platform Super Admin");
-                superAdmin.setEmail(superAdminEmail);
+                superAdmin.setEmail("superadmin@smartapartment");
+                superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
+                superAdmin.setRole(UserRole.SUPER_ADMIN);
+                return users.save(superAdmin);
+            });
+
+            users.findByEmail("superadmin@smartsociety").orElseGet(() -> {
+                AppUser superAdmin = new AppUser();
+                superAdmin.setTenantId("platform");
+                superAdmin.setFullName("Platform Super Admin");
+                superAdmin.setEmail("superadmin@smartsociety");
                 superAdmin.setPasswordHash(encoder.encode(superAdminPassword));
                 superAdmin.setRole(UserRole.SUPER_ADMIN);
                 return users.save(superAdmin);
