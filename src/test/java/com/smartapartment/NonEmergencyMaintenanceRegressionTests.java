@@ -81,6 +81,7 @@ class NonEmergencyMaintenanceRegressionTests {
             }
             """;
         MvcResult res1 = mvc.perform(post("/api/maintenance")
+                        .session(loginAsMaintenanceStaff())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(commonPayload))
                 .andExpect(status().isOk())
@@ -138,7 +139,7 @@ class NonEmergencyMaintenanceRegressionTests {
         t = ticketRepository.save(t);
 
         // View via /api/maintenance
-        mvc.perform(get("/api/maintenance"))
+        mvc.perform(get("/api/maintenance").session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", not(empty())))
                 .andExpect(jsonPath("$[?(@.id == " + t.getId() + ")].title").value(hasItem("Clubhouse AC Filter Cleaning")));
@@ -206,6 +207,7 @@ class NonEmergencyMaintenanceRegressionTests {
             }
             """;
         mvc.perform(patch("/api/maintenance/" + t.getId() + "/status")
+                        .session(loginAsMaintenanceStaff())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(assignPayload))
                 .andExpect(status().isOk())
@@ -321,12 +323,12 @@ class NonEmergencyMaintenanceRegressionTests {
         ticketRepository.save(t2);
 
         // Filter by platform = smartsociety
-        mvc.perform(get("/api/maintenance?sourcePlatform=smartsociety"))
+        mvc.perform(get("/api/maintenance?sourcePlatform=smartsociety").session(loginAsMaintenanceStaff()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].sourcePlatform", everyItem(equalToIgnoringCase("smartsociety"))));
 
         // Filter by status = RESOLVED
-        mvc.perform(get("/api/maintenance?status=RESOLVED"))
+        mvc.perform(get("/api/maintenance?status=RESOLVED").session(loginAsMaintenanceStaff()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].ticketStatus", everyItem(equalToIgnoringCase("RESOLVED"))));
     }

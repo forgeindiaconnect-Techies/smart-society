@@ -555,7 +555,7 @@ public class AuthController {
         }
 
         String normalizedEmail = safe(request.email()).toLowerCase(Locale.ROOT).trim();
-        if (!normalizedEmail.contains("@") || !normalizedEmail.contains(".")) {
+        if (!normalizedEmail.contains("@") || (!normalizedEmail.contains(".") && !normalizedEmail.endsWith("@smartapartment") && !normalizedEmail.endsWith("@smartsociety"))) {
             return ResponseEntity.badRequest().body(Map.of("message", "Please enter a valid email address"));
         }
 

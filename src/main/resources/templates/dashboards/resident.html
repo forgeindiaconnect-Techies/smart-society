@@ -904,9 +904,9 @@
                                         <th>Service</th>
                                         <th>Schedule</th>
                                         <th>Address</th>
-                                        <th>Price</th>
+                                        <th>Technician / work notes</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th>Completion estimate</th>
                                     </tr>
                                 </thead>
                                 <tbody id="noBrokerMaintenanceRows">
@@ -1313,25 +1313,7 @@
             if (!body) return;
             try {
                 const tickets = await noBrokerMaintenanceApi("?sourcePlatform=smartsociety");
-                const serviceTickets = tickets.filter(ticket => String(ticket.serviceCategory || ticket.serviceType || "").toLowerCase().includes("carpentry") || String(ticket.externalReference || "").startsWith("NB-CRP-"));
-                if (!serviceTickets.length) {
-                    body.innerHTML = '<tr><td colspan="7" class="text-muted text-center py-4">No saved NoBroker-style service bookings yet.</td></tr>';
-                    return;
-                }
-                body.innerHTML = serviceTickets.map(ticket => {
-                    const status = String(ticket.ticketStatus || "REQUESTED").replaceAll("_", " ");
-                    const done = /RESOLVED|CLOSED/i.test(status);
-                    const badgeClass = done ? "bg-success" : "bg-warning text-dark";
-                    return `<tr>
-                        <td><strong>#${ticket.id}</strong><br><small class="text-muted">${ticket.externalReference || "Resident booking"}</small></td>
-                        <td><strong>${ticket.serviceType || "Carpentry service"}</strong><br><small class="text-muted">${ticket.serviceOption || "Standard visit"}</small></td>
-                        <td>${formatNoBrokerDate(ticket.preferredAt)}</td>
-                        <td>${ticket.serviceAddress || "—"}</td>
-                        <td>${ticket.priceLabel || "Rs. 49"}</td>
-                        <td><span class="badge ${badgeClass}">${status}</span></td>
-                        <td>${done ? '<span class="text-success fw-bold small">Closed</span>' : `<button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="resolveNoBrokerTicket(${ticket.id})">Mark Resolved</button>`}</td>
-                    </tr>`;
-                }).join("");
+                body.innerHTML = window.renderMaintenanceProgressRows(tickets);
             } catch (error) {
                 body.innerHTML = `<tr><td colspan="7" class="text-danger text-center py-4">${error.message}</td></tr>`;
             }
@@ -1563,7 +1545,7 @@
             });
         })();
     </script>
-<script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
+<script src="/shared/js/common-maintenance.js?v=20260917-progress-v1"></script>
 <script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
 <script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
 <script src="/smartapartment/js/resident-gate-approvals.js?v=20260916-multigate-v1"></script>

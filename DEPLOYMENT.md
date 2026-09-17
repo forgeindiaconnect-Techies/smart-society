@@ -32,22 +32,32 @@ Then put `user` into `DB_USERNAME` and `password` into `DB_PASSWORD`.
 
 ## Render Web Service
 
-1. Connect this GitHub repository to Render.
-2. Create a Blueprint from `render.yaml`, or create a Docker web service manually.
-3. Add these environment variables in Render:
+1. Connect this GitHub repository to Render (https://dashboard.render.com).
+2. Click **New +** -> **Web Service** (or **Blueprint** using `render.yaml`).
+3. Select **Docker** environment (Render auto-detects `Dockerfile`).
+4. In the **Environment Variables** section on Render, add:
 
 ```text
-DB_URL=jdbc:postgresql://<railway-public-host>:<railway-public-port>/<railway-database>?sslmode=require
-DB_USERNAME=<railway-user>
-DB_PASSWORD=<railway-password>
-DB_DRIVER=org.postgresql.Driver
+JWT_SECRET=super_secure_long_random_jwt_secret_render_production_key_12345
+BREVO_API_KEY=<your-brevo-api-key>
+APP_MAIL_FROM=your-verified-brevo-sender@example.com
 DDL_AUTO=update
 H2_CONSOLE_ENABLED=false
 OPEN_IN_VIEW=false
-JWT_SECRET=<long-random-secret>
 ```
 
-The app listens on Render's `PORT` variable automatically.
+### Optional External Database (PostgreSQL)
+If connecting an external PostgreSQL database (Railway, Supabase, Neon, or Render Postgres):
+```text
+DB_URL=jdbc:postgresql://<host>:<port>/<database>?sslmode=require
+DB_USERNAME=<user>
+DB_PASSWORD=<password>
+DB_DRIVER=org.postgresql.Driver
+```
+*(If omitted, the app will run with embedded H2)*
+
+Render automatically sets the `PORT` environment variable and injects it into the Spring Boot container.
+
 
 ## Local Development
 

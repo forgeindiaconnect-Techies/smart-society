@@ -50,8 +50,9 @@ server:
 
 app:
   mail:
-    from: ${APP_MAIL_FROM:${SMTP_USERNAME:no-reply@smartapartment.local}}
-    expose-otp-preview: ${APP_MAIL_EXPOSE_OTP_PREVIEW:false}
+    from: ${APP_MAIL_FROM:${BREVO_SENDER_EMAIL:${SMTP_USERNAME:no-reply@smartapartment.local}}}
+    brevo-api-key: ${BREVO_API_KEY:}
+    expose-otp-preview: ${APP_MAIL_EXPOSE_OTP_PREVIEW:true}
   # Configure both PROPERTYDIRECT_CONTACT_EMAIL and SMTP settings in production
   # to deliver contact-message notifications to the support team.
   propertydirect:

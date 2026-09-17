@@ -46,6 +46,10 @@ public class SocietyApiController {
     private final TenantRepository tenants;
     private final SubscriptionPlanRepository subscriptionPlans;
     private final PasswordEncoder passwordEncoder;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.service.EmergencyMaintenanceService emergencyService;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.repository.CommonMaintenanceTicketRepository ticketRepository;
 
     public SocietyApiController(CurrentUserService currentUser, DashboardService dashboards,
                                 ApartmentRepository apartments, ResidentRepository residents,
@@ -370,7 +374,59 @@ public class SocietyApiController {
         complaint.setAssignedTo(clean(request.assignedTo()));
         complaint.setStatus("OPEN");
         complaint.setDueAt(LocalDateTime.now().plusHours(slaHours(complaint.getPriority())));
-        return complaintView(complaints.save(complaint));
+
+        boolean isMaintenance = isMaintenanceCategory(complaint.getCategory());
+        if (complaint.getAssignedTo().isBlank() && isMaintenance && emergencyService != null && emergencyService.isMaintenanceAdminBusy(user.getTenantId())) {
+            emergencyService.findFreeMaintenanceWorker(user.getTenantId(), complaint.getCategory()).ifPresent(worker -> {
+                complaint.setAssignedTo(worker.getFullName());
+                complaint.setStatus("IN_PROGRESS");
+                complaint.setResolutionNotes("⚡ Auto-assigned to free worker " + worker.getFullName() + " (" + (worker.getDesignation() != null ? worker.getDesignation() : "Staff") + ") because maintenance admin is currently busy.");
+            });
+        }
+
+        Complaint saved = complaints.save(complaint);
+
+        if (ticketRepository != null && isMaintenance) {
+            try {
+                CommonMaintenanceTicket t = new CommonMaintenanceTicket();
+                t.setTenantId(user.getTenantId());
+                t.setSourcePlatform("smartsociety");
+                t.setRequesterId(user.getId());
+                t.setRequesterName(user.getFullName());
+                t.setRequesterPhone(saved.getReporterPhone());
+                t.setTargetEntityType("COMPLAINT");
+                t.setTargetEntityId(saved.getId());
+                t.setTitle(saved.getTitle());
+                t.setDescription(saved.getDescription());
+                t.setServiceAddress(saved.getLocationDetails() != null && !saved.getLocationDetails().isBlank() 
+                        ? saved.getLocationDetails() 
+                        : (resident != null && resident.getApartment() != null ? "Flat " + resident.getApartment().getUnitNo() : "Society Area"));
+                t.setCity("Society Area");
+                t.setServiceType(saved.getCategory());
+                t.setServiceCategory(saved.getCategory());
+                t.setPriority(saved.getPriority());
+                t.setDueAt(saved.getDueAt());
+                if (!saved.getAssignedTo().isBlank()) {
+                    t.setTicketStatus("ASSIGNED");
+                    t.setVendorName(saved.getAssignedTo());
+                    t.setVendorNotes(saved.getResolutionNotes());
+                    t.setAssignedAt(LocalDateTime.now());
+                } else {
+                    t.setTicketStatus("REQUESTED");
+                }
+                ticketRepository.save(t);
+            } catch (Exception ignored) {}
+        }
+
+        return complaintView(saved);
+    }
+
+    private boolean isMaintenanceCategory(String category) {
+        if (category == null || category.isBlank()) return false;
+        String cat = category.toUpperCase(Locale.ROOT);
+        return cat.contains("MAINTENANCE") || cat.contains("PLUMB") || cat.contains("ELECT")
+                || cat.contains("CARPENT") || cat.contains("AC") || cat.contains("HVAC")
+                || cat.contains("LIFT") || cat.contains("CIVIL") || cat.contains("REPAIR");
     }
 
     @PatchMapping("/complaints/{id}")

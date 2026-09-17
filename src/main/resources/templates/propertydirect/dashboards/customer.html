@@ -2910,9 +2910,9 @@
                                         <th>Service</th>
                                         <th>Schedule</th>
                                         <th>Address</th>
-                                        <th>Price</th>
+                                        <th>Technician / work notes</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th>Completion estimate</th>
                                     </tr>
                                 </thead>
                                 <tbody id="noBrokerMaintenanceRows">
@@ -3145,7 +3145,7 @@
     <script src="/propertydirect/js/dashboard.js?v=20260909-sidebar-close-top-v3"></script>
     <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
     <script src="/propertydirect/js/market-workflows.js?v=20260905-vendor-only-v1"></script>
-    <script src="/shared/js/common-maintenance.js?v=20260909-carpentry-v2"></script>
+    <script src="/shared/js/common-maintenance.js?v=20260917-progress-v1"></script>
     <script>
         // Saved and comparison views must never present template/demo properties.
         // They are populated from the authenticated PropertyDirect APIs only.
@@ -3212,25 +3212,7 @@
             if (!tbody) return;
             try {
                 const items = await noBrokerMaintenanceApi("?sourcePlatform=propertydirect");
-                if (!items.length) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="padding: 16px; text-align: center; color: #64748b;">No service bookings submitted yet. Use the booking form above to place a request.</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = items.map(ticket => {
-                    const status = String(ticket.ticketStatus || "REQUESTED");
-                    const statusBadge = /RESOLVED|CLOSED/i.test(status)
-                        ? '<span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 999px; font-weight: 700; font-size: 0.75rem;">Resolved</span>'
-                        : '<span style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 999px; font-weight: 700; font-size: 0.75rem;">Booked</span>';
-                    return `<tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>#${ticket.id}</strong><br><small style="color: #64748b;">${ticket.externalReference || "NB-CARP"}</small></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>${ticket.serviceType || "Carpentry"}</strong><br><small style="color: #64748b;">${ticket.serviceCategory || "General"}</small></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${ticket.preferredAt ? new Date(ticket.preferredAt).toLocaleString("en-IN") : "Scheduled"}<br><small style="color: #64748b;">${ticket.priority === "HIGH" ? "Express 60Min" : "Standard Slot"}</small></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${ticket.serviceAddress || "Property Direct customer"}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>${ticket.priceLabel || "₹49"}</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${statusBadge}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${/RESOLVED|CLOSED/i.test(status) ? '<span style="font-size: 0.75rem; color: #64748b;">Completed</span>' : `<button type="button" style="padding: 4px 12px; border-radius: 999px; background: #ffffff; color: #16a34a; font-weight: 700; border: 1px solid #bbf7d0; cursor: pointer; font-size: 0.75rem;" onclick="resolveNoBrokerTicket(${ticket.id})">Mark Resolved</button>`}</td>
-                    </tr>`;
-                }).join("");
+                tbody.innerHTML = window.renderMaintenanceProgressRows(items);
             } catch (err) {
                 tbody.innerHTML = `<tr><td colspan="7" style="padding: 16px; text-align: center; color: #ef4444;">Could not load bookings: ${err.message}</td></tr>`;
             }
@@ -3472,4 +3454,3 @@
     <script src="/shared/js/home-services-dashboard.js?v=20260910-home-services-v1"></script>
 </body>
 </html>
-

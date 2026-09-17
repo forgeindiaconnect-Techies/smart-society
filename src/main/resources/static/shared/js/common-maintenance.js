@@ -9,6 +9,16 @@
     if (!isSmartSocietyResident && !isPropertyDirectCustomer) return;
 
     const sourcePlatform = isPropertyDirectCustomer ? "propertydirect" : "smartsociety";
+    const escapeText = value => String(value ?? "—").replace(/[&<>"']/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[character]));
+    window.renderMaintenanceProgressRows = items => items.length ? items.map(ticket => {
+        const done = ["RESOLVED", "CLOSED", "INVOICED"].includes(ticket.ticketStatus);
+        const remaining = ticket.estimatedCompletionAt ? Math.ceil((new Date(ticket.estimatedCompletionAt) - Date.now()) / 60000) : null;
+        const time = done ? `Completed ${ticket.resolvedAt ? new Date(ticket.resolvedAt).toLocaleString("en-IN") : ""}`
+            : ticket.ticketStatus === "CANCELLED" ? "Cancelled"
+            : ticket.ticketStatus === "ON_HOLD" ? "On hold · estimate will be updated"
+            : remaining === null ? "Completion estimate pending" : remaining > 0 ? `About ${remaining} min remaining` : "Estimate elapsed · awaiting maintenance update";
+        return `<tr><td><strong>${escapeText(ticket.ticketId || `#${ticket.id}`)}</strong></td><td>${escapeText(ticket.serviceType)}<br><small>${escapeText(ticket.description)}</small></td><td>${ticket.preferredAt ? escapeText(new Date(ticket.preferredAt).toLocaleString("en-IN")) : "Visit pending"}</td><td>${escapeText(ticket.serviceAddress)}</td><td>${escapeText(ticket.vendorName || "Awaiting technician")}<br><small>${escapeText(ticket.vendorNotes || "No work notes yet")}</small></td><td><span class="badge ${done ? "bg-success" : "bg-primary"}">${escapeText(ticket.workProgress || ticket.ticketStatus)}</span></td><td>${escapeText(time)}</td></tr>`;
+    }).join("") : '<tr><td colspan="7">No service bookings yet.</td></tr>';
     if (!document.getElementById("nobrokerServicesSection") && !document.getElementById("customerNoBrokerServicesSection")) {
         const catalogueScript = document.createElement("script");
         catalogueScript.src = "/shared/js/carpentry-catalogue.js?v=20260910-inline-service-images-v1";
@@ -175,7 +185,7 @@
                 <label>Vendor phone<input name="vendorPhone" maxlength="40" placeholder="Optional"></label>
                 <div class="common-maintenance-wide common-maintenance-actions"><button class="common-maintenance-primary" type="submit">Submit service request</button><button class="common-maintenance-secondary" type="reset">Clear form</button></div>
             </div></form>
-            <section class="common-maintenance-table-card"><h4>${isPropertyDirectCustomer ? "Property service tickets" : "Apartment service tickets"}</h4><p>These records are loaded from the common backend. Refreshing the page will keep the latest saved status.</p><div class="common-maintenance-table-wrap"><table class="common-maintenance-table"><thead><tr><th>Ticket</th><th>Service</th><th>Address</th><th>Schedule</th><th>Vendor</th><th>Status</th><th>Action</th></tr></thead><tbody id="commonMaintenanceRows"><tr><td colspan="7">Loading service tickets…</td></tr></tbody></table></div></section>
+            <section class="common-maintenance-table-card"><h4>${isPropertyDirectCustomer ? "Property service tickets" : "Apartment service tickets"}</h4><p>Work progress refreshes every 10 seconds. Completion times are maintenance estimates.</p><div class="common-maintenance-table-wrap"><table class="common-maintenance-table"><thead><tr><th>Ticket</th><th>Service</th><th>Schedule</th><th>Address</th><th>Technician / work notes</th><th>Status</th><th>Completion estimate</th></tr></thead><tbody id="commonMaintenanceRows"><tr><td colspan="7">Loading service tickets…</td></tr></tbody></table></div></section>
         </div>`;
     }
 
@@ -211,11 +221,7 @@
         const table = document.getElementById("commonMaintenanceRows");
         if (!table) return;
         const items = await api(`?sourcePlatform=${encodeURIComponent(sourcePlatform)}`);
-        table.innerHTML = items.length ? items.map(ticket => {
-            const status = String(ticket.ticketStatus || "REQUESTED");
-            const cls = /RESOLVED|CLOSED/i.test(status) ? "done" : /HOLD|CANCEL|REQUESTED/i.test(status) ? "warn" : "";
-            return `<tr><td><strong>#${ticket.id}</strong><br><small>${ticket.title || "Service request"}</small></td><td>${ticket.serviceCategory || "—"}<br><small>${ticket.serviceType || "—"} · ${ticket.serviceOption || "Standard"}</small></td><td>${ticket.serviceAddress || "—"}</td><td>${ticket.preferredAt ? new Date(ticket.preferredAt).toLocaleString("en-IN") : "—"}<br><small>${ticket.alternateAt ? `Alt: ${new Date(ticket.alternateAt).toLocaleString("en-IN")}` : ""}</small></td><td>${ticket.vendorName || "External vendor"}<br><small>${ticket.vendorPhone || ""}</small></td><td><span class="common-maintenance-status ${cls}">${status.replaceAll("_", " ")}</span></td><td>${/RESOLVED|CLOSED/i.test(status) ? "Closed" : `<button type="button" class="common-maintenance-secondary" data-maintenance-resolve="${ticket.id}">Mark resolved</button>`}</td></tr>`;
-        }).join("") : '<tr><td colspan="7">No service tickets yet. Submit a request above and it will stay after refresh.</td></tr>';
+        table.innerHTML = window.renderMaintenanceProgressRows(items);
     }
 
     async function submitBooking(form) {
@@ -286,5 +292,15 @@
         setDefaultDate();
         selectService(0, false);
         try { await loadTickets(); } catch (error) { notify(error.message); }
+        let refreshing = false;
+        setInterval(async () => {
+            if (document.hidden || refreshing) return;
+            refreshing = true;
+            try {
+                await loadTickets();
+                if (typeof window.loadNoBrokerMaintenanceTickets === "function") await window.loadNoBrokerMaintenanceTickets();
+            } catch (_) { /* Keep the last confirmed snapshot when offline. */ }
+            finally { refreshing = false; }
+        }, 10000);
     });
 })();

@@ -85,9 +85,10 @@ public class CommonMaintenanceService {
         ticket.setExternalReference(text(request.externalReference(), ticket.getExternalReference()));
         ticket.setVendorNotes(text(request.vendorNotes(), ticket.getVendorNotes()));
         ticket.setBillReference(text(request.billReference(), ticket.getBillReference()));
-        if ("DISPATCHED".equals(status) || "IN_PROGRESS".equals(status)) {
+        if ("ASSIGNED".equals(status) || "DISPATCHED".equals(status) || "IN_PROGRESS".equals(status)) {
             ticket.setAssignedAt(ticket.getAssignedAt() == null ? LocalDateTime.now() : ticket.getAssignedAt());
         }
+        if ("IN_PROGRESS".equals(status) && ticket.getWorkStartedAt() == null) ticket.setWorkStartedAt(LocalDateTime.now());
         if ("RESOLVED".equals(status) || "CLOSED".equals(status) || "INVOICED".equals(status)) {
             ticket.setResolvedAt(ticket.getResolvedAt() == null ? LocalDateTime.now() : ticket.getResolvedAt());
         }

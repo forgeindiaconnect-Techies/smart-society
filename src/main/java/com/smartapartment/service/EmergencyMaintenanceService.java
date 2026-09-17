@@ -29,6 +29,8 @@ public class EmergencyMaintenanceService {
     private final PropertyCustomerRepository customers;
     private final NotificationRepository notifications;
     private final AuditLogRepository auditLogs;
+    private final CommonMaintenanceTicketRepository tickets;
+    private final Map<String, String> adminDutyStatusMap = new ConcurrentHashMap<>();
     @Value("${app.emergency.offer-timeout-seconds:45}")
     private int offerTimeoutSeconds;
     @Value("${app.emergency.max-dispatch-cycles:2}")
@@ -49,10 +51,18 @@ public class EmergencyMaintenanceService {
     private final ConcurrentLinkedDeque<DispatchEvent> recentEventsQueue = new ConcurrentLinkedDeque<>();
     private static final Set<String> ACTIVE_EMERGENCY_STATES = Set.of(
             "OFFERED", "ASSIGNED", "ACCEPTED", "EN_ROUTE", "REACHED_LOCATION", "PHOTO_START", "IN_PROGRESS");
+
     public EmergencyMaintenanceService(EmergencyMaintenanceBookingRepository b, MaintenanceHubRepository h,
             MaintenancePartnerRepository p, AppUserRepository u, PropertyCustomerRepository c, NotificationRepository n,
             AuditLogRepository al) {
-        bookings=b; hubs=h; partners=p; users=u; customers=c; notifications=n; auditLogs=al;
+        this(b, h, p, u, c, n, al, null);
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public EmergencyMaintenanceService(EmergencyMaintenanceBookingRepository b, MaintenanceHubRepository h,
+            MaintenancePartnerRepository p, AppUserRepository u, PropertyCustomerRepository c, NotificationRepository n,
+            AuditLogRepository al, CommonMaintenanceTicketRepository t) {
+        bookings=b; hubs=h; partners=p; users=u; customers=c; notifications=n; auditLogs=al; tickets=t;
     }
     public record Actor(Long id, String platform, String tenant, String name, boolean admin, boolean worker) {}
     public Actor actor(HttpSession session, String platform) {
@@ -564,6 +574,10 @@ public class EmergencyMaintenanceService {
                 b.setBeforePhotoLongitude(longitude);
                 b.setPhotoStartAt(now);
                 b.setStartedAt(now);
+                if (b.getEstimatedDurationMinutes() == null || b.getEstimatedDurationMinutes() <= 0) {
+                    b.setEstimatedDurationMinutes(defaultWorkEstimateMinutes(b.getCategory()));
+                }
+                b.setEstimatedCompletionAt(now.plusMinutes(b.getEstimatedDurationMinutes()));
                 b.setJobStatus("IN_PROGRESS");
                 b.setDispatchReason(adminAllowed ? "Work started with photo proof via admin override" : "Repairs currently underway");
                 recordAudit(b, "STAGE_2_STARTED", b.getPartnerId(), "Mandatory before photo verified and work started" + (adminAllowed ? " via admin override" : ""), a.id());
@@ -587,6 +601,15 @@ public class EmergencyMaintenanceService {
         bookings.save(b);
         broadcastEvent(b.getId(), b.getJobStatus(), stage, b.getPartnerId(), "Workflow stage changed to " + stage);
         return b;
+    }
+
+
+    private int defaultWorkEstimateMinutes(String category) {
+        String trade = normalizeTradeTag(category);
+        if (trade.startsWith("ELECT")) return 60;
+        if (trade.startsWith("PLUMB")) return 75;
+        if (trade.startsWith("CARP")) return 90;
+        return 90;
     }
 
     private boolean isValidImageUrl(String url) {
@@ -1069,6 +1092,22 @@ public class EmergencyMaintenanceService {
         m.put("afterPhotoAt", b.getPhotoEndAt());
         m.put("startedAt",b.getStartedAt());
         m.put("inProgressAt", b.getStartedAt());
+        m.put("estimatedDurationMinutes", b.getEstimatedDurationMinutes());
+        m.put("estimatedCompletionAt", b.getEstimatedCompletionAt());
+        long remainingWorkMinutes = 0;
+        String remainingWorkText = "Estimate pending";
+        if (b.getCompletedAt() != null || "COMPLETED".equalsIgnoreCase(b.getJobStatus())) {
+            remainingWorkText = "Completed";
+        } else if (b.getEstimatedCompletionAt() != null) {
+            long seconds = java.time.Duration.between(LocalDateTime.now(), b.getEstimatedCompletionAt()).getSeconds();
+            remainingWorkMinutes = Math.max(0, (long)Math.ceil(seconds / 60.0));
+            remainingWorkText = seconds > 0 ? (remainingWorkMinutes + " min remaining") : "Estimate elapsed · finishing shortly";
+        } else if (b.getStartedAt() == null) {
+            remainingWorkText = "Starts after technician check-in and photo verification";
+        }
+        m.put("remainingWorkMinutes", remainingWorkMinutes);
+        m.put("remainingWorkText", remainingWorkText);
+        m.put("workProgress", workflowStageName(b).equals("STAGE_3_COMPLETED") ? "Completed" : workflowStageName(b).equals("STAGE_2_STARTED") ? "Processing" : workflowStageName(b).equals("STAGE_1_REACHED") || workflowStageName(b).equals("ASSIGNED") ? "Started" : "Awaiting assignment");
         m.put("completedAt",b.getCompletedAt());
         m.put("reviewLinkSentAt", b.getReviewLinkSentAt());
         m.put("reviewNotificationStatus", b.getReviewNotificationStatus());
@@ -1373,7 +1412,11 @@ public class EmergencyMaintenanceService {
                 if (b.getBeforePhoto() == null) throw error(409, "Before photo is required");
                 b.setJobStatus("IN_PROGRESS");
                 b.setStartedAt(now);
-                b.setDispatchReason("Service in progress");
+                if (b.getEstimatedDurationMinutes() == null || b.getEstimatedDurationMinutes() <= 0) {
+                    b.setEstimatedDurationMinutes(defaultWorkEstimateMinutes(b.getCategory()));
+                }
+                b.setEstimatedCompletionAt(now.plusMinutes(b.getEstimatedDurationMinutes()));
+                b.setDispatchReason("Service in progress; estimated completion " + b.getEstimatedCompletionAt());
                 recordAudit(b, "IN_PROGRESS", b.getPartnerId(), "Partner started service work", a.id());
             }
             case "COMPLETE", "COMPLETED" -> {
@@ -1967,6 +2010,163 @@ public class EmergencyMaintenanceService {
                 .sorted(Comparator.comparing(EmergencyMaintenanceBooking::getId).reversed())
                 .map(b -> reviewRequest(a, b.getId()))
                 .toList();
+    }
+
+    public void setAdminDutyStatus(String tenant, String status) {
+        if (tenant == null || tenant.isBlank()) tenant = "smartsociety";
+        String normalized = (status == null || status.isBlank()) ? "AVAILABLE" : status.trim().toUpperCase(Locale.ROOT);
+        adminDutyStatusMap.put(tenant.toLowerCase(Locale.ROOT), normalized);
+    }
+
+    public String getAdminDutyStatus(String tenant) {
+        if (tenant == null || tenant.isBlank()) tenant = "smartsociety";
+        return adminDutyStatusMap.getOrDefault(tenant.toLowerCase(Locale.ROOT), "AVAILABLE");
+    }
+
+    public boolean isMaintenanceAdminBusy(String tenant) {
+        String status = getAdminDutyStatus(tenant);
+        if ("BUSY".equalsIgnoreCase(status) || "OFF-DUTY".equalsIgnoreCase(status) || "OFF_DUTY".equalsIgnoreCase(status)) {
+            return true;
+        }
+        if (tickets != null) {
+            long activeAdminTickets = tickets.findAll().stream()
+                    .filter(t -> (tenant == null || tenant.equalsIgnoreCase(t.getTenantId()) || tenant.equalsIgnoreCase(t.getSourcePlatform())))
+                    .filter(t -> isSeededMaintenanceAdmin(t.getVendorEmail()))
+                    .filter(t -> Set.of("ASSIGNED", "IN_PROGRESS").contains(String.valueOf(t.getTicketStatus()).toUpperCase(Locale.ROOT)))
+                    .count();
+            if (activeAdminTickets >= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Optional<AppUser> findFreeMaintenanceWorker(String tenant, String category) {
+        List<AppUser> candidateWorkers = users.findAll().stream()
+                .filter(u -> !u.isAccountLocked())
+                .filter(u -> u.getRole() == UserRole.MAINTENANCE_STAFF)
+                .filter(u -> !isSeededMaintenanceAdmin(u.getEmail()))
+                .filter(u -> tenant == null || "system".equalsIgnoreCase(tenant) || "platform".equalsIgnoreCase(tenant) || tenant.equalsIgnoreCase(u.getTenantId()) || u.getTenantId() == null)
+                .toList();
+
+        if (candidateWorkers.isEmpty()) {
+            candidateWorkers = users.findAll().stream()
+                    .filter(u -> !u.isAccountLocked())
+                    .filter(u -> u.getRole() == UserRole.MAINTENANCE_STAFF)
+                    .filter(u -> !isSeededMaintenanceAdmin(u.getEmail()))
+                    .toList();
+        }
+
+        if (candidateWorkers.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Map<Long, Long> activeLoads = new HashMap<>();
+        if (tickets != null) {
+            for (AppUser worker : candidateWorkers) {
+                long count = tickets.findAll().stream()
+                        .filter(t -> Objects.equals(t.getVendorId(), worker.getId()))
+                        .filter(t -> Set.of("ASSIGNED", "IN_PROGRESS", "DISPATCHED", "ON_HOLD").contains(String.valueOf(t.getTicketStatus()).toUpperCase(Locale.ROOT)))
+                        .count();
+                activeLoads.put(worker.getId(), count);
+            }
+        }
+
+        String normalizedCat = (category == null ? "" : category.toLowerCase(Locale.ROOT));
+
+        return candidateWorkers.stream().min((w1, w2) -> {
+            long load1 = activeLoads.getOrDefault(w1.getId(), 0L);
+            long load2 = activeLoads.getOrDefault(w2.getId(), 0L);
+            if (load1 != load2) {
+                return Long.compare(load1, load2);
+            }
+            boolean w1SkillMatch = w1.getDesignation() != null && !normalizedCat.isEmpty()
+                    && (w1.getDesignation().toLowerCase(Locale.ROOT).contains(normalizedCat) || normalizedCat.contains(w1.getDesignation().toLowerCase(Locale.ROOT)));
+            boolean w2SkillMatch = w2.getDesignation() != null && !normalizedCat.isEmpty()
+                    && (w2.getDesignation().toLowerCase(Locale.ROOT).contains(normalizedCat) || normalizedCat.contains(w2.getDesignation().toLowerCase(Locale.ROOT)));
+            if (w1SkillMatch && !w2SkillMatch) return -1;
+            if (!w1SkillMatch && w2SkillMatch) return 1;
+            return Long.compare(w1.getId(), w2.getId());
+        });
+    }
+
+    public CommonMaintenanceTicket createAndRouteTicket(Actor actor, String title, String description,
+            String serviceAddress, String city, String category, String priority, String phone) {
+        if (tickets == null) throw error(500, "Ticket service unavailable");
+        String tenant = (actor.tenant() != null && !actor.tenant().isBlank()) ? actor.tenant() : "smartsociety";
+        String platform = (actor.platform() != null && !actor.platform().isBlank()) ? actor.platform() : "smartsociety";
+
+        CommonMaintenanceTicket t = new CommonMaintenanceTicket();
+        t.setTenantId(tenant);
+        t.setSourcePlatform(platform);
+        t.setRequesterId(actor.id());
+        t.setRequesterName(actor.name() != null ? actor.name() : (actor.worker() ? "Technician " + actor.id() : "Resident"));
+        t.setRequesterPhone(phone);
+        t.setTargetEntityType("GENERAL");
+        t.setTitle(title);
+        t.setDescription(description);
+        t.setServiceAddress(serviceAddress);
+        t.setCity(city);
+        t.setServiceType(category);
+        t.setServiceCategory(category);
+        t.setPriority(priority != null ? priority.toUpperCase(Locale.ROOT) : "MEDIUM");
+        t.setDueAt(LocalDateTime.now().plusHours("HIGH".equalsIgnoreCase(priority) ? 24 : "LOW".equalsIgnoreCase(priority) ? 72 : 48));
+
+        boolean adminBusy = isMaintenanceAdminBusy(tenant);
+        if (adminBusy) {
+            Optional<AppUser> freeWorker = findFreeMaintenanceWorker(tenant, category);
+            if (freeWorker.isPresent()) {
+                AppUser worker = freeWorker.get();
+                t.setTicketStatus("ASSIGNED");
+                t.setVendorId(worker.getId());
+                t.setVendorName(worker.getFullName());
+                t.setVendorEmail(worker.getEmail());
+                t.setVendorPhone(worker.getPhone());
+                t.setAssignedAt(LocalDateTime.now());
+                t.setVendorNotes("⚡ Auto-assigned to free worker " + worker.getFullName() + " (" + (worker.getDesignation() != null ? worker.getDesignation() : "Staff") + ") because maintenance admin is currently busy.");
+            } else {
+                t.setTicketStatus("REQUESTED");
+                t.setVendorNotes("Maintenance admin is currently busy; queued for next available free worker.");
+            }
+        } else {
+            t.setTicketStatus("REQUESTED");
+            t.setVendorNotes(actor.worker() ? "Raised by technician on site for maintenance admin queue." : "Raised for maintenance queue.");
+        }
+
+        CommonMaintenanceTicket saved = tickets.save(t);
+        if (saved.getTicketCode() == null || saved.getTicketCode().isBlank()) {
+            int year = saved.getCreatedAt() != null ? saved.getCreatedAt().getYear() : java.time.LocalDate.now().getYear();
+            saved.setTicketCode(String.format(Locale.ROOT, "TCK-%04d-%04d", year, saved.getId()));
+            saved = tickets.save(saved);
+        }
+        return saved;
+    }
+
+    public List<CommonMaintenanceTicket> autoAssignOpenPool(Actor actor) {
+        if (tickets == null) throw error(500, "Ticket service unavailable");
+        String tenant = (actor.tenant() != null && !actor.tenant().isBlank()) ? actor.tenant() : "smartsociety";
+        List<CommonMaintenanceTicket> openTickets = tickets.findAll().stream()
+                .filter(t -> "REQUESTED".equalsIgnoreCase(String.valueOf(t.getTicketStatus())) && t.getVendorId() == null)
+                .filter(t -> tenant.equalsIgnoreCase(t.getTenantId()) || tenant.equalsIgnoreCase(t.getSourcePlatform()) || "system".equalsIgnoreCase(tenant))
+                .sorted(Comparator.comparing(CommonMaintenanceTicket::getId))
+                .toList();
+
+        List<CommonMaintenanceTicket> assigned = new ArrayList<>();
+        for (CommonMaintenanceTicket ticket : openTickets) {
+            Optional<AppUser> freeWorker = findFreeMaintenanceWorker(tenant, ticket.getServiceType());
+            if (freeWorker.isPresent()) {
+                AppUser worker = freeWorker.get();
+                ticket.setTicketStatus("ASSIGNED");
+                ticket.setVendorId(worker.getId());
+                ticket.setVendorName(worker.getFullName());
+                ticket.setVendorEmail(worker.getEmail());
+                ticket.setVendorPhone(worker.getPhone());
+                ticket.setAssignedAt(LocalDateTime.now());
+                ticket.setVendorNotes("⚡ Auto-assigned to free worker " + worker.getFullName() + " by auto-assignment engine.");
+                assigned.add(tickets.save(ticket));
+            }
+        }
+        return assigned;
     }
 
     private static ResponseStatusException error(int status, String message) {return new ResponseStatusException(HttpStatus.valueOf(status), message);}

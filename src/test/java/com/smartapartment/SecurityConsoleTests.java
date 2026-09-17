@@ -66,7 +66,7 @@ class SecurityConsoleTests {
   action(inside,"EXIT").andExpect(status().isOk());call("/lockdown",Map.of("enabled",false,"reason","Test release","token",token)).andExpect(status().isBadRequest());
  }
  @Test void pendingApprovalAndWatchlistCannotBeBypassed()throws Exception{
-  Visitor v=visitor(one);v.setApprovalStatus("PENDING");visitors.save(v);action(v,"ENTRY").andExpect(status().isConflict());
+  Visitor v=visitor(one);v.setApprovalStatus("PENDING");v=visitors.save(v);action(v,"ENTRY").andExpect(status().isConflict());
   call("/action",Map.of("visitorId",v.getId(),"action","OVERRIDE","reason","RESIDENT_ESCORT","token",token)).andExpect(status().isBadRequest());
   call("/watchlist",Map.of("type","VEHICLE","value","KA 01 AB 1234","reason","Test restriction","token",token)).andExpect(status().isOk());
   v.setApprovalStatus("APPROVED");visitors.save(v);action(v,"ENTRY").andExpect(status().isConflict()).andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("FLAG DETECTED")));

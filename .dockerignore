@@ -1,0 +1,11 @@
+target/
+maven/
+data/
+.git
+.gitignore
+.vscode
+.kilo
+*.log
+*.png
+*.cmd
+test-clicks.js

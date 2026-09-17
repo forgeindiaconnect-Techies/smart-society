@@ -168,7 +168,7 @@ public class EmergencyMaintenanceController {
         return tickets.findAll().stream()
             .filter(t -> a.admin()
                     || (a.worker()
-                        && a.platform().equalsIgnoreCase(String.valueOf(t.getSourcePlatform()))
+                        && (Objects.equals(a.id(), t.getVendorId()) || Objects.equals(a.tenant(), t.getTenantId()))
                         && ("REQUESTED".equalsIgnoreCase(String.valueOf(t.getTicketStatus()))
                             || Objects.equals(a.id(), t.getVendorId())))
                     || (!a.worker() && a.platform().equalsIgnoreCase(String.valueOf(t.getSourcePlatform()))
@@ -179,14 +179,36 @@ public class EmergencyMaintenanceController {
     public record TicketInput(@NotBlank @Size(max=180)String title,@NotBlank @Size(max=3000)String description,
             @NotBlank @Size(max=600)String serviceAddress,@NotBlank @Size(max=60)String city,@NotBlank @Size(max=120)String category,
             @NotNull @Pattern(regexp="LOW|MEDIUM|HIGH")String priority,@NotBlank @Size(max=40)String phone){}
-    @PostMapping("/tickets")public CommonMaintenanceTicket ticket(HttpSession s,@RequestParam(defaultValue="smartsociety")String platform,@Valid @RequestBody TicketInput r){
-        Actor a=service.actor(s,platform);if(a.admin()||a.worker())throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Use a resident or customer account");
-        CommonMaintenanceTicket t=new CommonMaintenanceTicket();t.setTenantId(a.tenant());t.setSourcePlatform(a.platform());t.setRequesterId(a.id());t.setRequesterName(a.name());
-        t.setRequesterPhone(r.phone());t.setTargetEntityType("GENERAL");t.setTitle(r.title());t.setDescription(r.description());t.setServiceAddress(r.serviceAddress());t.setCity(r.city());
-        t.setServiceType(r.category());t.setPriority(r.priority());t.setTicketStatus("REQUESTED");t.setDueAt(LocalDateTime.now().plusHours("HIGH".equals(r.priority())?24:"LOW".equals(r.priority())?72:48));return tickets.save(t);
+    @PostMapping("/tickets")
+    public CommonMaintenanceTicket ticket(HttpSession s, @RequestParam(defaultValue="smartsociety") String platform, @Valid @RequestBody TicketInput r) {
+        Actor a = service.actor(s, platform);
+        return service.createAndRouteTicket(a, r.title(), r.description(), r.serviceAddress(), r.city(), r.category(), r.priority(), r.phone());
+    }
+
+    public record DutyStatusInput(String status) {}
+
+    @GetMapping("/admin/duty-status")
+    public Map<String, Object> getAdminDutyStatus(HttpSession s, @RequestParam(defaultValue="smartsociety") String platform) {
+        Actor a = service.actor(s, platform);
+        return Map.of("dutyStatus", service.getAdminDutyStatus(a.tenant()), "busy", service.isMaintenanceAdminBusy(a.tenant()));
+    }
+
+    @PostMapping("/admin/duty-status")
+    public Map<String, Object> setAdminDutyStatus(HttpSession s, @RequestParam(defaultValue="smartsociety") String platform, @RequestBody DutyStatusInput input) {
+        Actor a = service.actor(s, platform);
+        service.setAdminDutyStatus(a.tenant(), input != null ? input.status() : "AVAILABLE");
+        return Map.of("dutyStatus", service.getAdminDutyStatus(a.tenant()), "busy", service.isMaintenanceAdminBusy(a.tenant()));
+    }
+
+    @PostMapping("/tickets/auto-assign")
+    public Map<String, Object> autoAssignTickets(HttpSession s, @RequestParam(defaultValue="smartsociety") String platform) {
+        Actor a = service.actor(s, platform);
+        List<CommonMaintenanceTicket> assigned = service.autoAssignOpenPool(a);
+        return Map.of("assignedCount", assigned.size(), "assignedTickets", assigned);
     }
     public record TicketUpdate(@Pattern(regexp="REQUESTED|ASSIGNED|IN_PROGRESS|ON_HOLD|RESOLVED|CLOSED") @NotNull String status,
-            @Size(max=3000)String notes,@Future LocalDateTime preferredAt){}
+            @Size(max=3000)String notes,@Future LocalDateTime preferredAt,
+            @Min(1) @Max(10080) Integer estimatedMinutes){}
     @PatchMapping("/tickets/{id}")
     @Transactional
     public CommonMaintenanceTicket ticket(HttpSession s,@PathVariable Long id,@Valid @RequestBody TicketUpdate r){
@@ -195,12 +217,21 @@ public class EmergencyMaintenanceController {
         boolean samePlatform = actor.platform().equalsIgnoreCase(String.valueOf(t.getSourcePlatform()));
         boolean unassignedRequest = "REQUESTED".equalsIgnoreCase(String.valueOf(t.getTicketStatus())) && t.getVendorId() == null;
         boolean assignedToWorker = Objects.equals(actor.id(), t.getVendorId());
-        boolean workerCanManage = actor.worker() && samePlatform && (unassignedRequest || assignedToWorker);
+        boolean workerCanManage = actor.worker() && (assignedToWorker || (samePlatform && Objects.equals(actor.tenant(), t.getTenantId()) && unassignedRequest));
         if (!actor.admin() && !workerCanManage) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"This maintenance ticket is assigned to another worker or is not available for claim");
         }
 
         String nextStatus = r.status().toUpperCase(Locale.ROOT);
+        String current = String.valueOf(t.getTicketStatus());
+        if (Set.of("RESOLVED", "CLOSED", "INVOICED", "CANCELLED").contains(current) && !current.equals(nextStatus))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Completed or cancelled work cannot be restarted");
+        if ("RESOLVED".equals(nextStatus) && !Set.of("IN_PROGRESS", "RESOLVED").contains(current))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Start processing the work before completing it");
+        if ("IN_PROGRESS".equals(nextStatus)) {
+            if (t.getWorkStartedAt() == null) t.setWorkStartedAt(LocalDateTime.now());
+            if (r.estimatedMinutes() != null) t.setEstimatedCompletionAt(LocalDateTime.now().plusMinutes(r.estimatedMinutes()));
+        }
         if (actor.worker() && "ASSIGNED".equals(nextStatus) && unassignedRequest) {
             t.setVendorId(actor.id());
             t.setVendorName(actor.name());

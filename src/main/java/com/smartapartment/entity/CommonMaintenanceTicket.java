@@ -14,6 +14,20 @@ import java.time.LocalDateTime;
 @Table(name = "common_maintenance_tickets")
 public class CommonMaintenanceTicket extends BaseEntity {
 
+    private LocalDateTime workStartedAt;
+    private LocalDateTime estimatedCompletionAt;
+
+    public String getWorkProgress() {
+        return switch (ticketStatus == null ? "REQUESTED" : ticketStatus) {
+            case "ASSIGNED" -> "Started";
+            case "DISPATCHED", "IN_PROGRESS" -> "Processing";
+            case "RESOLVED", "CLOSED", "INVOICED" -> "Completed";
+            case "ON_HOLD" -> "On hold";
+            case "CANCELLED" -> "Cancelled";
+            default -> "Awaiting assignment";
+        };
+    }
+
     @Column(nullable = false, length = 40)
     private String sourcePlatform;
 

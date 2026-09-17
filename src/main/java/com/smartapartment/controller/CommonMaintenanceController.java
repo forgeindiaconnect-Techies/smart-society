@@ -3,6 +3,8 @@ package com.smartapartment.controller;
 import com.smartapartment.entity.CommonMaintenanceTicket;
 import com.smartapartment.repository.CommonMaintenanceTicketRepository;
 import com.smartapartment.service.CommonMaintenanceService;
+import com.smartapartment.service.EmergencyMaintenanceService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -18,16 +20,21 @@ public class CommonMaintenanceController {
 
     private final CommonMaintenanceTicketRepository tickets;
     private final CommonMaintenanceService service;
+    private final EmergencyMaintenanceService dispatch;
 
-    public CommonMaintenanceController(CommonMaintenanceTicketRepository tickets, CommonMaintenanceService service) {
+    public CommonMaintenanceController(CommonMaintenanceTicketRepository tickets, CommonMaintenanceService service, EmergencyMaintenanceService dispatch) {
         this.tickets = tickets;
         this.service = service;
+        this.dispatch = dispatch;
     }
 
     @GetMapping
     public List<CommonMaintenanceTicket> list(@RequestParam(required = false) String sourcePlatform,
-                                              @RequestParam(required = false) String status) {
-        var stream = tickets.findAll().stream();
+                                              @RequestParam(required = false) String status, HttpSession session) {
+        var actor = dispatch.actor(session, sourcePlatform == null ? "smartsociety" : sourcePlatform);
+        var stream = tickets.findAll().stream().filter(t -> actor.admin() ||
+                (actor.worker() ? java.util.Objects.equals(actor.id(), t.getVendorId()) :
+                actor.platform().equalsIgnoreCase(t.getSourcePlatform()) && java.util.Objects.equals(actor.id(), t.getRequesterId())));
         if (sourcePlatform != null && !sourcePlatform.isBlank()) {
             stream = stream.filter(t -> sourcePlatform.equalsIgnoreCase(t.getSourcePlatform()));
         }
@@ -41,13 +48,14 @@ public class CommonMaintenanceController {
 
     @PostMapping
     @Transactional
-    public CommonMaintenanceTicket create(@Valid @RequestBody MaintenanceTicketRequest request) {
-        return service.create(new CommonMaintenanceService.CreateTicketRequest(
-                request.sourcePlatform(),
+    public CommonMaintenanceTicket create(@Valid @RequestBody MaintenanceTicketRequest request, HttpSession session) {
+        var actor = dispatch.actor(session, request.sourcePlatform());
+        var ticket = service.create(new CommonMaintenanceService.CreateTicketRequest(
+                actor.platform(),
                 request.targetEntityType(),
                 request.targetEntityId(),
-                request.requesterId(),
-                request.requesterName(),
+                actor.id(),
+                actor.name(),
                 request.requesterPhone(),
                 request.requesterEmail(),
                 request.serviceType(),
@@ -63,20 +71,24 @@ public class CommonMaintenanceController {
                 request.preferredAt(),
                 request.alternateAt(),
                 request.dueAt(),
-                request.vendorId(),
-                request.vendorName(),
-                request.vendorPhone(),
-                request.vendorEmail(),
+                null,
+                null,
+                null,
+                null,
                 request.externalReference(),
                 request.accessType(),
                 request.contactMethod(),
                 request.attachmentReference()
         ));
+        ticket.setTenantId(actor.tenant());
+        return tickets.save(ticket);
     }
 
     @PatchMapping("/{id}/status")
     @Transactional
-    public CommonMaintenanceTicket updateStatus(@PathVariable Long id, @Valid @RequestBody MaintenanceStatusRequest request) {
+    public CommonMaintenanceTicket updateStatus(@PathVariable Long id, @Valid @RequestBody MaintenanceStatusRequest request, HttpSession session) {
+        var actor = dispatch.actor(session, "smartsociety");
+        dispatch.admin(actor);
         return service.updateStatus(id, new CommonMaintenanceService.StatusUpdateRequest(
                 request.ticketStatus(),
                 request.vendorId(),
@@ -91,8 +103,8 @@ public class CommonMaintenanceController {
 
     @PostMapping("/vendor-callback/{id}")
     @Transactional
-    public CommonMaintenanceTicket vendorCallback(@PathVariable Long id, @Valid @RequestBody MaintenanceStatusRequest request) {
-        return updateStatus(id, request);
+    public CommonMaintenanceTicket vendorCallback(@PathVariable Long id, @Valid @RequestBody MaintenanceStatusRequest request, HttpSession session) {
+        return updateStatus(id, request, session);
     }
 
     public record MaintenanceTicketRequest(

@@ -49,6 +49,9 @@ public class EmergencyMaintenanceBooking extends BaseEntity {
     private Double afterPhotoLatitude;
     private Double afterPhotoLongitude;
     private LocalDateTime startedAt;
+    /** Persisted work ETA shown to admin and the requesting resident while repairs are active. */
+    private Integer estimatedDurationMinutes;
+    private LocalDateTime estimatedCompletionAt;
     private LocalDateTime completedAt;
     private LocalDateTime cancelledAt;
     private LocalDateTime customerSignedOffAt;
