@@ -279,6 +279,8 @@ function openDashboardLogin({ platform, role, target }) {
 
 function setSmartForgotMode(enabled) {
     smartForgotOtpVerified = false;
+    const loginFields = document.getElementById("dashboardLoginFields");
+    if (loginFields) loginFields.classList.toggle("hidden", enabled);
     smartForgotPasswordForm?.classList.toggle("hidden", !enabled);
     submitDashboardLogin?.classList.toggle("hidden", enabled);
     smartForgotPasswordTrigger?.classList.toggle("hidden", enabled);

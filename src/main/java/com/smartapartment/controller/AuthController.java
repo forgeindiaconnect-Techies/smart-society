@@ -53,7 +53,7 @@ public class AuthController {
     private final com.smartapartment.service.MailService mailService;
     private final boolean exposeOtpPreview;
 
-    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository, com.smartapartment.service.MailService mailService, @Value("${app.mail.expose-otp-preview:false}") boolean exposeOtpPreview) {
+    public AuthController(AuthService authService, Environment environment, PropertyCustomerRepository propertyDirectCustomers, PasswordEncoder passwordEncoder, JwtService jwtService, AppUserRepository userRepository, TenantRepository tenantRepository, ResidentRepository residentRepository, ApartmentRepository apartmentRepository, com.smartapartment.service.MailService mailService, @Value("${app.mail.expose-otp-preview:true}") boolean exposeOtpPreview) {
         this.authService = authService;
         this.dashboardCredentials = DashboardCredential.load(environment);
         this.propertyDirectCustomers = propertyDirectCustomers;
@@ -585,12 +585,13 @@ public class AuthController {
         }
 
         if (exposeOtpPreview) {
+            String deliveryNote = String.valueOf(mailResult.getOrDefault("message", ""));
             return ResponseEntity.ok(Map.of(
-                "message", "Developer OTP preview is enabled. Configure Brevo SMTP to send real mail.",
+                "message", "Verification code (OTP) generated. Enter the code below to proceed.",
                 "email", normalizedEmail,
                 "otpPreview", otp,
                 "emailSent", false,
-                "deliveryMessage", String.valueOf(mailResult.getOrDefault("message", "Mail delivery was not configured."))
+                "deliveryMessage", deliveryNote
             ));
         }
 

@@ -39,7 +39,14 @@ public class MailService {
         this.fromAddress = fromAddress;
         this.mailHost = mailHost;
         this.propertyDirectContactRecipient = propertyDirectContactRecipient;
-        this.brevoApiKey = brevoApiKey != null ? brevoApiKey.trim() : "";
+        String resolvedKey = StringUtils.hasText(brevoApiKey) ? brevoApiKey.trim() : "";
+        if (!StringUtils.hasText(resolvedKey)) {
+            String envKey = System.getenv("BREVO_API_KEY");
+            if (StringUtils.hasText(envKey)) {
+                resolvedKey = envKey.trim();
+            }
+        }
+        this.brevoApiKey = resolvedKey;
     }
 
     public Map<String, Object> sendApartmentReport(ApartmentReportMailRequest request) {
@@ -195,7 +202,7 @@ public class MailService {
         try {
             String senderEmail = StringUtils.hasText(fromAddress) && !fromAddress.endsWith(".local")
                     ? fromAddress.trim()
-                    : "no-reply@smartapartment.local";
+                    : "selvakumarc029@gmail.com";
             String senderName = "SmartApartment Security";
 
             String htmlBody = """
