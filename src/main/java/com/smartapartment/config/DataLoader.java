@@ -140,6 +140,10 @@ public class DataLoader {
                         "maintenance@smartsociety", "maintenance123", UserRole.MAINTENANCE_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Society Accountant",
                         "accountant@smartsociety", "accountant123", UserRole.ACCOUNTANT);
+                createDemoUser(users, encoder, "green-heights", "Selva Kumar",
+                        "selvakumarc029@gmail.com", "password123", UserRole.RESIDENT);
+                createDemoUser(users, encoder, "green-heights", "Forge India Connect",
+                        "forgeindiaconnectfic@gmail.com", "password123", UserRole.SOCIETY_ADMIN);
             }
 
             Block block = blocks.findFirstByTenantIdAndNameOrderByIdAsc("green-heights", "Block A").orElseGet(() -> {

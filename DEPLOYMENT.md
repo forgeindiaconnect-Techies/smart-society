@@ -40,7 +40,7 @@ Then put `user` into `DB_USERNAME` and `password` into `DB_PASSWORD`.
 ```text
 JWT_SECRET=super_secure_long_random_jwt_secret_render_production_key_12345
 BREVO_API_KEY=<your-brevo-api-key>
-APP_MAIL_FROM=your-verified-brevo-sender@example.com
+APP_MAIL_FROM=forgeindiaconnectfic@gmail.com
 DDL_AUTO=update
 H2_CONSOLE_ENABLED=false
 OPEN_IN_VIEW=false

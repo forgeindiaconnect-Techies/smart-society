@@ -19,7 +19,7 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: APP_MAIL_FROM
-        sync: false
+        value: "forgeindiaconnectfic@gmail.com"
       - key: DB_URL
         sync: false
       - key: DB_USERNAME

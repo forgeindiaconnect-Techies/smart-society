@@ -202,7 +202,7 @@ public class MailService {
         try {
             String senderEmail = StringUtils.hasText(fromAddress) && !fromAddress.endsWith(".local")
                     ? fromAddress.trim()
-                    : "selvakumarc029@gmail.com";
+                    : "forgeindiaconnectfic@gmail.com";
             String senderName = "SmartApartment Security";
 
             String htmlBody = """
