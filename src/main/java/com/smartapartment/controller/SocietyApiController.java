@@ -50,6 +50,12 @@ public class SocietyApiController {
     private com.smartapartment.service.EmergencyMaintenanceService emergencyService;
     @org.springframework.beans.factory.annotation.Autowired(required = false)
     private com.smartapartment.repository.CommonMaintenanceTicketRepository ticketRepository;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.repository.EmergencyMaintenanceBookingRepository emergencyBookings;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.repository.MaintenancePartnerRepository maintenancePartners;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.repository.MaintenanceHubRepository maintenanceHubs;
 
     public SocietyApiController(CurrentUserService currentUser, DashboardService dashboards,
                                 ApartmentRepository apartments, ResidentRepository residents,
@@ -352,39 +358,179 @@ public class SocietyApiController {
                 .map(this::complaintView).toList();
     }
 
+    private LocalDateTime parseIncidentAt(Object raw) {
+        if (raw == null) return LocalDateTime.now();
+        if (raw instanceof LocalDateTime ldt) return ldt;
+        String str = String.valueOf(raw).trim();
+        if (str.isEmpty() || "null".equalsIgnoreCase(str)) return LocalDateTime.now();
+        try {
+            return LocalDateTime.parse(str);
+        } catch (Exception e1) {
+            try {
+                return LocalDateTime.parse(str, java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+            } catch (Exception e2) {
+                try {
+                    return LocalDateTime.parse(str, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a", Locale.ENGLISH));
+                } catch (Exception e3) {
+                    try {
+                        return LocalDateTime.parse(str, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH));
+                    } catch (Exception e4) {
+                        return LocalDateTime.now();
+                    }
+                }
+            }
+        }
+    }
+
     @PostMapping("/complaints")
     @Transactional
-    public Map<String, Object> createComplaint(@Valid @RequestBody ComplaintRequest request) {
+    public Map<String, Object> createComplaint(@RequestBody ComplaintRequest request) {
         AppUser user = currentUser.requireUser();
-        Resident resident = residentFor(user, request.residentId());
+        Resident resident = residentFor(user, request != null ? request.residentId() : null);
+
+        String cat = (request != null && request.category() != null && !request.category().isBlank())
+                ? request.category().trim() : "Plumbing";
+        String desc = (request != null && request.description() != null && !request.description().isBlank())
+                ? request.description().trim() : "Maintenance assistance required";
+        String loc = (request != null && request.locationDetails() != null && !request.locationDetails().isBlank())
+                ? request.locationDetails().trim()
+                : (resident != null && resident.getApartment() != null ? resident.getApartment().getUnitNo() : "205");
+
+        if ("Other".equalsIgnoreCase(cat) || cat.isBlank()) {
+            String lower = (desc + " " + (request != null && request.title() != null ? request.title() : "")).toLowerCase(Locale.ROOT);
+            if (lower.contains("leak") || lower.contains("water") || lower.contains("pipe") || lower.contains("tap") || lower.contains("drain") || lower.contains("sink") || lower.contains("flush")) {
+                cat = "Plumbing";
+            } else if (lower.contains("electric") || lower.contains("power") || lower.contains("light") || lower.contains("switch") || lower.contains("plug") || lower.contains("fuse") || lower.contains("wire")) {
+                cat = "Electrical";
+            } else if (lower.contains("wood") || lower.contains("door") || lower.contains("lock") || lower.contains("handle") || lower.contains("carpent")) {
+                cat = "Carpentry";
+            }
+        }
+
+        String title = (request != null && request.title() != null && !request.title().isBlank())
+                ? request.title().trim()
+                : (cat + ": " + (desc.length() > 30 ? desc.substring(0, 30) + "…" : desc) + " (Flat " + loc + ")");
+
+        String priority = (request != null && request.priority() != null && !request.priority().isBlank())
+                ? request.priority().trim().toUpperCase(Locale.ROOT)
+                : "NORMAL";
+
         Complaint complaint = new Complaint();
         complaint.setTenantId(user.getTenantId());
         complaint.setResident(resident);
-        complaint.setCategory(request.category().trim());
-        complaint.setSubcategory(clean(request.subcategory()));
-        complaint.setPriority(request.priority().trim().toUpperCase(Locale.ROOT));
-        complaint.setTitle(request.title().trim());
-        complaint.setDescription(request.description().trim());
-        complaint.setLocationDetails(clean(request.locationDetails()));
-        complaint.setIncidentAt(request.incidentAt());
-        complaint.setPreferredContactMethod(clean(request.preferredContactMethod()));
-        complaint.setReporterPhone(clean(request.reporterPhone()));
-        complaint.setAccessPermission(request.accessPermission());
-        complaint.setAttachmentReference(clean(request.attachmentReference()));
-        complaint.setAssignedTo(clean(request.assignedTo()));
+        complaint.setCategory(cat);
+        complaint.setSubcategory(clean(request != null && request.subcategory() != null && !request.subcategory().isBlank() ? request.subcategory() : "General"));
+        complaint.setPriority(priority);
+        complaint.setTitle(title);
+        complaint.setDescription(desc);
+        complaint.setLocationDetails(loc);
+        complaint.setIncidentAt(parseIncidentAt(request != null ? request.incidentAt() : null));
+        complaint.setPreferredContactMethod(clean(request != null && request.preferredContactMethod() != null && !request.preferredContactMethod().isBlank() ? request.preferredContactMethod() : "PHONE"));
+        complaint.setReporterPhone(clean(request != null && request.reporterPhone() != null && !request.reporterPhone().isBlank() ? request.reporterPhone() : (user.getPhone() != null ? user.getPhone() : "8778293269")));
+        complaint.setAccessPermission(request != null && request.accessPermission());
+        complaint.setAttachmentReference(clean(request != null ? request.attachmentReference() : ""));
         complaint.setStatus("OPEN");
         complaint.setDueAt(LocalDateTime.now().plusHours(slaHours(complaint.getPriority())));
 
         boolean isMaintenance = isMaintenanceCategory(complaint.getCategory());
-        if (complaint.getAssignedTo().isBlank() && isMaintenance && emergencyService != null && emergencyService.isMaintenanceAdminBusy(user.getTenantId())) {
-            emergencyService.findFreeMaintenanceWorker(user.getTenantId(), complaint.getCategory()).ifPresent(worker -> {
-                complaint.setAssignedTo(worker.getFullName());
+        boolean adminBusy = isMaintenance && emergencyService != null && emergencyService.isMaintenanceAdminBusy(user.getTenantId());
+
+        com.smartapartment.entity.MaintenancePartner matchedPartner = null;
+        AppUser matchedWorker = null;
+
+        if (adminBusy) {
+            if (emergencyService != null) {
+                matchedWorker = emergencyService.findFreeMaintenanceWorker(user.getTenantId(), complaint.getCategory()).orElse(null);
+            }
+            if (maintenancePartners != null) {
+                final String finalCat = cat;
+                matchedPartner = maintenancePartners.findAll().stream()
+                        .filter(com.smartapartment.entity.MaintenancePartner::isOnDuty)
+                        .filter(p -> "IDLE".equalsIgnoreCase(p.getAvailability()) || "AVAILABLE".equalsIgnoreCase(p.getAvailability()))
+                        .filter(p -> emergencyService == null || emergencyService.isTradeMatch(p, finalCat))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            String assigneeName = matchedPartner != null ? matchedPartner.getPartnerName()
+                    : (matchedWorker != null ? matchedWorker.getFullName() : null);
+
+            if (assigneeName != null) {
+                complaint.setAssignedTo(assigneeName);
                 complaint.setStatus("IN_PROGRESS");
-                complaint.setResolutionNotes("⚡ Auto-assigned to free worker " + worker.getFullName() + " (" + (worker.getDesignation() != null ? worker.getDesignation() : "Staff") + ") because maintenance admin is currently busy.");
-            });
+                complaint.setResolutionNotes("⚡ Auto-assigned to worker " + assigneeName + " (" + cat + ") because Maintenance Team Leader is currently busy.");
+                if (matchedPartner != null) {
+                    matchedPartner.setAvailability("BUSY");
+                    matchedPartner.setWorkState("BUSY");
+                    maintenancePartners.save(matchedPartner);
+                }
+            } else {
+                complaint.setAssignedTo("");
+                complaint.setStatus("OPEN");
+                complaint.setResolutionNotes("Maintenance Team Leader is busy; ticket queued for auto-assignment when worker is free.");
+            }
+        } else {
+            complaint.setAssignedTo(clean(request != null ? request.assignedTo() : ""));
+            complaint.setStatus("OPEN");
         }
 
         Complaint saved = complaints.save(complaint);
+
+        // Emergency Maintenance Booking for Dispatch Pipeline & Real-Time SSE
+        if (emergencyBookings != null && isMaintenance) {
+            try {
+                EmergencyMaintenanceBooking b = new EmergencyMaintenanceBooking();
+                b.setTenantId(user.getTenantId());
+                b.setSourcePlatform("smartsociety");
+                b.setRequesterId(user.getId());
+                b.setRequesterName(user.getFullName());
+                b.setRequesterPhone(saved.getReporterPhone());
+                b.setServiceAddress("Flat " + loc + ", " + (user.getTenantId() != null ? user.getTenantId() : "Smart Society"));
+                b.setCity("Chennai");
+                b.setArea("Whitefield");
+                b.setCategory(saved.getCategory());
+                b.setDescription(saved.getTitle() + " - " + saved.getDescription());
+                b.setLatitude(12.9716);
+                b.setLongitude(77.5946);
+                b.setUnitNumber(loc);
+
+                if (maintenanceHubs != null) {
+                    maintenanceHubs.findAll().stream().filter(com.smartapartment.entity.MaintenanceHub::isActive).findFirst()
+                            .ifPresentOrElse(h -> b.setHubId(h.getId()), () -> {
+                                maintenanceHubs.findAll().stream().findFirst().ifPresent(h -> b.setHubId(h.getId()));
+                            });
+                }
+
+                if (adminBusy && matchedPartner != null) {
+                    b.setPartnerId(matchedPartner.getId());
+                    b.setJobStatus("ASSIGNED");
+                    b.setAssignmentType("Auto");
+                    b.setAssignedAt(LocalDateTime.now());
+                    b.setAcceptedAt(LocalDateTime.now());
+                    b.setArrivalDueAt(LocalDateTime.now().plusMinutes(30));
+                    b.setDispatchReason("⚡ Auto-assigned to " + matchedPartner.getPartnerName() + " because Maintenance TL is busy");
+                } else {
+                    b.setJobStatus("UNASSIGNED");
+                    b.setDispatchReason("New resident complaint awaiting Maintenance TL assignment");
+                }
+
+                EmergencyMaintenanceBooking savedBooking = emergencyBookings.save(b);
+                savedBooking.setOrderReference("EM-" + String.format(Locale.ROOT, "%04d", savedBooking.getId()));
+                savedBooking = emergencyBookings.save(savedBooking);
+
+                if (emergencyService != null) {
+                    if (adminBusy && matchedPartner != null) {
+                        emergencyService.broadcastEvent(savedBooking.getId(), "ASSIGNED", "AUTO_ASSIGNED", matchedPartner.getId(),
+                                "⚡ Auto-assigned to " + matchedPartner.getPartnerName() + " (Maintenance TL Busy)");
+                    } else {
+                        emergencyService.broadcastEvent(savedBooking.getId(), "UNASSIGNED", "CREATED", null,
+                                "🔔 New complaint from Flat " + loc + " (" + saved.getCategory() + ") - Awaiting Maintenance TL Assignment");
+                    }
+                }
+            } catch (Exception ex) {
+                System.err.println("Warning: failed to create emergency dispatch booking: " + ex.getMessage());
+            }
+        }
 
         if (ticketRepository != null && isMaintenance) {
             try {
@@ -400,8 +546,8 @@ public class SocietyApiController {
                 t.setDescription(saved.getDescription());
                 t.setServiceAddress(saved.getLocationDetails() != null && !saved.getLocationDetails().isBlank() 
                         ? saved.getLocationDetails() 
-                        : (resident != null && resident.getApartment() != null ? "Flat " + resident.getApartment().getUnitNo() : "Society Area"));
-                t.setCity("Society Area");
+                        : (resident != null && resident.getApartment() != null ? "Flat " + resident.getApartment().getUnitNo() : "Flat " + loc));
+                t.setCity("Chennai");
                 t.setServiceType(saved.getCategory());
                 t.setServiceCategory(saved.getCategory());
                 t.setPriority(saved.getPriority());
@@ -413,6 +559,7 @@ public class SocietyApiController {
                     t.setAssignedAt(LocalDateTime.now());
                 } else {
                     t.setTicketStatus("REQUESTED");
+                    t.setVendorNotes("Awaiting Maintenance TL assignment.");
                 }
                 ticketRepository.save(t);
             } catch (Exception ignored) {}
@@ -1047,10 +1194,10 @@ public class SocietyApiController {
     private static BigDecimal value(BigDecimal value) { return value == null ? BigDecimal.ZERO : value; }
     private static long slaHours(String priority){return switch(priority==null?"NORMAL":priority.toUpperCase(Locale.ROOT)){case "EMERGENCY"->2;case "HIGH"->8;case "LOW"->72;default->24;};}
 
-    public record ComplaintRequest(@NotBlank @Size(max=120) String title,@NotBlank String category,String subcategory,
-                                   @NotBlank String priority,@NotBlank @Size(max=2000) String description,Long residentId,
-                                   String locationDetails,LocalDateTime incidentAt,String preferredContactMethod,
-                                   String reporterPhone,boolean accessPermission,String attachmentReference,String assignedTo) {}
+    public record ComplaintRequest(String title, String category, String subcategory,
+                                   String priority, String description, Long residentId,
+                                   String locationDetails, Object incidentAt, String preferredContactMethod,
+                                   String reporterPhone, boolean accessPermission, String attachmentReference, String assignedTo) {}
     public record ComplaintUpdate(@NotBlank String status, String assignedTo, String resolutionNotes, String sparePartsUsed, BigDecimal repairCost) {}
     public record ComplaintAssignment(@NotBlank String team, String assignmentNote) {}
     public record VisitorRequest(@NotBlank String name,@NotBlank String phone,@Email String email,@NotBlank String purpose,

@@ -30,6 +30,8 @@ public class EmergencyMaintenanceService {
     private final NotificationRepository notifications;
     private final AuditLogRepository auditLogs;
     private final CommonMaintenanceTicketRepository tickets;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.smartapartment.repository.ComplaintRepository complaints;
     private final Map<String, String> adminDutyStatusMap = new ConcurrentHashMap<>();
     @Value("${app.emergency.offer-timeout-seconds:45}")
     private int offerTimeoutSeconds;
@@ -1592,6 +1594,41 @@ public class EmergencyMaintenanceService {
         recordAudit(b, "MANUALLY_ASSIGNED", p.getId(), "Manually assigned by " + b.getAssignedBy() + " (Assignment Type: Manual)", a.id());
         partners.save(p);
         bookings.save(b);
+
+        if (complaints != null) {
+            try {
+                complaints.findByTenantIdOrderByCreatedAtDesc(b.getTenantId()).stream()
+                    .filter(c -> "OPEN".equalsIgnoreCase(c.getStatus()) || c.getAssignedTo() == null || c.getAssignedTo().isBlank())
+                    .filter(c -> (b.getUnitNumber() != null && c.getLocationDetails() != null && c.getLocationDetails().contains(b.getUnitNumber()))
+                              || (c.getDescription() != null && b.getDescription() != null && b.getDescription().contains(c.getDescription()))
+                              || (c.getReporterPhone() != null && c.getReporterPhone().equals(b.getRequesterPhone())))
+                    .findFirst()
+                    .ifPresent(c -> {
+                        c.setAssignedTo(p.getPartnerName());
+                        c.setStatus("ASSIGNED");
+                        c.setResolutionNotes("Manually assigned by Maintenance Team Leader to " + p.getPartnerName() + " (" + p.getTrade() + ")");
+                        complaints.save(c);
+                    });
+            } catch (Exception ignored) {}
+        }
+
+        if (tickets != null) {
+            try {
+                tickets.findAll().stream()
+                    .filter(t -> Objects.equals(t.getRequesterPhone(), b.getRequesterPhone()) || (b.getUnitNumber() != null && t.getServiceAddress() != null && t.getServiceAddress().contains(b.getUnitNumber())))
+                    .filter(t -> !"COMPLETED".equalsIgnoreCase(t.getTicketStatus()))
+                    .findFirst()
+                    .ifPresent(t -> {
+                        t.setTicketStatus("ASSIGNED");
+                        t.setVendorId(p.getUserId());
+                        t.setVendorName(p.getPartnerName());
+                        t.setVendorNotes("Manually assigned by Maintenance Team Leader to " + p.getPartnerName());
+                        t.setAssignedAt(now);
+                        tickets.save(t);
+                    });
+            } catch (Exception ignored) {}
+        }
+
         broadcastEvent(b.getId(), b.getJobStatus(), "MANUALLY_ASSIGNED", p.getId(), "Admin manually assigned partner " + p.getId());
     }
 
@@ -2026,6 +2063,15 @@ public class EmergencyMaintenanceService {
     public boolean isMaintenanceAdminBusy(String tenant) {
         String status = getAdminDutyStatus(tenant);
         if ("BUSY".equalsIgnoreCase(status) || "OFF-DUTY".equalsIgnoreCase(status) || "OFF_DUTY".equalsIgnoreCase(status)) {
+            return true;
+        }
+        String smartSocietyStatus = getAdminDutyStatus("smartsociety");
+        if ("BUSY".equalsIgnoreCase(smartSocietyStatus) || "OFF-DUTY".equalsIgnoreCase(smartSocietyStatus) || "OFF_DUTY".equalsIgnoreCase(smartSocietyStatus)) {
+            return true;
+        }
+        boolean anyBusyStatus = adminDutyStatusMap.values().stream()
+                .anyMatch(s -> "BUSY".equalsIgnoreCase(s) || "OFF-DUTY".equalsIgnoreCase(s) || "OFF_DUTY".equalsIgnoreCase(s));
+        if (anyBusyStatus) {
             return true;
         }
         if (tickets != null) {

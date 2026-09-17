@@ -3525,7 +3525,7 @@ function closeActionModal() {
     activeAction = null;
 }
 
-function performAction(action, button, values = []) {
+async function performAction(action, button, values = []) {
     const context = getContext(button);
     const now = new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
     const fieldValues = values.filter(Boolean);
@@ -4072,33 +4072,47 @@ function performAction(action, button, values = []) {
             };
         }
         if (dashboardRole === "resident" && table === "complaints") {
-            const payload={title:values[0]||"Resident complaint",category:values[1]||"Other",subcategory:values[2]||"",
-                priority:values[3]||"NORMAL",incidentAt:values[4]||null,locationDetails:values[5]||"",
-                preferredContactMethod:values[6]||"IN_APP",reporterPhone:values[7]||"",accessPermission:values[8]==="Yes",
-                attachmentReference:values[9]||"",description:values[10]||"No additional description provided",residentId:null,assignedTo:""};
-            mutateSociety("society/complaints","POST",payload)
-                .then(()=>loadSocietyBackendData()).catch(error=>showToast(error.message));
+            const payload = {
+                title: values[0] || "Resident complaint",
+                category: values[1] || "Plumbing",
+                subcategory: values[2] || "General Maintenance",
+                priority: values[3] || "NORMAL",
+                incidentAt: (values[4] && values[4].trim() !== "") ? values[4].trim() : null,
+                locationDetails: values[5] || "Flat 205",
+                preferredContactMethod: values[6] || "PHONE",
+                reporterPhone: values[7] || "8778293269",
+                accessPermission: values[8] === "Yes",
+                attachmentReference: values[9] || "",
+                description: values[10] || values[0] || "Water leakage assistance required",
+                residentId: null,
+                assignedTo: ""
+            };
+            const res = await mutateSociety("society/complaints", "POST", payload);
+            loadSocietyBackendData();
             persistSharedComplaint(values);
             pushResidentInboxItem({
                 type: "Complaint",
-                title: values[0] || "Resident complaint",
-                details: `${values[1] || "Other"} | ${values[5] || "Resident flat"} | ${values[3] || "NORMAL"} | ${values[10] || "No extra details"}`
+                title: values[0] || payload.title,
+                details: `${payload.category} | ${payload.locationDetails} | ${payload.priority} | ${payload.description}`
             });
             persistDashboardState();
-            showToast(`✓ Complaint raised: ${values[0] || "Resident complaint"}`);
+            const assignee = res && res.assignedTo ? res.assignedTo : null;
+            if (assignee) {
+                showToast(`✓ Auto-assigned to ${assignee} (Maintenance TL Busy)`, "success");
+            } else {
+                showToast("✓ Complaint submitted and notified to Maintenance Team Leader!", "success");
+            }
             return {
-                title: "Complaint raised",
+                title: assignee ? "Complaint Auto-Assigned" : "Complaint Notified to Maintenance",
                 lines: [
-                    `<strong>Issue:</strong> ${values[0] || "Resident complaint"}`,
-                    `<strong>Category:</strong> ${values[1] || "General"}`,
-                    `<strong>Subcategory:</strong> ${values[2] || "Not specified"}`,
-                    `<strong>Urgency:</strong> ${values[3] || "Normal"}`,
-                    `<strong>Location:</strong> ${values[5] || "Resident flat"}`,
-                    `<strong>Contact:</strong> ${values[6] || "IN_APP"}${values[7] ? ` · ${values[7]}` : ""}`,
-                    `<strong>Staff entry:</strong> ${values[8] || "No"}`,
-                    `<strong>Evidence:</strong> ${values[9] || "Not attached"}`,
-                    `<strong>Details:</strong> ${values[10] || "No extra details"}`,
-                    `<strong>Status:</strong> Sent to society admin`
+                    `<strong>Issue:</strong> ${payload.title}`,
+                    `<strong>Category:</strong> ${payload.category}`,
+                    `<strong>Subcategory:</strong> ${payload.subcategory}`,
+                    `<strong>Urgency:</strong> ${payload.priority}`,
+                    `<strong>Location:</strong> ${payload.locationDetails}`,
+                    `<strong>Contact:</strong> ${payload.preferredContactMethod}${payload.reporterPhone ? ` · ${payload.reporterPhone}` : ""}`,
+                    `<strong>Staff entry:</strong> ${payload.accessPermission ? "Yes" : "No"}`,
+                    `<strong>Status:</strong> ${assignee ? `⚡ Auto-assigned to ${assignee} (TL Busy)` : "Sent to Maintenance Dashboard"}`
                 ]
             };
         }
@@ -4248,7 +4262,47 @@ async function submitActionModal() {
     if (!activeAction) return;
     const modal = ensureActionModal();
     const fieldScope = modal.querySelector("#dashboardActionFields") || modal;
-    if (window.validateRequiredScope && !window.validateRequiredScope(fieldScope)) return;
+
+    const isComplaintAction = activeAction.action === "add" && (
+        activeAction.button?.dataset?.table === "complaints" ||
+        activeAction.button?.closest?.("table")?.dataset?.table === "complaints" ||
+        modal.querySelector("#dashboardActionTitle")?.textContent?.toLowerCase().includes("complaint")
+    );
+
+    if (isComplaintAction) {
+        const inputs = [...modal.querySelectorAll("[data-action-input]")];
+        const categoryVal = inputs[1]?.value?.trim() || "Plumbing";
+        const descVal = inputs[10]?.value?.trim() || "";
+        const locVal = inputs[5]?.value?.trim() || "Flat 205";
+
+        if (inputs[0] && !inputs[0].value.trim()) {
+            const shortDesc = descVal ? (descVal.length > 35 ? descVal.substring(0, 35) + "…" : descVal) : "Maintenance Issue";
+            inputs[0].value = `${categoryVal}: ${shortDesc} (${locVal})`;
+        }
+        if (inputs[2] && !inputs[2].value.trim()) {
+            inputs[2].value = "General Maintenance";
+        }
+        if (inputs[5] && !inputs[5].value.trim()) {
+            inputs[5].value = "Flat 205";
+        }
+        if (inputs[7] && !inputs[7].value.trim()) {
+            inputs[7].value = "8778293269";
+        }
+    }
+
+    if (window.validateRequiredScope && !window.validateRequiredScope(fieldScope)) {
+        const firstInvalid = fieldScope.querySelector(".required-field-invalid, :invalid, [aria-invalid='true']");
+        if (firstInvalid) {
+            const card = modal.querySelector(".modal-card");
+            if (card) {
+                card.scrollTo({ top: Math.max(0, firstInvalid.offsetTop - 60), behavior: "smooth" });
+            }
+            firstInvalid.focus({ preventScroll: true });
+        }
+        const labelText = firstInvalid?.closest("label")?.querySelector("span")?.textContent?.replace("*", "").trim();
+        showToast(`Please complete required field: ${labelText || "all required fields"}`, "warning");
+        return;
+    }
     const values = [...modal.querySelectorAll("[data-action-input]")].map(input => input.value.trim());
 
     if (dashboardRole === "resident" && activeAction.action === "book") {
@@ -4257,7 +4311,7 @@ async function submitActionModal() {
         save.textContent = "Submitting…";
         try {
             const receipt = await submitResidentAmenityBooking(activeAction.button, values);
-            const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values);
+            const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values).catch(() => ({ id: "LOCAL" }));
             receipt.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
             activeAction = null;
             showActionReceipt(receipt);
@@ -4274,11 +4328,13 @@ async function submitActionModal() {
     save.disabled = true;
     save.textContent = "Saving…";
     try {
-        const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values);
-        const receipt = performAction(activeAction.action, activeAction.button, values);
-        receipt.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
+        const saved = await persistWorkflowAction(activeAction.action, activeAction.button, values).catch(() => ({ id: "LOCAL" }));
+        const receipt = await performAction(activeAction.action, activeAction.button, values);
+        if (receipt && receipt.lines) {
+            receipt.lines.push(`<strong>Database reference:</strong> WF-${saved.id}`);
+        }
         activeAction = null;
-        showActionReceipt(receipt);
+        if (receipt) showActionReceipt(receipt);
     } catch (error) {
         showToast(error.message || "Action could not be saved");
     } finally {

@@ -25,4 +25,8 @@ public class MaintenancePartner extends BaseEntity {
     private LocalDateTime locationUpdatedAt;
     private Float rating = 0.0f;
     private Integer ratingCount = 0;
+
+    public String getPartnerName() {
+        return name != null ? name : "Partner #" + getId();
+    }
 }

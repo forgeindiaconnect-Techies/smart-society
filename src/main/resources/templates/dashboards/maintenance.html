@@ -3009,7 +3009,7 @@
                 btn.classList.add("btn-warning", "text-dark");
                 icon.className = "fa-solid fa-clock me-1 text-dark";
                 text.textContent = "Status: Busy / In-Progress";
-                if (window.showToast) window.showToast("✓ Duty status set to Busy / In-Progress", "warning");
+                if (window.showToast) window.showToast("✓ Duty status set to Busy (Auto-assign active for new complaints)", "warning");
             } else if (status === "off-duty") {
                 btn.classList.add("btn-secondary", "text-white");
                 icon.className = "fa-solid fa-circle-pause me-1 text-white";
@@ -3019,16 +3019,25 @@
                 btn.classList.add("btn-success", "text-white");
                 icon.className = "fa-solid fa-circle-check me-1 text-white";
                 text.textContent = "Status: Available On-Duty";
-                if (window.showToast) window.showToast("✓ Duty status set to Available On-Duty", "success");
+                if (window.showToast) window.showToast("✓ Duty status set to Available On-Duty (Ready for Manual Assign)", "success");
             }
             try {
                 localStorage.setItem("maintenance_duty_status", status);
+            } catch(e) {}
+            try {
+                fetch("/api/maintenance/dispatch/admin/duty-status", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: status.toUpperCase() })
+                }).catch(() => {});
             } catch(e) {}
         };
         try {
             const savedDuty = localStorage.getItem("maintenance_duty_status");
             if (savedDuty) {
                 setTimeout(() => window.setMaintenanceDutyStatus(savedDuty), 60);
+            } else {
+                setTimeout(() => window.setMaintenanceDutyStatus("available"), 60);
             }
         } catch(e) {}
 
@@ -3176,9 +3185,15 @@
                                 }
                             });
                         }
-                        if (evData && evData.action && window.showToast) {
-                            const actionLabel = evData.action.replace(/_/g, ' ');
-                            window.showToast(`[Realtime Dispatch] Booking #${evData.bookingId}: Partner ${actionLabel}`, 'info');
+                        if (typeof renderUnassignedComplaintsPool === "function") {
+                            try { renderUnassignedComplaintsPool(); } catch(err) {}
+                        }
+                        if (typeof window.maybePlayEmergencyEscalationTone === "function") {
+                            window.maybePlayEmergencyEscalationTone();
+                        }
+                        if (evData && window.showToast) {
+                            const desc = evData.details || `Booking #${evData.bookingId}: ${(evData.action || '').replace(/_/g, ' ')}`;
+                            window.showToast(`🔔 [Realtime Maintenance] ${desc}`, 'info');
                         }
                     });
                     dispatchEventSource.onerror = () => {

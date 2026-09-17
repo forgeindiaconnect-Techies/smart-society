@@ -8,6 +8,8 @@ import com.smartapartment.entity.Resident;
 import com.smartapartment.entity.SubscriptionPlan;
 import com.smartapartment.entity.Tenant;
 import com.smartapartment.entity.UserRole;
+import com.smartapartment.entity.MaintenanceHub;
+import com.smartapartment.entity.MaintenancePartner;
 import com.smartapartment.repository.ApartmentRepository;
 import com.smartapartment.repository.AppUserRepository;
 import com.smartapartment.repository.BlockRepository;
@@ -37,10 +39,12 @@ public class DataLoader {
                                ApartmentRepository apartments,
                                ResidentRepository residents,
                                ComplaintRepository complaints,
-                                AmenityRepository amenities,
-                                MaintenanceBillRepository maintenanceBills,
-                                PasswordEncoder encoder,
-                                Environment environment) {
+                               AmenityRepository amenities,
+                               MaintenanceBillRepository maintenanceBills,
+                               com.smartapartment.repository.MaintenanceHubRepository hubs,
+                               com.smartapartment.repository.MaintenancePartnerRepository partners,
+                               PasswordEncoder encoder,
+                               Environment environment) {
         return args -> {
             boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
             String superAdminEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL", "superadmin@smartapartment");
@@ -166,6 +170,100 @@ public class DataLoader {
                 newApartment.setOwnerPhone("9876543210");
                 return apartments.save(newApartment);
             });
+
+            apartments.findFirstByTenantIdAndUnitNoOrderByIdAsc("green-heights", "205").orElseGet(() -> {
+                Apartment apt205 = new Apartment();
+                apt205.setTenantId("green-heights");
+                apt205.setBlock(block);
+                apt205.setFloorNo(2);
+                apt205.setUnitNo("205");
+                apt205.setUnitType("2BHK");
+                apt205.setOccupancyStatus("OCCUPIED");
+                apt205.setOwnerName("Selva Kumar");
+                apt205.setOwnerPhone("8778293269");
+                return apartments.save(apt205);
+            });
+
+            // Seed default Maintenance Hub & on-duty trade partners for dispatch and auto-assignment
+            MaintenanceHub defaultHub = hubs.findAll().stream().findFirst().orElseGet(() -> {
+                MaintenanceHub hub = new MaintenanceHub();
+                hub.setName("Green Heights Maintenance Hub");
+                hub.setCity("Chennai");
+                hub.setArea("Whitefield");
+                hub.setLatitude(12.9716);
+                hub.setLongitude(77.5946);
+                hub.setCoverageRadiusKm(25.0);
+                hub.setActive(true);
+                return hubs.save(hub);
+            });
+
+            if (partners.count() == 0) {
+                AppUser plumberUser = createDemoUser(users, encoder, "green-heights", "Ramesh Plumber",
+                        "plumber@smartapartment", "password123", UserRole.MAINTENANCE_STAFF);
+                plumberUser.setDesignation("Plumber");
+                plumberUser.setPhone("9876543211");
+                users.save(plumberUser);
+                MaintenancePartner p1 = new MaintenancePartner();
+                p1.setUserId(plumberUser.getId());
+                p1.setName("Ramesh Plumber");
+                p1.setPhone("9876543211");
+                p1.setHubId(defaultHub.getId());
+                p1.setTrade("Plumbing");
+                p1.setSkillCategories("Plumbing,Water Supply,Pipes,Drainage");
+                p1.setEmploymentType("INTERNAL");
+                p1.setOnDuty(true);
+                p1.setWorkState("IDLE");
+                p1.setAvailability("IDLE");
+                p1.setLatitude(12.9716);
+                p1.setLongitude(77.5946);
+                p1.setRating(4.8f);
+                p1.setRatingCount(24);
+                partners.save(p1);
+
+                AppUser electricUser = createDemoUser(users, encoder, "green-heights", "Suresh Electrician",
+                        "electrician@smartapartment", "password123", UserRole.MAINTENANCE_STAFF);
+                electricUser.setDesignation("Electrician");
+                electricUser.setPhone("9876543212");
+                users.save(electricUser);
+                MaintenancePartner p2 = new MaintenancePartner();
+                p2.setUserId(electricUser.getId());
+                p2.setName("Suresh Electrician");
+                p2.setPhone("9876543212");
+                p2.setHubId(defaultHub.getId());
+                p2.setTrade("Electrical");
+                p2.setSkillCategories("Electrical,Power Supply,Wiring,Lighting");
+                p2.setEmploymentType("INTERNAL");
+                p2.setOnDuty(true);
+                p2.setWorkState("IDLE");
+                p2.setAvailability("IDLE");
+                p2.setLatitude(12.9716);
+                p2.setLongitude(77.5946);
+                p2.setRating(4.9f);
+                p2.setRatingCount(31);
+                partners.save(p2);
+
+                AppUser carpUser = createDemoUser(users, encoder, "green-heights", "Anand Carpenter",
+                        "carpenter@smartapartment", "password123", UserRole.MAINTENANCE_STAFF);
+                carpUser.setDesignation("Carpenter");
+                carpUser.setPhone("9876543213");
+                users.save(carpUser);
+                MaintenancePartner p3 = new MaintenancePartner();
+                p3.setUserId(carpUser.getId());
+                p3.setName("Anand Carpenter");
+                p3.setPhone("9876543213");
+                p3.setHubId(defaultHub.getId());
+                p3.setTrade("Carpentry");
+                p3.setSkillCategories("Carpentry,Doors,Windows,Furniture,Locks");
+                p3.setEmploymentType("INTERNAL");
+                p3.setOnDuty(true);
+                p3.setWorkState("IDLE");
+                p3.setAvailability("IDLE");
+                p3.setLatitude(12.9716);
+                p3.setLongitude(77.5946);
+                p3.setRating(4.7f);
+                p3.setRatingCount(19);
+                partners.save(p3);
+            }
 
             Resident resident = residents.findFirstByUserOrderByIdAsc(residentUser).orElseGet(() -> {
                 Resident newResident = new Resident();
