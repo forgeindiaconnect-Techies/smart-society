@@ -278,7 +278,7 @@ public class MailService {
             log.warn("Brevo API returned status {}: {}", status, respBody);
             String diagnostic = "Brevo API error (" + status + "): " + respBody;
             if (respBody.contains("unrecognised IP address")) {
-                diagnostic = "Brevo API: IP not authorized. Please authorize your IP (2401:4900:1cc8:81e0:b569:6619:56c9:15a9) at https://app.brevo.com/security/authorised_ips";
+                diagnostic = "Brevo API: IP not authorized by Brevo. " + respBody;
             } else if (respBody.contains("Key not authorized") || respBody.contains("sender")) {
                 diagnostic = "Brevo API: Sender email '" + senderEmail + "' is not verified in Brevo. Set APP_MAIL_FROM to your verified Brevo sender email.";
             }
