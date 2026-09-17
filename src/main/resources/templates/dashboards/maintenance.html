@@ -707,10 +707,10 @@
         /* Topbar Alignment */
         body.dashboard-body[data-dashboard-role="maintenance"] .topbar,
         .topbar {
-            height: 72px !important;
-            min-height: 72px !important;
-            max-height: 72px !important;
-            padding: 0 2rem !important;
+            min-height: 64px !important;
+            height: auto !important;
+            max-height: none !important;
+            padding: 10px 1.5rem !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
@@ -718,13 +718,13 @@
             border-bottom: 1px solid #e2e8f0 !important;
             position: sticky !important;
             top: 0 !important;
-            z-index: 100 !important;
+            z-index: 1030 !important;
             box-sizing: border-box !important;
             flex-shrink: 0 !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .topbar h2,
         .topbar h2 {
-            font-size: 1.45rem !important;
+            font-size: 1.25rem !important;
             font-weight: 700 !important;
             color: #0f172a !important;
             letter-spacing: -0.02em !important;
@@ -1074,15 +1074,15 @@
             position: sticky !important;
             top: 0 !important;
             width: 100% !important;
-            min-height: var(--maintenance-topbar-height) !important;
+            min-height: 64px !important;
             height: auto !important;
             max-height: none !important;
-            padding: 16px 20px 16px 46px !important;
+            padding: 10px 24px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            gap: 14px !important;
-            flex-wrap: nowrap !important;
+            gap: 12px 16px !important;
+            flex-wrap: wrap !important;
             z-index: 1030 !important;
             background: #ffffff !important;
             border-bottom: 1px solid #e2e8f0 !important;
@@ -1092,14 +1092,15 @@
         body.dashboard-body[data-dashboard-role="maintenance"] .topbar > .d-flex:first-child {
             display: flex !important;
             align-items: center !important;
-            gap: 16px !important;
-            flex: 0 0 auto !important;
+            gap: 12px !important;
+            flex: 0 1 auto !important;
             min-width: max-content !important;
-            flex-wrap: nowrap !important;
+            flex-wrap: wrap !important;
         }
-        body.dashboard-body[data-dashboard-role="maintenance"] .topbar h2 {
+        body.dashboard-body[data-dashboard-role="maintenance"] .topbar h2,
+        body.dashboard-body[data-dashboard-role="maintenance"] .topbar #title {
             margin: 0 !important;
-            font-size: 1.35rem !important;
+            font-size: 1.22rem !important;
             font-weight: 700 !important;
             color: #0f172a !important;
             letter-spacing: -0.02em !important;
@@ -1122,10 +1123,10 @@
             white-space: nowrap !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .top-level-queue-toggle .btn {
-            min-height: 36px !important;
-            height: 36px !important;
-            padding: 0 14px !important;
-            font-size: 0.82rem !important;
+            min-height: 34px !important;
+            height: 34px !important;
+            padding: 0 12px !important;
+            font-size: 0.8rem !important;
             font-weight: 600 !important;
             border-radius: 999px !important;
             display: inline-flex !important;
@@ -1137,24 +1138,21 @@
             flex-shrink: 0 !important;
             transition: all 0.15s ease !important;
         }
-        body.dashboard-body[data-dashboard-role="maintenance"] .topbar > div,
-        body.dashboard-body[data-dashboard-role="maintenance"] .topbar > a,
-        body.dashboard-body[data-dashboard-role="maintenance"] .topbar > button {
-            min-width: 0 !important;
-        }
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions {
             display: flex !important;
             align-items: center !important;
             justify-content: flex-end !important;
-            gap: 10px !important;
-            flex-wrap: nowrap !important;
+            gap: 8px !important;
+            flex-wrap: wrap !important;
             margin-left: auto !important;
             flex: 0 0 auto !important;
             min-width: max-content !important;
-            max-width: none !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .dashboard-header-meta {
             flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions > .d-flex {
             gap: 8px !important;
@@ -1163,60 +1161,92 @@
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions .btn,
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions a {
-            min-height: 38px !important;
-            height: 38px !important;
+            min-height: 36px !important;
+            height: 36px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
             padding: 0 14px !important;
-            font-size: 0.84rem !important;
+            font-size: 0.82rem !important;
             font-weight: 600 !important;
             border-radius: 999px !important;
             white-space: nowrap !important;
+            flex-shrink: 0 !important;
             transition: all 0.15s ease !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions span.badge {
-            min-height: 34px !important;
+            min-height: 32px !important;
             display: inline-flex !important;
             align-items: center !important;
-            padding: 0 12px !important;
-            font-size: 0.78rem !important;
+            padding: 0 10px !important;
+            font-size: 0.76rem !important;
             font-weight: 700 !important;
             border-radius: 999px !important;
             white-space: nowrap !important;
+            flex-shrink: 0 !important;
         }
-        @media (max-width: 1500px) {
-            body.dashboard-body[data-dashboard-role="maintenance"] {
-                --maintenance-topbar-height: 104px;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .topbar {
-                align-items: flex-start !important;
-                flex-wrap: wrap !important;
-                padding-top: 14px !important;
-                padding-bottom: 14px !important;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .topbar > .d-flex:first-child,
-            body.dashboard-body[data-dashboard-role="maintenance"] .header-actions {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .header-actions {
-                justify-content: flex-end !important;
-            }
+
+        /* Urgent Action Queue Table Styling & Sticky Action Column */
+        #unassignedTableWrapper {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        @media (max-width: 1280px) {
-            body.dashboard-body[data-dashboard-role="maintenance"] {
-                --maintenance-topbar-height: 126px;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .topbar > .d-flex:first-child {
-                flex-wrap: wrap !important;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .top-level-queue-toggle {
-                max-width: 100% !important;
-            }
-            body.dashboard-body[data-dashboard-role="maintenance"] .top-level-queue-toggle .btn {
-                flex: 1 1 auto !important;
-            }
+        #unassignedActionTable {
+            width: 100%;
+            margin-bottom: 0 !important;
+        }
+        #unassignedActionTable th,
+        #unassignedActionTable td {
+            padding: 0.7rem 0.8rem !important;
+            vertical-align: middle !important;
+        }
+        #unassignedActionTable .col-booking-id {
+            width: 85px;
+            white-space: nowrap;
+        }
+        #unassignedActionTable .col-category {
+            width: 115px;
+            white-space: nowrap;
+        }
+        #unassignedActionTable .col-area {
+            min-width: 150px;
+            max-width: 200px;
+        }
+        #unassignedActionTable .col-hub {
+            min-width: 140px;
+            max-width: 180px;
+        }
+        #unassignedActionTable .col-waiting {
+            width: 95px;
+            white-space: nowrap;
+        }
+        #unassignedActionTable .col-reason {
+            min-width: 160px;
+            max-width: 220px;
+        }
+        #unassignedActionTable .col-partners {
+            width: 115px;
+            white-space: nowrap;
+        }
+        #unassignedActionTable .col-actions {
+            width: 175px;
+            min-width: 175px;
+            white-space: nowrap;
+            text-align: right;
+            position: sticky;
+            right: 0;
+            background: #ffffff;
+            z-index: 3;
+            box-shadow: -4px 0 8px -2px rgba(0, 0, 0, 0.05);
+        }
+        #unassignedActionTable thead th.col-actions {
+            background: #f8fafc;
+            z-index: 4;
+        }
+        #unassignedActionTable tbody tr:hover td.col-actions {
+            background: #f8fafc;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .dashboard-container {
             width: 100% !important;
@@ -1563,7 +1593,7 @@
         <main class="main main-content">
             <!-- Topbar with Top-Level Queue Separation: Tickets | Live Bookings -->
             <header class="topbar p-3 px-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown bg-white border-bottom">
-                <div class="d-flex align-items-center gap-3 flex-nowrap">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
                     <h2 class="mb-0 fw-bold text-dark fs-4" id="title">Overview</h2>
 
                     <!-- Top-Level Queue Separation: Tickets | Live Bookings -->
@@ -1577,7 +1607,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 header-actions">
-                    <button class="btn btn-primary rounded-pill shadow-sm px-3" data-panel="workers" th:if="${maintenanceSuperAdmin}"><i class="fa-solid fa-user-plus me-1"></i>Add Worker</button>
+                    <button class="btn btn-primary rounded-pill shadow-sm px-3 text-nowrap" data-panel="workers" th:if="${maintenanceSuperAdmin}"><i class="fa-solid fa-user-plus me-1"></i>Add Worker</button>
                     <div class="dropdown">
                         <button class="btn btn-success rounded-pill shadow-sm px-3 dropdown-toggle d-flex align-items-center gap-1 fw-bold text-white" type="button" id="dutyStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-circle-check me-1 text-white" id="dutyStatusIcon"></i>
@@ -2142,8 +2172,8 @@
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span>
                             </div>
-                            <strong class="fs-6 fw-bold text-info mt-1 d-block" id="cardWorkforceAvailability">—</strong>
-                            <small class="text-muted mt-1">Idle / total by trade</small>
+                            <strong class="fs-2 fw-bold text-info mt-1 d-block" id="cardWorkforceAvailability">0</strong>
+                            <small class="text-muted mt-1 text-truncate d-block" id="cardWorkforceBreakdown" title="Idle / total by trade">Idle / total by trade</small>
                         </article>
                         <article class="card p-4 text-start h-100 shadow-sm border-0">
                             <div class="d-flex align-items-center justify-content-between w-100 mb-1">
@@ -2212,17 +2242,17 @@
 
                             <!-- Dedicated High-Priority Action Table -->
                             <div class="table-responsive" id="unassignedTableWrapper">
-                                <table class="table table-hover align-middle mb-0 text-nowrap" id="unassignedActionTable">
+                                <table class="table table-hover align-middle mb-0" id="unassignedActionTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th scope="col">Booking ID</th>
-                                            <th scope="col">Category</th>
-                                            <th scope="col">Customer Area</th>
-                                            <th scope="col">Hub</th>
-                                            <th scope="col">Time Waiting</th>
-                                            <th scope="col">Assignment Failure Reason</th>
-                                            <th scope="col">Possible Partners</th>
-                                            <th scope="col" class="text-end pe-4">Manual Assign Action</th>
+                                            <th scope="col" class="col-booking-id">Booking ID</th>
+                                            <th scope="col" class="col-category">Category</th>
+                                            <th scope="col" class="col-area">Customer Area</th>
+                                            <th scope="col" class="col-hub">Hub</th>
+                                            <th scope="col" class="col-waiting">Time Waiting</th>
+                                            <th scope="col" class="col-reason">Assignment Failure Reason</th>
+                                            <th scope="col" class="col-partners">Possible Partners</th>
+                                            <th scope="col" class="col-actions text-end pe-3">Manual Assign Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="unassignedQueueBody">
@@ -3309,18 +3339,29 @@
                     if (partnerCount) partnerCount.textContent = partners.filter(p => p.availability !== 'OFFLINE').length;
 
                     const byTrade = new Map();
+                    let totalIdle = 0;
+                    let totalPartners = 0;
                     partners.forEach(p => {
                         const trade = (p.tradeCode || p.trade || 'OTHER').toString().toUpperCase();
                         const label = trade.startsWith('PLUMB') ? 'Plumbing' : trade.startsWith('ELECT') ? 'Electrical' : trade.startsWith('CARP') ? 'Carpentry' : (p.trade || 'Other');
                         const curr = byTrade.get(label) || { idle: 0, total: 0 };
                         curr.total += 1;
+                        totalPartners += 1;
                         const work = (p.workState || p.workStatus || p.availability || '').toString().toUpperCase();
-                        if (p.onDuty === true && work === 'IDLE' && Number(p.activeJobCount || 0) === 0) curr.idle += 1;
+                        if (p.onDuty === true && work === 'IDLE' && Number(p.activeJobCount || 0) === 0) {
+                            curr.idle += 1;
+                            totalIdle += 1;
+                        }
                         byTrade.set(label, curr);
                     });
-                    const ratio = Array.from(byTrade.entries()).slice(0, 3).map(([name, v]) => `${name}: ${v.idle}/${v.total} Idle`).join(' · ');
                     const workforceCard = document.getElementById('cardWorkforceAvailability');
-                    if (workforceCard) workforceCard.textContent = ratio || '0/0 Idle';
+                    if (workforceCard) workforceCard.textContent = totalIdle;
+                    const workforceBreakdown = document.getElementById('cardWorkforceBreakdown');
+                    if (workforceBreakdown) {
+                        const breakdownDetails = Array.from(byTrade.entries()).map(([name, v]) => `${name}: ${v.idle}/${v.total} Idle`).join(' · ');
+                        workforceBreakdown.textContent = `${totalIdle}/${totalPartners} Idle across trades`;
+                        workforceBreakdown.title = breakdownDetails || 'No registered partners';
+                    }
                 }
 
                 window.__allDispatchBookings = bookings || [];
@@ -3374,7 +3415,7 @@
 
             if (countBadge) countBadge.textContent = `${unassignedList.length} Pending`;
             if (bannerText) {
-                bannerText.textContent = `${unassignedList.length} emergency booking${unassignedList.length === 1 ? '' : 's'} require immediate partner allocation`;
+                bannerText.textContent = `${unassignedList.length} emergency booking${unassignedList.length === 1 ? ' requires' : 's require'} immediate partner allocation`;
             }
 
             if (!tbody) return;
@@ -3406,35 +3447,35 @@
 
                 return `
                     <tr class="align-middle unassigned-incident-row" id="unassignedRow-${b.id}">
-                        <td>
+                        <td class="col-booking-id">
                             <a href="javascript:void(0)" class="font-monospace text-primary fw-bold text-decoration-none cursor-pointer" onclick="window.openBookingDetailsDrawer(${b.id})" title="Open Emergency Details Drawer">#EP-${b.id}</a>
                         </td>
-                        <td>
+                        <td class="col-category">
                             <span class="badge bg-light text-dark border"><i class="${catIcon} me-1 text-primary"></i>${escapeHtml(catName)}</span>
                         </td>
-                        <td>
-                            <div class="fw-semibold text-dark">${area}</div>
-                            <small class="text-muted text-truncate d-block" style="max-width: 200px;" title="${address}"><i class="fa-solid fa-location-dot me-1 text-danger"></i>${address}</small>
+                        <td class="col-area">
+                            <div class="fw-semibold text-dark text-truncate" title="${area}">${area}</div>
+                            <small class="text-muted text-truncate d-block" style="max-width: 190px;" title="${address}"><i class="fa-solid fa-location-dot me-1 text-danger"></i>${address}</small>
                         </td>
-                        <td>
-                            <span class="badge bg-indigo-subtle text-indigo border rounded-pill" style="color: #4338ca; background: #e0e7ff;"><i class="fa-solid fa-warehouse me-1"></i>${hub}</span>
+                        <td class="col-hub">
+                            <span class="badge bg-indigo-subtle text-indigo border rounded-pill text-truncate d-inline-block align-middle" style="max-width: 170px; color: #4338ca; background: #e0e7ff;" title="${hub}"><i class="fa-solid fa-warehouse me-1"></i>${hub}</span>
                         </td>
-                        <td>
+                        <td class="col-waiting">
                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill fw-bold"><i class="fa-solid fa-stopwatch me-1"></i>${timeWaiting}</span>
                         </td>
-                        <td>
-                            <span class="badge bg-secondary-subtle text-dark border text-wrap text-start rounded-3 py-1.5 px-2" style="max-width: var(--dashboard-sidebar-width); font-size: 0.76rem;">
+                        <td class="col-reason">
+                            <span class="badge bg-secondary-subtle text-dark border text-wrap text-start rounded-3 py-1.5 px-2" style="max-width: 210px; font-size: 0.74rem; line-height: 1.35; display: inline-block;">
                                 <i class="fa-solid fa-circle-exclamation text-warning me-1"></i>${failureReason}
                             </span>
                         </td>
-                        <td>
+                        <td class="col-partners">
                             ${possiblePartnersBadge}
                         </td>
-                        <td class="text-end pe-4">
+                        <td class="col-actions text-end pe-3">
                             <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 me-1 shadow-xs" onclick="window.openBookingDetailsDrawer(${b.id})" title="View Emergency Details Drawer">
                                 <i class="fa-solid fa-file-lines me-1"></i>Details
                             </button>
-                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold shadow-sm" onclick="window.openAssignPartnerModal(${b.id})">
+                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold shadow-sm text-nowrap" onclick="window.openAssignPartnerModal(${b.id})">
                                 <i class="fa-solid fa-user-plus me-1"></i>Manual Assign
                             </button>
                         </td>
