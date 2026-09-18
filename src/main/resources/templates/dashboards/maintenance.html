@@ -1075,37 +1075,38 @@
             top: 0 !important;
             width: 100% !important;
             min-height: 64px !important;
-            height: auto !important;
-            max-height: none !important;
-            padding: 10px 24px !important;
+            height: 64px !important;
+            max-height: 64px !important;
+            padding: 0 24px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            gap: 12px 16px !important;
-            flex-wrap: wrap !important;
+            gap: 16px !important;
+            flex-wrap: nowrap !important;
             z-index: 1030 !important;
             background: #ffffff !important;
             border-bottom: 1px solid #e2e8f0 !important;
             box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
             box-sizing: border-box !important;
         }
-        body.dashboard-body[data-dashboard-role="maintenance"] .topbar > .d-flex:first-child {
+        body.dashboard-body[data-dashboard-role="maintenance"] .topbar > .d-flex:first-child,
+        body.dashboard-body[data-dashboard-role="maintenance"] .topbar .topbar-left-cluster {
             display: flex !important;
             align-items: center !important;
-            gap: 12px !important;
-            flex: 0 1 auto !important;
+            gap: 14px !important;
+            flex: 0 0 auto !important;
             min-width: max-content !important;
-            flex-wrap: wrap !important;
+            flex-wrap: nowrap !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .topbar h2,
         body.dashboard-body[data-dashboard-role="maintenance"] .topbar #title {
             margin: 0 !important;
-            font-size: 1.22rem !important;
+            font-size: 1.18rem !important;
             font-weight: 700 !important;
             color: #0f172a !important;
-            letter-spacing: -0.02em !important;
+            letter-spacing: -0.01em !important;
             white-space: nowrap !important;
-            line-height: 1.2 !important;
+            line-height: 1 !important;
             flex-shrink: 0 !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .top-level-queue-toggle {
@@ -1143,7 +1144,7 @@
             align-items: center !important;
             justify-content: flex-end !important;
             gap: 8px !important;
-            flex-wrap: wrap !important;
+            flex-wrap: nowrap !important;
             margin-left: auto !important;
             flex: 0 0 auto !important;
             min-width: max-content !important;
@@ -1153,6 +1154,7 @@
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
+            white-space: nowrap !important;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .header-actions > .d-flex {
             gap: 8px !important;
@@ -1246,6 +1248,33 @@
             z-index: 4;
         }
         #unassignedActionTable tbody tr:hover td.col-actions {
+            background: #f8fafc;
+        }
+
+        /* Live Emergency Feed Streamlined Table Styling & Sticky Actions */
+        #liveDispatchTable {
+            width: 100%;
+            margin-bottom: 0 !important;
+        }
+        #liveDispatchTable th,
+        #liveDispatchTable td {
+            padding: 0.75rem 0.85rem !important;
+            vertical-align: middle !important;
+        }
+        #liveDispatchTable th.col-emg-actions,
+        #liveDispatchTable td.col-emg-actions {
+            position: sticky;
+            right: 0;
+            background: #ffffff;
+            z-index: 3;
+            box-shadow: -4px 0 8px -2px rgba(0, 0, 0, 0.06);
+            white-space: nowrap;
+        }
+        #liveDispatchTable thead th.col-emg-actions {
+            background: #f8fafc;
+            z-index: 4;
+        }
+        #liveDispatchTable tbody tr:hover td.col-emg-actions {
             background: #f8fafc;
         }
         body.dashboard-body[data-dashboard-role="maintenance"] .dashboard-container {
@@ -1593,8 +1622,8 @@
         <main class="main main-content">
             <!-- Topbar with Top-Level Queue Separation: Tickets | Live Bookings -->
             <header class="topbar p-3 px-4 d-flex justify-content-between align-items-center animate__animated animate__fadeInDown bg-white border-bottom">
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <h2 class="mb-0 fw-bold text-dark fs-4" id="title">Overview</h2>
+                <div class="d-flex align-items-center gap-3 topbar-left-cluster flex-nowrap">
+                    <h2 class="mb-0 fw-bold text-dark" id="title">Overview</h2>
 
                     <!-- Top-Level Queue Separation: Tickets | Live Bookings -->
                     <div class="btn-group p-1 bg-light border rounded-pill shadow-sm top-level-queue-toggle" role="group" aria-label="Top-Level Operational Queue Separation">
