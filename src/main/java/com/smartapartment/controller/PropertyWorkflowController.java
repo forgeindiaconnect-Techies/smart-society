@@ -117,7 +117,8 @@ public class PropertyWorkflowController {
     }
 
     private static String searchable(PropertyListing item) {
-        return String.join(" ", text(item.getTitle()), text(item.getDescription()), text(item.getSociety()),
+        return String.join(" ", String.valueOf(item.getId()), "#" + item.getId(), "pd-" + item.getId(), "pdt-" + item.getId(),
+                text(item.getApartmentCode()), text(item.getTitle()), text(item.getDescription()), text(item.getSociety()),
                 text(item.getLocality()), text(item.getAddress()), text(item.getCity()), text(item.getPincode()))
                 .toLowerCase(Locale.ROOT);
     }

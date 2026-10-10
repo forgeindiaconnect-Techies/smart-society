@@ -63,34 +63,44 @@
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 10px 24px !important;
+            padding: 0 32px !important;
+            height: 66px !important;
+            min-height: 66px !important;
             background: linear-gradient(135deg, #0b1836 0%, #122852 100%) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-            box-shadow: 0 8px 32px rgba(6, 20, 40, 0.25) !important;
+            box-shadow: 0 4px 24px rgba(6, 20, 40, 0.3) !important;
+            gap: 24px !important;
+        }
+        .topbar-brand-wrap {
+            display: flex !important;
+            align-items: center !important;
+            flex: 0 0 220px !important;
         }
         .topbar .brand {
             display: inline-flex !important;
             align-items: center !important;
-            gap: 8px !important;
+            gap: 9px !important;
             font-family: 'Manrope', sans-serif !important;
-            font-size: 1.22rem !important;
-            font-weight: 700 !important;
+            font-size: 1.24rem !important;
+            font-weight: 800 !important;
             color: #ffffff !important;
             text-decoration: none !important;
-            letter-spacing: -0.035em !important;
+            letter-spacing: -0.03em !important;
+            white-space: nowrap !important;
         }
         .topbar .brand .brand-mark {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 32px !important;
-            height: 32px !important;
-            background: rgba(140, 240, 189, 0.15) !important;
-            border: 1px solid rgba(140, 240, 189, 0.3) !important;
-            border-radius: 8px !important;
+            width: 34px !important;
+            height: 34px !important;
+            background: rgba(140, 240, 189, 0.16) !important;
+            border: 1.5px solid rgba(140, 240, 189, 0.45) !important;
+            border-radius: 9px !important;
             color: #8cf0bd !important;
-            font-size: 0.85rem !important;
+            font-size: 0.86rem !important;
             font-weight: 800 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
         }
         .topbar .brand span:not(.brand-mark) {
             color: #8cf0bd !important;
@@ -99,12 +109,16 @@
             display: flex !important;
             align-items: center !important;
             background: #ffffff !important;
-            padding: 4px 6px 4px 14px !important;
+            padding: 4px 5px 4px 16px !important;
             border-radius: 999px !important;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            max-width: 580px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.16) !important;
+            border: 1px solid rgba(255, 255, 255, 0.35) !important;
+            max-width: 680px !important;
             width: 100% !important;
+            height: 46px !important;
+            margin: 0 auto !important;
+            flex: 1 1 auto !important;
+            box-sizing: border-box !important;
         }
         .apartment-searchbar select {
             border: none !important;
@@ -114,68 +128,92 @@
             font-size: 0.85rem !important;
             font-weight: 700 !important;
             color: #0f3460 !important;
-            padding-right: 10px !important;
+            padding-right: 12px !important;
             border-right: 1px solid #e2e8f0 !important;
             cursor: pointer !important;
+            height: 36px !important;
+            line-height: 36px !important;
+            flex-shrink: 0 !important;
         }
         .apartment-searchbar input {
             border: none !important;
             outline: none !important;
             background: transparent !important;
             flex: 1 !important;
-            padding: 6px 12px !important;
+            padding: 0 14px !important;
             font-family: 'Manrope', sans-serif !important;
             font-size: 0.85rem !important;
             color: #1e293b !important;
+            height: 36px !important;
+            line-height: 36px !important;
+            min-width: 120px !important;
+        }
+        .apartment-searchbar input::placeholder {
+            color: #94a3b8 !important;
+            font-weight: 500 !important;
         }
         .apartment-searchbar button.primary {
-            background: linear-gradient(135deg, #1d376c, #315ab0) !important;
+            background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
             color: #ffffff !important;
             border: none !important;
-            padding: 8px 18px !important;
+            padding: 0 22px !important;
+            height: 38px !important;
+            line-height: 38px !important;
             border-radius: 999px !important;
             font-family: 'Manrope', sans-serif !important;
             font-size: 0.82rem !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
             cursor: pointer !important;
-            box-shadow: 0 4px 12px rgba(29, 55, 108, 0.25) !important;
-            transition: transform 0.2s, box-shadow 0.2s !important;
+            box-shadow: 0 3px 12px rgba(37, 99, 235, 0.35) !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .apartment-searchbar button.primary:hover {
             transform: translateY(-1px) !important;
-            box-shadow: 0 6px 16px rgba(29, 55, 108, 0.35) !important;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45) !important;
+            background: linear-gradient(135deg, #1e40af, #1d4ed8) !important;
         }
-        .topbar .nav {
-            display: flex !important;
-            align-items: center !important;
-            gap: 16px !important;
+        .topbar-right-spacer {
+            flex: 0 0 220px !important;
+            display: block !important;
         }
-        .topbar .nav a {
-            color: rgba(255, 255, 255, 0.88) !important;
-            text-decoration: none !important;
-            font-size: 0.84rem !important;
-            font-weight: 600 !important;
-            transition: color 0.2s !important;
+        @media (max-width: 960px) {
+            .topbar-brand-wrap {
+                flex: 0 0 auto !important;
+            }
+            .topbar-right-spacer {
+                display: none !important;
+            }
+            .apartment-searchbar {
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
         }
-        .topbar .nav a:hover {
-            color: #8cf0bd !important;
-        }
-        .post-apartment-trigger {
-            background: #a7f3cb !important;
-            color: #13254d !important;
-            border: none !important;
-            padding: 8px 16px !important;
-            border-radius: 999px !important;
-            font-family: 'Manrope', sans-serif !important;
-            font-size: 0.82rem !important;
-            font-weight: 700 !important;
-            cursor: pointer !important;
-            box-shadow: 0 6px 20px rgba(167, 243, 203, 0.25) !important;
-            transition: transform 0.2s, background 0.2s !important;
-        }
-        .post-apartment-trigger:hover {
-            background: #d8ffe8 !important;
-            transform: translateY(-1px) !important;
+        @media (max-width: 640px) {
+            .topbar.compact {
+                padding: 10px 16px !important;
+                height: auto !important;
+                min-height: auto !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+            .apartment-searchbar {
+                height: auto !important;
+                flex-wrap: wrap !important;
+                padding: 8px 12px !important;
+                border-radius: 14px !important;
+                gap: 6px !important;
+            }
+            .apartment-searchbar select,
+            .apartment-searchbar input,
+            .apartment-searchbar button.primary {
+                width: 100% !important;
+                border-right: none !important;
+            }
         }
         .listing-shell {
             display: grid !important;
@@ -498,7 +536,12 @@
             overflow: hidden !important;
             position: relative !important;
             border-radius: 16px 16px 0 0 !important;
-            background: #0c1b33 !important;
+            background: #f1f5f9 !important;
+        }
+        .apt-photo::before,
+        .apt-photo::after {
+            display: none !important;
+            content: none !important;
         }
         .apt-photo img, .apartment-img-wrap img, .property-img img {
             width: 100% !important;
@@ -513,17 +556,66 @@
         .apartment-card:hover img {
             transform: scale(1.04) !important;
         }
-        .apt-photo span {
+        .apt-photo .apt-status-tag {
             position: absolute !important;
-            bottom: 8px !important;
-            left: 8px !important;
-            background: rgba(12, 31, 48, 0.75) !important;
+            bottom: 10px !important;
+            left: 10px !important;
+            top: auto !important;
+            right: auto !important;
+            height: auto !important;
+            width: auto !important;
+            background: rgba(15, 23, 42, 0.80) !important;
             color: #ffffff !important;
-            padding: 3px 8px !important;
+            padding: 4px 10px !important;
             border-radius: 6px !important;
             font-size: 0.72rem !important;
             font-weight: 700 !important;
             backdrop-filter: blur(4px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            z-index: 2 !important;
+            white-space: nowrap !important;
+        }
+        .apt-photo .listing-id-pill {
+            position: absolute !important;
+            top: 10px !important;
+            left: 10px !important;
+            bottom: auto !important;
+            right: auto !important;
+            height: auto !important;
+            width: auto !important;
+            background: rgba(15, 23, 42, 0.88) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.74rem !important;
+            padding: 3px 9px !important;
+            border-radius: 6px !important;
+            backdrop-filter: blur(4px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+            z-index: 2 !important;
+            white-space: nowrap !important;
+        }
+        .apt-photo .verified-badge {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
+            bottom: auto !important;
+            left: auto !important;
+            height: auto !important;
+            width: auto !important;
+            background: rgba(16, 185, 129, 0.95) !important;
+            color: #ffffff !important;
+            font-weight: 800 !important;
+            font-size: 0.72rem !important;
+            padding: 4px 10px !important;
+            border-radius: 999px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18) !important;
+            backdrop-filter: blur(4px) !important;
+            z-index: 2 !important;
+            white-space: nowrap !important;
         }
         .apt-body {
             padding: 16px 18px !important;
@@ -550,7 +642,7 @@
         .apt-title-row h2 a:hover {
             color: #244a9d !important;
         }
-        .icon-action, button[data-action="shortlist"] {
+        .icon-action {
             display: inline-flex !important;
             align-items: center !important;
             gap: 5px !important;
@@ -568,28 +660,80 @@
             outline: none !important;
             white-space: nowrap !important;
         }
-        .icon-action:hover, button[data-action="shortlist"]:hover {
+        .icon-action:hover {
             background: #fff1f2 !important;
             border-color: #fecdd3 !important;
             color: #e11d48 !important;
             transform: translateY(-1px) !important;
             box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15) !important;
         }
-        .icon-action.active, button[data-action="shortlist"].active {
+        .icon-action.active, .icon-action.saved {
             background: #ffe4e6 !important;
             border-color: #fda4af !important;
             color: #e11d48 !important;
         }
-        .icon-action svg, button[data-action="shortlist"] svg {
+        .icon-action.active svg, .icon-action.saved svg {
+            fill: #e11d48 !important;
+            stroke: #e11d48 !important;
+        }
+        .icon-action svg {
             width: 13px !important;
             height: 13px !important;
             stroke: currentColor !important;
             fill: none !important;
             transition: fill 0.2s ease, transform 0.2s ease !important;
         }
-        .icon-action:hover svg, button[data-action="shortlist"]:hover svg {
+        .icon-action:hover svg {
             fill: #e11d48 !important;
             transform: scale(1.1) !important;
+        }
+        .apt-actions button[data-action="shortlist"],
+        .apt-actions button.btn-save-action {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            border-radius: 8px !important;
+            padding: 7px 10px !important;
+            font-family: 'Manrope', sans-serif !important;
+            font-size: 0.76rem !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+            white-space: nowrap !important;
+        }
+        .apt-actions button[data-action="shortlist"]:hover,
+        .apt-actions button.btn-save-action:hover {
+            background: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #e11d48 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15) !important;
+        }
+        .apt-actions button[data-action="shortlist"].active,
+        .apt-actions button[data-action="shortlist"].saved,
+        .apt-actions button.btn-save-action.active,
+        .apt-actions button.btn-save-action.saved {
+            background: #ffe4e6 !important;
+            border-color: #fda4af !important;
+            color: #e11d48 !important;
+            font-weight: 800 !important;
+        }
+        .apt-actions button[data-action="shortlist"] .heart-icon,
+        .apt-actions button.btn-save-action .heart-icon {
+            display: inline-block !important;
+            font-size: 0.85rem !important;
+            line-height: 1 !important;
+            transition: transform 0.2s ease !important;
+        }
+        .apt-actions button[data-action="shortlist"]:hover .heart-icon,
+        .apt-actions button.btn-save-action:hover .heart-icon,
+        .apt-actions button[data-action="shortlist"].active .heart-icon,
+        .apt-actions button.btn-save-action.active .heart-icon {
+            transform: scale(1.15) !important;
         }
         .apt-address {
             font-size: 0.78rem !important;
@@ -1062,6 +1206,19 @@
         color: #1d4ed8 !important;
         transform: translateY(-1px) !important;
     }
+    .feature-bar-btn.active {
+        background: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25) !important;
+    }
+    .feature-bar-btn.active svg {
+        stroke: #ffffff !important;
+    }
+    .feature-bar-btn.active .feature-badge {
+        background: rgba(255, 255, 255, 0.25) !important;
+        color: #ffffff !important;
+    }
     .feature-badge {
         display: inline-flex !important;
         align-items: center !important;
@@ -1404,42 +1561,15 @@
 </head>
 <body class="apartment-page">
 <header class="topbar compact">
-    <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> <span>Property</span>Direct</a>
-    <div class="apartment-searchbar" style="max-width: 600px;">
-        <select id="listingCity"><option value="">All Cities</option><option value="Bangalore">Bangalore / Bengaluru</option><option value="Chennai">Chennai</option><option value="Mumbai">Mumbai</option><option value="Pune">Pune</option><option value="Hyderabad">Hyderabad</option><option value="Delhi NCR">Delhi NCR</option></select>
-        <input id="listingSearch" placeholder="Search locality, project or bedrooms" aria-label="Search properties">
-        <button class="primary small" id="listingSearchButton" style="background: linear-gradient(135deg, #2563eb, #7c3aed); border: none; font-weight: 800;">Search</button>
+    <div class="topbar-brand-wrap">
+        <a class="brand" href="/propertydirect"><span class="brand-mark">PD</span> <span>Property</span>Direct</a>
     </div>
-    <nav class="nav">
-        <div class="apartments-header-actions">
-            <button type="button" class="topbar-action-pill" onclick="triggerPropertySearchFocus()" title="Search Properties">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span>Search</span>
-            </button>
-            <button type="button" class="topbar-action-pill" onclick="openSavedSearchesDrawer()" title="Saved Searches">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
-                <span>Saved</span>
-                <span class="action-count-pill" id="navSavedSearchesCount">0</span>
-            </button>
-            <button type="button" class="topbar-action-pill" onclick="openCompareDrawer()" title="Compare Properties">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="3" width="8" height="18" rx="2"/><rect x="14" y="3" width="8" height="18" rx="2"/></svg>
-                <span>Compare</span>
-                <span class="action-count-pill" id="navCompareCount">0</span>
-            </button>
-            <button type="button" class="topbar-action-pill" onclick="openRecentlyViewedDrawer()" title="Recently Viewed">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>Recent</span>
-                <span class="action-count-pill" id="navRecentlyViewedCount">0</span>
-            </button>
-        </div>
-        <a href="/" class="smartsociety-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            SmartSociety
-        </a>
-        <a href="/propertydirect/dashboards/customer">Customer Dashboard</a>
-        <button class="primary small post-apartment-trigger" data-open-modal="post"><span aria-hidden="true">＋</span> Post Apartment</button>
-    </nav>
-
+    <div class="apartment-searchbar">
+        <select id="listingCity"><option value="">All Cities</option><option value="Bangalore">Bangalore / Bengaluru</option><option value="Chennai">Chennai</option><option value="Mumbai">Mumbai</option><option value="Pune">Pune</option><option value="Hyderabad">Hyderabad</option><option value="Delhi NCR">Delhi NCR</option></select>
+        <input id="listingSearch" placeholder="Search by Listing ID (e.g. 104, #579), locality or project" aria-label="Search properties">
+        <button class="primary small" id="listingSearchButton" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; font-weight: 800;">Search</button>
+    </div>
+    <div class="topbar-right-spacer" aria-hidden="true"></div>
 </header>
 
 <main class="listing-shell">
@@ -1555,54 +1685,26 @@
         
         <!-- 4 Customer Quick Features Toolbar -->
         <div class="apartments-quick-features-bar" id="apartmentsFeaturesToolbar">
-            <button type="button" class="feature-bar-btn" id="btnQuickSearch" onclick="triggerPropertySearchFocus()">
+            <button type="button" class="feature-bar-btn active" id="btnQuickSearch" data-view-filter="all" onclick="if(typeof setToolbarViewMode==='function') setToolbarViewMode('all');">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <span>Search properties</span>
             </button>
-            <button type="button" class="feature-bar-btn" id="btnQuickSavedSearches" onclick="openSavedSearchesDrawer()">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <span>Saved searches</span>
+            <button type="button" class="feature-bar-btn" id="btnQuickSavedSearches" data-view-filter="saved" onclick="if(typeof setToolbarViewMode==='function') setToolbarViewMode('saved');">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span>Saved properties</span>
                 <span class="feature-badge" id="savedSearchesCountBadge">0</span>
             </button>
-            <button type="button" class="feature-bar-btn" id="btnQuickCompare" onclick="openCompareDrawer()">
+            <button type="button" class="feature-bar-btn" id="btnQuickCompare" data-view-filter="compare" onclick="if(typeof setToolbarViewMode==='function') setToolbarViewMode('compare');">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="3" width="8" height="18" rx="2"/><rect x="14" y="3" width="8" height="18" rx="2"/></svg>
                 <span>Compare properties</span>
                 <span class="feature-badge" id="compareCountBadge">0</span>
             </button>
-            <button type="button" class="feature-bar-btn" id="btnQuickRecent" onclick="openRecentlyViewedDrawer()">
+            <button type="button" class="feature-bar-btn" id="btnQuickRecent" data-view-filter="recent" onclick="if(typeof setToolbarViewMode==='function') setToolbarViewMode('recent');">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span>Recently viewed</span>
                 <span class="feature-badge" id="recentlyViewedCountBadge">0</span>
             </button>
         </div>
-
-        <!--  Smart AI Recommendations Banner -->
-        <div id="aiRecommendationBanner" style="background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #ffffff; padding: 18px 24px; border-radius: 16px; margin-top: 16px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(15,23,42,0.25);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1.3rem;"></span>
-                    <strong style="font-size: 1.05rem; color: #a7f3d0;">Find a home that fits</strong>
-                    <span style="background: #7c3aed; color: #ffffff; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;">Quick searches</span>
-                </div>
-                <small style="color: #94a3b8; font-size: 0.78rem;">Browse approved, currently available listings</small>
-            </div>
-            <p style="margin: 0 0 12px 0; font-size: 0.86rem; color: #cbd5e1;">Choose a city and purpose, then narrow your results by budget, bedrooms and property type.</p>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="aiPromptChips">
-                <button type="button" onclick="runAiQuery('3 BHK house in Chennai below 80 lakhs')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> 3 BHK house in Chennai below 80 lakhs</button>
-                <button type="button" onclick="runAiQuery('2 BHK apartment near Chennai under 50 lakh with parking')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> 2 BHK apartment near Chennai under 50 lakh with parking</button>
-                <button type="button" onclick="runAiQuery('Luxury Villa with swimming pool and gym')" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;"> Luxury Villa with Pool & Gym</button>
-            </div>
-        </div>
-
-        <script>
-        function runAiQuery(queryText) {
-            const input = document.getElementById("listingSearch");
-            if(input) {
-                input.value = queryText;
-                document.getElementById("listingSearchButton")?.click();
-            }
-        }
-        </script>
 
         <div id="apartmentResults" class="apartment-results"></div>
         <div id="mapView" class="map-view hidden">

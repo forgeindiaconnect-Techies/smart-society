@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Super Admin Console — PropertyDirect</title>
+    <title>Superadmin Dashboard — PropertyDirect</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
@@ -330,9 +330,9 @@
             bottom: 0 !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            width: 275px !important;
-            min-width: 275px !important;
-            max-width: 275px !important;
+            width: 280px !important;
+            min-width: 280px !important;
+            max-width: 280px !important;
             margin: 0 !important;
             padding: 16px 14px 115px 14px !important;
             border-radius: 0 !important;
@@ -348,9 +348,9 @@
         }
 
         .dash-brand {
-            height: 72px !important;
-            min-height: 72px !important;
-            max-height: 72px !important;
+            height: 76px !important;
+            min-height: 76px !important;
+            max-height: 76px !important;
             display: flex !important;
             align-items: center !important;
             gap: 10px !important;
@@ -540,10 +540,10 @@
         /* MAIN DASHBOARD CANVAS WITH UNLOCKED SCROLLING */
         main.dash-main,
         .dash-main {
-            margin: 0 0 0 275px !important;
-            padding: 0 !important;
-            width: calc(100% - 275px) !important;
-            max-width: calc(100% - 275px) !important;
+            margin-left: 280px !important;
+            padding: 0 32px 48px 32px !important;
+            width: calc(100% - 280px) !important;
+            max-width: calc(100% - 280px) !important;
             min-height: 100vh !important;
             height: auto !important;
             box-sizing: border-box !important;
@@ -554,28 +554,30 @@
 
         /* Top Header Bar - Full Width & Clean Top */
         .dash-header {
-            height: 72px !important;
-            min-height: 72px !important;
-            max-height: 72px !important;
+            height: 76px !important;
+            min-height: 76px !important;
+            max-height: 76px !important;
             background: #ffffff !important;
             border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
             border-radius: 0 !important;
             padding: 0 32px !important;
             box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
-            margin: 0 0 28px 0 !important;
+            margin: 0 -32px 24px -32px !important;
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
             box-sizing: border-box !important;
-            width: 100% !important;
+            width: calc(100% + 64px) !important;
             position: sticky !important;
             top: 0 !important;
             z-index: 100 !important;
         }
 
         .dash-panel {
-            padding: 0 32px 32px 32px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
             box-sizing: border-box !important;
         }
 
@@ -1753,13 +1755,17 @@
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="superadmin">
     <aside class="dash-sidebar">
-        <a class="dash-brand text-decoration-none" href="/propertydirect">
-            <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26"
-                    fill="#3b82f6">
-                    <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z" />
-                    <path d="M9.5 9V5.5h4" />
-                </svg></span>
-            <h4 class="mb-0 fw-bold text-white fs-5">Property<span style="color: #3b82f6 !important;">Direct</span></h4>
+        <a class="dash-brand text-decoration-none" href="/propertydirect" style="display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important;">
+            <span class="sidebar-home-mark" aria-hidden="true" style="width:38px !important; height:38px !important; min-width:38px !important; border-radius:10px !important; display:inline-grid !important; place-items:center !important; background:rgba(37,99,235,0.2) !important; border:1px solid rgba(59,130,246,0.4) !important; color:#60a5fa !important; flex-shrink:0 !important;">
+                <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px !important; height:22px !important; fill:none !important; stroke:currentColor !important; stroke-width:2 !important;">
+                    <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/>
+                    <path d="M9.5 9V5.5h4"/>
+                </svg>
+            </span>
+            <div style="display:flex !important; flex-direction:column !important; justify-content:center !important; min-width:0 !important; text-align:left !important;">
+                <h4 class="mb-0 fw-bold text-white fs-5" style="margin:0 !important; font-size:1.15rem !important; font-weight:800 !important; line-height:1.2 !important; display:block !important; white-space:nowrap !important;">Property<span style="color:#3b82f6 !important;">Direct</span></h4>
+                <span class="society-dashboard-role-label" style="display:block !important; margin-top:3px !important; font-size:12px !important; font-weight:600; line-height:1.3 !important; color:#a9c4ff !important; letter-spacing:.04em; white-space:nowrap !important;">Superadmin Dashboard</span>
+            </div>
         </a>
         <nav class="sidebar-nav" aria-label="Dashboard sections">
             <button class="active" data-panel="overview">

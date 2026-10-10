@@ -682,7 +682,8 @@ class Stage4JobLifecycleTests {
         b = bookingRepo.findById(bookingId).orElseThrow();
         assertEquals("IN_PROGRESS", b.getJobStatus());
         assertNotNull(b.getStartedAt());
-        assertEquals("Service in progress", b.getDispatchReason());
+        assertTrue(b.getDispatchReason().startsWith("Service in progress; estimated completion "));
+        assertNotNull(b.getEstimatedCompletionAt());
 
         // Audit log records IN_PROGRESS
         assertTrue(b.getAssignmentAuditLog().contains("IN_PROGRESS"));
@@ -1223,11 +1224,13 @@ class Stage4JobLifecycleTests {
         assertNotNull(completed.getCompletedAt());
         assertNotNull(completed.getReviewRequestedAt(), "Review requested timestamp must be set upon completion");
         assertNotNull(completed.getCustomerReviewUrl(), "Customer review URL must be generated");
-        assertTrue(completed.getCustomerReviewUrl().contains("/api/maintenance/dispatch/bookings/" + bookingId + "/review"));
+        assertEquals("/feedback/" + completed.getOrderReference() + "?token=" + completed.getFeedbackToken(), completed.getCustomerReviewUrl());
+        assertNotNull(completed.getFeedbackToken(), "Feedback links must carry their saved access token");
 
         // 2. Verify multi-channel notification state & channels
         assertEquals("IN_APP,SMS,WHATSAPP,PUSH", completed.getReviewNotificationChannels());
-        assertEquals("PREPARED", completed.getReviewNotificationStatus());
+        assertEquals("SENT", completed.getReviewNotificationStatus(), "The in-app notification has been saved; external delivery is not certified");
+        assertNotNull(completed.getReviewLinkSentAt());
         assertNotNull(completed.getReviewRequestPayload(), "Review request payload must be prepared for consumers");
         assertTrue(completed.getReviewRequestPayload().contains(bookingRef != null ? bookingRef : String.valueOf(bookingId)),
                 "Review request payload must reference the completed emergency booking");
@@ -1250,7 +1253,7 @@ class Stage4JobLifecycleTests {
         // 4. Verify review-request API endpoint details
         var reviewDetails = emergencyService.reviewRequest(assignedActor, bookingId);
         assertEquals(bookingId, reviewDetails.get("bookingId"));
-        assertEquals("PREPARED", reviewDetails.get("status"));
+        assertEquals("SENT", reviewDetails.get("status"));
         assertNotNull(reviewDetails.get("reviewRequestedAt"));
         assertNotNull(reviewDetails.get("customerReviewUrl"));
         @SuppressWarnings("unchecked")

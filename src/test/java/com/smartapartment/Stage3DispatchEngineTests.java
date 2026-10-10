@@ -31,30 +31,20 @@ class Stage3DispatchEngineTests {
 
     @BeforeEach
     void setUp() {
-        validUserId = userRepo.findByEmail("superadmin@smartapartment")
-                .map(AppUser::getId)
-                .orElseGet(() -> {
-                    AppUser u = new AppUser();
-                    u.setEmail("superadmin@smartapartment");
-                    u.setFullName("Platform Super Admin");
-                    u.setRole(UserRole.SUPER_ADMIN);
-                    u.setTenantId("test-tenant");
-                    u.setPasswordHash("$2a$10$dummyhash");
-                    u.setAccountLocked(false);
-                    return userRepo.save(u).getId();
-                });
+        validUserId = createWorker("dispatch-primary").getId();
+        secondUser = createWorker("dispatch-secondary");
+    }
 
-        secondUser = userRepo.findByEmail("worker2@smartapartment.local")
-                .orElseGet(() -> {
-                    AppUser u = new AppUser();
-                    u.setEmail("worker2@smartapartment.local");
-                    u.setFullName("Worker Two");
-                    u.setRole(UserRole.MAINTENANCE_STAFF);
-                    u.setTenantId("test-tenant");
-                    u.setPasswordHash("$2a$10$dummyhash");
-                    u.setAccountLocked(false);
-                    return userRepo.save(u);
-                });
+    private AppUser createWorker(String prefix) {
+        AppUser user = new AppUser();
+        user.setEmail(prefix + "-" + UUID.randomUUID() + "@audit.local");
+        user.setFullName(prefix);
+        user.setRole(UserRole.MAINTENANCE_STAFF);
+        user.setTenantId("test-tenant");
+        user.setPasswordHash("$2a$10$dummyhash");
+        user.setWorkShift("ALL_DAY");
+        user.setAccountLocked(false);
+        return userRepo.save(user);
     }
 
     private MaintenanceHub createTestHub(String cityName, String areaName, double lat, double lon) {
@@ -129,7 +119,9 @@ class Stage3DispatchEngineTests {
         // Electrician must NOT be selected
         assertNotEquals(electrician.getId(), booking.getPartnerId());
         assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
-        assertEquals("No partner with matching trade", booking.getDispatchReason());
+        assertEquals("Dispatch cycle 1 exhausted: No partner with matching trade. Automatic retry cycle scheduled.", booking.getDispatchReason());
+        assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
+        assertNull(booking.getEscalatedAt(), "The first failed cycle must remain eligible for automatic retry");
     }
 
     // 2. Busy Partner
@@ -150,7 +142,9 @@ class Stage3DispatchEngineTests {
         // Busy partner must NOT be selected
         assertNotEquals(busyPlumber.getId(), booking.getPartnerId());
         assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
-        assertEquals("All partners busy", booking.getDispatchReason());
+        assertEquals("Dispatch cycle 1 exhausted: All partners busy. Automatic retry cycle scheduled.", booking.getDispatchReason());
+        assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
+        assertNull(booking.getEscalatedAt(), "The first failed cycle must remain eligible for automatic retry");
     }
 
     // 3. Off-Duty Partner
@@ -171,7 +165,9 @@ class Stage3DispatchEngineTests {
         // Off-duty partner must NOT be selected
         assertNotEquals(offDutyPlumber.getId(), booking.getPartnerId());
         assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
-        assertEquals("No on-duty partners", booking.getDispatchReason());
+        assertEquals("Dispatch cycle 1 exhausted: No on-duty partners. Automatic retry cycle scheduled.", booking.getDispatchReason());
+        assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
+        assertNull(booking.getEscalatedAt(), "The first failed cycle must remain eligible for automatic retry");
     }
 
     // 4. Decline
@@ -255,7 +251,9 @@ class Stage3DispatchEngineTests {
         // Pool exhausted -> FAILED_ASSIGNMENT
         booking = bookingRepo.findById(bookingId).orElseThrow();
         assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
-        assertEquals("All candidates declined", booking.getDispatchReason());
+        assertEquals("Dispatch cycle 1 exhausted: All candidates declined. Automatic retry cycle scheduled.", booking.getDispatchReason());
+        assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
+        assertNull(booking.getEscalatedAt(), "The first failed cycle must remain eligible for automatic retry");
     }
 
     // 6. No Partners
@@ -274,7 +272,9 @@ class Stage3DispatchEngineTests {
         // Enters Failed Assignment state with reason
         assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
         assertNull(booking.getPartnerId());
-        assertEquals("No partners within service area", booking.getDispatchReason());
+        assertEquals("Dispatch cycle 1 exhausted: No partners within service area. Automatic retry cycle scheduled.", booking.getDispatchReason());
+        assertEquals("FAILED_ASSIGNMENT", booking.getJobStatus());
+        assertNull(booking.getEscalatedAt(), "The first failed cycle must remain eligible for automatic retry");
     }
 
     // 7. Manual Assignment

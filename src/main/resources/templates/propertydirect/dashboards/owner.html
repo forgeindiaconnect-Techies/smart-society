@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Property Owner Portal · PropertyDirect</title>
+  <title>Owner Dashboard — PropertyDirect</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
-  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260912-global-alignment-v3">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20261012-center-empty-v1">
   <link rel="stylesheet" href="/propertydirect/css/dashboard-polish.css?v=20260928-visual-v2">
   <style>
     :root {
@@ -62,8 +64,8 @@
       flex-direction: column !important;
       justify-content: space-between !important;
       z-index: 1040 !important;
-      border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 4px 0 24px rgba(5, 12, 28, 0.25) !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.16) !important;
+      box-shadow: 1px 0 0 rgba(0, 0, 0, 0.08), 4px 0 24px rgba(5, 12, 28, 0.25) !important;
       box-sizing: border-box !important;
       overflow: hidden !important;
     }
@@ -79,7 +81,7 @@
       padding: 0 16px !important;
       display: flex !important;
       align-items: center !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
       box-sizing: border-box !important;
     }
 
@@ -145,102 +147,121 @@
     }
 
     /* Scrollable Navigation */
-    .owner-nav {
+    /* Scrollable Navigation - Exact match to Customer Dashboard */
+    .owner-nav,
+    .dash-sidebar .sidebar-nav {
       display: flex !important;
       flex-direction: column !important;
-      gap: 5px !important;
-      margin: 12px 0 !important;
-      padding: 0 !important;
+      gap: 4px !important;
+      margin: 8px 0 !important;
+      padding: 10px 8px !important;
       flex: 1 1 auto !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
       min-height: 0 !important;
+      box-sizing: border-box !important;
     }
 
-    .owner-nav::-webkit-scrollbar {
-      width: 4px;
+    .owner-nav::-webkit-scrollbar,
+    .dash-sidebar .sidebar-nav::-webkit-scrollbar {
+      width: 4px !important;
     }
-    .owner-nav::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
+    .owner-nav::-webkit-scrollbar-thumb,
+    .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15) !important;
+      border-radius: 99px !important;
     }
-    .owner-nav::-webkit-scrollbar-track {
-      background: transparent;
+    .owner-nav::-webkit-scrollbar-track,
+    .dash-sidebar .sidebar-nav::-webkit-scrollbar-track {
+      background: transparent !important;
     }
 
     html body.app-dashboard[data-platform="propertydirect"] .owner-nav button,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button,
     .owner-nav button {
-      width: 100% !important;
-      box-sizing: border-box !important;
       display: flex !important;
       align-items: center !important;
       gap: 12px !important;
-      padding: 7px 10px !important;
+      width: 100% !important;
+      height: 42px !important;
+      min-height: 42px !important;
+      max-height: 42px !important;
+      padding: 0 14px !important;
       border-radius: 10px !important;
-      border: 1px solid transparent !important;
       background: transparent !important;
+      border: none !important;
+      border-left: 3px solid transparent !important;
       color: #94a3b8 !important;
-      cursor: pointer !important;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      font-size: 0.86rem !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.01em !important;
       text-align: left !important;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      box-sizing: border-box !important;
+      box-shadow: none !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      white-space: nowrap !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button:hover,
-    .owner-nav button:hover {
-      background: rgba(255, 255, 255, 0.06) !important;
-      color: #ffffff !important;
-      border-color: rgba(255, 255, 255, 0.05) !important;
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button span,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button span,
+    .owner-nav button .nav-label {
+      color: inherit !important;
+      font-size: inherit !important;
+      font-weight: inherit !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      flex: 1 1 auto !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button.active,
-    .owner-nav button.active {
-      background: #2563eb !important;
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-      color: #ffffff !important;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-    }
-
-    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button span.icon-badge,
-    .owner-nav button span.icon-badge {
-      width: 36px !important;
-      min-width: 36px !important;
-      max-width: 36px !important;
-      height: 36px !important;
-      border-radius: 9px !important;
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      font-size: 0.8rem !important;
-      font-weight: 800 !important;
-      color: #cbd5e1 !important;
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button svg,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button svg,
+    .owner-nav button svg {
+      width: 18px !important;
+      height: 18px !important;
+      min-width: 18px !important;
+      stroke: currentColor !important;
+      color: #64748b !important;
       flex-shrink: 0 !important;
       transition: all 0.2s ease !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button:hover span.icon-badge,
-    .owner-nav button:hover span.icon-badge {
-      background: rgba(255, 255, 255, 0.15) !important;
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button:hover,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover,
+    .owner-nav button:hover {
       color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-left-color: rgba(96, 165, 250, 0.5) !important;
+      transform: translateX(2px) !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button.active span.icon-badge,
-    .owner-nav button.active span.icon-badge {
-      background: rgba(255, 255, 255, 0.22) !important;
-      border-color: rgba(255, 255, 255, 0.3) !important;
-      color: #ffffff !important;
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover svg,
+    .owner-nav button:hover svg {
+      color: #93c5fd !important;
+      transform: scale(1.05) !important;
     }
 
-    .owner-nav button .nav-label {
-      flex: 1 1 auto !important;
-      font-size: 0.88rem !important;
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button.active,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active,
+    .owner-nav button.active {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%) !important;
+      border-left-color: #60a5fa !important;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
       font-weight: 700 !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      line-height: 1.2 !important;
+      transform: none !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .owner-nav button.active svg,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active svg,
+    .owner-nav button.active svg {
+      color: #ffffff !important;
+      stroke: #ffffff !important;
     }
 
     /* Bottom User Profile Section */
@@ -249,7 +270,7 @@
       flex-shrink: 0 !important;
       margin-top: auto !important;
       padding-top: 14px !important;
-      border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
     }
 
     .owner-user-badge {
@@ -659,19 +680,37 @@
 
     /* First column aligns with title text at exactly 24px from left card edge */
     html body.app-dashboard[data-platform="propertydirect"] .data-table th:first-child,
-    html body.app-dashboard[data-platform="propertydirect"] .data-table td:first-child,
+    html body.app-dashboard[data-platform="propertydirect"] .data-table td:first-child:not([colspan]),
     .owner-main .data-table th:first-child,
-    .owner-main .data-table td:first-child {
+    .owner-main .data-table td:first-child:not([colspan]) {
       padding-left: 24px !important;
     }
 
     /* Last column aligns with button at exactly 24px from right card edge */
     html body.app-dashboard[data-platform="propertydirect"] .data-table th:last-child,
-    html body.app-dashboard[data-platform="propertydirect"] .data-table td:last-child,
+    html body.app-dashboard[data-platform="propertydirect"] .data-table td:last-child:not([colspan]),
     .owner-main .data-table th:last-child,
-    .owner-main .data-table td:last-child {
+    .owner-main .data-table td:last-child:not([colspan]) {
       padding-right: 24px !important;
       text-align: right !important;
+    }
+
+    /* Universal empty state centered styling for all table rows with colspan */
+    html body.app-dashboard[data-platform="propertydirect"] table td[colspan],
+    html body.app-dashboard[data-platform="propertydirect"] .data-table td[colspan],
+    html body.app-dashboard[data-platform="propertydirect"] .table-responsive td[colspan],
+    html body.app-dashboard[data-platform="propertydirect"] tbody tr td[colspan],
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="earnings"] table td[colspan],
+    html body.app-dashboard[data-platform="propertydirect"] #ownerPayoutsTable td[colspan],
+    .owner-main .data-table td[colspan],
+    .data-table td[colspan] {
+      text-align: center !important;
+      padding: 44px 20px !important;
+      color: #64748b !important;
+      font-size: 0.88rem !important;
+      font-weight: 500 !important;
+      vertical-align: middle !important;
+      white-space: normal !important;
     }
 
     .status-badge {
@@ -1087,42 +1126,79 @@
     <!-- Owner Sidebar -->
     <aside class="dash-sidebar owner-sidebar sidebar" id="ownerSidebar">
       <div class="owner-sidebar-header">
-        <a href="/propertydirect" class="owner-brand">
-          <div class="owner-brand-icon">PD</div>
-          <div class="owner-brand-info">
-            <div class="owner-brand-text">Property<span>Direct</span></div>
-            <span class="owner-brand-badge">Owner &amp; Seller Portal</span>
+        <a href="/propertydirect" class="owner-brand dash-brand" style="text-decoration:none !important; display:flex !important; align-items:center !important; gap:12px !important;">
+          <span class="sidebar-home-mark" aria-hidden="true" style="width:38px !important; height:38px !important; min-width:38px !important; border-radius:10px !important; display:inline-grid !important; place-items:center !important; background:rgba(37,99,235,0.2) !important; border:1px solid rgba(59,130,246,0.4) !important; color:#60a5fa !important; flex-shrink:0 !important;">
+            <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px !important; height:22px !important; fill:none !important; stroke:currentColor !important; stroke-width:2 !important;">
+              <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/>
+              <path d="M9.5 9V5.5h4"/>
+            </svg>
+          </span>
+          <div style="display:flex !important; flex-direction:column !important; justify-content:center !important; min-width:0 !important; text-align:left !important;">
+            <h4 class="mb-0 fw-bold text-white fs-5" style="margin:0 !important; font-size:1.15rem !important; font-weight:800 !important; line-height:1.2 !important; display:block !important; white-space:nowrap !important;">Property<span style="color:#3b82f6 !important;">Direct</span></h4>
+            <span class="society-dashboard-role-label" style="display:block !important; margin-top:3px !important; font-size:12px !important; font-weight:600; line-height:1.3 !important; color:#a9c4ff !important; letter-spacing:.04em; white-space:nowrap !important;">Owner Dashboard</span>
           </div>
         </a>
       </div>
 
       <nav class="owner-nav sidebar-nav" aria-label="Owner dashboard navigation">
         <button class="active" data-panel="overview" onclick="switchTab('overview')">
-          <span class="icon-badge">OV</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
           <span class="nav-label">Dashboard Overview</span>
         </button>
         <button data-panel="listings" onclick="switchTab('listings')">
-          <span class="icon-badge">PR</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
           <span class="nav-label">My Property Listings</span>
         </button>
         <button data-panel="post-listing" onclick="switchTab('post-listing')">
-          <span class="icon-badge">+</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
           <span class="nav-label">Post New Property</span>
         </button>
         <button data-panel="tours" onclick="switchTab('tours')">
-          <span class="icon-badge">TR</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
           <span class="nav-label">Scheduled Site Tours</span>
         </button>
         <button data-panel="builder-projects" onclick="switchTab('builder-projects')">
-          <span class="icon-badge">BP</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <line x1="9" y1="6" x2="9" y2="6.01"></line>
+            <line x1="15" y1="6" x2="15" y2="6.01"></line>
+            <line x1="9" y1="10" x2="9" y2="10.01"></line>
+            <line x1="15" y1="10" x2="15" y2="10.01"></line>
+            <line x1="9" y1="14" x2="9" y2="14.01"></line>
+            <line x1="15" y1="14" x2="15" y2="14.01"></line>
+            <line x1="9" y1="18" x2="15" y2="18"></line>
+          </svg>
           <span class="nav-label">Builder Projects</span>
         </button>
         <button data-panel="earnings" onclick="switchTab('earnings')">
-          <span class="icon-badge">&#8377;</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
           <span class="nav-label">Financials &amp; Earnings</span>
         </button>
         <button data-panel="profile" onclick="switchTab('profile')">
-          <span class="icon-badge">PF</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
           <span class="nav-label">Owner Profile &amp; KYC</span>
         </button>
       </nav>
@@ -1146,7 +1222,7 @@
       <!-- Top Header -->
       <header class="dash-header owner-header">
         <div>
-          <h1 id="panelTitle">Property Owner Portal</h1>
+          <h1 id="panelTitle">Owner Dashboard</h1>
           <p>Directly manage your property portfolio, site visit tours, builder enclaves, and rental earnings.</p>
         </div>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; flex-shrink: 0;">
@@ -1216,7 +1292,10 @@
               <h3>My Property Listings</h3>
               <p style="margin: 4px 0 0 0; font-size: 0.84rem; color: #64748b;">Directly wired to PropertyDirect listing creation and moderation review APIs</p>
             </div>
-            <button class="btn-primary" onclick="switchTab('post-listing')">+ Create New Listing</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" id="ownerListingsSearch" placeholder="Filter by ID (e.g. 579) or title..." oninput="filterOwnerListingsTable(this.value)" style="padding: 7px 12px; font-size: 0.8rem; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 220px; background: #ffffff;">
+              <button class="btn-primary" onclick="switchTab('post-listing')">+ Create New Listing</button>
+            </div>
           </div>
           <div class="table-responsive">
             <table class="data-table">
@@ -1259,10 +1338,20 @@
                 <small>Title, location, configuration, and structural specs</small>
               </div>
 
-              <!-- Full-width property title -->
-              <div class="form-group full-width">
+              <!-- Listing ID No & Property Title (2 columns) -->
+              <div class="form-group">
+                <label>Listing ID No <span class="req">*</span></label>
+                <div style="position: relative; display: flex; align-items: center;">
+                  <input type="text" name="listingId" id="postListingId" placeholder="e.g. 1" required style="font-weight: 800; color: #1e3a8a; padding-right: 85px; background: #f8fafc; border: 1.5px solid #cbd5e1;">
+                  <button type="button" id="btnAutoListingId" onclick="generateOwnerListingId()" title="Generate next sequential ID" style="position: absolute; right: 6px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; cursor: pointer;">🔄 Auto ID</button>
+                </div>
+                <small style="color: #64748b; font-size: 0.72rem;">Unique reference ID for this property listing</small>
+              </div>
+
+              <div class="form-group">
                 <label>Property Title <span class="req">*</span></label>
                 <input type="text" name="title" required placeholder="e.g. Luxury 3 BHK in Prestige Shantiniketan">
+                <small style="color: #64748b; font-size: 0.72rem;">Public title shown across discovery and search</small>
               </div>
 
               <!-- City & Locality (2 columns) -->
@@ -1274,6 +1363,88 @@
               <div class="form-group">
                 <label>Locality / Society Name <span class="req">*</span></label>
                 <input type="text" name="locality" required placeholder="e.g. Whitefield / Brigade Metropolis">
+              </div>
+
+              <!-- Interactive Map Location Picker (Full Width) -->
+              <div class="form-group full-width" style="grid-column: 1 / -1; margin: 4px 0 12px 0;">
+                <div style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                    <div>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem;">🗺️</span>
+                        <strong style="color: #1e3a8a; font-size: 0.95rem; font-weight: 800;">Pick Property Location on Map</strong>
+                        <span style="background: #dbeafe; color: #1d4ed8; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;">Google / OpenStreetMap</span>
+                      </div>
+                      <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: #64748b;">Click anywhere on the map or drag the pin to set the exact coordinates, locality, and address.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <button type="button" onclick="detectOwnerLocationGPS()" style="background: #ffffff; color: #1e40af; border: 1px solid #93c5fd; padding: 6px 12px; border-radius: 8px; font-size: 0.76rem; font-weight: 750; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                        <span>My GPS Location</span>
+                      </button>
+                      <button type="button" id="btnToggleMapPicker" onclick="toggleMapCanvas()" style="background: #2563eb; color: #ffffff; border: none; padding: 6px 14px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(37,99,235,0.25);">
+                        <span>Show / Hide Map</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Map Search & Quick Hubs -->
+                  <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                    <div style="flex: 1; position: relative;">
+                      <input type="text" id="mapSearchInput" placeholder="Search area, locality, tech park, or landmark (e.g. Whitefield, Indiranagar, HSR Layout)..."
+                        onkeydown="if(event.key==='Enter'){event.preventDefault(); searchLocationOnMap();}"
+                        style="width: 100%; box-sizing: border-box; padding: 9px 14px 9px 34px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.82rem; background: #ffffff;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2" style="position: absolute; left: 11px; top: 50%; transform: translateY(-50%);">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                      </svg>
+                    </div>
+                    <button type="button" onclick="searchLocationOnMap()" style="padding: 9px 16px; border-radius: 8px; background: #0f172a; color: #ffffff; font-size: 0.8rem; font-weight: 750; border: none; cursor: pointer; white-space: nowrap;">
+                      Search on Map
+                    </button>
+                  </div>
+
+                  <!-- Quick Locality Chips -->
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.75rem;">
+                    <span style="color: #64748b; font-weight: 700;">Popular Areas:</span>
+                    <button type="button" onclick="flyToMapLocation(12.9698, 77.7499, 'Whitefield', 'Bengaluru', '560066')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Whitefield</button>
+                    <button type="button" onclick="flyToMapLocation(12.9784, 77.6408, 'Indiranagar', 'Bengaluru', '560038')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Indiranagar</button>
+                    <button type="button" onclick="flyToMapLocation(12.9352, 77.6245, 'Koramangala', 'Bengaluru', '560034')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Koramangala</button>
+                    <button type="button" onclick="flyToMapLocation(12.9121, 77.6446, 'HSR Layout', 'Bengaluru', '560102')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">HSR Layout</button>
+                    <button type="button" onclick="flyToMapLocation(12.9304, 77.6784, 'Bellandur', 'Bengaluru', '560103')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Bellandur</button>
+                    <button type="button" onclick="flyToMapLocation(12.8452, 77.6602, 'Electronic City', 'Bengaluru', '560100')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Electronic City</button>
+                    <button type="button" onclick="flyToMapLocation(13.0358, 77.5970, 'Hebbal', 'Bengaluru', '560024')" style="padding: 3px 9px; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; font-size: 0.74rem; font-weight: 600; cursor: pointer;">Hebbal</button>
+                  </div>
+
+                  <!-- Leaflet Map Canvas -->
+                  <div id="ownerMapPickerContainer" style="height: 320px; width: 100%; border-radius: 12px; overflow: hidden; border: 1.5px solid #94a3b8; position: relative; box-shadow: 0 4px 12px rgba(15,23,42,0.08);">
+                    <div id="ownerMapPicker" style="height: 100%; width: 100%; background: #e2e8f0;"></div>
+                    <div style="position: absolute; bottom: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.92); backdrop-filter: blur(4px); padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; color: #1e3a8a; border: 1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                      📍 Click anywhere to reposition pin
+                    </div>
+                  </div>
+
+                  <!-- Location Confirmation Bar -->
+                  <div id="mapSelectedLocationInfo" style="margin-top: 10px; padding: 10px 14px; background: #ffffff; border-radius: 10px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="color: #10b981; font-size: 1.1rem;">📍</span>
+                      <div>
+                        <strong id="mapLocalityDisplay" style="color: #0f172a; font-size: 0.84rem; display: block;">Whitefield, Bengaluru</strong>
+                        <small id="mapCoordsDisplay" style="color: #64748b; font-size: 0.74rem;">Lat: 12.9698, Lng: 77.7499 • Pin Auto-filled</small>
+                      </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <a id="btnGoogleMapsView" href="https://www.google.com/maps?q=12.9698,77.7499" target="_blank"
+                        style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.76rem; font-weight: 750; text-decoration: none;">
+                        <span>View in Google Maps ↗</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Hidden Lat & Lng form inputs -->
+                  <input type="hidden" name="latitude" id="postListingLat" value="12.9698">
+                  <input type="hidden" name="longitude" id="postListingLng" value="77.7499">
+                </div>
               </div>
 
               <!-- BHK & Property Type (2 columns) -->
@@ -1482,7 +1653,7 @@
               <h3>Builder Projects &amp; Multi-Tower Enclaves</h3>
               <p style="margin: 4px 0 0 0; font-size: 0.84rem; color: #64748b;">Promote township launches, master floor plans, and direct builder sales contacts.</p>
             </div>
-            <button class="btn-primary" onclick="openLaunchProjectModal()">+ Launch New Project</button>
+            <button class="btn-primary" data-action="launch-builder-project" onclick="openLaunchProjectModal(event)">+ Launch New Project</button>
           </div>
           <div id="vendorProjectsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
             <div style="grid-column: 1 / -1; padding: 36px 20px; text-align: center; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
@@ -1521,20 +1692,20 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table class="data-table">
+            <table class="data-table" id="ownerPayoutsTable" style="width: 100% !important; min-width: 100% !important;">
               <thead>
                 <tr>
-                  <th>Payout Ref</th>
-                  <th>Property Transaction</th>
-                  <th>Deal Value</th>
-                  <th>Type</th>
-                  <th>Earned Amount</th>
-                  <th>Payout Status</th>
+                  <th style="min-width: 110px;">Payout Ref</th>
+                  <th style="min-width: 180px;">Property Transaction</th>
+                  <th style="min-width: 110px;">Deal Value</th>
+                  <th style="min-width: 90px;">Type</th>
+                  <th style="min-width: 130px;">Earned Amount</th>
+                  <th style="min-width: 120px; text-align: right;">Payout Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">No commission payouts recorded yet. Completed transactions and verified owner payouts will appear here.</td>
+                <tr class="table-empty-row">
+                  <td colspan="6" class="table-empty-cell" style="text-align: center !important; vertical-align: middle !important; padding: 44px 24px !important; color: #64748b !important; font-weight: 500; font-size: 0.88rem; white-space: normal !important; width: 100% !important;">No commission payouts recorded yet. Completed transactions and verified owner payouts will appear here.</td>
                 </tr>
               </tbody>
             </table>
@@ -1551,7 +1722,6 @@
               <h3>Owner / Partner Profile &amp; Contact Details</h3>
               <p style="margin: 4px 0 0 0; font-size: 0.84rem; color: #64748b;">Manage your official mobile number, registered email, and verified ownership credentials for client inquiries</p>
             </div>
-            <button class="btn-primary" onclick="saveOwnerProfile()">Save Contact Details</button>
           </div>
           <form id="ownerProfileForm" onsubmit="event.preventDefault(); saveOwnerProfile();" class="form-grid">
             <div class="form-group">
@@ -1747,14 +1917,53 @@
       document.getElementById('recordLeadModal')?.classList.add('hidden');
     }
 
-    function openLaunchProjectModal() {
+    function openLaunchProjectModal(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
       document.getElementById('launchProjectModal')?.classList.remove('hidden');
     }
 
     function handleSaveProject(e) {
       e.preventDefault();
       const name = document.getElementById('newProjName')?.value || 'New Project';
+      const loc = document.getElementById('newProjLoc')?.value || 'OMR, Chennai';
+      const acres = document.getElementById('newProjAcres')?.value || '5.8 Acres';
+      const price = document.getElementById('newProjPrice')?.value || '₹95 Lakhs';
+      const date = document.getElementById('newProjPossession')?.value || 'Q3 2028';
+
+      const container = document.getElementById('vendorProjectsContainer');
+      if (container) {
+        const emptyState = container.querySelector('div[style*="grid-column: 1 / -1"]');
+        if (emptyState) emptyState.remove();
+
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.05); font-family:"Manrope",sans-serif;';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+            <span style="background:#eff6ff; color:#2563eb; font-weight:800; font-size:0.75rem; padding:4px 10px; border-radius:999px;">🏗️ Builder Project</span>
+            <span style="background:#ecfdf5; color:#059669; font-weight:700; font-size:0.75rem; padding:3px 8px; border-radius:999px;">Active</span>
+          </div>
+          <h4 style="margin:0 0 6px 0; font-size:1.1rem; font-weight:800; color:#0f172a;">${name}</h4>
+          <p style="margin:0 0 12px 0; font-size:0.84rem; color:#64748b;">📍 ${loc} · ${acres}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px;">
+            <div>
+              <span style="font-size:0.75rem; color:#94a3b8; display:block;">Starting From</span>
+              <strong style="color:#0f172a; font-size:1rem;">${price}</strong>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.75rem; color:#94a3b8; display:block;">Possession</span>
+              <span style="font-size:0.85rem; font-weight:700; color:#475569;">${date}</span>
+            </div>
+          </div>
+        `;
+        container.prepend(card);
+      }
+
       document.getElementById('launchProjectModal')?.classList.add('hidden');
+      e.target.reset();
       showOwnerToast('Builder Project "' + name + '" launched and registered successfully!');
     }
 
@@ -2035,6 +2244,15 @@
       if (activePanel) {
         activePanel.classList.remove('hidden');
         activePanel.style.setProperty('display', 'flex', 'important');
+        if (panelId === 'post-listing') {
+          const idInput = document.getElementById('postListingId');
+          const form = document.getElementById('postApartmentForm');
+          if (idInput && (!idInput.value || !form?.dataset.editingId)) {
+            if (typeof window.generateOwnerListingId === 'function') {
+              window.generateOwnerListingId();
+            }
+          }
+        }
       }
 
       // 4. Highlight target navigation button
@@ -2043,6 +2261,13 @@
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
       });
+
+      // 4b. Sync panel title clean text (without icon badge)
+      const titleElem = document.getElementById('panelTitle');
+      if (titleElem && activeBtns.length > 0) {
+        const label = activeBtns[0].querySelector('.nav-label')?.textContent?.trim() || activeBtns[0].textContent?.trim();
+        if (label) titleElem.textContent = label;
+      }
 
       // 5. Scroll page and main container to top
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -2054,6 +2279,54 @@
         history.replaceState(null, '', '#' + panelId);
       }
     }
+    window.generateOwnerListingId = async function() {
+      const input = document.getElementById("postListingId");
+      if (!input) return;
+      try {
+        let maxId = 0;
+        // 1. Check existing listings rendered in the table
+        document.querySelectorAll("#agentListingsBody tr[data-listing-id]").forEach(tr => {
+          const raw = tr.dataset.listingId || "";
+          const n = parseInt(raw.replace(/\D/g, ''), 10);
+          if (!isNaN(n) && n > maxId) maxId = n;
+        });
+        // 2. Check cached ownerProperties
+        if (window.ownerProperties && window.ownerProperties.size > 0) {
+          for (const [idStr] of window.ownerProperties) {
+            const n = parseInt(String(idStr).replace(/\D/g, ''), 10);
+            if (!isNaN(n) && n > maxId) maxId = n;
+          }
+        }
+        // 3. Check /api/my-listings endpoint to get accurate count/max ID
+        try {
+          const resp = await fetch('/api/my-listings');
+          if (resp.ok) {
+            const list = await resp.json();
+            if (Array.isArray(list)) {
+              list.forEach(item => {
+                const n = parseInt(String(item.id || item.listingId || '').replace(/\D/g, ''), 10);
+                if (!isNaN(n) && n > maxId) maxId = n;
+              });
+            }
+          }
+        } catch(e) {}
+        input.value = maxId + 1;
+      } catch(e) {
+        input.value = 1;
+      }
+    };
+
+    window.filterOwnerListingsTable = function(query) {
+      const q = (query || "").toLowerCase().trim();
+      const rows = document.querySelectorAll("#agentListingsBody tr[data-listing-id]");
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const id = (row.dataset.listingId || "").toLowerCase();
+        const matches = !q || text.includes(q) || id === q || id.includes(q) || `id: #${id}`.includes(q) || `#${id}`.includes(q);
+        row.style.display = matches ? "" : "none";
+      });
+    };
+
     window.switchTab = switchTab;
     window.openPanel = switchTab;
     window.PropertyDirectDashboardControls = window.PropertyDirectDashboardControls || {};
@@ -2064,6 +2337,9 @@
       if (initialTab === 'leads') initialTab = 'overview';
       switchTab(initialTab);
       loadSavedOwnerProfile();
+      if (typeof window.generateOwnerListingId === 'function') {
+        window.generateOwnerListingId();
+      }
     }
 
     if (document.readyState === 'loading') {
@@ -2078,7 +2354,7 @@
       switchTab(tab);
     });
   </script>
-  <script src="/propertydirect/js/market-workflows.js?v=20261008-property-workflow-v8"></script>
+  <script src="/propertydirect/js/market-workflows.js?v=20261012-center-empty-v1"></script>
   <script src="/propertydirect/js/dashboard-controls.js?v=20260910-end-to-end-buttons-v1"></script>
   <!-- Script ensuring full-page vertical scrolling is always active on owner dashboard -->
   <script>
@@ -2169,6 +2445,194 @@
       window.addEventListener('load', enhanceResponsiveTables);
       window.addEventListener('hashchange', () => setTimeout(enhanceResponsiveTables, 150));
       setInterval(enhanceResponsiveTables, 2000);
+    })();
+  </script>
+
+  <!-- Interactive Map Location Picker Script -->
+  <script>
+    (function initOwnerMapPickerModule() {
+      let map = null;
+      let marker = null;
+      let currentLat = 12.9698;
+      let currentLng = 77.7499;
+
+      function initMap() {
+        if (typeof L === 'undefined') {
+          setTimeout(initMap, 200);
+          return;
+        }
+        const mapDiv = document.getElementById("ownerMapPicker");
+        if (!mapDiv) return;
+        if (map) {
+          map.invalidateSize();
+          return;
+        }
+
+        try {
+          map = L.map("ownerMapPicker", {
+            center: [currentLat, currentLng],
+            zoom: 13
+          });
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap | Google Maps Compatible'
+          }).addTo(map);
+
+          marker = L.marker([currentLat, currentLng], {
+            draggable: true
+          }).addTo(map);
+
+          marker.bindPopup("<b>Property Location</b><br>Drag pin or click map to reposition").openPopup();
+
+          marker.on("dragend", function (e) {
+            const pos = e.target.getLatLng();
+            updateSelectedCoords(pos.lat, pos.lng, true);
+          });
+
+          map.on("click", function (e) {
+            marker.setLatLng(e.latlng);
+            updateSelectedCoords(e.latlng.lat, e.latlng.lng, true);
+          });
+
+          setTimeout(function () {
+            if (map) map.invalidateSize();
+          }, 300);
+        } catch (err) {
+          console.warn("Map initialization notice:", err);
+        }
+      }
+
+      window.toggleMapCanvas = function () {
+        const cont = document.getElementById("ownerMapPickerContainer");
+        const btn = document.getElementById("btnToggleMapPicker");
+        if (!cont) return;
+        if (cont.style.display === "none") {
+          cont.style.display = "block";
+          if (btn) btn.innerHTML = '<span>Hide Map</span> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+          if (map) setTimeout(function () { map.invalidateSize(); }, 150);
+          else initMap();
+        } else {
+          cont.style.display = "none";
+          if (btn) btn.innerHTML = '<span>Show Map</span> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        }
+      };
+
+      window.flyToMapLocation = function (lat, lng, localityName, cityName, pincode) {
+        currentLat = lat;
+        currentLng = lng;
+        if (!map) initMap();
+        if (map) {
+          map.flyTo([lat, lng], 15, { duration: 1.2 });
+          if (marker) {
+            marker.setLatLng([lat, lng]);
+            marker.bindPopup(`<b>${localityName}</b><br>${cityName || 'Bengaluru'}`).openPopup();
+          }
+        }
+        updateSelectedCoords(lat, lng, false);
+        if (localityName) {
+          const el = document.querySelector('[name="locality"]');
+          if (el) el.value = localityName;
+        }
+        if (cityName) {
+          const el = document.querySelector('[name="city"]');
+          if (el) el.value = cityName;
+        }
+        if (pincode) {
+          const el = document.querySelector('[name="pincode"]');
+          if (el) el.value = pincode;
+        }
+      };
+
+      async function updateSelectedCoords(lat, lng, shouldReverseGeocode) {
+        const latInp = document.getElementById("postListingLat");
+        const lngInp = document.getElementById("postListingLng");
+        if (latInp) latInp.value = lat.toFixed(6);
+        if (lngInp) lngInp.value = lng.toFixed(6);
+
+        const coordsDisplay = document.getElementById("mapCoordsDisplay");
+        if (coordsDisplay) coordsDisplay.textContent = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)} • Pin Updated`;
+
+        const gmapsLink = document.getElementById("btnGoogleMapsView");
+        if (gmapsLink) gmapsLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+
+        if (shouldReverseGeocode) {
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`);
+            if (res.ok) {
+              const data = await res.json();
+              const addr = data.address || {};
+              const locality = addr.suburb || addr.neighbourhood || addr.residential || addr.village || addr.city_district || "";
+              const city = addr.city || addr.town || addr.state_district || "Bengaluru";
+              const pincode = addr.postcode || "";
+
+              if (locality) {
+                const el = document.querySelector('[name="locality"]');
+                if (el) el.value = locality;
+              }
+              if (city) {
+                const el = document.querySelector('[name="city"]');
+                if (el) el.value = city;
+              }
+              if (pincode) {
+                const el = document.querySelector('[name="pincode"]');
+                if (el) el.value = pincode;
+              }
+              const locDisplay = document.getElementById("mapLocalityDisplay");
+              if (locDisplay) locDisplay.textContent = (locality ? locality + ", " : "") + city;
+            }
+          } catch (_) {}
+        }
+      }
+
+      window.searchLocationOnMap = async function () {
+        const input = document.getElementById("mapSearchInput");
+        const q = input?.value?.trim();
+        if (!q) return;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Bengaluru, India')}&limit=1`);
+          if (res.ok) {
+            const results = await res.json();
+            if (results && results.length > 0) {
+              const lat = parseFloat(results[0].lat);
+              const lng = parseFloat(results[0].lon);
+              flyToMapLocation(lat, lng, q, "Bengaluru");
+            } else {
+              alert(`Could not find "${q}" on the map.`);
+            }
+          }
+        } catch (e) {
+          alert("Search error: " + e.message);
+        }
+      };
+
+      window.detectOwnerLocationGPS = function () {
+        if (!navigator.geolocation) {
+          alert("Geolocation is not supported by your browser.");
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            flyToMapLocation(pos.coords.latitude, pos.coords.longitude, "Current GPS Location", "Bengaluru");
+          },
+          function (err) {
+            alert("Unable to retrieve GPS location: " + err.message);
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      };
+
+      function checkAndInit() {
+        if (window.location.hash === "#post-listing" || (document.getElementById("post-listing") && !document.getElementById("post-listing").classList.contains("hidden"))) {
+          setTimeout(initMap, 250);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", checkAndInit);
+      window.addEventListener("hashchange", checkAndInit);
+      document.querySelectorAll('a[href="#post-listing"], [data-tab="post-listing"], [data-route="post-listing"]').forEach(function (el) {
+        el.addEventListener("click", function () { setTimeout(initMap, 300); });
+      });
     })();
   </script>
 </body>

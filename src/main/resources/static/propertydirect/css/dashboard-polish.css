@@ -472,16 +472,16 @@ html body.app-dashboard[data-platform="propertydirect"] #agentLeadsContainer td 
   box-sizing: border-box !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll td:last-child,
-html body.app-dashboard[data-platform="propertydirect"] #agentLeadsContainer td:last-child {
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll td:last-child:not([colspan]),
+html body.app-dashboard[data-platform="propertydirect"] #agentLeadsContainer td:last-child:not([colspan]) {
   min-width: 270px !important;
   width: 270px !important;
   white-space: nowrap !important;
   text-align: right !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll td:last-child > div,
-html body.app-dashboard[data-platform="propertydirect"] #agentLeadsContainer td:last-child > div {
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll td:last-child:not([colspan]) > div,
+html body.app-dashboard[data-platform="propertydirect"] #agentLeadsContainer td:last-child:not([colspan]) > div {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-end !important;

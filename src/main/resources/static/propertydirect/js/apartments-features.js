@@ -106,15 +106,18 @@
     };
 
     function updateSavedSearchesBadges() {
-        const count = savedSearchesList.length;
-        document.querySelectorAll('.saved-searches-count').forEach(badge => {
-            badge.textContent = count;
-            badge.style.display = count > 0 ? 'inline-flex' : 'none';
+        let savedListingsCount = 0;
+        try {
+            savedListingsCount = JSON.parse(localStorage.getItem('propertydirect-saved-listings') || '[]').length;
+        } catch(e) {}
+        document.querySelectorAll('.saved-searches-count, .saved-properties-count').forEach(badge => {
+            badge.textContent = savedListingsCount;
+            badge.style.display = savedListingsCount > 0 ? 'inline-flex' : 'none';
         });
         const toolbarBadge = document.getElementById('savedSearchesCountBadge');
-        if (toolbarBadge) toolbarBadge.textContent = count;
+        if (toolbarBadge) toolbarBadge.textContent = savedListingsCount;
         const navBadge = document.getElementById('navSavedSearchesCount');
-        if (navBadge) navBadge.textContent = count;
+        if (navBadge) navBadge.textContent = savedListingsCount;
     }
 
     // CREATE: Save search in real time

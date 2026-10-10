@@ -34,7 +34,9 @@ const panelTitles = {
     contacts: "Owner Contacts",
     rentpay: "Rent Pay",
     "saved-searches": "Saved Searches and Alerts",
-    "service-requests": "Service & Maintenance Requests"
+    "service-requests": "Service & Maintenance Requests",
+    "my-properties": "Property Inventory & Queue",
+    "verifications": "Owner & Builder Verification"
 };
 
 const toast = document.getElementById("toast");
@@ -103,8 +105,34 @@ function readPropertyProfile() {
     catch { return defaults; }
 }
 
+function syncProfileDisplay(profile) {
+    if (!profile) return;
+    const name = profile.fullName || "Property Moderator";
+    const initials = name.split(/\s+/).filter(Boolean).map(word => word[0]).join("").slice(0, 2).toUpperCase() || "PM";
+
+    // 1. Profile Summary Panel (left card)
+    const summaryAvatar = document.querySelector(".property-profile-avatar");
+    if (summaryAvatar) summaryAvatar.textContent = initials;
+    const summaryName = document.querySelector(".property-profile-summary h3");
+    if (summaryName) summaryName.textContent = name;
+
+    // 2. Header user badge
+    const headerAvatar = document.querySelector(".user-avatar-badge");
+    if (headerAvatar) {
+        headerAvatar.textContent = initials;
+        headerAvatar.setAttribute("title", `${name} (${profile.roleLabel || "Administrator"})`);
+    }
+
+    // 3. Sidebar user card
+    const sidebarAvatar = document.querySelector(".sidebar-user-avatar");
+    if (sidebarAvatar) sidebarAvatar.textContent = initials;
+    const sidebarName = document.querySelector(".sidebar-user-name");
+    if (sidebarName) sidebarName.textContent = name;
+}
+window.syncProfileDisplay = syncProfileDisplay;
+
 function propertyProfileMarkup(profile) {
-    const initials = profile.fullName.split(/\s+/).map(word => word[0]).join("").slice(0, 2).toUpperCase();
+    const initials = (profile.fullName || "PM").split(/\s+/).filter(Boolean).map(word => word[0]).join("").slice(0, 2).toUpperCase() || "PM";
     return `
         <div class="property-profile-layout">
             <aside class="property-profile-summary">
@@ -113,14 +141,36 @@ function propertyProfileMarkup(profile) {
                 <dl><div><dt>Profile ID</dt><dd>${profile.employeeId}</dd></div><div><dt>Member since</dt><dd>August 2026</dd></div><div><dt>Last login</dt><dd>Today, 10:42 AM</dd></div><div><dt>Profile status</dt><dd>100% complete</dd></div></dl>
             </aside>
             <div class="property-profile-card">
-                <div class="property-profile-head"><div><h3>Profile information</h3><p>Maintain your personal, contact, address, role and account-security information.</p></div><div class="property-profile-actions"><button type="button" class="profile-cancel" data-profile-action="cancel" hidden>Cancel</button><button type="button" class="primary" data-profile-action="edit">Edit profile</button><button type="button" class="primary" data-profile-action="save" hidden>Save changes</button></div></div>
-                <form class="property-profile-form" id="propertyProfileForm">
+                <div class="property-profile-head">
+                    <div>
+                        <h3>Profile information</h3>
+                        <p>Maintain your personal, contact, address, role and account-security information.</p>
+                    </div>
+                    <div class="property-profile-actions">
+                        <button type="button" class="profile-cancel" data-profile-action="cancel" onclick="window.cancelPropertyProfileEdit && window.cancelPropertyProfileEdit(event)" hidden>Cancel</button>
+                        <button type="button" class="primary" data-profile-action="edit" onclick="window.startPropertyProfileEdit && window.startPropertyProfileEdit(event)">Edit profile</button>
+                        <button type="button" class="primary" data-profile-action="save" onclick="window.savePropertyProfile && window.savePropertyProfile(event)" hidden>Save changes</button>
+                    </div>
+                </div>
+                <form class="property-profile-form" id="propertyProfileForm" onsubmit="event.preventDefault(); window.savePropertyProfile && window.savePropertyProfile(event);">
                     <div class="property-profile-section"><strong>Personal details</strong><small>Your primary identity and communication information.</small></div>
-                    <label>Full name<input name="fullName" value="${profile.fullName}" required disabled></label><label>Email address<input name="email" type="email" value="${profile.email}" required disabled></label><label>Mobile number<input name="phone" value="${profile.phone}" required disabled></label><label>Alternate mobile<input name="alternatePhone" value="${profile.alternatePhone}" placeholder="Optional" disabled></label>
+                    <label>Full name<input name="fullName" value="${profile.fullName || ''}" required disabled></label>
+                    <label>Email address<input name="email" type="email" value="${profile.email || ''}" required disabled></label>
+                    <label>Mobile number<input name="phone" value="${profile.phone || ''}" required disabled></label>
+                    <label>Alternate mobile<input name="alternatePhone" value="${profile.alternatePhone || ''}" placeholder="Optional" disabled></label>
                     <div class="property-profile-section"><strong>Role and organisation</strong><small>Account ownership and operational responsibility.</small></div>
-                    <label>Profile / employee ID<input name="employeeId" value="${profile.employeeId}" disabled></label><label>Account role<input value="${profile.roleLabel}" disabled data-permanent-disabled></label><label>Department / account type<input name="department" value="${profile.department}" disabled></label><label>Designation<input name="designation" value="${profile.designation}" disabled></label>
+                    <label>Profile / employee ID<input name="employeeId" value="${profile.employeeId || ''}" disabled></label>
+                    <label>Account role<input value="${profile.roleLabel || ''}" disabled data-permanent-disabled></label>
+                    <label>Department / account type<input name="department" value="${profile.department || ''}" disabled></label>
+                    <label>Designation<input name="designation" value="${profile.designation || ''}" disabled></label>
                     <div class="property-profile-section"><strong>Address and preferences</strong><small>Location, language and regional settings.</small></div>
-                    <label class="profile-wide">Address<textarea name="address" disabled>${profile.address}</textarea></label><label>City<input name="city" value="${profile.city}" disabled></label><label>State<input name="state" value="${profile.state}" disabled></label><label>Postal code<input name="postalCode" value="${profile.postalCode}" disabled></label><label>Timezone<select name="timezone" disabled><option selected>${profile.timezone}</option><option>UTC</option><option>Asia/Dubai</option></select></label><label>Language<select name="language" disabled><option selected>${profile.language}</option><option>Hindi</option><option>Tamil</option><option>Kannada</option></select></label><label>Two-factor authentication<select name="twoFactor" disabled><option ${profile.twoFactor === "Enabled" ? "selected" : ""}>Enabled</option><option ${profile.twoFactor === "Optional" ? "selected" : ""}>Optional</option><option>Disabled</option></select></label>
+                    <label class="profile-wide">Address<textarea name="address" disabled>${profile.address || ''}</textarea></label>
+                    <label>City<input name="city" value="${profile.city || ''}" disabled></label>
+                    <label>State<input name="state" value="${profile.state || ''}" disabled></label>
+                    <label>Postal code<input name="postalCode" value="${profile.postalCode || ''}" disabled></label>
+                    <label>Timezone<select name="timezone" disabled><option selected>${profile.timezone || 'Asia/Kolkata'}</option><option>UTC</option><option>Asia/Dubai</option></select></label>
+                    <label>Language<select name="language" disabled><option selected>${profile.language || 'English'}</option><option>Hindi</option><option>Tamil</option><option>Kannada</option></select></label>
+                    <label>Two-factor authentication<select name="twoFactor" disabled><option ${profile.twoFactor === "Enabled" ? "selected" : ""}>Enabled</option><option ${profile.twoFactor === "Optional" ? "selected" : ""}>Optional</option><option>Disabled</option></select></label>
                 </form>
             </div>
         </div>`;
@@ -134,20 +184,132 @@ function ensureRoleProfileSection() {
     if (!navButton) { navButton = document.createElement("button"); navButton.type = "button"; navButton.dataset.panel = "profile"; navButton.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg><span>My Profile</span>'; nav.appendChild(navButton); }
     let section = main.querySelector('[data-view="profile"]');
     if (!section) { section = document.createElement("section"); section.className = "dash-panel hidden"; section.dataset.view = "profile"; main.insertBefore(section, document.getElementById("dashboardModal") || null); }
-    section.innerHTML = propertyProfileMarkup(readPropertyProfile());
+    const current = readPropertyProfile();
+    section.innerHTML = propertyProfileMarkup(current);
+    syncProfileDisplay(current);
 }
+
+function startPropertyProfileEdit(event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    const form = document.getElementById("propertyProfileForm");
+    const card = document.querySelector(".property-profile-card");
+    if (!form || !card) return;
+
+    form.querySelectorAll("input,select,textarea").forEach(field => {
+        if (!field.hasAttribute("data-permanent-disabled")) {
+            field.disabled = false;
+        }
+    });
+
+    card.classList.add("is-editing");
+
+    const editBtn = card.querySelector('[data-profile-action="edit"]');
+    const saveBtn = card.querySelector('[data-profile-action="save"]');
+    const cancelBtn = card.querySelector('[data-profile-action="cancel"]');
+    if (editBtn) { editBtn.hidden = true; editBtn.style.setProperty("display", "none", "important"); }
+    if (saveBtn) { saveBtn.hidden = false; saveBtn.style.setProperty("display", "inline-flex", "important"); }
+    if (cancelBtn) { cancelBtn.hidden = false; cancelBtn.style.setProperty("display", "inline-flex", "important"); }
+
+    const firstInput = form.querySelector('input[name="fullName"]');
+    if (firstInput) {
+        firstInput.focus();
+        try { firstInput.select(); } catch (_) {}
+    }
+}
+window.startPropertyProfileEdit = startPropertyProfileEdit;
+
+function cancelPropertyProfileEdit(event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    const form = document.getElementById("propertyProfileForm");
+    const card = document.querySelector(".property-profile-card");
+    if (!form || !card) return;
+
+    const saved = readPropertyProfile();
+    form.querySelectorAll("input[name], select[name], textarea[name]").forEach(field => {
+        if (saved[field.name] !== undefined) {
+            field.value = saved[field.name];
+        }
+        if (!field.hasAttribute("data-permanent-disabled")) {
+            field.disabled = true;
+        }
+    });
+
+    card.classList.remove("is-editing");
+
+    const editBtn = card.querySelector('[data-profile-action="edit"]');
+    const saveBtn = card.querySelector('[data-profile-action="save"]');
+    const cancelBtn = card.querySelector('[data-profile-action="cancel"]');
+    if (editBtn) { editBtn.hidden = false; editBtn.style.setProperty("display", "inline-flex", "important"); }
+    if (saveBtn) { saveBtn.hidden = true; saveBtn.style.setProperty("display", "none", "important"); }
+    if (cancelBtn) { cancelBtn.hidden = true; cancelBtn.style.setProperty("display", "none", "important"); }
+
+    showToast("Profile changes cancelled");
+}
+window.cancelPropertyProfileEdit = cancelPropertyProfileEdit;
 
 function setPropertyProfileEditing(editing) {
-    const form = document.getElementById("propertyProfileForm"); if (!form) return;
-    form.querySelectorAll("input,select,textarea").forEach(field => { if (!field.hasAttribute("data-permanent-disabled")) field.disabled = !editing; });
-    document.querySelector('[data-profile-action="edit"]')?.toggleAttribute("hidden", editing); document.querySelector('[data-profile-action="save"]')?.toggleAttribute("hidden", !editing); document.querySelector('[data-profile-action="cancel"]')?.toggleAttribute("hidden", !editing);
-    form.closest(".property-profile-card")?.classList.toggle("is-editing", editing);
+    if (editing) startPropertyProfileEdit();
+    else cancelPropertyProfileEdit();
 }
+window.setPropertyProfileEditing = setPropertyProfileEditing;
 
-function savePropertyProfile() {
-    const form = document.getElementById("propertyProfileForm"); if (!form || !form.reportValidity()) return;
-    const saved = { ...readPropertyProfile(), ...Object.fromEntries(new FormData(form).entries()) }; localStorage.setItem(propertyProfileStorageKey, JSON.stringify(saved)); ensureRoleProfileSection(); showToast("Profile changes saved");
+function savePropertyProfile(event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    const form = document.getElementById("propertyProfileForm");
+    const card = document.querySelector(".property-profile-card");
+    if (!form) return;
+
+    if (!form.reportValidity()) {
+        showToast("Please fill in required profile fields correctly");
+        return;
+    }
+
+    const current = readPropertyProfile();
+    const updated = { ...current };
+    form.querySelectorAll("input[name], select[name], textarea[name]").forEach(field => {
+        if (field.name) {
+            updated[field.name] = (field.value || "").trim();
+        }
+    });
+
+    if (!updated.fullName) {
+        showToast("Full name is required");
+        return;
+    }
+
+    try {
+        localStorage.setItem(propertyProfileStorageKey, JSON.stringify(updated));
+    } catch (e) {
+        console.warn("Unable to save profile to localStorage:", e);
+    }
+
+    form.querySelectorAll("input,select,textarea").forEach(field => {
+        field.disabled = true;
+    });
+
+    if (card) {
+        card.classList.remove("is-editing");
+        const editBtn = card.querySelector('[data-profile-action="edit"]');
+        const saveBtn = card.querySelector('[data-profile-action="save"]');
+        const cancelBtn = card.querySelector('[data-profile-action="cancel"]');
+        if (editBtn) { editBtn.hidden = false; editBtn.style.setProperty("display", "inline-flex", "important"); }
+        if (saveBtn) { saveBtn.hidden = true; saveBtn.style.setProperty("display", "none", "important"); }
+        if (cancelBtn) { cancelBtn.hidden = true; cancelBtn.style.setProperty("display", "none", "important"); }
+    }
+
+    syncProfileDisplay(updated);
+
+    try {
+        fetch("/api/property/portal/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ name: updated.fullName, phone: updated.phone })
+        }).catch(() => {});
+    } catch (_) {}
+
+    showToast("✓ Profile changes saved successfully!");
 }
+window.savePropertyProfile = savePropertyProfile;
 
 function readPublishedListings() {
     try {
@@ -1001,6 +1163,11 @@ function receipt(title, target, values = [], extra = []) {
 }
 
 function openPanel(panel, updateHistory = true) {
+    if (window.switchTabAndFilter && (dashboardRole === 'admin' || document.body.dataset.dashboardRole === 'admin' || document.querySelector('[data-view="my-properties"]'))) {
+        window.switchTabAndFilter(panel);
+        if (updateHistory && location.hash !== `#${panel}`) history.pushState(null, "", `#${panel}`);
+        return;
+    }
     const selectedView = document.querySelector(`[data-view="${panel}"]`);
     if (!selectedView) return;
     document.querySelectorAll("[data-panel]").forEach((button) => {
@@ -1012,10 +1179,11 @@ function openPanel(panel, updateHistory = true) {
         const shouldHide = view !== selectedView;
         view.classList.toggle("hidden", shouldHide);
         view.classList.toggle("d-none", shouldHide);
+        view.hidden = shouldHide;
         if (shouldHide) {
-            view.style.display = "none";
+            view.style.setProperty("display", "none", "important");
         } else {
-            view.style.display = "";
+            view.style.setProperty("display", "flex", "important");
         }
     });
     const title = document.getElementById("panelTitle");
@@ -1470,7 +1638,7 @@ function ensureCustomerDashboardScaffold() {
     if (supportCard && !document.getElementById("supportState")) {
         supportCard.querySelector("h3")?.insertAdjacentHTML("afterend", '<span class="inline-state" id="supportState">Ready</span>');
     }
-    if (supportCard && !document.getElementById("supportTickets")) {
+    if (supportCard && !document.getElementById("supportTickets") && document.body?.dataset?.dashboardRole !== "customer") {
         supportCard.insertAdjacentHTML("beforeend", '<h3>Tickets</h3><ul class="task-list" id="supportTickets"><li>No active support tickets</li></ul>');
     }
 }
@@ -2475,7 +2643,19 @@ function enhanceDashboardCategories() {
 
 document.addEventListener("click", async (event) => {
     const profileAction = event.target.closest("[data-profile-action]");
-    if (profileAction) { event.preventDefault(); if (profileAction.dataset.profileAction === "edit") setPropertyProfileEditing(true); if (profileAction.dataset.profileAction === "cancel") { ensureRoleProfileSection(); showToast("Profile changes cancelled"); } if (profileAction.dataset.profileAction === "save") savePropertyProfile(); return; }
+    if (profileAction) {
+        event.preventDefault();
+        event.stopPropagation();
+        const actionType = profileAction.dataset.profileAction;
+        if (actionType === "edit") {
+            window.startPropertyProfileEdit ? window.startPropertyProfileEdit(event) : setPropertyProfileEditing(true);
+        } else if (actionType === "cancel") {
+            window.cancelPropertyProfileEdit ? window.cancelPropertyProfileEdit(event) : cancelPropertyProfileEdit(event);
+        } else if (actionType === "save") {
+            window.savePropertyProfile ? window.savePropertyProfile(event) : savePropertyProfile(event);
+        }
+        return;
+    }
     const navigationItem = event.target.closest(".sidebar-nav [data-panel]");
     if (navigationItem) { event.preventDefault(); openPanel(navigationItem.dataset.panel); if (innerWidth <= 900) document.body.classList.remove("sidebar-open"); return; }
     const panelTile = event.target.closest("[data-category-panel]");

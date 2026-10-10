@@ -153,21 +153,29 @@
     function reportPage() {return panel('Property reports',state.reports.length?state.reports.map(r=>`<article class="record-card"><div class="panel-head"><h3>Property #${r.listingId} · Report #${r.id}</h3>${badge(r.status)}</div><p>${esc(r.reason)}</p>${r.resolution?`<p class="reply-box">${esc(r.resolution)}</p>`:''}${isAdmin()&&r.status==='OPEN'?button('Resolve report','resolve-report',r.id,'primary'):''}</article>`).join(''):empty('No reports','Reports submitted from property pages appear here.'));}
     function activityPage() {return panel('Activity history',state.audit.length?table(['Time','Action','Record','Performed by','Details'],state.audit.map(a=>`<tr><td>${date(a.createdAt)}</td><td>${esc(a.action.replaceAll('_',' '))}</td><td>${esc(a.targetType)} #${a.targetId}</td><td>${esc(a.actor)}</td><td>${esc(a.detail)}</td></tr>`)):empty('No recorded activity yet'));}
     function profilePage() {
-        return panel('Your profile & search preferences',`<form data-form="profile" class="form-grid">
+        return `<div class="profile-layout">`+panel('Your profile & search preferences',`<form data-form="profile" class="profile-form">
+            <fieldset class="profile-section"><legend>Contact details</legend><p>Keep your details current so property owners can reach you.</p><div class="form-grid">
             ${input('Full name','name',state.me.name,'text','required maxlength="120"')}
             ${input('Phone','phone',state.me.phone,'tel','required pattern="[0-9+() -]{7,20}"')}
-            ${input('Preferred City','preferredCity',state.me.preferredCity||'')}
-            ${input('Preferred Locality','preferredLocality',state.me.preferredLocality||'')}
+            <div class="profile-email full"><span>Registered email</span><strong>${esc(state.me.email)}</strong></div>
+            </div></fieldset>
+            <fieldset class="profile-section"><legend>What are you looking for?</legend><p>These optional preferences help you find relevant properties.</p><div class="form-grid">
+            ${input('Preferred city','preferredCity',state.me.preferredCity||'','text','maxlength="120" placeholder="e.g. Chennai"')}
+            ${input('Preferred locality','preferredLocality',state.me.preferredLocality||'','text','maxlength="160" placeholder="e.g. Anna Nagar"')}
             ${select('Preferred Purpose','preferredListingType',[['','Any purpose'],['BUY','Buy / Sale'],['RENT','Rent'],['LEASE','Lease']],state.me.preferredListingType||'')}
             ${select('Preferred Property Type','preferredPropertyType',[['','Any type'],['APARTMENT','Apartment'],['VILLA','Villa'],['PLOT','Plot'],['COMMERCIAL','Commercial']],state.me.preferredPropertyType||'')}
             ${select('Preferred Bedrooms','preferredBhk',[['','Any BHK'],['1 BHK','1 BHK'],['2 BHK','2 BHK'],['3 BHK','3 BHK'],['4+ BHK','4+ BHK']],state.me.preferredBhk||'')}
-            ${input('Min Budget (₹)','budgetMin',state.me.budgetMin||'','number','min="0"')}
-            ${input('Max Budget (₹)','budgetMax',state.me.budgetMax||'','number','min="0"')}
-            ${select('Email Match Alerts','emailAlertsEnabled',[['true','Receive email alerts for matching properties'],['false','Do not send email alerts']],String(state.me.emailAlertsEnabled!==false))}
-            <p class="form-note full">Registered email: ${esc(state.me.email)}</p>
-            ${formActions('Save profile & preferences')}
-        </form>`)+
-            panel('Apply for posting access',state.me.postingVerified?`<p>${badge('APPROVED')} Your ${esc(state.me.role.toLowerCase())} posting access is verified.</p>`:state.me.application?.decision==='PENDING'?`<p>${badge('PENDING')} Your ${esc(state.me.application.requestedRole.toLowerCase())} application is awaiting review.</p>`:`<form data-form="application" class="form-grid"><p class="form-note full">Owners post their own properties. Builders post their own projects and units. An administrator will check these details before approving posting access.</p>${select('Apply as','role',['OWNER','BUILDER'],'OWNER','required')}${input('Company name (required for builders)','companyName','','text','maxlength="160"')}${input('Registration / verification reference','registrationNumber','','text','maxlength="160"')}${textarea('Ownership or company verification details','verificationDetails','','required minlength="20" maxlength="2000"')}${state.me.application?.reviewNote?`<p class="form-note full">Previous review: ${esc(state.me.application.reviewNote)}</p>`:''}${formActions('Submit application')}</form>`);
+            </div><div class="form-grid profile-budget">
+            ${input('Minimum budget (₹)','budgetMin',state.me.budgetMin??'','number','min="0" step="0.01" placeholder="No minimum"')}
+            ${input('Maximum budget (₹)','budgetMax',state.me.budgetMax??'','number','min="0" step="0.01" placeholder="No maximum"')}
+            </div><p class="profile-help">For rent, enter your monthly budget. For buying, enter the total property price.</p></fieldset>
+            <fieldset class="profile-section"><legend>Property match alerts</legend><p>Choose whether to receive matching property updates at your registered email.</p>
+            ${select('Email alerts','emailAlertsEnabled',[['true','Enabled — send matching properties'],['false','Disabled — no email alerts']],String(state.me.emailAlertsEnabled!==false))}
+            </fieldset>
+            <div class="profile-save"><span data-profile-status role="status">Your saved preferences</span><button type="submit" class="primary">Save changes</button></div>
+        </form>`,'','Manage your contact information and personalise your property search.')+
+            panel('Apply for posting access',state.me.postingVerified?`<p>${badge('APPROVED')} Your ${esc(state.me.role.toLowerCase())} posting access is verified.</p>`:state.me.application?.decision==='PENDING'?`<p>${badge('PENDING')} Your ${esc(state.me.application.requestedRole.toLowerCase())} application is awaiting review.</p>`:`<form data-form="application" class="form-grid"><p class="form-note full">Owners post their own properties. Builders post their own projects and units. An administrator will check these details before approving posting access.</p>${select('Apply as','role',['OWNER','BUILDER'],'OWNER','required')}${input('Company name (required for builders)','companyName','','text','maxlength="160"')}${input('Registration / verification reference','registrationNumber','','text','maxlength="160"')}${textarea('Ownership or company verification details','verificationDetails','','required minlength="20" maxlength="2000"')}${state.me.application?.reviewNote?`<p class="form-note full">Previous review: ${esc(state.me.application.reviewNote)}</p>`:''}${formActions('Submit application')}</form>`)+
+            `</div>`;
     }
 
     async function showPropertyAction(id,action) {
@@ -262,6 +270,10 @@
         const form=event.target.closest('[data-form]');if(!form) return;event.preventDefault();
         if(!form.reportValidity()) return;
         const submit=event.submitter;const values=Object.fromEntries(new FormData(form));const kind=form.dataset.form,id=form.dataset.id;
+        if(kind==='profile' && values.budgetMin!=='' && values.budgetMax!=='' && Number(values.budgetMin)>Number(values.budgetMax)) {
+            form.elements.budgetMax.setCustomValidity('Maximum budget must be at least the minimum budget.');
+            form.elements.budgetMax.reportValidity();return;
+        }
         if(form.dataset.saving==='true') return;form.dataset.saving='true';if(submit) submit.disabled=true;
         try {
             if(kind==='profile') {
@@ -295,6 +307,10 @@
         }catch(error){notify(error.message,true);}finally{delete form.dataset.saving;if(submit) submit.disabled=false;}
     });
     document.addEventListener('input',event=>{
+        if(event.target.form?.dataset.form==='profile') {
+            event.target.form.elements.budgetMax.setCustomValidity('');
+            event.target.form.querySelector('[data-profile-status]').textContent='Unsaved changes';
+        }
         if(event.target.matches('[data-filter-table]')) {const q=event.target.value.toLowerCase();$('#workspaceContent').querySelectorAll('[data-search-row]').forEach(row=>{row.hidden=!row.textContent.toLowerCase().includes(q);});}
         if(event.target.matches('[name="ownerId"]')) {
             const project=event.target.form.elements.projectId;

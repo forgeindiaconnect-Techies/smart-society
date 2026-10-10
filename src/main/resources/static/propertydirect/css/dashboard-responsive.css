@@ -381,7 +381,7 @@ html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable {
 }
 
 html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable th:last-child,
-html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child {
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child:not([colspan]) {
   min-width: 340px;
   white-space: nowrap;
 }
@@ -403,7 +403,7 @@ html body.app-dashboard[data-platform="propertydirect"] #userMgmtStatusFilter + 
 /* User-directory actions have fixed tracks so "Block" and "Unblock" do not
    shift the rest of the row. Every control begins on the same vertical line. */
 html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable th:last-child,
-html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child {
+html body.app-dashboard[data-platform="propertydirect"] #userMgmtTable td:last-child:not([colspan]) {
   text-align: left !important;
   vertical-align: middle !important;
 }
@@ -488,7 +488,7 @@ html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable {
 }
 
 html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable th:last-child,
-html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable td:last-child {
+html body.app-dashboard[data-platform="propertydirect"] #ownerMgmtTable td:last-child:not([colspan]) {
   min-width: 324px !important;
   white-space: nowrap !important;
   text-align: left !important;
@@ -678,7 +678,7 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-brand {
   margin: 0 !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role="admin"], [data-dashboard-role="customer"]) main.dash-main > .dash-header {
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main.dash-main > .dash-header {
   width: 100% !important;
   max-width: 100% !important;
   height: 76px !important;
@@ -700,7 +700,7 @@ html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role=
   justify-content: space-between !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"]:is([data-dashboard-role="admin"], [data-dashboard-role="customer"]) main.dash-main > .dash-panel {
+html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main.dash-main > .dash-panel {
   margin-left: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -806,19 +806,19 @@ html body[data-platform="propertydirect"] .dashboard-table-scroll td button {
 }
 
 html body[data-platform="propertydirect"] :is(
-  .dashboard-table-scroll td:last-child,
+  .dashboard-table-scroll td:last-child:not([colspan]),
   .dashboard-table-scroll th:last-child,
-  td[class*="action"],
+  td[class*="action"]:not([colspan]),
   th[class*="action"]
 ) {
   min-width: 320px !important;
 }
 
 html body[data-platform="propertydirect"] :is(
-  .dashboard-table-scroll td:last-child > div,
-  .dashboard-table-scroll td:last-child .action-buttons,
-  .dashboard-table-scroll td:last-child .controls,
-  .dashboard-table-scroll td:last-child .table-actions
+  .dashboard-table-scroll td:last-child:not([colspan]) > div,
+  .dashboard-table-scroll td:last-child:not([colspan]) .action-buttons,
+  .dashboard-table-scroll td:last-child:not([colspan]) .controls,
+  .dashboard-table-scroll td:last-child:not([colspan]) .table-actions
 ) {
   display: inline-flex !important;
   flex-direction: row !important;
@@ -840,15 +840,99 @@ html body[data-platform="propertydirect"] :is(.pd-form-step-btn, #postApartmentF
   line-height: 1.1 !important;
 }
 
+/* Profile Action Buttons - State-aware visibility & styling */
 html body.app-dashboard[data-platform="propertydirect"] :is([data-profile-action], .property-profile-actions button, .profile-cancel) {
-  min-height: 42px !important;
-  min-width: 118px !important;
-  padding: 9px 16px !important;
-  display: inline-flex !important;
+  min-height: 40px !important;
+  min-width: 112px !important;
+  padding: 8px 18px !important;
   align-items: center !important;
   justify-content: center !important;
   white-space: nowrap !important;
   line-height: 1.1 !important;
+  border-radius: 10px !important;
+  font-family: inherit !important;
+  font-size: 0.88rem !important;
+  font-weight: 750 !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 1. HIDE states - Guaranteed override */
+html body.app-dashboard[data-platform="propertydirect"] :is([data-profile-action], .property-profile-actions button, .profile-cancel)[hidden],
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action][hidden],
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-actions button[hidden],
+html body.app-dashboard[data-platform="propertydirect"] .profile-cancel[hidden],
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="cancel"],
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="save"],
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) .profile-cancel,
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="edit"] {
+  display: none !important;
+}
+
+/* 2. SHOW states */
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="edit"]:not([hidden]) {
+  display: inline-flex !important;
+}
+
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="cancel"]:not([hidden]),
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .profile-cancel:not([hidden]),
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="save"]:not([hidden]) {
+  display: inline-flex !important;
+}
+
+/* 3. Button Themes */
+/* Edit Profile: Deep navy button with subtle lift */
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="edit"] {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #0f172a !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16) !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="edit"]:hover {
+  background: #1e293b !important;
+  border-color: #1e293b !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.24) !important;
+}
+
+/* Cancel: Neutral clean button */
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="cancel"],
+html body.app-dashboard[data-platform="propertydirect"] .profile-cancel {
+  background: #ffffff !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="cancel"]:hover,
+html body.app-dashboard[data-platform="propertydirect"] .profile-cancel:hover {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Save changes: Royal blue primary button */
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="save"] {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+}
+html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="save"]:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38) !important;
+}
+
+/* Form field styling when in editing mode */
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form input:not(:disabled),
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form select:not(:disabled),
+html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form textarea:not(:disabled) {
+  background: #ffffff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+  cursor: text !important;
 }
 
 /* Admin reports dashboard: balanced cards with clear label/value separation. */
@@ -1053,7 +1137,7 @@ html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel d
   scrollbar-width: none !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel table td:last-child {
+html body.app-dashboard[data-platform="propertydirect"] .dash-main .dash-panel table td:last-child:not([colspan]) {
   min-width: var(--dashboard-sidebar-width) !important;
 }
 
@@ -1560,14 +1644,32 @@ html body[data-dashboard-role="vendor"] :is(.dash-card:has(.dashboard-table-scro
   width: 100% !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:first-child, td:first-child),
-html body[data-dashboard-role="vendor"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:first-child, td:first-child) {
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:first-child, td:first-child:not([colspan])),
+html body[data-dashboard-role="vendor"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:first-child, td:first-child:not([colspan])) {
   padding-left: 24px !important;
 }
 
-html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:last-child, td:last-child),
-html body[data-dashboard-role="vendor"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:last-child, td:last-child) {
+html body.app-dashboard[data-platform="propertydirect"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:last-child, td:last-child:not([colspan])),
+html body[data-dashboard-role="vendor"] :is(.dash-card:has(.dashboard-table-scroll), .dash-card.table-card, .dash-card:has(table)) table :is(th:last-child, td:last-child:not([colspan])) {
   padding-right: 24px !important;
+}
+
+/* Universal centering and styling for empty states and colspan rows */
+html body.app-dashboard[data-platform="propertydirect"] table td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] .data-table td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] .table-responsive td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] tbody tr td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] .dash-panel[data-view="earnings"] table td[colspan],
+html body.app-dashboard[data-platform="propertydirect"] #ownerPayoutsTable td[colspan],
+html body[data-dashboard-role="vendor"] table td[colspan] {
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 44px 20px !important;
+  color: #64748b !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  white-space: normal !important;
 }
 
 html body.app-dashboard[data-platform="propertydirect"] #subtabEnquiriesView.hidden,

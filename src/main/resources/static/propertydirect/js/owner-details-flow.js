@@ -273,11 +273,7 @@
                                 </div>
                             </div>
 
-                            <div class="pd-action-grid">
-                                <a href="#" class="pd-btn-call" id="pdModalCallBtn">📞 Call Owner</a>
-                                <a href="#" class="pd-btn-wa" id="pdModalWaBtn" target="_blank">💬 WhatsApp</a>
-                                <a href="#" class="pd-btn-mail" id="pdModalMailBtn">✉️ Email Owner</a>
-                            </div>
+
 
                             <button type="button" class="pd-btn-copy" id="pdCopyOwnerBtn">📋 Copy Owner Contact Details</button>
                         </div>
@@ -455,10 +451,13 @@
             document.getElementById('pdModalPropLocality').textContent = `${data.locality || ''}, ${data.city || ''}`.replace(/^,\s*|,\s*$/g, '') || 'Bengaluru, India';
             document.getElementById('pdModalPropCode').textContent = data.apartmentCode || `PDT-${listingId}`;
 
-            // Buttons
-            document.getElementById('pdModalCallBtn').href = `tel:${phoneCall}`;
-            document.getElementById('pdModalWaBtn').href = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(`Hi ${data.ownerName || 'Property Owner'}, I am interested in your property listing "${data.title || 'listing'}" on PropertyDirect.`)}`;
-            document.getElementById('pdModalMailBtn').href = `mailto:${validEmail}?subject=${encodeURIComponent(`Inquiry regarding ${data.title || 'PropertyDirect Listing'}`)}`;
+            // Buttons (if present)
+            const callBtn = document.getElementById('pdModalCallBtn');
+            if (callBtn) callBtn.href = `tel:${phoneCall}`;
+            const waBtn = document.getElementById('pdModalWaBtn');
+            if (waBtn) waBtn.href = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(`Hi ${data.ownerName || 'Property Owner'}, I am interested in your property listing "${data.title || 'listing'}" on PropertyDirect.`)}`;
+            const mailBtn = document.getElementById('pdModalMailBtn');
+            if (mailBtn) mailBtn.href = `mailto:${validEmail}?subject=${encodeURIComponent(`Inquiry regarding ${data.title || 'PropertyDirect Listing'}`)}`;
 
             document.getElementById('pdOwnerAuthModal')?.classList.remove('active');
             document.getElementById('pdOwnerDetailsModal')?.classList.add('active');

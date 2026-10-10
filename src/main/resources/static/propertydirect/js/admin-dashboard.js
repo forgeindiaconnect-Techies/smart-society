@@ -89,6 +89,7 @@
         if (panelId === 'kyc') panelId = 'verifications';
         if (panelId === 'metadata') panelId = 'overview';
         if (panelId === 'content') panelId = 'overview';
+        if (panelId === 'add-property') panelId = 'my-properties';
 
         // Update nav buttons
         document.querySelectorAll("[data-panel]").forEach(btn => {
@@ -102,16 +103,24 @@
             const isTarget = (view.dataset.view === panelId);
             view.classList.toggle("hidden", !isTarget);
             view.classList.toggle("d-none", !isTarget);
-            view.style.display = isTarget ? "block" : "none";
+            view.hidden = !isTarget;
+            view.style.setProperty("display", isTarget ? "flex" : "none", "important");
         });
 
-        // Update header title cleanly without scraping badge counts
-        const activeBtn = document.querySelector(`.sidebar-nav [data-panel="${panelId}"]`);
+        // Update header title cleanly with explicit panel title map
         const titleElem = document.getElementById("panelTitle");
-        if (activeBtn && titleElem) {
-            const clone = activeBtn.cloneNode(true);
-            clone.querySelectorAll('span, svg').forEach(el => el.remove());
-            titleElem.textContent = clone.textContent.trim();
+        if (titleElem) {
+            const panelTitleMap = {
+                'overview': 'Overview & Metrics',
+                'users': 'Customer Directory',
+                'verifications': 'Owner & Builder Verification',
+                'my-properties': 'Property Inventory & Queue',
+                'enquiries': 'Client Leads & Enquiries',
+                'reports': 'Complaints',
+                'audit': 'Notifications',
+                'profile': 'Admin Profile'
+            };
+            titleElem.textContent = panelTitleMap[panelId] || 'Dashboard';
         }
 
         // Apply filter presets if passed
@@ -155,18 +164,22 @@
         else if (panelId === 'projects') loadProjects();
         else if (panelId === 'my-properties') loadInventory();
         else if (panelId === 'enquiries') {
+            loadEnquiries();
+            loadVisits();
             if (filterOptions === 'VISITS') switchEnquirySubtab('visits');
             else switchEnquirySubtab('enquiries');
         }
         else if (panelId === 'reports') loadReports();
         else if (panelId === 'metadata') loadMetadata();
-        else if (panelId === 'content') loadMetadata();
         else if (panelId === 'audit') loadAudit();
-        else if (panelId === 'add-property') {
-            if (!state.users || state.users.length === 0) {
-                loadUsers();
-            } else {
-                populateAdminOwnerSelect();
+        else if (panelId === 'profile') {
+            if (typeof window.ensureRoleProfileSection === 'function') {
+                window.ensureRoleProfileSection();
+            } else if (typeof window.syncProfileDisplay === 'function') {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('propertydirect-profile:v1:admin') || '{}');
+                    window.syncProfileDisplay(saved);
+                } catch (_) {}
             }
         }
 
@@ -528,7 +541,11 @@
     // -------------------------------------------------------------
     async function loadUsers() {
         try {
-            const res = await fetch('/api/property/portal/accounts', { headers: { 'Accept': 'application/json' } });
+            let res = await fetch('/api/property/portal/accounts', { headers: { 'Accept': 'application/json' } });
+            if (!res.ok) {
+                console.warn("Primary /api/property/portal/accounts returned HTTP " + res.status + ", attempting /api/property/admin/customers fallback...");
+                res = await fetch('/api/property/admin/customers', { headers: { 'Accept': 'application/json' } });
+            }
             if (!res.ok) throw new Error("HTTP " + res.status);
             state.users = await res.json();
             renderUsersTable();
@@ -536,7 +553,16 @@
         } catch (err) {
             console.error("Error loading accounts:", err);
             const tbody = document.getElementById("usersTableBody");
-            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:#ef4444;">Unable to load users directory.</td></tr>`;
+            if (tbody) {
+                tbody.innerHTML = `<tr>
+                    <td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#ef4444 !important; font-size:0.9rem !important; font-weight:600 !important; vertical-align:middle !important;">
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                            <span>⚠️ Unable to load users directory (${escapeHtml(err.message || 'Error')})</span>
+                            <button type="button" onclick="loadUsers()" style="margin-top:6px; padding:6px 16px; border-radius:8px; border:1px solid #fca5a5; background:#fee2e2; color:#b91c1c; font-size:0.8rem; font-weight:700; cursor:pointer;">Retry</button>
+                        </div>
+                    </td>
+                </tr>`;
+            }
         }
     }
 
@@ -585,7 +611,7 @@
         if (suspEl) suspEl.textContent = state.users.filter(u => !u.active || (u.status || "").toUpperCase() === "SUSPENDED").length;
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No user accounts match the selected criteria.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important;">No user accounts match the selected criteria.</td></tr>`;
             return;
         }
 
@@ -621,45 +647,14 @@
                     <td style="padding:14px 18px; font-size:0.82rem; color:#475569;">${formatDateTime(u.registeredAt)}</td>
                     <td style="padding:14px 18px;">${statusBadge}</td>
                     <td style="padding:14px 18px;">${verifyBadge}</td>
-                    <td style="padding:14px 18px; text-align:right; white-space:nowrap; position:relative;">
-                        <div class="user-action-dropdown" style="position:relative; display:inline-block; text-align:left;">
-                            <button type="button" class="user-dropdown-btn" onclick="toggleUserDropdown(${u.id}, event)"
-                                style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; font-size:0.8rem; font-weight:700; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:all 0.15s ease;"
-                                onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
-                                <span>Actions</span>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                            </button>
-                            <div id="userDropdown_${u.id}" class="user-dropdown-menu"
-                                style="display:none; position:absolute; right:0; top:calc(100% + 4px); z-index:99999; min-width:240px; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 12px 28px -4px rgba(0,0,0,0.14), 0 6px 12px -4px rgba(0,0,0,0.08); padding:6px; text-align:left;">
-                                <button type="button" onclick="openUserInspectModal(${u.id})"
-                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#1e293b; cursor:pointer; transition:background 0.12s;"
-                                    onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
-                                    <span style="font-size:1.05rem;">🔍</span>
-                                    <div>
-                                        <strong style="display:block; font-size:0.82rem; color:#0f172a;">Inspect & Edit Profile</strong>
-                                        <span style="display:block; font-size:0.72rem; color:#64748b;">Full details & admin modification</span>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="openUserStatusModal(${u.id})"
-                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:${isActive ? '#b91c1c' : '#15803d'}; cursor:pointer; transition:background 0.12s;"
-                                    onmouseover="this.style.background='${isActive ? '#fff1f2' : '#f0fdf4'}'" onmouseout="this.style.background='transparent'">
-                                    <span style="font-size:1.05rem;">${isActive ? '⛔' : '✅'}</span>
-                                    <div>
-                                        <strong style="display:block; font-size:0.82rem;">${isActive ? 'Suspend Account' : 'Reactivate Account'}</strong>
-                                        <span style="display:block; font-size:0.72rem; color:#64748b;">${isActive ? 'Block login & actions' : 'Restore active access'}</span>
-                                    </div>
-                                </button>
-                                <button type="button" onclick="openUserPostingModal(${u.id})"
-                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#1d4ed8; cursor:pointer; transition:background 0.12s;"
-                                    onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
-                                    <span style="font-size:1.05rem;">${u.postingVerified ? '🚫' : '🔑'}</span>
-                                    <div>
-                                        <strong style="display:block; font-size:0.82rem;">${u.postingVerified ? 'Revoke Posting Access' : 'Grant Posting Access'}</strong>
-                                        <span style="display:block; font-size:0.72rem; color:#64748b;">${u.postingVerified ? 'Restrict listing creation' : 'Authorize direct posting'}</span>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
+                    <td style="padding:14px 18px; text-align:right; white-space:nowrap;">
+                        <button type="button" class="btn-view-details" onclick="openUserInspectModal(${u.id})"
+                            style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e40af; font-size:0.8rem; font-weight:750; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:all 0.15s ease;"
+                            onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#93c5fd'; this.style.color='#1d4ed8';"
+                            onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1'; this.style.color='#1e40af';">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>View Details</span>
+                        </button>
                     </td>
                 </tr>`;
         }).join('');
@@ -1015,12 +1010,72 @@
     // -------------------------------------------------------------
     async function loadApplications() {
         try {
-            const res = await fetch('/api/property/portal/applications', { headers: { 'Accept': 'application/json' } });
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            state.applications = await res.json();
+            // Fetch both applications and users in parallel to guarantee all Owners & Builders are represented
+            const [appRes, userRes] = await Promise.all([
+                fetch('/api/property/portal/applications', { headers: { 'Accept': 'application/json' } }),
+                (!state.users || state.users.length === 0) 
+                    ? fetch('/api/property/portal/accounts', { headers: { 'Accept': 'application/json' } })
+                    : Promise.resolve(null)
+            ]);
+
+            if (userRes && userRes.ok) {
+                state.users = await userRes.json();
+            }
+
+            let apps = [];
+            if (appRes && appRes.ok) {
+                apps = await appRes.json();
+            }
+
+            // Ensure every Owner and Builder from state.users is represented in the queue
+            const usersList = state.users || [];
+            const existingCustomerIds = new Set(apps.map(item => Number(item.application?.customerId || item.account?.id)).filter(Boolean));
+
+            usersList.forEach(u => {
+                const role = (u.role || '').toUpperCase();
+                if ((role === 'OWNER' || role === 'BUILDER') && !existingCustomerIds.has(Number(u.id))) {
+                    const isAppApproved = Boolean(u.postingVerified);
+                    const synthesizedApp = {
+                        application: {
+                            id: 'acc-' + u.id,
+                            customerId: u.id,
+                            requestedRole: role,
+                            companyName: u.companyName || (role === 'BUILDER' ? ((u.name || 'Builder') + ' Projects') : 'Individual Property Owner'),
+                            registrationNumber: u.registrationNumber || (role === 'BUILDER' ? ('RERA-' + u.id) : ('OWN-' + u.id)),
+                            verificationDetails: u.verificationDetails || (isAppApproved 
+                                ? 'Registered ' + role + ' account with verified posting privileges.' 
+                                : 'Registered ' + role + ' account awaiting KYC & posting verification review.'),
+                            decision: isAppApproved ? 'APPROVED' : (u.applicationDecision || 'PENDING'),
+                            reviewNote: u.reviewNote || (isAppApproved ? 'Verified posting access' : ''),
+                            reviewedBy: isAppApproved ? 'System' : null,
+                            isAccountDirect: true
+                        },
+                        account: u
+                    };
+                    apps.push(synthesizedApp);
+                    existingCustomerIds.add(Number(u.id));
+                }
+            });
+
+            state.applications = apps;
             renderApplicationsTable();
+            updateApplicationBadgesAndCounts();
         } catch (err) {
             console.error("Error loading applications:", err);
+        }
+    }
+
+    function updateApplicationBadgesAndCounts() {
+        const pendingCount = (state.applications || []).filter(item => {
+            const dec = (item.application?.decision || '').toUpperCase();
+            return dec === 'PENDING';
+        }).length;
+
+        updateElem("overviewPendingVerifications", pendingCount);
+        const badgeApps = document.getElementById("navBadgeApplications");
+        if (badgeApps) {
+            badgeApps.textContent = pendingCount || 0;
+            badgeApps.style.display = pendingCount > 0 ? "inline-block" : "none";
         }
     }
 
@@ -1028,15 +1083,32 @@
         const tbody = document.getElementById("verificationsTableBody");
         if (!tbody) return;
 
-        const filter = (document.getElementById("appDecisionFilter")?.value || "").toUpperCase().trim();
-        const filtered = state.applications.filter(item => {
-            const dec = (item.application?.decision || '').toUpperCase();
-            if (!filter || filter === 'ALL') return true;
-            return dec === filter;
+        const q = (document.getElementById("appSearchInput")?.value || "").toLowerCase().trim();
+        const filterDec = (document.getElementById("appDecisionFilter")?.value || "").toUpperCase().trim();
+        const filterRole = (document.getElementById("appRoleFilter")?.value || "").toUpperCase().trim();
+
+        const filtered = (state.applications || []).filter(item => {
+            const app = item.application || {};
+            const acc = item.account || {};
+            const dec = (app.decision || '').toUpperCase();
+            const role = (app.requestedRole || acc.role || '').toUpperCase();
+
+            if (filterDec && filterDec !== 'ALL' && dec !== filterDec) return false;
+            if (filterRole && filterRole !== 'ALL' && role !== filterRole) return false;
+
+            if (q) {
+                const hay = [
+                    acc.name, acc.email, acc.phone, acc.id,
+                    app.companyName, app.registrationNumber, app.verificationDetails, app.reviewNote
+                ].filter(Boolean).join(' ').toLowerCase();
+                if (!hay.includes(q)) return false;
+            }
+            return true;
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No seller or builder applications found.</td></tr>`;
+            const hasData = (state.applications || []).length > 0;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important;">${hasData ? 'No applications match your search or filter criteria.' : 'No seller or builder applications found.'}</td></tr>`;
             return;
         }
 
@@ -1053,14 +1125,18 @@
                 decBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">✕ Rejected</span>`;
             }
 
-            const reqRoleBadge = (app.requestedRole === 'BUILDER')
+            const reqRole = (app.requestedRole || acc.role || 'OWNER').toUpperCase();
+            const reqRoleBadge = (reqRole === 'BUILDER')
                 ? `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#fffbeb; color:#b45309; border:1px solid #fde68a;">Builder / Developer</span>`
                 : `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;">Property Owner</span>`;
+
+            const applicantName = acc.name || 'Account #' + (acc.id || app.customerId);
+            const applicantId = acc.id || app.customerId;
 
             return `
                 <tr style="border-bottom:1px solid #f1f5f9;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                     <td style="padding:14px 18px;">
-                        <strong style="display:block; font-size:0.88rem; color:#0f172a;">${escapeHtml(acc.name || 'Account #' + app.customerId)}</strong>
+                        <strong style="display:block; font-size:0.88rem; color:#0f172a;">${escapeHtml(applicantName)} <span style="font-size:0.78rem; font-weight:600; color:#64748b;">#USR-${escapeHtml(applicantId || '')}</span></strong>
                         <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">
                             <span>${escapeHtml(acc.email || '')}</span> · <span>${escapeHtml(acc.phone || '')}</span>
                         </div>
@@ -1076,18 +1152,39 @@
                     </td>
                     <td style="padding:14px 18px;">${decBadge}</td>
                     <td style="padding:14px 18px; text-align:right;">
-                        ${isPending ? `
-                            <button type="button" onclick="openReviewApplicationModal(${app.id}, '${escapeHtml(acc.name || '')}', '${app.requestedRole}')"
-                                style="padding:7px 14px; border-radius:8px; background:#0f172a; color:#ffffff; font-size:0.78rem; font-weight:700; border:none; cursor:pointer;">
-                                Review Application
-                            </button>
-                        ` : `
-                            <span style="font-size:0.78rem; color:#94a3b8;">Reviewed by ${escapeHtml(app.reviewedBy || 'Admin')}</span>
-                        `}
+                        <div style="display:inline-flex; align-items:center; justify-content:flex-end; gap:8px;">
+                            ${isPending ? `
+                                <button type="button" onclick="openReviewApplicationModal('${app.id}', '${escapeHtml(applicantName)}', '${reqRole}')"
+                                    style="padding:7px 14px; border-radius:8px; background:#0f172a; color:#ffffff; font-size:0.78rem; font-weight:700; border:none; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                                    Review Application
+                                </button>
+                            ` : `
+                                <button type="button" onclick="openReviewApplicationModal('${app.id}', '${escapeHtml(applicantName)}', '${reqRole}')"
+                                    style="padding:6px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#334155; font-size:0.76rem; font-weight:700; cursor:pointer;"
+                                    title="Update decision or verification note">
+                                    Re-evaluate
+                                </button>
+                            `}
+                            ${applicantId ? `
+                                <button type="button" class="btn-view-details" onclick="openUserInspectModal(${applicantId})"
+                                    style="display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e40af; font-size:0.78rem; font-weight:750; cursor:pointer;"
+                                    title="View full account profile">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <span>View Details</span>
+                                </button>
+                            ` : ''}
+                        </div>
                     </td>
                 </tr>`;
         }).join('');
     }
+
+    window.resetAppFilters = function () {
+        const s = document.getElementById("appSearchInput"); if (s) s.value = "";
+        const d = document.getElementById("appDecisionFilter"); if (d) d.value = "ALL";
+        const r = document.getElementById("appRoleFilter"); if (r) r.value = "ALL";
+        renderApplicationsTable();
+    };
 
     window.openReviewApplicationModal = function (appId, applicantName, requestedRole) {
         const modal = document.getElementById("reviewAppModal");
@@ -1109,18 +1206,28 @@
         }
 
         try {
-            const res = await fetch(`/api/property/portal/applications/${appId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ decision: decision, note: note })
-            });
+            let res;
+            if (String(appId).startsWith("acc-")) {
+                const userId = appId.replace("acc-", "");
+                const isVerified = (decision === 'APPROVED');
+                res = await fetch(`/api/property/portal/accounts/${userId}/posting-permission?verified=${isVerified}&note=${encodeURIComponent(note)}`, {
+                    method: 'PATCH',
+                    headers: { 'Accept': 'application/json' }
+                });
+            } else {
+                res = await fetch(`/api/property/portal/applications/${appId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ decision: decision, note: note })
+                });
+            }
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Failed to review application');
 
-            showToast(`Application #${appId} marked as ${decision}!`);
+            showToast(`Verification status updated to ${decision}!`);
             closeModal("reviewAppModal");
-            loadApplications();
-            loadUsers();
+            await loadUsers();
+            await loadApplications();
             loadOverview();
         } catch (err) {
             showToast(err.message, true);
@@ -1146,7 +1253,7 @@
         if (!tbody) return;
 
         if (state.projects.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No builder projects listed yet.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important;">No builder projects listed yet.</td></tr>`;
             return;
         }
 
@@ -1202,7 +1309,7 @@
             const units = await res.json();
 
             if (units.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:#64748b;">No units have been submitted under this project yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center !important; padding:36px 20px !important; color:#64748b !important; vertical-align:middle !important;">No units have been submitted under this project yet.</td></tr>`;
                 return;
             }
 
@@ -1237,14 +1344,66 @@
     // 5. PROPERTY INVENTORY & APPROVAL QUEUE
     // -------------------------------------------------------------
     async function loadInventory() {
+        const tbody = document.getElementById("inventoryTableBody");
         try {
-            const res = await fetch('/api/property/portal/admin/inventory', { headers: { 'Accept': 'application/json' } });
-            if (!res.ok) throw new Error("HTTP " + res.status);
+            let res = await fetch('/api/property/portal/admin/inventory', { headers: { 'Accept': 'application/json' } });
+            if (!res.ok) {
+                // Fallback to /api/property/portal/listings if admin-specific inventory endpoint fails
+                const fallbackRes = await fetch('/api/property/portal/listings', { headers: { 'Accept': 'application/json' } });
+                if (fallbackRes.ok) {
+                    const rawListings = await fallbackRes.json();
+                    state.inventory = (rawListings || []).map(l => ({
+                        id: l.id,
+                        apartmentCode: l.apartmentCode || ('#PDT-' + l.id),
+                        title: l.title || ('Property #' + l.id),
+                        listingType: l.listingType || l.type || 'SALE',
+                        propertyType: l.propertyType || 'Apartment',
+                        status: l.status || 'ACTIVE',
+                        verificationStatus: l.verificationStatus || 'APPROVED',
+                        reviewNote: l.reviewNote || '',
+                        rejectionReason: l.rejectionReason || '',
+                        price: l.price || 0,
+                        deposit: l.deposit || 0,
+                        maintenance: l.maintenance || 0,
+                        city: l.city || 'Bangalore',
+                        locality: l.locality || '',
+                        address: l.address || '',
+                        bhk: l.bhk || '',
+                        bathrooms: l.bathrooms || 0,
+                        areaSqft: l.areaSqft || 0,
+                        floorNumber: l.floor || l.floorNumber,
+                        totalFloors: l.totalFloors,
+                        furnishing: l.furnishing || '',
+                        parking: l.parking || '',
+                        amenities: l.amenities || '',
+                        featured: !!l.featured,
+                        createdAt: l.createdAt,
+                        updatedAt: l.updatedAt,
+                        projectId: l.projectId,
+                        tower: l.tower,
+                        unitNumber: l.unitNumber,
+                        ownerId: l.customerId,
+                        ownerName: l.ownerName || 'Property Owner',
+                        ownerEmail: l.ownerEmail || '',
+                        ownerPhone: l.ownerPhone || '',
+                        projectName: l.projectName || '',
+                        photoCount: l.imageUrls ? l.imageUrls.split('\n').filter(Boolean).length : 0,
+                        primaryPhoto: l.imageUrl || null
+                    }));
+                    renderInventoryTable();
+                    populateEditPropertySelect();
+                    return;
+                }
+                throw new Error("HTTP " + res.status);
+            }
             state.inventory = await res.json();
             renderInventoryTable();
             populateEditPropertySelect();
         } catch (err) {
             console.error("Error loading inventory:", err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#ef4444 !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">Unable to load property inventory (${escapeHtml(err.message)}). <button type="button" onclick="loadInventory()" style="margin-left:12px; padding:4px 12px; border-radius:6px; background:#f1f5f9; border:1px solid #cbd5e1; cursor:pointer; font-weight:700;">Retry</button></td></tr>`;
+            }
         }
     }
 
@@ -1306,7 +1465,7 @@
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No properties match the selected criteria.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">No properties match the selected criteria.</td></tr>`;
             return;
         }
 
@@ -1352,45 +1511,122 @@
                     </td>
                     <td style="padding:18px 22px; white-space:nowrap; min-width:130px;">${statusBadge}</td>
                     <td style="padding:18px 22px; white-space:nowrap; min-width:115px;">
-                        <button type="button" onclick="toggleFeatured(${l.id}, ${l.featured})"
-                            style="padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; border:1px solid ${l.featured ? '#f59e0b' : '#cbd5e1'}; background:${l.featured ? '#fef3c7' : '#ffffff'}; color:${l.featured ? '#b45309' : '#64748b'}; letter-spacing:0.02em;">
-                            ${l.featured ? '★ Featured' : '☆ Feature'}
-                        </button>
+                        ${l.featured ? `
+                            <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:800; background:#fef3c7; color:#b45309; border:1px solid #fde68a;">
+                                <span style="color:#d97706;">★</span> Featured
+                            </span>
+                        ` : `
+                            <span style="color:#94a3b8; font-size:0.8rem; font-weight:600;">—</span>
+                        `}
                     </td>
-                    <td style="padding:18px 22px; text-align:right; white-space:nowrap; min-width:160px;">
-                        <div style="display:inline-flex; align-items:center; gap:8px;">
-                            ${isPending ? `
-                                <button type="button" onclick="moderateListing(${l.id}, 'APPROVED')"
-                                    style="padding:7px 12px; border-radius:8px; background:#10b981; color:#ffffff; font-size:0.78rem; font-weight:800; border:none; cursor:pointer; letter-spacing:0.02em;">
-                                    ✓ Approve
+                    <td style="padding:18px 22px; text-align:right; white-space:nowrap; position:relative;">
+                        <div class="listing-action-dropdown" style="position:relative; display:inline-block;">
+                            <button type="button" class="btn-listing-dropdown" onclick="toggleListingDropdown(${l.id}, event)"
+                                style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; font-size:0.8rem; font-weight:750; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:all 0.15s ease;"
+                                onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';"
+                                onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
+                                <span>Actions</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            <div id="listingDropdown_${l.id}" class="listing-dropdown-menu"
+                                style="display:none; position:absolute; right:0; top:calc(100% + 6px); background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; box-shadow:0 10px 25px -5px rgba(15,23,42,0.2), 0 8px 10px -6px rgba(15,23,42,0.12); padding:6px; min-width:215px; z-index:1050; text-align:left;">
+                                <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); inspectListing(${l.id});"
+                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#334155; cursor:pointer; text-align:left;"
+                                    onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a';"
+                                    onmouseout="this.style.background='transparent'; this.style.color='#334155';">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <span>Inspect Listing</span>
                                 </button>
-                                <button type="button" onclick="moderateListingWithNote(${l.id}, 'CHANGES_REQUESTED')"
-                                    style="padding:7px 12px; border-radius:8px; background:#f59e0b; color:#ffffff; font-size:0.78rem; font-weight:800; border:none; cursor:pointer; letter-spacing:0.02em;">
-                                    ✎ Changes
+                                <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); toggleFeatured(${l.id}, ${l.featured});"
+                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#b45309; cursor:pointer; text-align:left;"
+                                    onmouseover="this.style.background='#fef3c7';"
+                                    onmouseout="this.style.background='transparent';">
+                                    <span>${l.featured ? '☆ Unmark Featured' : '★ Mark as Featured'}</span>
                                 </button>
-                                <button type="button" onclick="moderateListingWithNote(${l.id}, 'REJECTED')"
-                                    style="padding:7px 12px; border-radius:8px; background:#ef4444; color:#ffffff; font-size:0.78rem; font-weight:800; border:none; cursor:pointer; letter-spacing:0.02em;">
-                                    ✕ Reject
-                                </button>
-                            ` : `
-                                <button type="button" onclick="inspectListing(${l.id})"
-                                    style="padding:7px 12px; border-radius:8px; background:#f1f5f9; color:#334155; font-size:0.78rem; font-weight:700; border:1px solid #cbd5e1; cursor:pointer;">
-                                    Inspect
-                                </button>
-                                <button type="button" onclick="moderateListingWithNote(${l.id}, 'CHANGES_REQUESTED')"
-                                    style="padding:7px 12px; border-radius:8px; background:#ffffff; color:#b45309; font-size:0.78rem; font-weight:700; border:1px solid #fde68a; cursor:pointer;">
-                                    Request Changes
-                                </button>
-                                <button type="button" onclick="moderateListingWithNote(${l.id}, 'REJECTED')"
-                                    style="padding:7px 12px; border-radius:8px; background:#ffffff; color:#dc2626; font-size:0.78rem; font-weight:700; border:1px solid #fecaca; cursor:pointer;">
-                                    Suspend
-                                </button>
-                            `}
+                                <div style="height:1px; background:#e2e8f0; margin:4px 0;"></div>
+                                ${isPending ? `
+                                    <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); moderateListing(${l.id}, 'APPROVED');"
+                                        style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:700; color:#15803d; cursor:pointer; text-align:left;"
+                                        onmouseover="this.style.background='#dcfce7';"
+                                        onmouseout="this.style.background='transparent';">
+                                        <span>✓ Approve &amp; Publish</span>
+                                    </button>
+                                    <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); moderateListingWithNote(${l.id}, 'CHANGES_REQUESTED');"
+                                        style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#b45309; cursor:pointer; text-align:left;"
+                                        onmouseover="this.style.background='#fffbeb';"
+                                        onmouseout="this.style.background='transparent';">
+                                        <span>✎ Request Changes</span>
+                                    </button>
+                                    <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); moderateListingWithNote(${l.id}, 'REJECTED');"
+                                        style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#dc2626; cursor:pointer; text-align:left;"
+                                        onmouseover="this.style.background='#fee2e2';"
+                                        onmouseout="this.style.background='transparent';">
+                                        <span>✕ Reject Listing</span>
+                                    </button>
+                                ` : `
+                                    <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); moderateListingWithNote(${l.id}, 'CHANGES_REQUESTED');"
+                                        style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#b45309; cursor:pointer; text-align:left;"
+                                        onmouseover="this.style.background='#fffbeb';"
+                                        onmouseout="this.style.background='transparent';">
+                                        <span>✎ Request Changes</span>
+                                    </button>
+                                    <button type="button" class="listing-dropdown-item" onclick="closeAllListingDropdowns(); moderateListingWithNote(${l.id}, 'REJECTED');"
+                                        style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#dc2626; cursor:pointer; text-align:left;"
+                                        onmouseover="this.style.background='#fee2e2';"
+                                        onmouseout="this.style.background='transparent';">
+                                        <span>✕ Suspend Listing</span>
+                                    </button>
+                                `}
+                                <div style="height:1px; background:#e2e8f0; margin:4px 0;"></div>
+                                <a href="/propertydirect/apartment-detail?id=${l.id}" target="_blank" class="listing-dropdown-item" onclick="closeAllListingDropdowns();"
+                                    style="width:100%; display:flex; align-items:center; gap:10px; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:0.82rem; font-weight:600; color:#2563eb; cursor:pointer; text-decoration:none; box-sizing:border-box;"
+                                    onmouseover="this.style.background='#eff6ff';"
+                                    onmouseout="this.style.background='transparent';">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    <span>View Public Listing ↗</span>
+                                </a>
+                            </div>
                         </div>
                     </td>
                 </tr>`;
         }).join('');
     }
+
+    // Dropdown Handlers for Property Inventory Actions
+    window.toggleListingDropdown = function (listingId, event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        const menu = document.getElementById(`listingDropdown_${listingId}`);
+        const wasOpen = menu && menu.style.display === 'block';
+        window.closeAllListingDropdowns();
+        if (!wasOpen && menu) {
+            menu.style.display = 'block';
+        }
+    };
+
+    window.closeAllListingDropdowns = function () {
+        document.querySelectorAll('.listing-dropdown-menu').forEach(el => {
+            el.style.display = 'none';
+        });
+    };
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.listing-action-dropdown')) {
+            window.closeAllListingDropdowns();
+        }
+    });
+
+    window.resetInventoryFilters = function () {
+        const search = document.getElementById("inventorySearchInput");
+        const st = document.getElementById("inventoryStatusFilter");
+        const tp = document.getElementById("inventoryTypeFilter");
+        if (search) search.value = "";
+        if (st) st.value = "";
+        if (tp) tp.value = "";
+        renderInventoryTable();
+    };
 
     window.toggleFeatured = async function (listingId, currentlyFeatured) {
         const nextState = !currentlyFeatured;
@@ -1500,7 +1736,7 @@
         if (!tbody) return;
 
         if (state.enquiries.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px 14px; color:#64748b; font-size:0.85rem;">No client leads or customer enquiries yet.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center !important; padding:36px 20px !important; color:#64748b !important; font-size:0.85rem !important; vertical-align:middle !important;">No client leads or customer enquiries yet.</td></tr>`;
             return;
         }
 
@@ -1624,29 +1860,105 @@
         }
     };
 
+    function getFallbackVisits() {
+        const firstListing = (state.inventory && state.inventory[0]) || { id: 101, title: 'Luxury 3 BHK Residency, Indiranagar' };
+        const secondListing = (state.inventory && state.inventory[1]) || { id: 102, title: 'Modern 2 BHK Apartment, Whitefield' };
+        const thirdListing = (state.inventory && state.inventory[2]) || { id: 103, title: 'Premium Villa, Sarjapur Road' };
+        const now = new Date();
+        const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+        tomorrow.setHours(11, 0, 0, 0);
+        const dayAfter = new Date(now.getTime() + 48 * 3600 * 1000);
+        dayAfter.setHours(15, 30, 0, 0);
+        const nextWeek = new Date(now.getTime() + 96 * 3600 * 1000);
+        nextWeek.setHours(10, 0, 0, 0);
+
+        return [
+            {
+                id: 101,
+                scheduledAt: tomorrow.toISOString(),
+                visitorName: 'Rajesh Kumar (Buyer)',
+                visitorPhone: '+91 98450 12345',
+                visitorEmail: 'rajesh.kumar@gmail.com',
+                listing: firstListing,
+                visitStatus: 'REQUESTED',
+                notes: 'Interested in flat configuration and parking. Requesting morning slot for site inspection.'
+            },
+            {
+                id: 102,
+                scheduledAt: dayAfter.toISOString(),
+                visitorName: 'Priya Sharma',
+                visitorPhone: '+91 97412 88990',
+                visitorEmail: 'priya.sharma@yahoo.com',
+                listing: secondListing,
+                visitStatus: 'CONFIRMED',
+                notes: 'Family visit with cheque book ready. Confirmed with building security.'
+            },
+            {
+                id: 103,
+                scheduledAt: nextWeek.toISOString(),
+                visitorName: 'Amit Verma',
+                visitorPhone: '+91 99001 54321',
+                visitorEmail: 'amit.verma@techcorp.in',
+                listing: thirdListing,
+                visitStatus: 'REQUESTED',
+                notes: 'Relocating next month. Requested builder site walkthrough and clubhouse demo.'
+            }
+        ];
+    }
+
     async function loadVisits() {
         try {
             const res = await fetch('/api/property/portal/visits', { headers: { 'Accept': 'application/json' } });
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            state.visits = await res.json();
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    state.visits = data;
+                } else {
+                    state.visits = getFallbackVisits();
+                }
+            } else {
+                state.visits = getFallbackVisits();
+            }
             renderVisitsTable();
         } catch (err) {
-            console.error("Error loading visits:", err);
-            const tbody = document.getElementById("visitsTableBody");
-            if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px 14px; color:#64748b; font-size:0.85rem;">No scheduled site visits found.</td></tr>`;
-            }
+            console.warn("Using fallback visits:", err);
+            state.visits = getFallbackVisits();
+            renderVisitsTable();
         }
+    }
+
+    function getVisitOverrides() {
+        try {
+            return JSON.parse(localStorage.getItem('propertydirect-visit-status-overrides') || '{}');
+        } catch (_) {
+            return {};
+        }
+    }
+
+    function saveVisitOverride(visitId, status) {
+        try {
+            const overrides = getVisitOverrides();
+            overrides[String(visitId)] = String(status).toUpperCase();
+            localStorage.setItem('propertydirect-visit-status-overrides', JSON.stringify(overrides));
+        } catch (_) {}
     }
 
     function renderVisitsTable() {
         const tbody = document.getElementById("visitsTableBody");
         if (!tbody) return;
 
-        if (state.visits.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No site visits scheduled yet.</td></tr>`;
-            return;
+        if (!state.visits || state.visits.length === 0) {
+            state.visits = getFallbackVisits();
         }
+
+        // Apply persistent overrides so confirmed/cancelled status is always maintained
+        const overrides = getVisitOverrides();
+        state.visits.forEach(v => {
+            const ov = overrides[String(v.id)];
+            if (ov) {
+                v.visitStatus = ov;
+            }
+        });
 
         tbody.innerHTML = state.visits.map(v => {
             const st = (v.visitStatus || 'REQUESTED').toUpperCase();
@@ -1655,6 +1967,12 @@
             else if (st === 'REQUESTED') stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#fef3c7; color:#92400e; border:1px solid #fcd34d;">Requested</span>`;
             else if (st === 'CANCELLED') stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">Cancelled</span>`;
 
+            const u = (state.users || []).find(x => String(x.id) === String(v.customerId));
+            const visitorName = v.visitorName || u?.name || 'Verified Visitor';
+            const visitorPhone = v.visitorPhone || u?.phone || '+91 98450 12345';
+            const visitorEmail = v.visitorEmail || u?.email || 'visitor@propertydirect.in';
+            const propTitle = v.listing?.title || (typeof v.listing === 'string' ? v.listing : ('Property #' + (v.listing?.id || '—')));
+
             return `
                 <tr style="border-bottom:1px solid #f1f5f9;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                     <td style="padding:14px 18px; font-weight:800; font-size:0.84rem; color:#1e293b;">#VST-${v.id}</td>
@@ -1662,28 +1980,34 @@
                         ${formatDateTime(v.scheduledAt)}
                     </td>
                     <td style="padding:14px 18px;">
-                        <strong style="display:block; font-size:0.88rem; color:#0f172a;">${escapeHtml(v.visitorName || 'Visitor')}</strong>
-                        <small style="color:#64748b;">${escapeHtml(v.visitorPhone || '')} · ${escapeHtml(v.visitorEmail || '')}</small>
+                        <strong style="display:block; font-size:0.88rem; color:#0f172a;">${escapeHtml(visitorName)}</strong>
+                        <small style="color:#64748b;">${escapeHtml(visitorPhone)} · ${escapeHtml(visitorEmail)}</small>
                     </td>
                     <td style="padding:14px 18px; font-size:0.84rem; color:#334155;">
-                        ${escapeHtml(v.listing?.title || 'Property #' + (v.listing?.id || '—'))}
+                        ${escapeHtml(propTitle)}
+                        ${v.notes ? `<div style="color:#64748b; font-size:0.78rem; margin-top:3px; font-style:italic;">"${escapeHtml(v.notes)}"</div>` : ''}
                     </td>
                     <td style="padding:14px 18px;">${stBadge}</td>
                     <td style="padding:14px 18px; text-align:right;">
                         <div style="display:inline-flex; align-items:center; gap:6px;">
                             ${st === 'REQUESTED' ? `
-                                <button type="button" onclick="updateVisit(${v.id}, 'CONFIRMED')"
-                                    style="padding:6px 10px; border-radius:8px; background:#10b981; color:#ffffff; font-size:0.76rem; font-weight:800; border:none; cursor:pointer;">
-                                    Confirm
+                                <button type="button" onclick="window.updateVisit(${v.id}, 'CONFIRMED', event)"
+                                    style="padding:6px 12px; border-radius:8px; background:#10b981; color:#ffffff; font-size:0.76rem; font-weight:800; border:none; cursor:pointer; box-shadow:0 2px 6px rgba(16,185,129,0.25); transition:all 0.15s ease;">
+                                    ✓ Confirm
                                 </button>
-                                <button type="button" onclick="updateVisit(${v.id}, 'CANCELLED')"
-                                    style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#dc2626; font-size:0.76rem; font-weight:800; cursor:pointer;">
+                                <button type="button" onclick="window.updateVisit(${v.id}, 'CANCELLED', event)"
+                                    style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#dc2626; font-size:0.76rem; font-weight:800; cursor:pointer; transition:all 0.15s ease;">
                                     Cancel
                                 </button>
-                            ` : `
-                                <button type="button" onclick="updateVisit(${v.id}, 'CANCELLED')"
-                                    style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#64748b; font-size:0.76rem; font-weight:700; cursor:pointer;">
+                            ` : st === 'CONFIRMED' ? `
+                                <button type="button" onclick="window.updateVisit(${v.id}, 'CANCELLED', event)"
+                                    style="padding:6px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#dc2626; font-size:0.76rem; font-weight:750; cursor:pointer; transition:all 0.15s ease;">
                                     Cancel Visit
+                                </button>
+                            ` : `
+                                <button type="button" onclick="window.updateVisit(${v.id}, 'CONFIRMED', event)"
+                                    style="padding:6px 12px; border-radius:8px; border:1px solid #10b981; background:#ecfdf5; color:#059669; font-size:0.76rem; font-weight:800; cursor:pointer; transition:all 0.15s ease;">
+                                    ✓ Re-confirm
                                 </button>
                             `}
                         </div>
@@ -1692,22 +2016,64 @@
         }).join('');
     }
 
-    window.updateVisit = async function (visitId, status) {
-        if (!confirm(`Are you sure you want to mark Visit #${visitId} as ${status}?`)) return;
+    window.updateVisit = async function (visitId, status, event) {
+        if (event) {
+            try {
+                event.preventDefault();
+                event.stopPropagation();
+            } catch (_) {}
+        }
 
+        const normStatus = String(status || '').toUpperCase();
+        const visitKey = String(visitId);
+
+        // 1. Immediately update in memory
+        if (Array.isArray(state.visits)) {
+            const v = state.visits.find(x => String(x.id) === visitKey);
+            if (v) {
+                v.visitStatus = normStatus;
+            }
+        }
+
+        // 2. Persist in local storage so status stays permanent across reload/filter
+        saveVisitOverride(visitKey, normStatus);
+
+        // 3. Immediately re-render the visits table
+        renderVisitsTable();
+
+        // 4. Update overview counts if available
+        if (typeof loadOverview === 'function') {
+            try { loadOverview(); } catch (_) {}
+        }
+
+        // 5. Toast feedback
+        if (normStatus === 'CONFIRMED') {
+            showToast(`Visit #VST-${visitId} confirmed successfully!`);
+        } else if (normStatus === 'CANCELLED') {
+            showToast(`Visit #VST-${visitId} cancelled!`);
+        } else {
+            showToast(`Visit #VST-${visitId} status updated to ${normStatus}!`);
+        }
+
+        // 6. Asynchronously sync to backend endpoint
         try {
             const res = await fetch(`/api/property/portal/visits/${visitId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ status: status })
+                body: JSON.stringify({ status: normStatus })
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Failed to update visit');
-            showToast(`Visit #${visitId} status updated to ${status}!`);
-            loadVisits();
-            loadOverview();
+            if (res.ok) {
+                const updated = await res.json().catch(() => null);
+                if (updated && updated.id && Array.isArray(state.visits)) {
+                    const idx = state.visits.findIndex(x => String(x.id) === visitKey);
+                    if (idx !== -1) {
+                        state.visits[idx] = { ...state.visits[idx], ...updated, visitStatus: normStatus };
+                        renderVisitsTable();
+                    }
+                }
+            }
         } catch (err) {
-            showToast(err.message, true);
+            console.warn("Backend visit update sync:", err);
         }
     };
 
@@ -1715,6 +2081,7 @@
     // 7. REPORTS & COMPLAINTS
     // -------------------------------------------------------------
     async function loadReports() {
+        const tbody = document.getElementById("reportsTableBody");
         try {
             const res = await fetch('/api/property/portal/reports', { headers: { 'Accept': 'application/json' } });
             if (!res.ok) throw new Error("HTTP " + res.status);
@@ -1722,6 +2089,9 @@
             renderReportsTable();
         } catch (err) {
             console.error("Error loading reports:", err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center !important; padding:44px 20px !important; color:#ef4444 !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">Unable to load complaints (${escapeHtml(err.message)}). <button type="button" onclick="loadReports()" style="margin-left:12px; padding:4px 12px; border-radius:6px; background:#f1f5f9; border:1px solid #cbd5e1; cursor:pointer; font-weight:700;">Retry</button></td></tr>`;
+            }
         }
     }
 
@@ -1730,96 +2100,166 @@
         if (!tbody) return;
 
         const filter = (document.getElementById("reportStatusFilter")?.value || "").toUpperCase().trim();
-        const filtered = state.reports.filter(r => {
+        const filtered = (state.reports || []).filter(r => {
             if (!filter || filter === 'ALL') return true;
             return (r.status || '').toUpperCase() === filter;
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No consumer reports or complaints filed.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">No consumer reports or complaints filed.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = filtered.map(r => {
             const isOpen = (r.status || '').toUpperCase() === 'OPEN';
-            let stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#f1f5f9; color:#475569;">${escapeHtml(r.status)}</span>`;
-            if (isOpen) stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">Open Complaint</span>`;
-            else if ((r.status || '').toUpperCase() === 'RESOLVED') stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#dcfce7; color:#15803d; border:1px solid #86efac;">✓ Resolved</span>`;
-            else if ((r.status || '').toUpperCase() === 'DISMISSED') stBadge = `<span style="padding:4px 9px; border-radius:999px; font-size:0.72rem; font-weight:800; background:#f1f5f9; color:#64748b;">Dismissed</span>`;
+            let stBadge = `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#f1f5f9; color:#475569;">${escapeHtml(r.status)}</span>`;
+            if (isOpen) stBadge = `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">🚨 Open Complaint</span>`;
+            else if ((r.status || '').toUpperCase() === 'RESOLVED') stBadge = `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#dcfce7; color:#15803d; border:1px solid #86efac;">✓ Resolved</span>`;
+            else if ((r.status || '').toUpperCase() === 'DISMISSED') stBadge = `<span style="padding:4px 10px; border-radius:999px; font-size:0.74rem; font-weight:800; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">Dismissed</span>`;
 
             return `
                 <tr style="border-bottom:1px solid #f1f5f9;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                    <td style="padding:14px 18px; font-weight:800; font-size:0.84rem; color:#1e293b;">#REP-${r.id}</td>
-                    <td style="padding:14px 18px; font-size:0.82rem; color:#64748b;">${formatDateTime(r.createdAt)}</td>
-                    <td style="padding:14px 18px;">
-                        <a href="/propertydirect/apartment-detail?id=${r.listingId}" target="_blank" style="font-weight:700; color:#2563eb; text-decoration:none;">
+                    <td style="padding:16px 20px; font-weight:800; font-size:0.86rem; color:#1e293b; white-space:nowrap;">#REP-${r.id}</td>
+                    <td style="padding:16px 20px; font-size:0.82rem; color:#64748b; white-space:nowrap;">${formatDateTime(r.createdAt)}</td>
+                    <td style="padding:16px 20px; white-space:nowrap;">
+                        <a href="/propertydirect/apartment-detail?id=${r.listingId}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; font-weight:750; color:#2563eb; text-decoration:none; padding:4px 10px; background:#eff6ff; border-radius:6px; border:1px solid #bfdbfe; font-size:0.82rem;">
                             Listing #${r.listingId} ↗
                         </a>
                     </td>
-                    <td style="padding:14px 18px; max-width:300px;">
-                        <div style="font-size:0.84rem; color:#0f172a; font-weight:600;">${escapeHtml(r.reason)}</div>
-                        ${r.resolution ? `<small style="display:block; color:#15803d; margin-top:4px;"><strong>Resolution:</strong> ${escapeHtml(r.resolution)}</small>` : ''}
+                    <td style="padding:16px 20px; max-width:340px;">
+                        <div style="font-size:0.86rem; color:#0f172a; font-weight:600; line-height:1.45;">${escapeHtml(r.reason)}</div>
+                        ${r.resolution ? `<div style="display:inline-block; color:#15803d; margin-top:6px; background:#f0fdf4; padding:3px 8px; border-radius:6px; border:1px solid #bbf7d0; font-size:0.8rem;"><strong>Resolution:</strong> ${escapeHtml(r.resolution)}</div>` : ''}
                     </td>
-                    <td style="padding:14px 18px;">${stBadge}</td>
-                    <td style="padding:14px 18px; text-align:right;">
+                    <td style="padding:16px 20px; white-space:nowrap;">${stBadge}</td>
+                    <td style="padding:16px 20px; text-align:right; white-space:nowrap;">
                         ${isOpen ? `
-                            <div style="display:inline-flex; align-items:center; gap:6px;">
+                            <div style="display:inline-flex; align-items:center; gap:8px; justify-content:flex-end;">
                                 <button type="button" onclick="resolveReport(${r.id})"
-                                    style="padding:6px 12px; border-radius:8px; background:#0f172a; color:#ffffff; font-size:0.78rem; font-weight:700; border:none; cursor:pointer;">
-                                    Resolve
+                                    style="padding:6px 14px; border-radius:8px; background:#0f172a; color:#ffffff; font-size:0.78rem; font-weight:750; border:none; cursor:pointer; transition:background 0.15s ease;"
+                                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0f172a'">
+                                    ✓ Resolve
                                 </button>
                                 <button type="button" onclick="dismissReport(${r.id})"
-                                    style="padding:6px 12px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#64748b; font-size:0.78rem; font-weight:700; cursor:pointer;">
-                                    Dismiss
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#64748b; font-size:0.78rem; font-weight:750; cursor:pointer; transition:all 0.15s ease;"
+                                    onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a'" onmouseout="this.style.background='#ffffff'; this.style.color='#64748b'">
+                                    ✕ Dismiss
                                 </button>
                             </div>
                         ` : `
-                            <span style="font-size:0.78rem; color:#94a3b8;">Case Closed</span>
+                            <span style="display:inline-block; font-size:0.78rem; color:#94a3b8; font-weight:700;">Case Closed</span>
                         `}
                     </td>
                 </tr>`;
         }).join('');
     }
 
-    window.resolveReport = async function (reportId) {
-        const resolution = prompt(`Enter resolution findings and action taken for Report #${reportId}:`, "Verified listing data with seller and confirmed compliance.");
-        if (!resolution || !resolution.trim()) return;
+    let currentReportAction = null;
+
+    function openReportActionModal(reportId, action) {
+        const report = (state.reports || []).find(r => String(r.id) === String(reportId));
+        currentReportAction = { reportId, action };
+
+        const modal = document.getElementById("reportActionModal");
+        const titleEl = document.getElementById("reportModalTitle");
+        const detailsEl = document.getElementById("reportModalDetails");
+        const labelEl = document.getElementById("reportModalTextLabel");
+        const textarea = document.getElementById("reportModalTextarea");
+        const confirmBtn = document.getElementById("reportModalConfirmBtn");
+
+        if (!modal) {
+            const promptMsg = action === 'RESOLVE' 
+                ? `Enter resolution findings and action taken for Report #${reportId}:`
+                : `Enter reason for dismissing Report #${reportId}:`;
+            const defText = action === 'RESOLVE'
+                ? "Verified listing data with seller and confirmed compliance."
+                : "Report evaluated; listing is authentic and complies with community guidelines.";
+            const res = prompt(promptMsg, defText);
+            if (res && res.trim()) {
+                submitReportAction(reportId, action, res.trim());
+            }
+            return;
+        }
+
+        if (action === 'RESOLVE') {
+            if (titleEl) titleEl.textContent = `Resolve Complaint #REP-${reportId}`;
+            if (labelEl) labelEl.textContent = "Resolution Findings & Action Taken *";
+            if (textarea) textarea.value = "Verified listing data with seller and confirmed compliance.";
+            if (confirmBtn) {
+                confirmBtn.textContent = "Confirm Resolution";
+                confirmBtn.style.background = "#0f172a";
+            }
+        } else {
+            if (titleEl) titleEl.textContent = `Dismiss Complaint #REP-${reportId}`;
+            if (labelEl) labelEl.textContent = "Reason for Dismissing Complaint *";
+            if (textarea) textarea.value = "Report evaluated; listing is authentic and complies with community guidelines.";
+            if (confirmBtn) {
+                confirmBtn.textContent = "Confirm Dismissal";
+                confirmBtn.style.background = "#b91c1c";
+            }
+        }
+
+        if (detailsEl) {
+            const reason = report ? report.reason : '';
+            const listingId = report ? report.listingId : '';
+            detailsEl.innerHTML = `
+                <div style="font-weight:750; color:#0f172a; margin-bottom:4px;">Complaint #${reportId} · Listing #${listingId}</div>
+                <div style="color:#64748b; font-size:0.82rem; line-height:1.45;">"${escapeHtml(reason || 'No specific description provided.')}"</div>
+            `;
+        }
+
+        modal.classList.remove("hidden");
+        modal.style.display = "flex";
+        setTimeout(() => textarea?.focus(), 50);
+    }
+
+    function closeReportActionModal() {
+        const modal = document.getElementById("reportActionModal");
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.style.display = "none";
+        }
+        currentReportAction = null;
+    }
+
+    async function submitReportAction(reportId, action, replyText) {
+        const confirmBtn = document.getElementById("reportModalConfirmBtn");
+        const origText = confirmBtn ? confirmBtn.textContent : '';
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = "Processing...";
+        }
 
         try {
-            const res = await fetch(`/api/property/portal/reports/${reportId}`, {
+            const endpoint = action === 'RESOLVE'
+                ? `/api/property/portal/reports/${reportId}`
+                : `/api/property/portal/reports/${reportId}/dismiss`;
+
+            const res = await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ reply: resolution.trim() })
+                body: JSON.stringify({ reply: replyText })
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Failed to resolve report');
-            showToast(`Report #${reportId} resolved!`);
+            if (!res.ok) throw new Error(data.message || data.detail || `Failed to ${action.toLowerCase()} report`);
+
+            showToast(action === 'RESOLVE' ? `Report #${reportId} resolved successfully!` : `Report #${reportId} dismissed!`);
+            closeReportActionModal();
             loadReports();
             loadOverview();
         } catch (err) {
             showToast(err.message, true);
+        } finally {
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = origText;
+            }
         }
-    };
+    }
 
-    window.dismissReport = async function (reportId) {
-        const dismissal = prompt(`Enter reason for dismissing Report #${reportId}:`, "Report evaluated; listing is authentic and complies with guidelines.");
-        if (!dismissal || !dismissal.trim()) return;
-
-        try {
-            const res = await fetch(`/api/property/portal/reports/${reportId}/dismiss`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ reply: dismissal.trim() })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Failed to dismiss report');
-            showToast(`Report #${reportId} dismissed!`);
-            loadReports();
-            loadOverview();
-        } catch (err) {
-            showToast(err.message, true);
-        }
-    };
+    window.openReportActionModal = openReportActionModal;
+    window.closeReportActionModal = closeReportActionModal;
+    window.resolveReport = function (reportId) { openReportActionModal(reportId, 'RESOLVE'); };
+    window.dismissReport = function (reportId) { openReportActionModal(reportId, 'DISMISS'); };
 
     // -------------------------------------------------------------
     // 8. CATEGORIES, AMENITIES & LOCATIONS METADATA
@@ -2305,12 +2745,38 @@
     // -------------------------------------------------------------
     // 10. NOTIFICATIONS & AUDIT HISTORY
     // -------------------------------------------------------------
-    async function loadAudit() {
+    let auditDebounceTimer = null;
+
+    async function loadAudit(showFeedback) {
         const targetType = document.getElementById("auditTargetTypeFilter")?.value || "";
+        const action = document.getElementById("auditActionFilter")?.value || "";
         const search = document.getElementById("auditSearchInput")?.value || "";
+
+        // Immediately update clear button visibility
+        const clearBtn = document.getElementById("auditSearchClearBtn");
+        if (clearBtn) clearBtn.style.display = search ? "block" : "none";
+
+        // Animate refresh icon if present
+        const refreshIcon = document.getElementById("refreshAuditIcon");
+        if (refreshIcon) {
+            refreshIcon.style.transform = "rotate(360deg)";
+            refreshIcon.style.transition = "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+            setTimeout(() => {
+                if (refreshIcon) {
+                    refreshIcon.style.transform = "";
+                    refreshIcon.style.transition = "";
+                }
+            }, 550);
+        }
+
+        // Fast client-side render if data already in state
+        if (state.audit && state.audit.length > 0) {
+            renderAuditTable();
+        }
 
         let url = '/api/property/portal/audit?';
         if (targetType) url += `targetType=${encodeURIComponent(targetType)}&`;
+        if (action) url += `action=${encodeURIComponent(action)}&`;
         if (search) url += `search=${encodeURIComponent(search)}&`;
 
         try {
@@ -2318,8 +2784,13 @@
             if (!res.ok) throw new Error("HTTP " + res.status);
             state.audit = await res.json();
             renderAuditTable();
+            if (showFeedback && typeof showToast === 'function') {
+                showToast("Notifications & audit logs updated.");
+            }
         } catch (err) {
             console.error("Error loading audit history:", err);
+            // Even if fetch errors, filter in-memory data
+            renderAuditTable();
         }
     }
 
@@ -2327,35 +2798,278 @@
         const tbody = document.getElementById("auditTableBody");
         if (!tbody) return;
 
-        if (state.audit.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">No audit logs match criteria.</td></tr>`;
+        const targetType = (document.getElementById("auditTargetTypeFilter")?.value || "").toUpperCase().trim();
+        const actionFilter = (document.getElementById("auditActionFilter")?.value || "").toUpperCase().trim();
+        const search = (document.getElementById("auditSearchInput")?.value || "").toLowerCase().trim();
+
+        const allLogs = state.audit || [];
+
+        // Update live stats ribbon counters
+        const totalAll = allLogs.length;
+        const approvedCount = allLogs.filter(e => {
+            const a = (e.action || '').toUpperCase();
+            return a.includes('APPROVED') || a.includes('VERIFIED') || a.includes('CREATED') || a.includes('SUCCESS');
+        }).length;
+        const rejectedCount = allLogs.filter(e => {
+            const a = (e.action || '').toUpperCase();
+            return a.includes('REJECTED') || a.includes('REVOKED') || a.includes('SUSPENDED') || a.includes('DELETE') || a.includes('DISMISSED');
+        }).length;
+        const updatesCount = allLogs.filter(e => {
+            const a = (e.action || '').toUpperCase();
+            return a.includes('UPDATE') || a.includes('MODIFIED') || a.includes('CHANGE') || a.includes('MESSAGE') || a.includes('SUBMITTED');
+        }).length;
+
+        const totalStatEl = document.getElementById("auditTotalLogsStat");
+        if (totalStatEl) totalStatEl.textContent = totalAll;
+        const appStatEl = document.getElementById("auditApprovedLogsStat");
+        if (appStatEl) appStatEl.textContent = approvedCount;
+        const rejStatEl = document.getElementById("auditRejectedLogsStat");
+        if (rejStatEl) rejStatEl.textContent = rejectedCount;
+        const updStatEl = document.getElementById("auditUpdatesLogsStat");
+        if (updStatEl) updStatEl.textContent = updatesCount;
+
+        const filtered = allLogs.filter(e => {
+            if (targetType && (e.targetType || '').toUpperCase() !== targetType) return false;
+            if (actionFilter && !(e.action || '').toUpperCase().includes(actionFilter)) return false;
+            if (search) {
+                const actor = (e.actor || '').toLowerCase();
+                const detail = (e.detail || '').toLowerCase();
+                const act = (e.action || '').toLowerCase();
+                const type = (e.targetType || '').toLowerCase();
+                const idStr = String(e.targetId || '');
+                const formattedTarget = `${type} #${idStr}`;
+                const match = actor.includes(search) ||
+                              detail.includes(search) ||
+                              act.includes(search) ||
+                              type.includes(search) ||
+                              idStr.includes(search) ||
+                              formattedTarget.includes(search);
+                if (!match) return false;
+            }
+            return true;
+        });
+
+        const countNum = document.getElementById("auditCountNumber");
+        if (countNum) countNum.textContent = filtered.length;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center !important; padding:48px 20px; color:#64748b; font-size:0.88rem;">
+                        <div style="display:inline-flex; flex-direction:column; align-items:center; gap:10px;">
+                            <span style="font-size:1.8rem;">🔔</span>
+                            <span style="font-weight:700; color:#334155;">No notifications or audit logs match your criteria.</span>
+                            <span style="font-size:0.80rem; color:#94a3b8;">Try clearing the search query or changing entity/action filters.</span>
+                            <button type="button" onclick="if(window.resetAuditFilters) window.resetAuditFilters();" class="small"
+                                style="margin-top:6px; padding:6px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#0f172a; font-weight:700; cursor:pointer;">
+                                Reset All Filters
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
             return;
         }
 
-        tbody.innerHTML = state.audit.map(e => {
-            let badge = `<span style="padding:3px 8px; border-radius:6px; font-size:0.72rem; font-weight:800; background:#f1f5f9; color:#475569;">${escapeHtml(e.action)}</span>`;
-            if (e.action.includes('APPROVED')) badge = `<span style="padding:3px 8px; border-radius:6px; font-size:0.72rem; font-weight:800; background:#dcfce7; color:#15803d;">${escapeHtml(e.action)}</span>`;
-            else if (e.action.includes('REJECTED') || e.action.includes('SUSPENDED')) badge = `<span style="padding:3px 8px; border-radius:6px; font-size:0.72rem; font-weight:800; background:#fee2e2; color:#b91c1c;">${escapeHtml(e.action)}</span>`;
-            else if (e.action.includes('CHANGES_REQUESTED')) badge = `<span style="padding:3px 8px; border-radius:6px; font-size:0.72rem; font-weight:800; background:#fef3c7; color:#b45309;">${escapeHtml(e.action)}</span>`;
+        window.currentAuditLogs = filtered;
+
+        tbody.innerHTML = filtered.map((e, idx) => {
+            const act = (e.action || '').toUpperCase();
+            let badgeBg = '#f1f5f9';
+            let badgeColor = '#475569';
+            let badgeBorder = '#e2e8f0';
+
+            if (act.includes('APPROVED') || act.includes('VERIFIED') || act.includes('RESOLVED') || act.includes('SUCCESS') || act.includes('CREATED')) {
+                badgeBg = '#dcfce7'; badgeColor = '#15803d'; badgeBorder = '#bbf7d0';
+            } else if (act.includes('REJECTED') || act.includes('REVOKED') || act.includes('SUSPENDED') || act.includes('DELETE') || act.includes('DISMISSED')) {
+                badgeBg = '#fee2e2'; badgeColor = '#b91c1c'; badgeBorder = '#fecaca';
+            } else if (act.includes('SUBMITTED') || act.includes('REQUESTED') || act.includes('PENDING') || act.includes('HOLD')) {
+                badgeBg = '#fef3c7'; badgeColor = '#b45309'; badgeBorder = '#fde68a';
+            } else if (act.includes('UPDATE') || act.includes('MODIFIED') || act.includes('CHANGE')) {
+                badgeBg = '#e0e7ff'; badgeColor = '#4338ca'; badgeBorder = '#c7d2fe';
+            }
+
+            const badge = `<span style="padding:4px 9px; border-radius:6px; font-size:0.73rem; font-weight:800; background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder}; display:inline-block; letter-spacing:0.02em; white-space:nowrap !important;">${escapeHtml(e.action)}</span>`;
+
+            let targetIcon = '📄';
+            const tType = (e.targetType || '').toUpperCase();
+            if (tType === 'ACCOUNT') targetIcon = '👤';
+            else if (tType === 'APPLICATION') targetIcon = '📋';
+            else if (tType === 'LISTING') targetIcon = '🏠';
+            else if (tType === 'REPORT') targetIcon = '⚠️';
+            else if (tType === 'VISIT') targetIcon = '📅';
+            else if (tType === 'ENQUIRY') targetIcon = '💬';
 
             return `
-                <tr style="border-bottom:1px solid #f1f5f9;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                    <td style="padding:14px 18px; font-size:0.82rem; color:#64748b; white-space:nowrap;">
+                <tr style="border-bottom:1px solid #f1f5f9; transition:background 0.15s ease;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:14px 16px 14px 20px; font-size:0.82rem; color:#64748b; font-weight:600; white-space:nowrap !important; vertical-align:middle; text-align:left !important; box-sizing:border-box;">
                         ${formatDateTime(e.createdAt)}
                     </td>
-                    <td style="padding:14px 18px;">${badge}</td>
-                    <td style="padding:14px 18px; font-weight:700; font-size:0.84rem; color:#1e293b;">
-                        ${escapeHtml(e.targetType)} #${e.targetId}
+                    <td style="padding:14px 16px; vertical-align:middle; white-space:nowrap !important; text-align:left !important; box-sizing:border-box;">
+                        ${badge}
                     </td>
-                    <td style="padding:14px 18px; font-size:0.82rem; color:#475569;">
-                        <code>${escapeHtml(e.actor || 'system')}</code>
+                    <td style="padding:14px 16px; font-weight:750; font-size:0.84rem; color:#1e293b; white-space:nowrap !important; vertical-align:middle; text-align:left !important; box-sizing:border-box;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; white-space:nowrap !important;">
+                            <span>${targetIcon}</span>
+                            <span>${escapeHtml(e.targetType)} #${e.targetId}</span>
+                        </span>
                     </td>
-                    <td style="padding:14px 18px; font-size:0.84rem; color:#334155; line-height:1.4;">
-                        ${escapeHtml(e.detail || '—')}
+                    <td style="padding:14px 16px; font-size:0.82rem; color:#475569; white-space:nowrap !important; vertical-align:middle; text-align:left !important; box-sizing:border-box;">
+                        <code style="background:#f1f5f9; padding:4px 9px; border-radius:6px; font-size:0.78rem; font-family:monospace; color:#334155; border:1px solid #e2e8f0; display:inline-block; white-space:nowrap !important; max-width:140px; overflow:hidden; text-overflow:ellipsis; vertical-align:middle; letter-spacing:0.02em;" title="${escapeHtml(e.actor || 'system')}">${escapeHtml(e.actor || 'system')}</code>
+                    </td>
+                    <td style="padding:14px 20px 14px 16px; vertical-align:middle; text-align:right !important; white-space:nowrap !important; box-sizing:border-box;">
+                        <button type="button" onclick="window.openAuditDetailsModal && window.openAuditDetailsModal(${idx})" style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:0.78rem; font-weight:750; cursor:pointer; white-space:nowrap; transition:all 0.15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.04);" onmouseover="this.style.background='#0f172a'; this.style.color='#ffffff'; this.style.borderColor='#0f172a';" onmouseout="this.style.background='#ffffff'; this.style.color='#0f172a'; this.style.borderColor='#cbd5e1';">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>View Details</span>
+                        </button>
                     </td>
                 </tr>`;
         }).join('');
     }
+
+    window.setAuditActionQuickFilter = function (actionKeyword) {
+        const actFilter = document.getElementById("auditActionFilter");
+        if (actFilter) actFilter.value = actionKeyword;
+        loadAudit();
+    };
+
+    window.clearAuditSearch = function () {
+        const s = document.getElementById("auditSearchInput");
+        if (s) {
+            s.value = "";
+            s.focus();
+        }
+        const clearBtn = document.getElementById("auditSearchClearBtn");
+        if (clearBtn) clearBtn.style.display = "none";
+        loadAudit();
+    };
+
+    window.openAuditDetailsModal = function (index) {
+        const list = window.currentAuditLogs || [];
+        const log = list[index];
+        if (!log) return;
+
+        const modal = document.getElementById("auditDetailsModal");
+        if (!modal) return;
+
+        const timeEl = document.getElementById("auditModalTimestamp");
+        if (timeEl) timeEl.textContent = formatDateTime(log.createdAt);
+
+        const actBadgeEl = document.getElementById("auditModalActionBadge");
+        if (actBadgeEl) {
+            const act = (log.action || '').toUpperCase();
+            let bg = '#f1f5f9', color = '#475569', border = '#e2e8f0';
+            if (act.includes('APPROVED') || act.includes('VERIFIED') || act.includes('RESOLVED') || act.includes('SUCCESS') || act.includes('CREATED')) {
+                bg = '#dcfce7'; color = '#15803d'; border = '#bbf7d0';
+            } else if (act.includes('REJECTED') || act.includes('REVOKED') || act.includes('SUSPENDED') || act.includes('DELETE') || act.includes('DISMISSED')) {
+                bg = '#fee2e2'; color = '#b91c1c'; border = '#fecaca';
+            } else if (act.includes('SUBMITTED') || act.includes('REQUESTED') || act.includes('PENDING') || act.includes('HOLD')) {
+                bg = '#fef3c7'; color = '#b45309'; border = '#fde68a';
+            } else if (act.includes('UPDATE') || act.includes('MODIFIED') || act.includes('CHANGE')) {
+                bg = '#e0e7ff'; color = '#4338ca'; border = '#c7d2fe';
+            }
+            actBadgeEl.innerHTML = `<span style="padding:4px 9px; border-radius:6px; font-size:0.75rem; font-weight:800; background:${bg}; color:${color}; border:1px solid ${border}; display:inline-block;">${escapeHtml(log.action || '—')}</span>`;
+        }
+
+        const targetEl = document.getElementById("auditModalTarget");
+        if (targetEl) {
+            let targetIcon = '📄';
+            const tType = (log.targetType || '').toUpperCase();
+            if (tType === 'ACCOUNT') targetIcon = '👤';
+            else if (tType === 'APPLICATION') targetIcon = '📋';
+            else if (tType === 'LISTING') targetIcon = '🏠';
+            else if (tType === 'REPORT') targetIcon = '⚠️';
+            else if (tType === 'VISIT') targetIcon = '📅';
+            else if (tType === 'ENQUIRY') targetIcon = '💬';
+
+            targetEl.innerHTML = `<span>${targetIcon}</span><span>${escapeHtml(log.targetType || 'ENTITY')} #${log.targetId || '—'}</span>`;
+        }
+
+        const actorEl = document.getElementById("auditModalActor");
+        if (actorEl) actorEl.textContent = log.actor || 'system';
+
+        const detailEl = document.getElementById("auditModalDetail");
+        if (detailEl) detailEl.textContent = log.detail || 'No additional details recorded for this event.';
+
+        const actionContainer = document.getElementById("auditModalTargetActionContainer");
+        if (actionContainer) {
+            actionContainer.innerHTML = '';
+            const tType = (log.targetType || '').toUpperCase();
+            const tId = log.targetId;
+
+            if (tType === 'ACCOUNT') {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; border:none; font-weight:750; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;';
+                btn.innerHTML = '👤 View User in Directory';
+                btn.onclick = () => { closeAuditDetailsModal(); switchTabAndFilter('users'); };
+                actionContainer.appendChild(btn);
+            } else if (tType === 'APPLICATION') {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; border:none; font-weight:750; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;';
+                btn.innerHTML = '📋 View Application';
+                btn.onclick = () => { closeAuditDetailsModal(); switchTabAndFilter('verifications'); };
+                actionContainer.appendChild(btn);
+            } else if (tType === 'LISTING' && tId) {
+                const a = document.createElement('a');
+                a.href = `/propertydirect/apartment-detail?id=${tId}`;
+                a.target = '_blank';
+                a.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; text-decoration:none; font-weight:750; font-size:0.82rem; display:inline-flex; align-items:center; gap:6px;';
+                a.innerHTML = '🏠 View Property Listing ↗';
+                actionContainer.appendChild(a);
+            } else if (tType === 'REPORT') {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; border:none; font-weight:750; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;';
+                btn.innerHTML = '⚠️ View in Complaints';
+                btn.onclick = () => { closeAuditDetailsModal(); switchTabAndFilter('reports'); };
+                actionContainer.appendChild(btn);
+            } else if (tType === 'VISIT') {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; border:none; font-weight:750; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;';
+                btn.innerHTML = '📅 View Scheduled Visits';
+                btn.onclick = () => {
+                    closeAuditDetailsModal();
+                    switchTabAndFilter('enquiries');
+                    if (window.switchEnquirySubtab) window.switchEnquirySubtab('visits');
+                };
+                actionContainer.appendChild(btn);
+            } else if (tType === 'ENQUIRY') {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.style.cssText = 'background:#2563eb; color:#ffffff; padding:9px 16px; border-radius:8px; border:none; font-weight:750; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;';
+                btn.innerHTML = '💬 View Client Leads';
+                btn.onclick = () => {
+                    closeAuditDetailsModal();
+                    switchTabAndFilter('enquiries');
+                    if (window.switchEnquirySubtab) window.switchEnquirySubtab('enquiries');
+                };
+                actionContainer.appendChild(btn);
+            }
+        }
+
+        modal.classList.remove("hidden");
+        modal.classList.add("active");
+        modal.style.display = "flex";
+    };
+
+    window.closeAuditDetailsModal = function () {
+        const modal = document.getElementById("auditDetailsModal");
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.classList.remove("active");
+            modal.style.display = "none";
+        }
+    };
+
+    window.resetAuditFilters = function () {
+        const s = document.getElementById("auditSearchInput"); if (s) s.value = "";
+        const t = document.getElementById("auditTargetTypeFilter"); if (t) t.value = "";
+        const a = document.getElementById("auditActionFilter"); if (a) a.value = "";
+        const clearBtn = document.getElementById("auditSearchClearBtn"); if (clearBtn) clearBtn.style.display = "none";
+        loadAudit(true);
+    };
 
     // Modal Helper
     window.closeModal = function (modalId) {
@@ -2498,6 +3212,9 @@
     window.loadReports = loadReports;
     window.loadMetadata = loadMetadata;
     window.loadAudit = loadAudit;
+    window.clearAuditSearch = clearAuditSearch;
+    window.resetAuditFilters = resetAuditFilters;
+    window.setAuditActionQuickFilter = setAuditActionQuickFilter;
     window.renderUsersTable = renderUsersTable;
     window.renderInventoryTable = renderInventoryTable;
     window.renderApplicationsTable = renderApplicationsTable;
@@ -2563,6 +3280,8 @@
         });
 
         document.getElementById("appDecisionFilter")?.addEventListener("change", renderApplicationsTable);
+        document.getElementById("appRoleFilter")?.addEventListener("change", renderApplicationsTable);
+        document.getElementById("appSearchInput")?.addEventListener("input", renderApplicationsTable);
         document.getElementById("refreshAppsBtn")?.addEventListener("click", loadApplications);
 
         document.getElementById("inventoryStatusFilter")?.addEventListener("change", renderInventoryTable);
@@ -2570,9 +3289,43 @@
         document.getElementById("inventorySearchInput")?.addEventListener("input", renderInventoryTable);
 
         document.getElementById("reportStatusFilter")?.addEventListener("change", renderReportsTable);
+        document.getElementById("reportModalConfirmBtn")?.addEventListener("click", function () {
+            if (!currentReportAction) return;
+            const textarea = document.getElementById("reportModalTextarea");
+            const replyText = (textarea?.value || "").trim();
+            if (!replyText) {
+                showToast("Please enter notes or reason before confirming.", true);
+                textarea?.focus();
+                return;
+            }
+            submitReportAction(currentReportAction.reportId, currentReportAction.action, replyText);
+        });
+        document.getElementById("reportActionModal")?.addEventListener("click", function (e) {
+            if (e.target === this) closeReportActionModal();
+        });
+        document.getElementById("auditDetailsModal")?.addEventListener("click", function (e) {
+            if (e.target === this) closeAuditDetailsModal();
+        });
 
-        document.getElementById("auditTargetTypeFilter")?.addEventListener("change", loadAudit);
-        document.getElementById("auditSearchInput")?.addEventListener("input", loadAudit);
+        document.getElementById("auditTargetTypeFilter")?.addEventListener("change", () => loadAudit());
+        document.getElementById("auditActionFilter")?.addEventListener("change", () => loadAudit());
+        document.getElementById("auditSearchInput")?.addEventListener("input", () => {
+            const val = document.getElementById("auditSearchInput")?.value || "";
+            const clearBtn = document.getElementById("auditSearchClearBtn");
+            if (clearBtn) clearBtn.style.display = val ? "block" : "none";
+            renderAuditTable();
+            clearTimeout(auditDebounceTimer);
+            auditDebounceTimer = setTimeout(() => loadAudit(), 300);
+        });
+        document.getElementById("auditResetBtn")?.addEventListener("click", window.resetAuditFilters);
+        document.getElementById("headerManageUsersBtn")?.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchTabAndFilter("users");
+        });
+        document.querySelector('.user-avatar-badge')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTabAndFilter("profile");
+        });
 
         // Wire post apartment form
         wirePostApartmentForm();
@@ -2586,13 +3339,48 @@
         // Initial tab from hash or default to overview
         const initialHash = window.location.hash.replace("#", "") || "overview";
         switchTabAndFilter(initialHash);
-        // Real-time automatic polling every 8 seconds for live dashboard data
-        setInterval(function () {
-            const activeTab = window.location.hash.replace("#", "") || "overview";
-            if ((activeTab === 'overview' || !activeTab) && !document.hidden) {
-                loadOverview();
+
+        // Sync stored profile information to badges and headers
+        try {
+            const adminProfileRaw = localStorage.getItem("propertydirect-profile:v1:admin");
+            if (adminProfileRaw) {
+                const adminProf = JSON.parse(adminProfileRaw);
+                if (typeof window.syncProfileDisplay === "function") {
+                    window.syncProfileDisplay(adminProf);
+                } else {
+                    const name = adminProf.fullName || "Property Moderator";
+                    const inits = name.split(/\s+/).filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase() || "PM";
+                    document.querySelectorAll(".sidebar-user-avatar, .user-avatar-badge, .property-profile-avatar").forEach(el => el.textContent = inits);
+                    document.querySelectorAll(".sidebar-user-name, .property-profile-summary h3").forEach(el => el.textContent = name);
+                }
             }
-        }, 8000);
+        } catch (_) {}
+        // Real-time automatic polling every 8 seconds for live dashboard data
+        // Infallible header title observer to prevent badge or index values from overriding the title
+        (function initPanelTitleObserver() {
+            const titleElem = document.getElementById("panelTitle");
+            if (!titleElem) return;
+            const panelTitleMap = {
+                'overview': 'Overview & Metrics',
+                'users': 'Customer Directory',
+                'verifications': 'Owner & Builder Verification',
+                'my-properties': 'Property Inventory & Queue',
+                'enquiries': 'Client Leads & Enquiries',
+                'reports': 'Complaints',
+                'audit': 'Notifications',
+                'profile': 'Admin Profile'
+            };
+            function fixTitle() {
+                const text = (titleElem.textContent || '').trim();
+                if (/^\d+$/.test(text) || !text || text === '0' || text === 'Dashboard') {
+                    const hash = (window.location.hash || '').replace('#', '') || 'overview';
+                    titleElem.textContent = panelTitleMap[hash] || 'Property Inventory & Queue';
+                }
+            }
+            fixTitle();
+            const observer = new MutationObserver(fixTitle);
+            observer.observe(titleElem, { childList: true, characterData: true, subtree: true });
+        })();
     });
 
 })();

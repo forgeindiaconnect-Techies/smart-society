@@ -13,7 +13,8 @@ import static org.mockito.Mockito.*;
 class MaintenanceActorBoundaryTests {
  AppUserRepository users=mock(AppUserRepository.class);
  MaintenancePartnerRepository partners=mock(MaintenancePartnerRepository.class);
- EmergencyMaintenanceService service=new EmergencyMaintenanceService(mock(EmergencyMaintenanceBookingRepository.class),mock(MaintenanceHubRepository.class),partners,users,mock(PropertyCustomerRepository.class),mock(NotificationRepository.class),mock(AuditLogRepository.class));
+ EmergencyMaintenanceBookingRepository bookings=mock(EmergencyMaintenanceBookingRepository.class);
+ EmergencyMaintenanceService service=new EmergencyMaintenanceService(bookings,mock(MaintenanceHubRepository.class),partners,users,mock(PropertyCustomerRepository.class),mock(NotificationRepository.class),mock(AuditLogRepository.class));
  @AfterEach void clear(){SecurityContextHolder.clearContext();}
  @Test void dashboardFlagsCannotImpersonateAnySocietyAccount(){
   var session=new MockHttpSession();session.setAttribute("dashboard:smartapartment:resident",true);session.setAttribute("dashboard:smartapartment:superadmin",true);
@@ -42,5 +43,23 @@ class MaintenanceActorBoundaryTests {
  @Test void societyAdminCannotReadAnotherSocietysMaintenance(){
   var actor=new EmergencyMaintenanceService.Actor(1L,"smartsociety","society-a","Admin",true,false);
   assertTrue(service.canAccessTenant(actor,"society-a"));assertFalse(service.canAccessTenant(actor,"society-b"));
+ }
+ @Test void manualAssignmentCannotChangeAnotherSocietysBooking(){
+  var actor=new EmergencyMaintenanceService.Actor(1L,"smartsociety","society-a","Admin",true,false);
+  var booking=new EmergencyMaintenanceBooking();booking.setId(21L);booking.setTenantId("society-b");booking.setJobStatus("UNASSIGNED");
+  when(bookings.lockById(21L)).thenReturn(Optional.of(booking));
+  assertEquals(403,assertThrows(ResponseStatusException.class,()->service.assign(actor,21L,8L)).getStatusCode().value());
+  verifyNoInteractions(partners);verify(bookings,never()).save(any());assertNull(booking.getPartnerId());
+ }
+ @Test void failedQueueOmitsOtherSocietysBookings(){
+  var actor=new EmergencyMaintenanceService.Actor(1L,"smartsociety","society-a","Admin",true,false);
+  var booking=new EmergencyMaintenanceBooking();booking.setId(22L);booking.setTenantId("society-b");booking.setJobStatus("FAILED_ASSIGNMENT");
+  when(bookings.findAll()).thenReturn(List.of(booking));assertTrue(service.listFailed(actor).isEmpty());
+ }
+ @Test void pendingFeedbackQueueOmitsOtherSocietysCompletedJobs(){
+  var actor=new EmergencyMaintenanceService.Actor(1L,"smartsociety","society-a","Admin",true,false);
+  var booking=new EmergencyMaintenanceBooking();booking.setId(23L);booking.setTenantId("society-b");booking.setJobStatus("COMPLETED");
+  when(bookings.findAll()).thenReturn(List.of(booking));assertTrue(service.pendingReviewNotifications(actor).isEmpty());
+  verify(bookings,never()).findById(any());
  }
 }

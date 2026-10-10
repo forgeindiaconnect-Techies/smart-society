@@ -1706,8 +1706,9 @@
         }
 
         body[data-dashboard-role="customer"] .dash-sidebar {
-            width: 275px !important;
-            min-width: 275px !important;
+            width: 280px !important;
+            min-width: 280px !important;
+            max-width: 280px !important;
             padding: 0 14px 84px !important;
             overflow: hidden !important;
         }
@@ -1801,11 +1802,11 @@
         }
 
         body[data-dashboard-role="customer"] .dash-main {
-            margin-left: 275px !important;
-            width: calc(100% - 275px) !important;
-            max-width: calc(100% - 275px) !important;
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+            max-width: calc(100% - 280px) !important;
             min-height: 100vh !important;
-            padding: 0 32px 40px 0 !important;
+            padding: 0 0 40px 0 !important;
             margin-top: 0 !important;
             padding-top: 0 !important;
             background: #f8fafc !important;
@@ -2285,18 +2286,18 @@
 
         body[data-dashboard-role="customer"] .dash-main {
             position: relative !important;
-            margin-left: 275px !important;
-            width: auto !important;
-            max-width: none !important;
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+            max-width: calc(100% - 280px) !important;
             min-width: 0 !important;
-            padding: 0 28px 40px 0 !important;
+            padding: 0 0 40px 0 !important;
         }
 
         body[data-dashboard-role="customer"] .dash-header {
             width: 100% !important;
             max-width: 100% !important;
-            margin: 0 0 28px 0 !important;
-            border-radius: 0 0 18px 0 !important;
+            margin: 0 0 24px 0 !important;
+            border-radius: 0 !important;
         }
 
         body[data-dashboard-role="customer"] .header-actions {
@@ -2315,9 +2316,13 @@
         }
 
         body[data-dashboard-role="customer"] .dash-panel {
-            margin-left: 28px !important;
-            width: calc(100% - 28px) !important;
-            max-width: calc(100% - 28px) !important;
+            margin: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding: 0 32px 32px 32px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
 
         @media (max-width: 1180px) {
@@ -2378,7 +2383,82 @@
                 grid-template-columns: 1fr !important;
             }
         }
-    </style>
+    
+    /* ==========================================================================
+       SUB-SERVICES & PAYMENT SUCCESS MODAL FULL SCROLLABILITY FIX
+       ========================================================================== */
+    .subservice-modal-backdrop,
+    html body.app-dashboard .subservice-modal-backdrop,
+    html body.app-dashboard[data-platform="propertydirect"] .subservice-modal-backdrop {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 24px 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    .subservice-modal-box,
+    #subserviceModalBox,
+    .subservice-modal-box.payment-mode,
+    #subserviceModalBox.payment-mode,
+    html body.app-dashboard .subservice-modal-box,
+    html body.app-dashboard[data-platform="propertydirect"] .subservice-modal-box.payment-mode {
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        overscroll-behavior: contain !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .payment-success-container,
+    #subserviceGrid.payment-success-container {
+        width: 100% !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .pg-success-card {
+        width: 100% !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+    }
+
+    .pg-receipt-card {
+        width: 100% !important;
+        max-width: 520px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+
+    .pg-success-actions {
+        width: 100% !important;
+        max-width: 520px !important;
+        display: flex !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        margin: 1.25rem auto 0.5rem !important;
+    }
+
+    #subserviceModalBox::-webkit-scrollbar {
+        width: 8px !important;
+    }
+    #subserviceModalBox::-webkit-scrollbar-track {
+        background: #f1f5f9 !important;
+        border-radius: 99px !important;
+    }
+    #subserviceModalBox::-webkit-scrollbar-thumb {
+        background: #cbd5e1 !important;
+        border-radius: 99px !important;
+    }
+    #subserviceModalBox::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8 !important;
+    }
+</style>
     <link rel="stylesheet" href="/shared/css/dashboard-flat.css?v=20260831-blue-headings-v1">
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
     <link rel="stylesheet" href="/propertydirect/css/smartsociety-brand.css?v=20260904-urbanist-v4">
@@ -2414,16 +2494,16 @@
     body[data-dashboard-role="customer"] .dash-main,
     main.dash-main {
         position: relative !important;
-        margin-left: 275px !important;
-        width: calc(100% - 275px) !important;
-        max-width: calc(100% - 275px) !important;
+        margin-left: 280px !important;
+        width: calc(100% - 280px) !important;
+        max-width: calc(100% - 280px) !important;
         min-width: 0 !important;
         min-height: 100vh !important;
         height: auto !important;
         max-height: none !important;
         overflow-x: hidden !important;
         overflow-y: visible !important;
-        padding: 0 0 60px 0 !important;
+        padding: 0 0 48px 0 !important;
         box-sizing: border-box !important;
         background: #f8fafc !important;
     }
@@ -2435,9 +2515,9 @@
         top: 0 !important;
         left: 0 !important;
         bottom: 0 !important;
-        width: 275px !important;
-        min-width: 275px !important;
-        max-width: 275px !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
         height: 100vh !important;
         max-height: 100vh !important;
         z-index: 1000 !important;
@@ -2490,9 +2570,11 @@
         min-height: 76px !important;
         max-height: 76px !important;
         width: 100% !important;
-        margin: 0 !important;
-        padding: 0 28px !important;
+        max-width: 100% !important;
+        margin: 0 0 24px 0 !important;
+        padding: 0 32px !important;
         border-radius: 0 !important;
+        border: 0 !important;
         border-bottom: 1px solid #e2e8f0 !important;
         display: flex !important;
         align-items: center !important;
@@ -3428,27 +3510,576 @@
         }
     }
 
+
+    /* ==========================================================================
+       CUSTOMER DASHBOARD - ULTRA-POLISHED SIDEBAR SPECIFICATION
+       ========================================================================== */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        background: linear-gradient(180deg, #091322 0%, #0d1b2e 50%, #0a1626 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        z-index: 1000 !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .dash-brand {
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        padding: 0 18px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: transparent !important;
+        text-decoration: none !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-brand .sidebar-home-mark {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        border-radius: 11px !important;
+        display: inline-grid !important;
+        place-items: center !important;
+        background: rgba(37, 99, 235, 0.18) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        color: #60a5fa !important;
+        flex-shrink: 0 !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-brand:hover .sidebar-home-mark {
+        background: rgba(37, 99, 235, 0.3) !important;
+        border-color: rgba(96, 165, 250, 0.6) !important;
+        transform: scale(1.04) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-brand-text {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-brand-title {
+        margin: 0 !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 1.18rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
+        color: #ffffff !important;
+        white-space: nowrap !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-brand-title span {
+        color: #3b82f6 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .society-dashboard-role-label {
+        display: block !important;
+        margin-top: 2px !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.05em !important;
+        text-transform: uppercase !important;
+        color: #93c5fd !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: calc(100vh - 76px - 64px) !important;
+        max-height: calc(100vh - 76px - 64px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding: 14px 12px 14px 12px !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav::-webkit-scrollbar {
+        width: 4px !important;
+    }
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 99px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        padding: 0 14px !important;
+        border-radius: 10px !important;
+        background: transparent !important;
+        border: none !important;
+        border-left: 3px solid transparent !important;
+        color: #94a3b8 !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 0.86rem !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+        text-align: left !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        box-sizing: border-box !important;
+        box-shadow: none !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        white-space: nowrap !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout span {
+        color: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout svg {
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px !important;
+        stroke: currentColor !important;
+        color: #64748b !important;
+        flex-shrink: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-left-color: rgba(96, 165, 250, 0.5) !important;
+        transform: translateX(2px) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button:hover svg {
+        color: #93c5fd !important;
+        transform: scale(1.05) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button.active {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%) !important;
+        border-left-color: #60a5fa !important;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        font-weight: 700 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button.active svg {
+        color: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+
+    /* Distinct Logout Navigation Link */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout {
+        color: #f87171 !important;
+        margin-top: 4px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout svg {
+        color: #f87171 !important;
+        stroke: #f87171 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout:hover {
+        color: #ffffff !important;
+        background: rgba(239, 68, 68, 0.16) !important;
+        border-left-color: #ef4444 !important;
+        transform: translateX(2px) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout:hover svg {
+        color: #fca5a5 !important;
+        stroke: #fca5a5 !important;
+        transform: scale(1.08) !important;
+    }
+
+    /* User Profile & Logout Bottom Card */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card {
+        position: absolute !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 64px !important;
+        min-height: 64px !important;
+        max-height: 64px !important;
+        padding: 10px 14px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: #081120 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        z-index: 10 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 0 !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-avatar {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 9px !important;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.82rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.02em !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-details {
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
+        text-align: left !important;
+        overflow: hidden !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-name {
+        color: #ffffff !important;
+        font-size: 0.84rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-role {
+        color: #94a3b8 !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+        margin-top: 1px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Compact Logout Icon Button in User Card */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout {
+        width: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        max-height: 36px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 9px !important;
+        background: rgba(239, 68, 68, 0.12) !important;
+        border: 1px solid rgba(239, 68, 68, 0.28) !important;
+        color: #f87171 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        text-decoration: none !important;
+        box-sizing: border-box !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        cursor: pointer !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout svg,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout svg {
+        width: 17px !important;
+        height: 17px !important;
+        stroke: currentColor !important;
+        stroke-width: 2.2 !important;
+        fill: none !important;
+        flex-shrink: 0 !important;
+        transition: transform 0.2s ease !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout:hover,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout:hover {
+        background: rgba(239, 68, 68, 0.25) !important;
+        border-color: rgba(248, 113, 113, 0.6) !important;
+        color: #ffffff !important;
+        transform: scale(1.06) !important;
+        box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout:hover svg,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout:hover svg {
+        transform: translateX(1px) !important;
+    }
+
+    /* ==========================================================================
+       SEAMLESS ALIGNMENT: REMOVE ALL GAPS BETWEEN SIDEBAR & MAIN DASHBOARD
+       ========================================================================== */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] {
+        --dashboard-sidebar-width: 280px !important;
+    }
+
+    /* 1. Eliminate dead gap between fixed sidebar (280px) and main content */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main.dash-main,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-main {
+        position: relative !important;
+        margin-left: 280px !important;
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+        width: calc(100% - 280px) !important;
+        max-width: calc(100% - 280px) !important;
+        min-width: 0 !important;
+        padding: 0 0 48px 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 48px !important;
+        box-sizing: border-box !important;
+        background: #f8fafc !important;
+    }
+
+    /* 2. Hide unwanted menu-toggle hamburger on desktop that creates an empty gap in dash-header */
+    @media (min-width: 901px) {
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header .dashboard-menu-toggle,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header button.dashboard-menu-toggle,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header .pd-sidebar-menu,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dashboard-menu-toggle {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+    }
+
+    /* 3. Flush header layout: spans 100% width edge-to-edge with 0 gap on left and right */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main:is(.dash-main, .vendor-main, .agent-main) > :is(.dash-header, .vendor-top, .agent-header, .agent-top),
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header,
+    body[data-dashboard-role="customer"] main.dash-main > .dash-header,
+    body[data-dashboard-role="customer"] .dash-header {
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1020 !important;
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 24px 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 32px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header > div:first-child,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-header > div:first-of-type {
+        margin: 0 !important;
+        padding: 0 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+
+    /* 4. Flush panel layout: 32px horizontal padding so content aligns with header text */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] main.dash-main > .dash-panel,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-panel,
+    body[data-dashboard-role="customer"] main.dash-main > .dash-panel,
+    body[data-dashboard-role="customer"] .dash-panel {
+        margin: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 32px 32px 32px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
 </style>
 </head>
 
 <body class="app-dashboard" data-platform="propertydirect" data-dashboard-role="customer">
-    <aside class="dash-sidebar">
-        <a class="dash-brand" href="/propertydirect" aria-label="PropertyDirect home">
-            <span class="brand-mark">PD</span>
-            <strong>Property<span>Direct</span></strong>
+        <aside class="dash-sidebar">
+        <a class="dash-brand text-decoration-none" href="/propertydirect" aria-label="PropertyDirect home">
+            <span class="sidebar-home-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/>
+                    <path d="M9.5 9V5.5h4"/>
+                </svg>
+            </span>
+            <div class="dash-brand-text">
+                <h4 class="dash-brand-title">Property<span>Direct</span></h4>
+                <span class="society-dashboard-role-label">Customer Dashboard</span>
+            </div>
         </a>
         <nav class="sidebar-nav" aria-label="Customer dashboard sections">
-            <button class="active" type="button" data-panel="overview" onclick="switchTab('overview')"><span>Overview</span></button>
-            <button type="button" data-panel="notifications" onclick="switchTab('notifications')"><span>Notifications</span></button>
-            <button type="button" data-panel="contacts" onclick="switchTab('contacts')"><span>Contacts</span></button>
-            <button type="button" data-panel="visits" onclick="switchTab('visits')"><span>Site visits</span></button>
-            <button type="button" data-panel="services" onclick="switchTab('services')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;"><path d="M14.5 5.5l4 4"/><path d="M4 20l6.5-6.5"/><path d="M13 4l7 7-5 5-7-7z"/><path d="M5 19l-1 1"/></svg><span>Carpentry & Home Services</span></button>
-            <button type="button" data-panel="plans" onclick="switchTab('plans')"><span>Plans</span></button>
-            <button type="button" data-panel="become-owner" onclick="switchTab('become-owner')" style="color:#059669; font-weight:800;"><span>🏠 Become Property Owner</span></button>
-            <button type="button" data-panel="profile" onclick="switchTab('profile')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Profile & Account</span></button>
-            <button type="button" data-panel="support" onclick="switchTab('support')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span>Support</span></button>
+            <button class="active" type="button" data-panel="overview" onclick="switchTab('overview')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+                <span>Overview</span>
+            </button>
+            <button type="button" data-panel="notifications" onclick="switchTab('notifications')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>Notifications</span>
+            </button>
+            <button type="button" data-panel="contacts" onclick="switchTab('contacts')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Contacts</span>
+            </button>
+            <button type="button" data-panel="visits" onclick="switchTab('visits')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Site Visits</span>
+            </button>
+            <button type="button" data-panel="services" onclick="switchTab('services')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 5.5l4 4"></path>
+                    <path d="M4 20l6.5-6.5"></path>
+                    <path d="M13 4l7 7-5 5-7-7z"></path>
+                    <path d="M5 19l-1 1"></path>
+                </svg>
+                <span>Services</span>
+            </button>
+            <button type="button" data-panel="plans" onclick="switchTab('plans')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span>Plans</span>
+            </button>
+            <button type="button" data-panel="become-owner" onclick="switchTab('become-owner')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span style="color:#34d399; font-weight:700;">Become Owner</span>
+            </button>
+            <button type="button" data-panel="support" onclick="switchTab('support')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Support</span>
+            </button>
+            <button type="button" data-panel="profile" onclick="switchTab('profile')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Profile</span>
+            </button>
+            <a href="/dashboards/logout?platform=propertydirect" class="sidebar-nav-logout" title="Sign out of PropertyDirect">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Logout</span>
+            </a>
         </nav>
-        <a class="logout-link" href="/dashboards/logout?platform=propertydirect">Logout</a>
+        <div class="sidebar-user-card">
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-avatar">CU</div>
+                <div class="sidebar-user-details">
+                    <strong class="sidebar-user-name" id="sidebarCustomerName">Customer</strong>
+                    <span class="sidebar-user-role">Buyer / Tenant</span>
+                </div>
+            </div>
+            <a class="sidebar-user-logout-btn logout" href="/dashboards/logout?platform=propertydirect" title="Sign Out">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </a>
+        </div>
     </aside>
 
     <main class="dash-main">
@@ -4039,7 +4670,15 @@
                             </tr>
                         </thead>
                         <tbody id="noBrokerMaintenanceRows">
-                            <tr><td colspan="7" style="text-align:center; padding:28px; color:#64748b;">Loading saved service bookings...</td></tr>
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:44px 20px; color:#64748b;">
+                                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                                        <i class="fa-regular fa-clipboard" style="font-size:2rem; color:#94a3b8; margin-bottom:4px;"></i>
+                                        <span style="font-size:0.95rem; font-weight:700; color:#334155;">No Service Bookings</span>
+                                        <span style="font-size:0.82rem; color:#94a3b8;">You haven't booked any services yet. Choose a service above to get started.</span>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -4349,54 +4988,7 @@
         </section>
 
         <section class="dash-panel hidden" data-view="support" id="customerSupportPanel">
-            <!-- 1. Top Quick Help & Contact Channels -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-bottom: 24px;">
-                <div class="dash-card" style="padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 14px;">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-                        📞
-                    </div>
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #0f172a; display: block; margin-bottom: 4px;">Phone Helpline</strong>
-                        <p style="margin: 0 0 8px 0; font-size: 0.82rem; color: #64748b;">Mon - Sat, 9:00 AM - 8:00 PM</p>
-                        <a href="tel:18004197860" style="font-weight: 700; color: #2563eb; font-size: 0.88rem; text-decoration: none;">1800-419-7860 (Toll Free)</a>
-                    </div>
-                </div>
-
-                <div class="dash-card" style="padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 14px;">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-                        💬
-                    </div>
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #0f172a; display: block; margin-bottom: 4px;">WhatsApp Support</strong>
-                        <p style="margin: 0 0 8px 0; font-size: 0.82rem; color: #64748b;">Instant replies within 5 mins</p>
-                        <a href="https://wa.me/919876543210" target="_blank" style="font-weight: 700; color: #059669; font-size: 0.88rem; text-decoration: none;">+91 98765 43210</a>
-                    </div>
-                </div>
-
-                <div class="dash-card" style="padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 14px;">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-                        ✉️
-                    </div>
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #0f172a; display: block; margin-bottom: 4px;">Email Support</strong>
-                        <p style="margin: 0 0 8px 0; font-size: 0.82rem; color: #64748b;">Response within 2 hours</p>
-                        <a href="mailto:support@propertydirect.in" style="font-weight: 700; color: #d97706; font-size: 0.88rem; text-decoration: none;">support@propertydirect.in</a>
-                    </div>
-                </div>
-
-                <div class="dash-card" style="padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 14px;">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #f3e8ff; color: #9333ea; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-                        ⚡
-                    </div>
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #0f172a; display: block; margin-bottom: 4px;">Visit Concierge</strong>
-                        <p style="margin: 0 0 8px 0; font-size: 0.82rem; color: #64748b;">Live site visit assistance</p>
-                        <span style="font-weight: 700; color: #9333ea; font-size: 0.88rem;">Available 7 Days</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Raise Ticket Card -->
+            <!-- 1. Raise Ticket Card -->
             <div class="dash-card" style="margin-bottom: 24px;">
                 <div class="card-head">
                     <div>
@@ -4439,24 +5031,6 @@
                     </label>
                     <button class="primary profile-wide" id="raiseSupportTicketBtn" data-action="support" data-property-api-action="support-ticket" type="button">Raise Detailed Ticket</button>
                 </form>
-
-                <h3 style="margin-top: 28px; margin-bottom: 14px; font-size: 1.15rem; font-weight: 800; color: #0f172a;">Active Support Tickets</h3>
-                <ul class="task-list" id="supportTickets" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                    <li style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-                        <div>
-                            <strong style="color: #0f172a;">#TKT-8902 · Site Visit Confirmation with Owner</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Category: Site Visit · Priority: Normal · Created 2 hours ago</p>
-                        </div>
-                        <span class="inline-state" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.75rem; padding: 2px 10px; border-radius: 999px;">Under Review</span>
-                    </li>
-                    <li style="padding: 14px 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-                        <div>
-                            <strong style="color: #0f172a;">#TKT-8419 · Rental Agreement E-Stamp Delivery Query</strong>
-                            <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: #64748b;">Category: Legal Services · Priority: High · Completed yesterday</p>
-                        </div>
-                        <span class="inline-state" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 0.75rem; padding: 2px 10px; border-radius: 999px;">Resolved</span>
-                    </li>
-                </ul>
             </div>
 
             <!-- 3. FAQs Card -->
@@ -4783,6 +5357,8 @@
                     view.style.setProperty("display", "block", "important");
                 } else {
                     view.style.setProperty("display", "none", "important");
+                }
+            });
                 }
             });
 
@@ -5180,12 +5756,27 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             loadSavedCustomerProfile();
+            // Hook window.openPanel to sync switchTab and eyebrow
+            if (typeof window.openPanel === "function") {
+                var prevOpenPanel = window.openPanel;
+                window.openPanel = function (panel, updateHistory) {
+                    try { prevOpenPanel(panel, updateHistory); } catch (e) {}
+                    switchTab(panel);
+                };
+            }
+
 
             document.addEventListener("click", function (e) {
                 var target = e.target.closest("[data-panel]");
                 if (target) {
-                    e.preventDefault();
                     switchTab(target.dataset.panel);
+                }
+            }, true);
+
+            window.addEventListener("hashchange", function () {
+                var h = window.location.hash.replace("#", "") || "overview";
+                if (document.querySelector('[data-view="' + h + '"]')) {
+                    switchTab(h);
                 }
             });
 
@@ -5254,11 +5845,46 @@
         async function loadNoBrokerMaintenanceTickets() {
             const tbody = document.getElementById("noBrokerMaintenanceRows");
             if (!tbody) return;
+            const emptyHtml = `<tr>
+                <td colspan="7" style="text-align:center; padding:44px 20px; color:#64748b;">
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                        <i class="fa-regular fa-clipboard" style="font-size:2rem; color:#94a3b8; margin-bottom:4px;"></i>
+                        <span style="font-size:0.95rem; font-weight:700; color:#334155;">No Service Bookings</span>
+                        <span style="font-size:0.82rem; color:#94a3b8;">You haven't booked any services yet. Choose a service above to get started.</span>
+                    </div>
+                </td>
+            </tr>`;
             try {
                 const items = await noBrokerMaintenanceApi("?sourcePlatform=propertydirect");
-                tbody.innerHTML = window.renderMaintenanceProgressRows(items);
+                const pdItems = (Array.isArray(items) ? items : []).filter(item => {
+                    const plat = (item.sourcePlatform || "").toLowerCase();
+                    const ref = String(item.ticketReference || item.externalReference || item.requestNumber || "");
+                    return plat === "propertydirect" && !item.isMaintenanceRequest && !ref.startsWith("MR-");
+                });
+                if (pdItems.length > 0) {
+                    tbody.innerHTML = pdItems.map(item => {
+                        const ref = item.ticketReference || item.externalReference || ('PD-HS-' + item.id);
+                        const sType = item.serviceType || 'Home Service';
+                        const sOpt = item.serviceOption || item.serviceCategory || 'Standard';
+                        const sDate = item.preferredAt ? new Date(item.preferredAt).toLocaleDateString() : (item.preferredDate || 'Scheduled');
+                        const sAddr = item.serviceAddress || '-';
+                        const sPrice = item.priceLabel || '₹49';
+                        const sStatus = item.ticketStatus || item.status || 'CONFIRMED';
+                        return `<tr>
+                            <td><strong style="font-family:monospace; color:#0f172a;">${ref}</strong></td>
+                            <td><div style="font-weight:700; color:#0f172a;">${sType}</div><small style="color:#64748b;">${sOpt}</small></td>
+                            <td>${sDate}</td>
+                            <td><i class="fa-solid fa-location-dot me-1 text-muted"></i>${sAddr}</td>
+                            <td><strong style="color:#0f766e;">${sPrice}</strong></td>
+                            <td><span style="background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:700;">${sStatus}</span></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold" style="font-size:0.78rem;" onclick="resolveNoBrokerTicket(${item.id})">Mark Resolved</button></td>
+                        </tr>`;
+                    }).join("");
+                } else {
+                    tbody.innerHTML = emptyHtml;
+                }
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="7" style="padding: 16px; text-align: center; color: #ef4444;">Could not load bookings: ${err.message}</td></tr>`;
+                tbody.innerHTML = emptyHtml;
             }
         }
 
@@ -5368,23 +5994,7 @@
                         })
                     }).then(r => r.ok ? r.json() : r.json().then(err => { throw new Error(err.message || "Failed to place emergency booking"); }));
 
-                    // Automatically mirror to SmartSociety Maintenance Dashboard
-                    try {
-                        await fetch("/api/maintenance/requests", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                category: service.toLowerCase().includes("plumb") ? "Plumbing" : service.toLowerCase().includes("electric") ? "Electrical" : "Carpentry",
-                                serviceType: service,
-                                title: `[PropertyDirect Emergency] ${service} - ${address || name}`,
-                                description: `Platform: PropertyDirect\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${address}\nSlot: ${slot}\nNotes: ${notes || 'Emergency Service Request'}`,
-                                priority: "URGENT",
-                                preferredDate: date,
-                                preferredTime: slot,
-                                notes: `[PropertyDirect Emergency Dispatch] Booking Ref: ${saved.bookingReference || ''}`
-                            })
-                        });
-                    } catch (mErr) { console.warn("Mirroring to maintenance dashboard:", mErr); }
+
                 } else {
                     // Non-Emergency Maintenance Ticket Engine (Flow A)
                     saved = await noBrokerMaintenanceApi("", {
@@ -5418,23 +6028,7 @@
                         })
                     });
 
-                    // Automatically mirror to SmartSociety Maintenance Dashboard
-                    try {
-                        await fetch("/api/maintenance/requests", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                category: meta.category || "Carpentry",
-                                serviceType: service,
-                                title: `[PropertyDirect] ${service} - ${address || name}`,
-                                description: `Platform: PropertyDirect\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${address}\nSlot: ${slot}\nPrice: Rs. ${price}\nNotes: ${notes || ''}`,
-                                priority: "MEDIUM",
-                                preferredDate: date,
-                                preferredTime: slot,
-                                notes: `[PropertyDirect Customer Request] Ticket Ref: ${bookingId}`
-                            })
-                        });
-                    } catch (mErr) { console.warn("Mirroring to maintenance dashboard:", mErr); }
+
                 }
                 e.currentTarget.reset();
                 updateNoBrokerCheckoutPrice();
@@ -5532,8 +6126,6 @@
 
     <script src="/shared/js/dashboard-system.js?v=20260916-universal-sidebar-v3"></script>
     <script src="/shared/js/home-services-dashboard.js?v=20261005-nobroker-force-v3"></script>
-<link rel="stylesheet" href="/shared/css/service-order-progress.css?v=20261009-v1">
-<script defer src="/shared/js/service-order-progress.js?v=20261009-v1"></script>
 <script>
     function toggleCustCityDropdown(event) {
         if (event) {
@@ -5890,6 +6482,106 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         };
-    </script>
+    
+        // Ensure subservice modal and payment success view is dynamically scrollable and properly formatted
+        (function() {
+            const hookPaymentSuccess = () => {
+                if (typeof window.showPaymentSuccess === 'function' && !window.showPaymentSuccess._scrollHooked) {
+                    const originalFn = window.showPaymentSuccess;
+                    const wrappedFn = function(data) {
+                        try { originalFn.apply(this, arguments); } catch (e) { console.error(e); }
+                        const box = document.getElementById("subserviceModalBox");
+                        if (box) {
+                            box.classList.remove("wide");
+                            box.style.setProperty("max-height", "88vh", "important");
+                            box.style.setProperty("overflow-y", "auto", "important");
+                            box.style.setProperty("overflow-x", "hidden", "important");
+                            box.style.setProperty("max-width", "620px", "important");
+                        }
+                        const grid = document.getElementById("subserviceGrid");
+                        if (grid) {
+                            grid.style.setProperty("overflow", "visible", "important");
+                            grid.style.setProperty("max-height", "none", "important");
+                        }
+                        const backdrop = document.getElementById("subservicesModalBackdrop");
+                        if (backdrop) {
+                            backdrop.style.setProperty("overflow-y", "auto", "important");
+                        }
+                    };
+                    wrappedFn._scrollHooked = true;
+                    window.showPaymentSuccess = wrappedFn;
+                }
+            };
+            hookPaymentSuccess();
+            window.addEventListener('load', hookPaymentSuccess);
+            document.addEventListener('DOMContentLoaded', hookPaymentSuccess);
+            setTimeout(hookPaymentSuccess, 500);
+            setTimeout(hookPaymentSuccess, 1500);
+        })();
+
+        // Strict Customer Dashboard Service Bookings Isolation:
+        // Do NOT display SmartSociety resident maintenance requests (e.g. MR-... / Flat A-204)
+        (function() {
+            window.loadNoBrokerMaintenanceTickets = async function loadNoBrokerMaintenanceTickets() {
+                const tbody = document.getElementById("noBrokerMaintenanceRows");
+                if (!tbody) return;
+                const emptyHtml = `<tr>
+                    <td colspan="7" style="text-align:center; padding:44px 20px; color:#64748b;">
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                            <i class="fa-regular fa-clipboard" style="font-size:2rem; color:#94a3b8; margin-bottom:4px;"></i>
+                            <span style="font-size:0.95rem; font-weight:700; color:#334155;">No Service Bookings</span>
+                            <span style="font-size:0.82rem; color:#94a3b8;">You haven't booked any services yet. Choose a service above to get started.</span>
+                        </div>
+                    </td>
+                </tr>`;
+                try {
+                    const res = await fetch("/api/maintenance?sourcePlatform=propertydirect", {
+                        headers: { "Accept": "application/json" }
+                    });
+                    if (!res.ok) {
+                        tbody.innerHTML = emptyHtml;
+                        return;
+                    }
+                    const items = await res.json().catch(() => []);
+                    const pdItems = (Array.isArray(items) ? items : []).filter(item => {
+                        const plat = (item.sourcePlatform || "").toLowerCase();
+                        const ref = String(item.ticketReference || item.externalReference || item.requestNumber || "");
+                        return plat === "propertydirect" && !item.isMaintenanceRequest && !ref.startsWith("MR-");
+                    });
+                    if (pdItems.length > 0) {
+                        tbody.innerHTML = pdItems.map(item => {
+                            const ref = item.ticketReference || item.externalReference || ('PD-HS-' + item.id);
+                            const sType = item.serviceType || 'Home Service';
+                            const sOpt = item.serviceOption || item.serviceCategory || 'Standard';
+                            const sDate = item.preferredAt ? new Date(item.preferredAt).toLocaleDateString() : (item.preferredDate || 'Scheduled');
+                            const sAddr = item.serviceAddress || '-';
+                            const sPrice = item.priceLabel || '₹49';
+                            const sStatus = item.ticketStatus || item.status || 'CONFIRMED';
+                            return `<tr>
+                                <td><strong style="font-family:monospace; color:#0f172a;">${ref}</strong></td>
+                                <td><div style="font-weight:700; color:#0f172a;">${sType}</div><small style="color:#64748b;">${sOpt}</small></td>
+                                <td>${sDate}</td>
+                                <td><i class="fa-solid fa-location-dot me-1 text-muted"></i>${sAddr}</td>
+                                <td><strong style="color:#0f766e;">${sPrice}</strong></td>
+                                <td><span style="background:#fef3c7; color:#b45309; padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:700;">${sStatus}</span></td>
+                                <td><button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold" style="font-size:0.78rem;" onclick="resolveNoBrokerTicket(${item.id})">Mark Resolved</button></td>
+                            </tr>`;
+                        }).join("");
+                    } else {
+                        tbody.innerHTML = emptyHtml;
+                    }
+                } catch (err) {
+                    tbody.innerHTML = emptyHtml;
+                }
+            };
+
+            // Immediately clear any resident tickets and enforce clean customer state
+            window.loadNoBrokerMaintenanceTickets();
+            document.addEventListener('DOMContentLoaded', window.loadNoBrokerMaintenanceTickets);
+            window.addEventListener('load', window.loadNoBrokerMaintenanceTickets);
+            setTimeout(window.loadNoBrokerMaintenanceTickets, 100);
+            setTimeout(window.loadNoBrokerMaintenanceTickets, 500);
+        })();
+</script>
 </body>
 </html>

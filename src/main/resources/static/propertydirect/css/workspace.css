@@ -295,3 +295,20 @@ body.pd-workspace .workspace-header {
 body.pd-workspace .workspace-sidebar {
   max-width: calc(100vw - 28px);
 }
+
+/* Profile sections keep related fields together without stretching across the screen. */
+.pd-workspace .profile-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr);gap:24px;padding:24px;align-items:start;max-width:1440px;margin:auto}
+body.pd-workspace .profile-layout>.panel{padding:24px;border:1px solid var(--line);border-radius:16px;margin:0;box-shadow:0 6px 24px #14234205}
+.pd-workspace .profile-form{display:grid;gap:24px}
+.pd-workspace .profile-section{border:0;border-top:1px solid var(--line);padding:18px 0 0;margin:0;min-width:0}
+.pd-workspace .profile-section legend{padding:0 12px 0 0;font-size:.95rem;font-weight:750;color:var(--ink)}
+.pd-workspace .profile-section>p{font-size:.82rem;color:var(--copy);margin:0 0 16px}
+.pd-workspace .profile-budget{margin-top:16px}
+.pd-workspace .profile-section .profile-help{margin:10px 0 0;font-size:.76rem}
+.pd-workspace .profile-email{display:grid;gap:3px;padding:12px 14px;background:#f5f7fb;border-radius:10px;font-size:.82rem;overflow-wrap:anywhere}
+.pd-workspace .profile-email span{color:var(--copy)}
+.pd-workspace .profile-email strong{font-weight:600}
+.pd-workspace .profile-save{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;bottom:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 5px 24px #14234212;z-index:2}
+.pd-workspace .profile-save span{font-size:.8rem;color:var(--copy)}
+@media(max-width:1200px){.pd-workspace .profile-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.pd-workspace .profile-layout{padding:14px;gap:16px}body.pd-workspace .profile-layout>.panel{padding:18px}.pd-workspace .profile-save{bottom:8px;flex-wrap:wrap}}

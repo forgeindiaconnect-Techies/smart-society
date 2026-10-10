@@ -492,8 +492,9 @@
 <main class="detail-page" style="visibility:hidden" aria-busy="true">
     <section class="detail-hero">
         <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
+            <div class="d-flex align-items-center gap-2 mb-1" style="flex-wrap: wrap;">
                 <p class="breadcrumb mb-0">Home / Apartments / Bangalore / Hebbal</p>
+                <span id="detailListingIdBadge" style="font-size: 0.78rem; font-weight: 800; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 3px 10px; border-radius: 6px;">Listing ID</span>
                 <span class="status active" style="background: rgba(16, 185, 129, 0.15); color: #065f46; font-weight: 800; font-size: 0.78rem; padding: 4px 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px;">
                      Verified Property
                 </span>
@@ -1096,10 +1097,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div style="font-size:0.85rem; color:#334155;">️ Email: <strong style="color:#0f3460;" id="pdOwnerEmail">rohan.mehta@propertydirect.test</strong></div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <a id="pdCallOwnerLink" href="tel:+919876543210" style="display:block; text-decoration:none; padding:10px; background:#0f3460; color:#ffffff; border-radius:10px; font-weight:700; font-size:0.85rem;"> Call Owner</a>
-            <a id="pdWhatsappOwnerLink" href="https://wa.me/919876543210" target="_blank" style="display:block; text-decoration:none; padding:10px; background:#16a34a; color:#ffffff; border-radius:10px; font-weight:700; font-size:0.85rem;"> WhatsApp</a>
-        </div>
+
     </div>
 </div>
 
@@ -1411,7 +1409,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (priceMeta) priceMeta.textContent = [item.deposit!=null?`Deposit: ${currency(item.deposit)}`:'',item.maintenance!=null?`Maintenance: ${currency(item.maintenance)}`:''].filter(Boolean).join(' · ');
 
         const overview = document.querySelector(".overview-grid");
+        const idBadge = document.getElementById("detailListingIdBadge");
+        if (idBadge) idBadge.textContent = `Listing ID: #${item.id}`;
         if (overview) overview.innerHTML = `
+            <article><span>Listing ID</span><strong style="color: #1d4ed8; font-weight: 800;">#${item.id} (${safeText(item.apartmentCode || 'PD-' + item.id)})</strong></article>
             <article><span>Bedrooms / BHK</span><strong>${safeText(item.bhk || "On request")}</strong></article>
             <article><span>Property Type</span><strong>${safeText(item.propertyType || "Apartment")}</strong></article>
             <article><span>Bathrooms</span><strong>${safeText(item.bathrooms || "On request")}</strong></article>

@@ -95,6 +95,15 @@ function isSameCity(aptCity, filterCity) {
     return a.includes(f) || f.includes(a);
 }
 
+function isModeButtonActive(btnVal, selectedMode) {
+    if (!selectedMode || !btnVal) return false;
+    const b = String(btnVal).trim().toLowerCase();
+    const s = String(selectedMode).trim().toLowerCase();
+    if (b === s) return true;
+    if ((b === "buy" || b === "sale") && (s === "buy" || s === "sale")) return true;
+    return false;
+}
+
 function isSameMode(aptMode, filterMode) {
     if (!filterMode) return true;
     const f = String(filterMode).trim().toLowerCase();
@@ -102,8 +111,8 @@ function isSameMode(aptMode, filterMode) {
     const a = String(aptMode || "").trim().toLowerCase();
     if (!a) return true;
 
-    const isRental = (m) => m.includes("rent") || m.includes("lease");
-    if (isRental(f)) return isRental(a);
+    if (f === "rent") return a.includes("rent") && !a.includes("lease");
+    if (f === "lease") return a.includes("lease");
 
     const isBuy = (m) => m.includes("buy") || m.includes("sale") || m.includes("sell");
     if (isBuy(f)) return isBuy(a);
@@ -158,6 +167,8 @@ function hydrateCityDropdowns(selectedCity = "") {
 function publishedApartments() {
     return approvedDiscoveryListings.map((item) => ({
         id: item.id,
+        apartmentCode: item.apartmentCode || (item.id ? `PD-${item.id}` : ""),
+        listingId: item.listingId || item.id,
         isPublished: true,
         listingMode: item.listingMode || item.listingType || item.type || "Rent",
         title: escapeApartmentText(item.title || `Property in ${item.locality || item.city || "your city"}`),
@@ -339,7 +350,7 @@ function updateFilterState(message = "") {
         const group = button.dataset.filterGroup || "general";
         if (group === "mode") {
             const bVal = (button.dataset.filter || "").toLowerCase();
-            const active = Boolean(activeSearchMode && isSameMode(bVal, activeSearchMode));
+            const active = isModeButtonActive(bVal, activeSearchMode);
             button.classList.toggle("active", active);
             button.setAttribute("aria-pressed", String(active));
             return;
@@ -364,10 +375,36 @@ function filteredApartments() {
     const minBudget = Number(minBudgetEl?.value || 0);
     const mode = (activeSearchMode || "").toLowerCase().trim();
 
+    const cleanQuery = query.replace(/^(listing\s*id[:#\s]*|id[:#\s]*|#)/i, "").trim().toLowerCase();
+    const queryNumOnly = query.replace(/[^\d]/g, "");
+
     return allApartments().filter((apt) => {
-        const text = `${apt.title} ${apt.society} ${apt.locality} ${apt.city} ${apt.bhk || apt.type} ${apt.listingMode || ""} ${apt.furnishing} ${apt.available} ${apt.parking} ${apt.apartmentType || apt.propertyType} ${apt.amenities || ""} ${apt.nearby?.join(" ") || ""}`.toLowerCase();
+        const aptIdStr = String(apt.id || "").toLowerCase();
+        const aptCodeStr = String(apt.apartmentCode || "").toLowerCase();
+
+        // Exact Listing ID check
+        const isExactIdMatch = cleanQuery && (
+            aptIdStr === cleanQuery ||
+            aptCodeStr === cleanQuery ||
+            `pd-${aptIdStr}` === cleanQuery ||
+            `pdt-${aptIdStr}` === cleanQuery ||
+            (queryNumOnly && aptIdStr === queryNumOnly)
+        );
+
+        // If user typed exact Listing ID (e.g. 579, #579, PDT-0579), match immediately!
+        if (isExactIdMatch) return true;
+
+        const isPartialIdMatch = query && (
+            aptIdStr.includes(cleanQuery) ||
+            aptCodeStr.includes(cleanQuery) ||
+            `#${aptIdStr}`.includes(query) ||
+            `id: #${aptIdStr}`.includes(query) ||
+            `listing id: #${aptIdStr}`.includes(query)
+        );
+
+        const text = `${apt.id} #${apt.id} pd-${apt.id} pdt-${apt.id} ${apt.apartmentCode || ""} ${apt.title} ${apt.society} ${apt.locality} ${apt.city} ${apt.bhk || apt.type} ${apt.listingMode || ""} ${apt.furnishing} ${apt.available} ${apt.parking} ${apt.apartmentType || apt.propertyType} ${apt.amenities || ""} ${apt.nearby?.join(" ") || ""}`.toLowerCase();
         const filtersOk = matchesGroupedFilters(apt);
-        const queryOk = !query || text.includes(query);
+        const queryOk = !query || text.includes(query) || isPartialIdMatch;
         const cityOk = isSameCity(apt.city, city) || isSameCity(apt.locality, city);
         const modeOk = isSameMode(apt.listingMode || apt.type, mode);
 
@@ -398,21 +435,262 @@ function matchingCityModeApartments() {
     return filteredApartments();
 }
 
-function renderApartments(items = filteredApartments()) {
+
+function getSavedListings() {
+    try {
+        return JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]");
+    } catch (e) {
+        return [];
+    }
+}
+
+function isListingSaved(id, title) {
+    const saved = getSavedListings();
+    const strId = String(id || "").trim();
+    const cleanTitle = String(title || "").trim().toLowerCase();
+    return saved.some(item => {
+        if (strId && item.id && String(item.id).trim() === strId) return true;
+        if (cleanTitle && item.title && String(item.title).trim().toLowerCase() === cleanTitle) return true;
+        return false;
+    });
+}
+
+function updateCardSaveButtons(listingId, cardTitle, isSaved) {
+    const strId = String(listingId || "").trim();
+    const cleanTitle = String(cardTitle || "").trim().toLowerCase();
+
+    document.querySelectorAll('[data-action="shortlist"]').forEach(btn => {
+        const parentCard = btn.closest(".apartment-card");
+        const btnId = String(btn.dataset.listingId || parentCard?.dataset?.listingId || "").trim();
+        const btnTitle = String(parentCard?.dataset?.apartmentTitle || parentCard?.querySelector("h2")?.textContent || "").trim().toLowerCase();
+
+        const matchesId = strId && btnId && btnId === strId;
+        const matchesTitle = cleanTitle && btnTitle && btnTitle === cleanTitle;
+
+        if (matchesId || matchesTitle) {
+            btn.classList.toggle("active", isSaved);
+            btn.classList.toggle("saved", isSaved);
+            btn.title = isSaved ? "Saved to favourites (Click to remove)" : "Save to favourites";
+
+            if (btn.classList.contains("icon-action")) {
+                const span = btn.querySelector("span");
+                if (span) span.textContent = isSaved ? "Saved" : "Save";
+                const svg = btn.querySelector("svg");
+                if (svg) svg.setAttribute("fill", isSaved ? "currentColor" : "none");
+            } else {
+                const heart = btn.querySelector(".heart-icon");
+                const text = btn.querySelector(".btn-text");
+                if (heart && text) {
+                    heart.textContent = isSaved ? "❤️" : "♡";
+                    text.textContent = isSaved ? "Saved" : "Save";
+                } else {
+                    btn.innerHTML = `<span class="heart-icon">${isSaved ? '❤️' : '♡'}</span> <span class="btn-text">${isSaved ? 'Saved' : 'Save'}</span>`;
+                }
+            }
+        }
+    });
+}
+
+function syncAllToolbarBadges() {
+    const saved = getSavedListings();
+    const savedCount = saved.length;
+    const savedBadge = document.getElementById("savedSearchesCountBadge");
+    if (savedBadge) savedBadge.textContent = savedCount;
+    document.querySelectorAll(".saved-searches-count, .saved-properties-count").forEach(b => {
+        b.textContent = savedCount;
+        b.style.display = savedCount > 0 ? "inline-flex" : "none";
+    });
+    const navSaved = document.getElementById("navSavedSearchesCount");
+    if (navSaved) {
+        navSaved.textContent = savedCount;
+        navSaved.style.display = savedCount > 0 ? "inline-flex" : "none";
+    }
+
+    let compCount = 0;
+    try { compCount = JSON.parse(localStorage.getItem("pd_compare_properties:v1") || "[]").length; } catch(e){}
+    const compBadge = document.getElementById("compareCountBadge");
+    if (compBadge) compBadge.textContent = compCount;
+
+    let recentCount = 0;
+    try { recentCount = JSON.parse(localStorage.getItem("pd_recently_viewed:v1") || "[]").length; } catch(e){}
+    const recentBadge = document.getElementById("recentlyViewedCountBadge");
+    if (recentBadge) recentBadge.textContent = recentCount;
+}
+
+window.activeToolbarMode = "all";
+window.setToolbarViewMode = function(mode) {
+    window.activeToolbarMode = mode || "all";
+    document.querySelectorAll("#apartmentsFeaturesToolbar .feature-bar-btn").forEach(btn => {
+        const btnFilter = btn.dataset.viewFilter;
+        btn.classList.toggle("active", btnFilter === window.activeToolbarMode);
+    });
+    syncAllToolbarBadges();
+    renderApartments();
+    if (mode === "all") {
+        const searchInput = document.getElementById("listingSearch");
+        if (searchInput) searchInput.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+};
+
+function getApartmentsForCurrentView() {
+    if (window.activeToolbarMode === "saved") {
+        const saved = getSavedListings();
+        const savedIds = new Set(saved.map(s => String(s.id || "")));
+        const savedTitles = new Set(saved.map(s => String(s.title || "").trim().toLowerCase()));
+
+        const matched = allApartments().filter(apt => 
+            (apt.id && savedIds.has(String(apt.id))) || 
+            savedTitles.has(String(apt.title || "").trim().toLowerCase())
+        );
+
+        const existingIds = new Set(matched.map(a => String(a.id || "")));
+        const existingTitles = new Set(matched.map(a => String(a.title || "").trim().toLowerCase()));
+
+        saved.forEach(s => {
+            if ((!s.id || !existingIds.has(String(s.id))) && !existingTitles.has(String(s.title || "").trim().toLowerCase())) {
+                matched.push({
+                    id: s.id || `saved-${Date.now()}`,
+                    title: s.title,
+                    society: s.society || s.locality || "Owner Listed Apartment",
+                    locality: s.locality || "Owner Listed",
+                    city: s.city || "Bangalore",
+                    rent: Number(String(s.rent || 0).replace(/[^\d]/g, "")),
+                    deposit: s.deposit || "Rs. 1,00,000",
+                    sqft: s.sqft || "1,200 sqft",
+                    type: s.bhk || "2 BHK",
+                    bhk: s.bhk || "2 BHK",
+                    furnishing: s.furnishing || "Semi-Furnished",
+                    available: s.available || "Ready to Move",
+                    apartmentType: "Apartment",
+                    image: s.image || "/propertydirect/images/orchid_enclave.jpg"
+                });
+            }
+        });
+        return matched;
+    }
+
+    if (window.activeToolbarMode === "compare") {
+        let compare = [];
+        try { compare = JSON.parse(localStorage.getItem("pd_compare_properties:v1") || "[]"); } catch(e){}
+        const compareIds = new Set(compare.map(c => String(c.id || "")));
+        const compareTitles = new Set(compare.map(c => String(c.title || "").trim().toLowerCase()));
+
+        const matched = allApartments().filter(apt => 
+            (apt.id && compareIds.has(String(apt.id))) || 
+            compareTitles.has(String(apt.title || "").trim().toLowerCase())
+        );
+
+        const existingIds = new Set(matched.map(a => String(a.id || "")));
+        compare.forEach(c => {
+            if (!c.id || !existingIds.has(String(c.id))) {
+                matched.push(c);
+            }
+        });
+        return matched;
+    }
+
+    if (window.activeToolbarMode === "recent") {
+        let recent = [];
+        try { recent = JSON.parse(localStorage.getItem("pd_recently_viewed:v1") || "[]"); } catch(e){}
+        const recentIds = new Set(recent.map(r => String(r.id || "")));
+        const recentTitles = new Set(recent.map(r => String(r.title || "").trim().toLowerCase()));
+
+        const matched = allApartments().filter(apt => 
+            (apt.id && recentIds.has(String(apt.id))) || 
+            recentTitles.has(String(apt.title || "").trim().toLowerCase())
+        );
+
+        const existingIds = new Set(matched.map(a => String(a.id || "")));
+        recent.forEach(r => {
+            if (!r.id || !existingIds.has(String(r.id))) {
+                matched.push(r);
+            }
+        });
+        return matched;
+    }
+
+    return filteredApartments();
+}
+
+function renderApartments(items = getApartmentsForCurrentView()) {
     if (!results) return;
     updateListingContext(items.length);
     resultCount.textContent = items.length;
     if (!items.length) {
-        results.innerHTML = `
-            <article class="apartment-card empty-results">
-                <h2>No apartments matched</h2>
-                <p>Try removing one filter, increasing the budget, or changing the city/search keyword.</p>
-                <button class="primary" type="button" id="emptyResetFilters">Reset Filters</button>
-            </article>
-        `;
+        if (window.activeToolbarMode === "saved") {
+            results.innerHTML = `
+                <article class="apartment-card empty-results">
+                    <h2>No saved properties yet</h2>
+                    <p>Click the ♡ Save button on any property card to save your favourite homes.</p>
+                    <button class="primary" type="button" onclick="setToolbarViewMode('all')">Browse All Properties</button>
+                </article>
+            `;
+        } else if (window.activeToolbarMode === "compare") {
+            results.innerHTML = `
+                <article class="apartment-card empty-results">
+                    <h2>No properties in comparison</h2>
+                    <p>Click the Compare button on any property card to compare features side-by-side.</p>
+                    <button class="primary" type="button" onclick="setToolbarViewMode('all')">Browse All Properties</button>
+                </article>
+            `;
+        } else if (window.activeToolbarMode === "recent") {
+            results.innerHTML = `
+                <article class="apartment-card empty-results">
+                    <h2>No recently viewed properties</h2>
+                    <p>Properties you explore will automatically appear here.</p>
+                    <button class="primary" type="button" onclick="setToolbarViewMode('all')">Browse All Properties</button>
+                </article>
+            `;
+        } else {
+            results.innerHTML = `
+                <article class="apartment-card empty-results">
+                    <h2>No apartments matched</h2>
+                    <p>Try removing one filter, increasing the budget, or changing the city/search keyword.</p>
+                    <button class="primary" type="button" id="emptyResetFilters">Reset Filters</button>
+                </article>
+            `;
+        }
         return;
     }
-    results.innerHTML = items.map((apt, index) => {
+    let bannerHtml = "";
+    if (window.activeToolbarMode === "compare") {
+        bannerHtml = `
+            <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 18px; margin-bottom: 8px;">
+                <div>
+                    <strong style="color: #1e3a8a; font-size: 0.92rem;">Comparing ${items.length} Properties</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: #3b82f6;">Side-by-side comparison matrix of price, BHK, area & furnishing</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="if(typeof openCompareDrawer==='function') openCompareDrawer();" class="primary" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer;">⚖️ Open Comparison Matrix</button>
+                    <button type="button" onclick="if(typeof clearComparisonList==='function') clearComparisonList(); setToolbarViewMode('compare');" style="background: #ffffff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer;">Clear</button>
+                </div>
+            </div>
+        `;
+    } else if (window.activeToolbarMode === "saved") {
+        bannerHtml = `
+            <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 12px 18px; margin-bottom: 8px;">
+                <div>
+                    <strong style="color: #9f1239; font-size: 0.92rem;">♥ Saved Properties (${items.length})</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: #e11d48;">Your personal collection of shortlisted listings</p>
+                </div>
+                <button type="button" onclick="setToolbarViewMode('all')" style="background: #ffffff; border: 1px solid #fecdd3; color: #e11d48; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer;">← Browse All</button>
+            </div>
+        `;
+    } else if (window.activeToolbarMode === "recent") {
+        bannerHtml = `
+            <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 18px; margin-bottom: 8px;">
+                <div>
+                    <strong style="color: #0f172a; font-size: 0.92rem;">🕒 Recently Viewed Properties (${items.length})</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: #64748b;">Properties you have recently explored</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="if(typeof clearRecentlyViewed==='function') clearRecentlyViewed(); setToolbarViewMode('recent');" style="background: #ffffff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer;">Clear History</button>
+                    <button type="button" onclick="setToolbarViewMode('all')" style="background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer;">← Browse All</button>
+                </div>
+            </div>
+        `;
+    }
+    results.innerHTML = bannerHtml + items.map((apt, index) => {
         const rawSlug = `${apt.type || "2-BHK"}-${apt.apartmentType || "apartment"}-for-${(apt.listingMode || "rent").toLowerCase()}-in-${apt.locality || "central"}-${apt.city || "chennai"}`
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
@@ -420,6 +698,7 @@ function renderApartments(items = filteredApartments()) {
         const detailUrl = `/propertydirect/apartment-detail?id=${encodeURIComponent(apt.id)}`;
         const bathroomsText = apt.bathrooms ? `${apt.bathrooms} Baths` : "Bathrooms not specified";
         const ownerAgentLabel = "Approved Owner / Builder Listing";
+        const savedState = isListingSaved(apt.id, apt.title);
         return `
         <article class="apartment-card" data-listing-id="${apt.id}"
             data-apartment-title="${safeAttribute(apt.title)}"
@@ -434,18 +713,22 @@ function renderApartments(items = filteredApartments()) {
             data-apartment-availability="${safeAttribute(apt.available)}"
             data-apartment-mode="${safeAttribute(apt.listingMode || activeSearchMode || "Rent")}">
             <div class="apt-photo" style="position: relative;">
-                <img src="${apt.image}" alt="${apt.title} at ${apt.society}">
-                <span>${apt.apartmentType || "Apartment"} · ${apt.available}</span>
-                <span class="verified-badge" style="position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.95); color: #ffffff; font-weight: 800; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(15,23,42,0.18); backdrop-filter: blur(4px);">✓ Verified Property</span>
-                ${apt.video ? `<button type="button" onclick="event.stopPropagation(); if (typeof playPropertyVideo === 'function') playPropertyVideo('${apt.video}', '${safeAttribute(apt.title)}')" style="position: absolute; bottom: 12px; right: 12px; background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 800; font-size: 0.76rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4); display: inline-flex; align-items: center; gap: 4px; z-index: 3;">Play Video Tour</button>` : ''}
+                <img src="${apt.image || '/propertydirect/images/orchid_enclave.jpg'}" alt="${apt.title} at ${apt.society}" onerror="this.onerror=null; this.src='/propertydirect/images/orchid_enclave.jpg';">
+                <span class="apt-status-tag">${apt.apartmentType || "Apartment"} · ${apt.available}</span>
+                <span class="listing-id-pill">ID: #${apt.id}</span>
+                <span class="verified-badge">✓ Verified Property</span>
+                ${apt.video ? `<button type="button" onclick="event.stopPropagation(); if (typeof playPropertyVideo === 'function') playPropertyVideo('${apt.video}', '${safeAttribute(apt.title)}')" style="position: absolute; bottom: 10px; right: 10px; background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 800; font-size: 0.76rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4); display: inline-flex; align-items: center; gap: 4px; z-index: 3;">Play Video Tour</button>` : ''}
             </div>
             <div class="apt-body">
                 <div class="apt-title-row">
                     <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span class="listing-id-badge" style="font-size: 0.74rem; font-weight: 800; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 6px; letter-spacing: 0.02em;">Listing ID: #${apt.id}</span>
+                        </div>
                         <h2><a href="${detailUrl}">${apt.title}</a></h2>
                         <p class="apt-address">📍 ${apt.society}, ${apt.locality}, ${apt.city}</p>
                     </div>
-                    <button class="icon-action" data-action="shortlist" title="Save to Favourites"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>Save</span></button>
+                    <button class="icon-action ${savedState ? 'active saved' : ''}" data-action="shortlist" data-listing-id="${apt.id}" title="${savedState ? 'Saved to favourites (Click to remove)' : 'Save to favourites'}"><svg width="14" height="14" viewBox="0 0 24 24" fill="${savedState ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>${savedState ? 'Saved' : 'Save'}</span></button>
                 </div>
                 <div class="apt-price-grid">
                     <article><span>Price</span><strong>${money(apt.rent)}</strong></article>
@@ -462,7 +745,7 @@ function renderApartments(items = filteredApartments()) {
                     <a class="primary" href="${detailUrl}">View Details</a>
                     <button class="primary" data-action="owner">Get Owner Details</button>
                     <button class="ghost" data-action="visit">Schedule Visit</button>
-                    <button class="ghost" data-action="shortlist">♡ Save</button>
+                    <button class="ghost btn-save-action ${savedState ? 'active saved' : ''}" data-action="shortlist" data-listing-id="${apt.id}" title="${savedState ? 'Saved to favourites (Click to remove)' : 'Save to favourites'}"><span class="heart-icon">${savedState ? '❤️' : '♡'}</span> <span class="btn-text">${savedState ? 'Saved' : 'Save'}</span></button>
                 </div>
             </div>
         </article>
@@ -860,6 +1143,19 @@ function updateListingContext(count = Number(resultCount?.textContent || 0)) {
     if (breadcrumb) breadcrumb.textContent = `Home / Apartments / ${cityLabel}${modeLabel}`;
     const liveCount = document.getElementById("resultCount");
     if (liveCount) liveCount.textContent = String(count);
+
+    const h1 = document.querySelector(".results-header h1");
+    if (h1) {
+        if (window.activeToolbarMode === "saved") {
+            h1.innerHTML = `<span id="resultCount">${count}</span> saved apartments in your shortlist`;
+        } else if (window.activeToolbarMode === "compare") {
+            h1.innerHTML = `<span id="resultCount">${count}</span> apartments in comparison`;
+        } else if (window.activeToolbarMode === "recent") {
+            h1.innerHTML = `<span id="resultCount">${count}</span> recently viewed apartments`;
+        } else {
+            h1.innerHTML = `<span id="resultCount">${count}</span> verified apartments without brokerage`;
+        }
+    }
 }
 
 function readImageFile(file) {
@@ -944,6 +1240,7 @@ async function submitPostedApartment() {
     document.getElementById("apartmentResults")?.classList.remove("hidden");
     document.getElementById("mapView")?.classList.add("hidden");
     updateFilterState();
+    syncAllToolbarBadges();
     showToast(`Apartment posted in ${city} and city dropdown updated`);
 }
 
@@ -983,7 +1280,7 @@ document.addEventListener("click", (event) => {
             });
             document.querySelectorAll('[data-filter-group="mode"]').forEach(b => {
                 const bVal = (b.dataset.filter || "").toLowerCase();
-                const isActive = activeSearchMode && isSameMode(bVal, activeSearchMode);
+                const isActive = isModeButtonActive(bVal, activeSearchMode);
                 b.classList.toggle("active", Boolean(isActive));
                 b.setAttribute("aria-pressed", String(Boolean(isActive)));
             });
@@ -1014,31 +1311,62 @@ document.addEventListener("click", (event) => {
     if (action) {
         const [title, text] = actionMessage(action);
         if (action === "shortlist") {
+            event.preventDefault();
+            event.stopPropagation();
             const btn = event.target.closest("button");
             const card = event.target.closest(".apartment-card") || document.querySelector(".detail-hero");
             const details = detailsFromApartmentCard(card);
-            let saved = [];
-            try { saved = JSON.parse(localStorage.getItem("propertydirect-saved-listings") || "[]"); } catch(e){}
-            const index = saved.findIndex(item => item.title === details.title);
+            const listingId = card?.dataset?.listingId || btn?.dataset?.listingId || details.id || "";
+            const cleanTitle = String(details.title || "").trim();
+            const cleanTitleLower = cleanTitle.toLowerCase();
+            const strListingId = String(listingId || "").trim();
+
+            let saved = getSavedListings();
+            const index = saved.findIndex(item => {
+                if (strListingId && item.id && String(item.id).trim() === strListingId) return true;
+                if (cleanTitleLower && item.title && String(item.title).trim().toLowerCase() === cleanTitleLower) return true;
+                return false;
+            });
+
+            let isNowSaved = false;
             if (index >= 0) {
                 saved.splice(index, 1);
-                btn?.classList.remove("active", "saved");
-                showToast(`Removed ${details.title} from shortlist`);
+                isNowSaved = false;
+                showToast(`Removed "${cleanTitle}" from saved properties`);
+                if (strListingId && /^\d+$/.test(strListingId)) {
+                    fetch(`/api/property/saved/${encodeURIComponent(strListingId)}`, { method: "DELETE" }).catch(() => {});
+                }
             } else {
                 saved.unshift({
-                    title: details.title,
+                    id: strListingId,
+                    title: cleanTitle,
                     rent: details.rent,
+                    deposit: details.deposit,
                     locality: details.locality,
                     city: details.city,
                     society: details.society,
                     bhk: details.bhk,
                     sqft: details.sqft,
+                    furnishing: details.furnishing,
+                    available: details.available,
+                    mode: details.mode,
                     image: card?.querySelector("img")?.src || "/propertydirect/images/orchid_enclave.jpg"
                 });
-                btn?.classList.add("active", "saved");
-                showToast(`Shortlisted ${details.title}`);
+                isNowSaved = true;
+                showToast(`Saved "${cleanTitle}" to favourites!`);
+                if (strListingId && /^\d+$/.test(strListingId)) {
+                    fetch(`/api/property/saved/${encodeURIComponent(strListingId)}`, { method: "POST" }).catch(() => {});
+                }
             }
             localStorage.setItem("propertydirect-saved-listings", JSON.stringify(saved));
+
+            updateCardSaveButtons(strListingId, cleanTitle, isNowSaved);
+            syncAllToolbarBadges();
+
+            if (window.activeToolbarMode === "saved") {
+                renderApartments();
+            }
+            return;
         }
         else openModal(title, text, action === "post" ? "post" : action, event.target);
     }
@@ -1052,7 +1380,7 @@ document.addEventListener("click", (event) => {
         
         document.querySelectorAll('[data-filter-group="mode"]').forEach(b => {
             const bVal = (b.dataset.filter || "").toLowerCase();
-            const isActive = activeSearchMode && isSameMode(bVal, activeSearchMode);
+            const isActive = isModeButtonActive(bVal, activeSearchMode);
             b.classList.toggle("active", Boolean(isActive));
             b.setAttribute("aria-pressed", String(Boolean(isActive)));
         });
@@ -1098,6 +1426,11 @@ document.getElementById("listingSearchButton")?.addEventListener("click", () => 
     const isMapActive = document.querySelector(".view-toggle button[data-view-mode='map']")?.classList.contains("active");
     if (isMapActive) renderMapView(); else renderApartments();
     showToast("Apartment search updated");
+});
+
+document.getElementById("listingSearch")?.addEventListener("input", () => {
+    const isMapActive = document.querySelector(".view-toggle button[data-view-mode='map']")?.classList.contains("active");
+    if (isMapActive) renderMapView(); else renderApartments();
 });
 
 document.getElementById("listingCity")?.addEventListener("change", () => {
@@ -1258,6 +1591,8 @@ function updateSocietiesFromListings() {
 loadPublicInventory().then(items => {
     const mapped = items.map(x => ({
         id: x.id,
+        apartmentCode: x.apartmentCode || (x.id ? `PD-${x.id}` : ""),
+        listingId: x.id,
         title: x.title,
         society: x.society || x.locality || "Approved Society",
         locality: x.locality || x.city || "Direct Listing",
@@ -1271,8 +1606,8 @@ loadPublicInventory().then(items => {
         bedrooms: x.bedrooms,
         bathrooms: x.bathrooms,
         furnishing: x.furnishing,
-        image: x.imageUrl,
-        imageUrl: x.imageUrl,
+        image: x.imageUrl || "/propertydirect/images/orchid_enclave.jpg",
+        imageUrl: x.imageUrl || "/propertydirect/images/orchid_enclave.jpg",
         imageUrls: String(x.imageUrls || "").split(/\r?\n/).filter(Boolean),
         video: x.videoUrl,
         videoUrl: x.videoUrl,

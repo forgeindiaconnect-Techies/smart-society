@@ -910,6 +910,7 @@ public class EmergencyMaintenanceService {
     }
     public void assign(Actor a,Long id,Long partnerId) {
         admin(a);EmergencyMaintenanceBooking b=locked(id);
+        if (!canAccessTenant(a, b.getTenantId())) throw error(403, "This booking belongs to another society");
         if(!"UNASSIGNED".equals(b.getJobStatus()) && !"FAILED_ASSIGNMENT".equals(b.getJobStatus()))throw error(409,"Only unassigned or failed bookings can be assigned");
         MaintenancePartner p=partners.lockById(partnerId).orElseThrow(()->error(404,"Partner not found"));
         MaintenanceHub h=hubs.findById(p.getHubId()).orElseThrow();
@@ -1768,6 +1769,7 @@ public class EmergencyMaintenanceService {
     public List<Map<String, Object>> listFailed(Actor a) {
         admin(a);
         return bookings.findAll().stream()
+                .filter(b -> canAccessTenant(a, b.getTenantId()))
                 .filter(b -> "FAILED_ASSIGNMENT".equals(b.getJobStatus()) || "UNASSIGNED".equals(b.getJobStatus()))
                 .sorted(Comparator.comparing(EmergencyMaintenanceBooking::getId).reversed())
                 .map(b -> view(a, b))
@@ -2090,6 +2092,7 @@ public class EmergencyMaintenanceService {
     public List<Map<String, Object>> pendingReviewNotifications(Actor a) {
         admin(a);
         return bookings.findAll().stream()
+                .filter(b -> canAccessTenant(a, b.getTenantId()))
                 .filter(b -> "COMPLETED".equals(b.getJobStatus()) && b.getRating() == null)
                 .sorted(Comparator.comparing(EmergencyMaintenanceBooking::getId).reversed())
                 .map(b -> reviewRequest(a, b.getId()))

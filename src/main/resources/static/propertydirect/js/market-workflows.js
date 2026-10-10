@@ -207,7 +207,7 @@
             return [];
         }
         if (!items.length) {
-            body.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">No site visit requests received yet.</td></tr>`;
+            body.innerHTML = `<tr><td colspan="6" style="text-align: center !important; color: #64748b !important; padding: 36px 20px !important; font-weight: 500; font-size: 0.88rem;">No site visit requests received yet.</td></tr>`;
             return [];
         }
         const esc = s => s ? String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : "";
@@ -273,6 +273,7 @@
             items = [];
         }
         ownerProperties.clear(); items.forEach(item => ownerProperties.set(String(item.id), item));
+        window.ownerProperties = ownerProperties;
 
         // Populate listing dropdown for lead recording form
         const leadSelect = document.getElementById("leadListingSelect");
@@ -286,7 +287,7 @@
         if (body.id === "agentListingsBody" || role === "agent") {
             if (!items.length) {
                 body.innerHTML = `<tr>
-                    <td colspan="7" style="text-align: center; padding: 40px 20px; color: #64748b;">
+                    <td colspan="7" style="text-align: center !important; padding: 40px 20px !important; color: #64748b !important;">
                         <strong style="color: #0f172a; font-size: 1rem; display: block; margin-bottom: 6px;">No Property Listings Yet</strong>
                         <span>You haven't posted any property listings yet. Click below to submit your first listing for Super Admin approval.</span><br><br>
                         <button class="btn-primary" type="button" onclick="switchTab('post-listing')">+ Submit First Property Listing</button>
@@ -320,7 +321,12 @@
                     actionHtml += '</div>';
 
                     return `<tr data-listing-id="${item.id}">
-                        <td><strong>${esc(code)}</strong></td>
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                <strong style="color: #1e3a8a; font-size: 0.92rem; letter-spacing: 0.01em;">Listing ID: #${item.id}</strong>
+                                <code style="font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; width: fit-content;">${esc(code)}</code>
+                            </div>
+                        </td>
                         <td><strong>${esc(item.title || 'Untitled Property')}</strong><br><small style="color: #64748b;">${esc(loc)}</small></td>
                         <td style="white-space: nowrap;"><span style="font-weight: 600;">${esc(typeBhk)}</span></td>
                         <td style="white-space: nowrap;"><strong style="color: #16a34a;">${currency(item.price)}</strong></td>
@@ -381,8 +387,8 @@
             </tr>`;
         };
 
-        if (leadsBody) leadsBody.innerHTML = items.length ? items.map(i => renderRow(i, false)).join("") : '<tr><td colspan="7">No leads received yet.</td></tr>';
-        if (overviewBody) overviewBody.innerHTML = items.length ? items.slice(0, 4).map(i => renderRow(i, true)).join("") : '<tr><td colspan="6">No leads received yet.</td></tr>';
+        if (leadsBody) leadsBody.innerHTML = items.length ? items.map(i => renderRow(i, false)).join("") : '<tr><td colspan="7" style="text-align: center !important; color: #64748b !important; padding: 36px 20px !important; font-weight: 500; font-size: 0.88rem;">No leads received yet.</td></tr>';
+        if (overviewBody) overviewBody.innerHTML = items.length ? items.slice(0, 4).map(i => renderRow(i, true)).join("") : '<tr><td colspan="6" style="text-align: center !important; color: #64748b !important; padding: 36px 20px !important; font-weight: 500; font-size: 0.88rem;">No leads received yet.</td></tr>';
 
         return items;
     }
@@ -441,6 +447,9 @@
         if (form.elements.ownerId && form.elements.ownerId.value) {
             payload.ownerId = Number(form.elements.ownerId.value);
         }
+        if (form.elements.listingId && form.elements.listingId.value) {
+            payload.listingId = form.elements.listingId.value.trim();
+        }
         if (!payload.title || !payload.locality || !payload.city || !payload.price) throw new Error("Title, city, locality and a valid price are required.");
         if (form.dataset.editingId) {
             await api(`/listings/${form.dataset.editingId}/resubmit`, {method: "PATCH", body: JSON.stringify(payload)});
@@ -482,6 +491,7 @@
         const body = new FormData(); body.append("listing", new Blob([JSON.stringify(payload)], {type: "application/json"})); photos.forEach(photo => body.append("photos", photo));
         await api("/listings/with-photos", {method: "POST", body});
         form.reset();
+        if (typeof window.generateOwnerListingId === "function") window.generateOwnerListingId();
         const preview = document.getElementById("propertyPhotoPreview") || document.getElementById("photoPreviewContainer");
         preview?.replaceChildren();
         const count = document.getElementById("propertyPhotoCount");
@@ -513,6 +523,8 @@
             });
         }
         form.dataset.editingId = item.id;
+        const postListingId = form.querySelector('#postListingId');
+        if (postListingId) postListingId.value = item.id;
         const photos = form.querySelector('[name="photos"]'); if (photos) photos.required = false;
         const button = form.querySelector('[data-property-api-action="publish-owner-listing"]'); if (button) button.textContent = "Save & Resubmit for Approval";
         const upload = form.querySelector(".property-photo-upload"); if (upload) upload.classList.add("optional-on-resubmit");
@@ -570,8 +582,8 @@
             if (rows) {
                 if (!items.length) {
                     rows.innerHTML = `<tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b; font-size: 0.95rem;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <td colspan="7" style="text-align: center !important; padding: 40px !important; color: #64748b !important; font-size: 0.95rem;">
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8">
                                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                                     <polyline points="22 4 12 14.01 9 11.01"></polyline>

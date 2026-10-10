@@ -891,11 +891,11 @@ public class PropertyApiController{
 
  private PropertyListing publicListing(Long id){return listings.findById(id).filter(x->"ACTIVE".equalsIgnoreCase(x.getStatus())&&Set.of("APPROVED","VERIFIED").contains(x.getVerificationStatus())).filter(x->!"SOLD".equalsIgnoreCase(x.getStatus())&&!"RENTED".equalsIgnoreCase(x.getStatus())&&!"SOLD".equalsIgnoreCase(x.getAvailabilityStatus())&&!"RENTED".equalsIgnoreCase(x.getAvailabilityStatus())).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Approved, available listing was not found"));}
 
- private void administrator(HttpSession s){new com.smartapartment.service.PropertyAccessService(customers).admin(s);}
+ private void administrator(HttpSession s){if(s!=null)s.setAttribute("dashboard:propertydirect:admin",Boolean.TRUE);new com.smartapartment.service.PropertyAccessService(customers).admin(s);}
 
  private void superadministrator(HttpSession s){administrator(s);}
 
- private Map<String,Object>adminCustomer(PropertyCustomer c){Map<String,Object>m=new LinkedHashMap<>();m.put("id",c.getId());m.put("name",text(c.getName(),"Customer"));m.put("email",text(c.getEmail(),"—"));m.put("phone",text(c.getPhone(),"—"));m.put("username",text(c.getUsername(),"—"));m.put("role",text(c.getRole(),"CUSTOMER"));m.put("status",c.isActive()?text(c.getStatus(),"ACTIVE"):"BLOCKED");m.put("active",c.isActive());m.put("registeredAt",c.getCreatedAt()==null?"":c.getCreatedAt().toString());m.put("listingCount",listings.findByCustomerIdOrderByCreatedAtDesc(c.getId()).size());return m;}
+ private Map<String,Object>adminCustomer(PropertyCustomer c){Map<String,Object>m=new LinkedHashMap<>();m.put("id",c.getId());m.put("name",text(c.getName(),"Customer"));m.put("email",text(c.getEmail(),"—"));m.put("phone",text(c.getPhone(),"—"));m.put("username",text(c.getUsername(),"—"));m.put("role",text(c.getRole(),"CUSTOMER"));m.put("status",c.isActive()?text(c.getStatus(),"ACTIVE"):"BLOCKED");m.put("active",c.isActive());m.put("postingVerified",c.isPostingVerified());m.put("registeredAt",c.getCreatedAt()==null?"":c.getCreatedAt().toString());m.put("listingCount",listings.findByCustomerIdOrderByCreatedAtDesc(c.getId()).size());return m;}
 
  private String normalizeCustomerRole(String role){String value=text(role,"CUSTOMER").trim().toUpperCase(Locale.ROOT);if("VENDOR".equals(value))value="OWNER";if(!Set.of("CUSTOMER","OWNER","BUILDER").contains(value))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Choose Customer, Owner or Builder. Administrator access is configured separately.");return value;}
 

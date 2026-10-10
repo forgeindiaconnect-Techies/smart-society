@@ -10,10 +10,13 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Admin Operations Dashboard — PropertyDirect</title>
+    <title>Admin Dashboard — PropertyDirect</title>
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/shared/css/typography.css?v=20260818-readable-type-v1">
 
     <link rel="stylesheet" href="/shared/css/dashboard-system.css?v=20260916-universal-sidebar-v4">
@@ -81,6 +84,324 @@
 
 
         /* TAB SHOW / HIDE RESET - CRITICAL */
+
+        /* ==========================================================================
+           PROPERTYDIRECT SIDEBAR SYSTEM - CUSTOMER DASHBOARD PARITY FOR ADMIN
+           ========================================================================== */
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar {
+            width: 275px !important;
+            min-width: 275px !important;
+            max-width: 275px !important;
+            height: 100vh !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            background: linear-gradient(180deg, #091322 0%, #0d1b2e 50%, #0a1626 100%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            z-index: 1000 !important;
+            box-sizing: border-box !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand {
+            height: 76px !important;
+            min-height: 76px !important;
+            max-height: 76px !important;
+            padding: 0 18px !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: transparent !important;
+            text-decoration: none !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .sidebar-home-mark,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .sidebar-home-mark {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            border-radius: 11px !important;
+            display: inline-grid !important;
+            place-items: center !important;
+            background: rgba(37, 99, 235, 0.18) !important;
+            border: 1px solid rgba(59, 130, 246, 0.4) !important;
+            color: #60a5fa !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand:hover .sidebar-home-mark,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand:hover .sidebar-home-mark {
+            background: rgba(37, 99, 235, 0.3) !important;
+            border-color: rgba(96, 165, 250, 0.6) !important;
+            transform: scale(1.04) !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand-title,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand-title {
+            margin: 0 !important;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-size: 1.18rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em !important;
+            line-height: 1.2 !important;
+            color: #ffffff !important;
+            white-space: nowrap !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand-title span,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand-title span {
+            color: #3b82f6 !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .society-dashboard-role-label,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .society-dashboard-role-label {
+            display: block !important;
+            margin-top: 2px !important;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.05em !important;
+            text-transform: uppercase !important;
+            color: #93c5fd !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav {
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 14px 12px !important;
+            margin: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+            box-sizing: border-box !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav::-webkit-scrollbar,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav::-webkit-scrollbar {
+            width: 4px !important;
+        }
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-radius: 99px !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            width: 100% !important;
+            height: 42px !important;
+            min-height: 42px !important;
+            max-height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 10px !important;
+            background: transparent !important;
+            border: none !important;
+            border-left: 3px solid transparent !important;
+            color: #94a3b8 !important;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-size: 0.86rem !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.01em !important;
+            text-align: left !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            box-sizing: border-box !important;
+            box-shadow: none !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            white-space: nowrap !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button span,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button span,
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button .nav-label,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button .nav-label {
+            color: inherit !important;
+            font-size: inherit !important;
+            font-weight: inherit !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button svg,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button svg {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            margin-right: 0 !important;
+            stroke: currentColor !important;
+            color: #64748b !important;
+            flex-shrink: 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-left-color: rgba(96, 165, 250, 0.5) !important;
+            transform: translateX(2px) !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover svg,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button:hover svg {
+            color: #93c5fd !important;
+            transform: scale(1.05) !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%) !important;
+            border-left-color: #60a5fa !important;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            font-weight: 700 !important;
+            transform: none !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active svg,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button.active svg {
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+        }
+
+        /* Bottom User Profile Section - Exact match to Customer Dashboard */
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card {
+            margin-top: auto !important;
+            padding: 12px 14px 14px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: rgba(8, 17, 32, 0.6) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+            position: static !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-info,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 2px 4px !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-avatar,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-avatar {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
+            border-radius: 9px !important;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+            color: #ffffff !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.02em !important;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+            flex-shrink: 0 !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-details,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-details {
+            display: flex !important;
+            flex-direction: column !important;
+            min-width: 0 !important;
+            text-align: left !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-name,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-name {
+            color: #ffffff !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-role,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-role {
+            color: #64748b !important;
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+            margin-top: 1px !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+            height: 38px !important;
+            min-height: 38px !important;
+            padding: 0 14px !important;
+            border-radius: 9px !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            border: 1px solid rgba(239, 68, 68, 0.22) !important;
+            color: #f87171 !important;
+            font-family: inherit !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            text-decoration: none !important;
+            box-sizing: border-box !important;
+            cursor: pointer !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout:hover,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout:hover {
+            background: rgba(239, 68, 68, 0.22) !important;
+            border-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout svg,
+        html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout svg {
+            width: 16px !important;
+            height: 16px !important;
+            stroke: currentColor !important;
+            stroke-width: 2.2 !important;
+            fill: none !important;
+            flex-shrink: 0 !important;
+            transition: transform 0.2s ease !important;
+        }
 
         .hidden,
 
@@ -3184,9 +3505,9 @@
 
     <link rel="stylesheet" href="/shared/css/required-fields.css?v=20260826-v2">
 
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20260912-global-alignment-v3">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-responsive.css?v=20261012-inventory-center-v1">
 
-    <link rel="stylesheet" href="/propertydirect/css/dashboard-polish.css?v=20260928-visual-v2">
+    <link rel="stylesheet" href="/propertydirect/css/dashboard-polish.css?v=20261012-inventory-center-v1">
 
     <link rel="stylesheet" href="/shared/css/dashboard-sidebar-final.css?v=20260916-sidebar-final-v1">
 
@@ -3268,39 +3589,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-        /* 2. Sleek, unified Smart Society sidebar button layout */
-
-        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button {
-
-            display: flex !important;
-
-            align-items: center !important;
-
-            grid-template-columns: none !important;
-
-            gap: 10px !important;
-
-            height: 38px !important;
-
-            min-height: 38px !important;
-
-            padding: 8px 12px !important;
-
-            margin: 0 0 2px 0 !important;
-
-            font-size: 0.84rem !important;
-
-            font-weight: 700 !important;
-
-            border-radius: 10px !important;
-
-            text-align: left !important;
-
-            color: rgba(255, 255, 255, 0.78) !important;
-
-            transition: all 0.18s ease !important;
-
-        }
+        /* replaced by customer parity button styles */
 
 
 
@@ -3316,19 +3605,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-        html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active {
-
-            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
-
-            color: #ffffff !important;
-
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
-
-            border: none !important;
-
-            transform: none !important;
-
-        }
+        /* replaced by customer parity active button styles */
 
 
 
@@ -3601,7 +3878,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
         }
 
         /* 8. PANELS & CARD SYSTEM */
-        html body.app-dashboard[data-platform="propertydirect"] .dash-panel {
+        html body.app-dashboard[data-platform="propertydirect"] .dash-panel:not(.hidden):not([hidden]):not(.d-none) {
             padding: 0 !important;
             margin: 0 !important;
             width: 100% !important;
@@ -3612,7 +3889,8 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
             gap: 24px !important;
         }
         html body.app-dashboard[data-platform="propertydirect"] .dash-panel.hidden,
-        html body.app-dashboard[data-platform="propertydirect"] .dash-panel[hidden] {
+        html body.app-dashboard[data-platform="propertydirect"] .dash-panel[hidden],
+        html body.app-dashboard[data-platform="propertydirect"] .dash-panel.d-none {
             display: none !important;
         }
 
@@ -3721,13 +3999,13 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
         /* First column aligns with title text at exactly 24px from left card edge */
         html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table th:first-child,
-        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:first-child {
+        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:first-child:not([colspan]) {
             padding-left: 24px !important;
         }
 
         /* Last column aligns with button at exactly 24px from right card edge */
         html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table th:last-child,
-        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:last-child {
+        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:last-child:not([colspan]) {
             padding-right: 24px !important;
             text-align: right !important;
         }
@@ -3757,11 +4035,34 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
             border-bottom: none !important;
         }
 
-        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td[colspan] {
-            padding: 36px 24px !important;
+        html body.app-dashboard[data-platform="propertydirect"] .dash-main :is(.dashboard-table-scroll, .table-responsive, table) td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] table.data-table td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #usersTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #verificationsTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #inventoryTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #enquiriesTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #visitsTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #reportsTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] #auditTableBody td[colspan],
+        #usersTableBody td[colspan],
+        #verificationsTableBody td[colspan],
+        #inventoryTableBody td[colspan],
+        #enquiriesTableBody td[colspan],
+        #visitsTableBody td[colspan],
+        #reportsTableBody td[colspan],
+        #auditTableBody td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] td[colspan],
+        html body.app-dashboard[data-platform="propertydirect"] td[colspan]:last-child,
+        html body.app-dashboard[data-platform="propertydirect"] td[colspan]:first-child {
+            padding: 44px 20px !important;
             text-align: center !important;
             color: #64748b !important;
             font-size: 0.88rem !important;
+            vertical-align: middle !important;
+            min-width: 0 !important;
+            width: auto !important;
+            white-space: normal !important;
         }
     </style>
 
@@ -4051,83 +4352,11 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 <style id="pd-admin-logout-perfect-style">
 
-    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card,
-
-    html body.app-dashboard .dash-sidebar .sidebar-user-card {
-
-        padding: 14px 16px !important;
-
-        background: #090f1f !important;
-
-        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-
-        display: flex !important;
-
-        align-items: center !important;
-
-        justify-content: center !important;
-
-        width: 100% !important;
-
-        box-sizing: border-box !important;
-
-    }
+    /* replaced by customer parity sidebar styles */
 
 
 
-    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout,
-
-    html body.app-dashboard .dash-sidebar .sidebar-user-card a.logout,
-
-    html body.app-dashboard .sidebar-user-card .logout {
-
-        display: inline-flex !important;
-
-        align-items: center !important;
-
-        justify-content: center !important;
-
-        gap: 10px !important;
-
-        width: 100% !important;
-
-        min-width: 0 !important;
-
-        max-width: 100% !important;
-
-        height: 44px !important;
-
-        min-height: 44px !important;
-
-        padding: 0 16px !important;
-
-        border-radius: 12px !important;
-
-        background: rgba(239, 68, 68, 0.09) !important;
-
-        border: 1px solid rgba(239, 68, 68, 0.25) !important;
-
-        color: #f87171 !important;
-
-        font-family: inherit !important;
-
-        font-size: 0.88rem !important;
-
-        font-weight: 700 !important;
-
-        letter-spacing: 0.02em !important;
-
-        text-decoration: none !important;
-
-        box-sizing: border-box !important;
-
-        cursor: pointer !important;
-
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-
-    }
+    /* replaced by customer parity logout styles */
 
 
 
@@ -4288,31 +4517,20 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
     html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table th:last-child,
-
-    html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:last-child {
-
+    html body.app-dashboard[data-platform="propertydirect"] .dashboard-table-scroll table td:last-child:not([colspan]) {
         padding-right: 24px !important;
-
     }
 
-
-
     html body.app-dashboard[data-platform="propertydirect"] .dash-main :is(
-
-        .dashboard-table-scroll td:last-child,
-
+        .dashboard-table-scroll td:last-child:not([colspan]),
         .dashboard-table-scroll th:last-child,
-
-        td[class*="action"],
-
+        table.data-table td:last-child:not([colspan]),
+        table.data-table th:last-child,
+        td[class*="action"]:not([colspan]),
         th[class*="action"]
-
     ) {
-
         min-width: 120px !important;
-
         text-align: right !important;
-
     }
 
 
@@ -4399,15 +4617,17 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
     /* Prevent ID / Code squishing */
 
-    #inventoryTableBody td:first-child,
+    #inventoryTableBody td:first-child:not([colspan]),
 
-    #usersTableBody td:first-child,
+    #usersTableBody td:first-child:not([colspan]),
 
-    #applicationsTableBody td:first-child,
+    #verificationsTableBody td:first-child:not([colspan]),
 
-    #reportsTableBody td:first-child,
+    #applicationsTableBody td:first-child:not([colspan]),
 
-    #auditTableBody td:first-child {
+    #reportsTableBody td:first-child:not([colspan]),
+
+    #auditTableBody td:first-child:not([colspan]) {
 
         white-space: nowrap !important;
 
@@ -4425,6 +4645,816 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
+
+<style id="pd-admin-perfect-alignment">
+    /* ==========================================================================
+       PIXEL-PERFECT ADMIN DASHBOARD ALIGNMENT HARMONY SYSTEM
+       Eliminates excessive margin/padding gaps between sidebar and page content.
+       ========================================================================== */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"],
+    html body.app-dashboard[data-platform="propertydirect"] {
+        --dashboard-sidebar-width: 280px !important;
+        --dashboard-topbar-height: 76px !important;
+        --dashboard-content-gutter: 24px !important;
+    }
+
+    /* Fixed Left Sidebar - 280px Width */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] aside.dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"] aside.dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        z-index: 1040 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.16) !important;
+    }
+
+    /* Main Dashboard Content Canvas */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-main,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-main {
+        margin: 0 !important;
+        margin-left: 280px !important;
+        margin-right: 0 !important;
+        width: calc(100% - 280px) !important;
+        max-width: calc(100% - 280px) !important;
+        min-height: 100vh !important;
+        padding: 0 24px 36px 24px !important;
+        box-sizing: border-box !important;
+        background: #f8fafc !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+    }
+
+    /* Topbar Header - Flushes seamlessly against sidebar line with 24px content inset */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header {
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        box-sizing: border-box !important;
+        border: 0 !important;
+        border-bottom: 1px solid var(--pd-border, #e2e8f0) !important;
+        border-radius: 0 !important;
+        margin: 0 -24px 20px -24px !important;
+        padding: 0 24px !important;
+        width: calc(100% + 48px) !important;
+        max-width: calc(100% + 48px) !important;
+        background: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1020 !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+        gap: 16px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header > div:first-child,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header #panelTitle,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header #panelTitle {
+        font-size: 1.35rem !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        margin: 0 0 2px 0 !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.02em !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header .propertydirect-section-eyebrow,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header .propertydirect-section-eyebrow {
+        font-size: 0.72rem !important;
+        font-weight: 800 !important;
+        color: #64748b !important;
+        letter-spacing: 0.08em !important;
+        text-transform: uppercase !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-align: left !important;
+    }
+
+    /* Panels - Zero Extra Inset; Uses dash-main's 24px Gutter Cleanly */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel:not(.hidden):not([hidden]):not(.d-none) {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel.d-none,
+    .dash-panel.hidden,
+    .dash-panel[hidden],
+    .dash-panel.d-none {
+        display: none !important;
+    }
+
+    /* Hero Bar & Overview Elements */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .overview-hero-bar,
+    html body.app-dashboard[data-platform="propertydirect"] .overview-hero-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 20px 0 !important;
+        padding: 18px 22px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .overview-hero-bar h2,
+    html body.app-dashboard[data-platform="propertydirect"] .overview-hero-bar h2 {
+        font-size: 1.35rem !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        margin: 0 0 4px 0 !important;
+        letter-spacing: -0.01em !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .overview-hero-bar p,
+    html body.app-dashboard[data-platform="propertydirect"] .overview-hero-bar p {
+        font-size: 0.84rem !important;
+        color: #64748b !important;
+        margin: 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Cards & Grids Uniform Alignment */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-card,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 0 20px 0 !important;
+        padding: 22px !important;
+        border-radius: 16px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-grid,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+</style>
+
+<style id="pd-customer-parity-authoritative">
+
+    /* ==========================================================================
+       PROPERTYDIRECT MODERN SIDEBAR SYSTEM - CUSTOMER DASHBOARD PARITY (AUTHORITATIVE)
+       Exact 1:1 visual match with Customer Dashboard
+       ========================================================================== */
+    html body.app-dashboard[data-platform="propertydirect"],
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] {
+        --dashboard-sidebar-width: 280px !important;
+        --pd-sidebar-bg: linear-gradient(180deg, #091322 0%, #0d1b2e 50%, #0a1626 100%) !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    /* Fixed Left Sidebar Shell - 280px Width */
+    html body.app-dashboard[data-platform="propertydirect"] aside.dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] aside.dash-sidebar,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        background: linear-gradient(180deg, #091322 0%, #0d1b2e 50%, #0a1626 100%) !important;
+        border: none !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        z-index: 1000 !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+    }
+
+    /* Top Brand Section - Locked to exact 76px height for seamless horizontal header alignment */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand {
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        padding: 0 18px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: transparent !important;
+        text-decoration: none !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Brand Home Icon Box */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .sidebar-home-mark,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .sidebar-home-mark {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+        border-radius: 11px !important;
+        display: inline-grid !important;
+        place-items: center !important;
+        background: rgba(37, 99, 235, 0.18) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        color: #60a5fa !important;
+        flex-shrink: 0 !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand:hover .sidebar-home-mark,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand:hover .sidebar-home-mark {
+        background: rgba(37, 99, 235, 0.3) !important;
+        border-color: rgba(96, 165, 250, 0.6) !important;
+        transform: scale(1.04) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .sidebar-home-mark svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .sidebar-home-mark svg {
+        width: 22px !important;
+        height: 22px !important;
+        fill: none !important;
+        stroke: currentColor !important;
+        stroke-width: 2 !important;
+    }
+
+    /* Brand Typography */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .dash-brand-text,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .dash-brand-text {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .dash-brand-title,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .dash-brand-title {
+        margin: 0 !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 1.18rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
+        color: #ffffff !important;
+        white-space: nowrap !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .dash-brand-title span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .dash-brand-title span {
+        color: #3b82f6 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .dash-brand .society-dashboard-role-label,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .dash-brand .society-dashboard-role-label {
+        display: block !important;
+        margin-top: 2px !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.05em !important;
+        text-transform: uppercase !important;
+        color: #93c5fd !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Scrollable Navigation Container */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding: 14px 12px !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav::-webkit-scrollbar,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav::-webkit-scrollbar {
+        width: 4px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 99px !important;
+    }
+
+    /* Nav Buttons - Exact Customer Dashboard Styling */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        padding: 0 14px !important;
+        border-radius: 10px !important;
+        background: transparent !important;
+        border: none !important;
+        border-left: 3px solid transparent !important;
+        color: #94a3b8 !important;
+        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-size: 0.86rem !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+        text-align: left !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        box-sizing: border-box !important;
+        box-shadow: none !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        white-space: nowrap !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button span,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button .nav-label,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button .nav-label {
+        color: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button svg {
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px !important;
+        stroke: currentColor !important;
+        color: #64748b !important;
+        flex-shrink: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    /* Hover State */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-left-color: rgba(96, 165, 250, 0.5) !important;
+        transform: translateX(2px) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button:hover svg {
+        color: #93c5fd !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Active State */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button.active {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%) !important;
+        border-left-color: #60a5fa !important;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        font-weight: 700 !important;
+        transform: none !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button.active svg {
+        color: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+
+    /* Badges */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button .sidebar-badge,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button .sidebar-badge {
+        margin-left: auto !important;
+        font-size: 0.72rem !important;
+        font-weight: 800 !important;
+        padding: 2px 7px !important;
+        border-radius: 999px !important;
+        line-height: 1.2 !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-nav button.active .sidebar-badge,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-nav button.active .sidebar-badge {
+        background: rgba(255, 255, 255, 0.22) !important;
+        color: #ffffff !important;
+    }
+
+    /* Bottom User Profile Section - Exact Match to Customer Dashboard */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card,
+    html body.app-dashboard .dash-sidebar .sidebar-user-card {
+        margin-top: auto !important;
+        padding: 12px 14px 14px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(8, 17, 32, 0.6) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        width: 100% !important;
+        position: static !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-info,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 2px 4px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-avatar,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-avatar {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        border-radius: 9px !important;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.02em !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-details,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-details {
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
+        text-align: left !important;
+        flex: 1 1 auto !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-name,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-name {
+        color: #ffffff !important;
+        font-size: 0.84rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-role,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-role {
+        color: #64748b !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+        margin-top: 1px !important;
+    }
+
+    /* Red Logout Button */
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout,
+    html body.app-dashboard .dash-sidebar .sidebar-user-card .logout {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0 14px !important;
+        border-radius: 9px !important;
+        background: rgba(239, 68, 68, 0.08) !important;
+        border: 1px solid rgba(239, 68, 68, 0.22) !important;
+        color: #f87171 !important;
+        font-family: inherit !important;
+        font-size: 0.84rem !important;
+        font-weight: 700 !important;
+        text-decoration: none !important;
+        box-sizing: border-box !important;
+        cursor: pointer !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: none !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout:hover,
+    html body.app-dashboard .dash-sidebar .sidebar-user-card .logout:hover {
+        background: rgba(239, 68, 68, 0.22) !important;
+        border-color: #ef4444 !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card .logout svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-sidebar .sidebar-user-card .logout svg,
+    html body.app-dashboard .dash-sidebar .sidebar-user-card .logout svg {
+        width: 16px !important;
+        height: 16px !important;
+        stroke: currentColor !important;
+        stroke-width: 2.2 !important;
+        stroke-linecap: round !important;
+        stroke-linejoin: round !important;
+        fill: none !important;
+        flex-shrink: 0 !important;
+        transition: transform 0.2s ease !important;
+    }
+
+    /* Main Dashboard Layout Parity with Customer Dashboard */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-main,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-main {
+        position: relative !important;
+        margin: 0 !important;
+        margin-left: 280px !important;
+        margin-right: 0 !important;
+        width: calc(100% - 280px) !important;
+        max-width: calc(100% - 280px) !important;
+        min-width: 0 !important;
+        min-height: 100vh !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        padding: 0 24px 36px 24px !important;
+        box-sizing: border-box !important;
+        background: #f8fafc !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Topbar Header Parity */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-header,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header {
+        height: 76px !important;
+        min-height: 76px !important;
+        max-height: 76px !important;
+        width: calc(100% + 48px) !important;
+        max-width: calc(100% + 48px) !important;
+        margin: 0 -24px 20px -24px !important;
+        padding: 0 24px !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+        box-sizing: border-box !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1020 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header > div:first-child,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header #panelTitle,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header #panelTitle {
+        font-family: 'Plus Jakarta Sans', 'Manrope', -apple-system, sans-serif !important;
+        font-size: 1.35rem !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.02em !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        text-align: left !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-header .propertydirect-section-eyebrow,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-header .propertydirect-section-eyebrow {
+        font-family: 'Manrope', sans-serif !important;
+        font-size: 0.72rem !important;
+        font-weight: 800 !important;
+        color: #2563eb !important;
+        letter-spacing: 0.08em !important;
+        text-transform: uppercase !important;
+        margin: 0 0 2px 0 !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        text-align: left !important;
+    }
+
+    /* Panels Layout */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel:not(.hidden):not([hidden]):not(.d-none),
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel:not(.hidden):not([hidden]):not(.d-none) {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] main.dash-main > .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="admin"] .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] main.dash-main > .dash-panel.d-none,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel.hidden,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] .dash-panel.d-none,
+    .dash-panel.hidden,
+    .dash-panel[hidden],
+    .dash-panel.d-none {
+        display: none !important;
+    }
+
+    /* Profile Action Buttons - State-aware visibility & styling */
+    html body.app-dashboard[data-platform="propertydirect"] :is([data-profile-action], .property-profile-actions button, .profile-cancel) {
+        min-height: 40px !important;
+        min-width: 112px !important;
+        padding: 8px 18px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+        line-height: 1.1 !important;
+        border-radius: 10px !important;
+        font-family: inherit !important;
+        font-size: 0.88rem !important;
+        font-weight: 750 !important;
+        cursor: pointer !important;
+        box-sizing: border-box !important;
+        transition: all 0.2s ease !important;
+    }
+
+    /* 1. HIDE states */
+    html body.app-dashboard[data-platform="propertydirect"] :is([data-profile-action], .property-profile-actions button, .profile-cancel)[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action][hidden],
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-actions button[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] .profile-cancel[hidden],
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="cancel"],
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="save"],
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) .profile-cancel,
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="edit"] {
+        display: none !important;
+    }
+
+    /* 2. SHOW states */
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card:not(.is-editing) [data-profile-action="edit"]:not([hidden]) {
+        display: inline-flex !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="cancel"]:not([hidden]),
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .profile-cancel:not([hidden]),
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing [data-profile-action="save"]:not([hidden]) {
+        display: inline-flex !important;
+    }
+
+    /* 3. Button Themes */
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="edit"] {
+        background: #0f172a !important;
+        color: #ffffff !important;
+        border: 1px solid #0f172a !important;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16) !important;
+    }
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="edit"]:hover {
+        background: #1e293b !important;
+        border-color: #1e293b !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.24) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="cancel"],
+    html body.app-dashboard[data-platform="propertydirect"] .profile-cancel {
+        background: #ffffff !important;
+        color: #475569 !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+    }
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="cancel"]:hover,
+    html body.app-dashboard[data-platform="propertydirect"] .profile-cancel:hover {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border-color: #94a3b8 !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="save"] {
+        background: #2563eb !important;
+        color: #ffffff !important;
+        border: 1px solid #1d4ed8 !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+    }
+    html body.app-dashboard[data-platform="propertydirect"] [data-profile-action="save"]:hover {
+        background: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form input:not(:disabled),
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form select:not(:disabled),
+    html body.app-dashboard[data-platform="propertydirect"] .property-profile-card.is-editing .property-profile-form textarea:not(:disabled) {
+        background: #ffffff !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        cursor: text !important;
+    }
+
+</style>
 </head>
 
 
@@ -4433,116 +5463,84 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
     <aside class="dash-sidebar">
 
-        <a class="dash-brand text-decoration-none" href="/propertydirect">
-
-            <span class="sidebar-home-mark me-2" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26" fill="#3b82f6"><path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z" /><path d="M9.5 9V5.5h4" /></svg></span>
-
-            <h4 class="mb-0 fw-bold text-white fs-5">Property<span style="color: #3b82f6 !important;">Direct</span></h4>
-
+        <a class="dash-brand text-decoration-none" href="/propertydirect" aria-label="PropertyDirect home">
+            <span class="sidebar-home-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 14.5 16 4l12 10.5V28h-8v-8h-8v8H4Z"/>
+                    <path d="M9.5 9V5.5h4"/>
+                </svg>
+            </span>
+            <div class="dash-brand-text">
+                <h4 class="dash-brand-title">Property<span>Direct</span></h4>
+                <span class="society-dashboard-role-label">Admin Dashboard</span>
+            </div>
         </a>
 
         <nav class="sidebar-nav" aria-label="Platform Admin sections">
 
             <button class="active" type="button" data-panel="overview" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('overview');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-
-                Overview & Metrics
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                <span class="nav-label">Overview & Metrics</span>
             </button>
 
-            <button type="button" data-panel="users" style="position:relative;" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('users');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-
-                Customer Directory
-
-                <span id="sidebarUserCountBadge" style="margin-left:auto; background:rgba(59,130,246,0.25); color:#60a5fa; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800;">0</span>
-
+            <button type="button" data-panel="users" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('users');}return false;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span class="nav-label">Customer Directory</span>
+                <span id="sidebarUserCountBadge" class="sidebar-badge" style="margin-left:auto; background:rgba(59,130,246,0.25); color:#60a5fa; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800;">0</span>
             </button>
 
             <button type="button" data-panel="verifications" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('verifications');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-
-                Owner & Builder Verification
-
-                <span id="sidebarPendingAppsBadge" style="margin-left:auto; background:rgba(245,158,11,0.25); color:#fbbf24; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span class="nav-label">Owner & Builder Verification</span>
+                <span id="sidebarPendingAppsBadge" class="sidebar-badge" style="margin-left:auto; background:rgba(245,158,11,0.25); color:#fbbf24; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
             </button>
 
             <button type="button" data-panel="my-properties" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('my-properties');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-
-                Property Inventory & Queue
-
-                <span id="sidebarPendingListingsBadge" style="margin-left:auto; background:rgba(239,68,68,0.25); color:#f87171; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span class="nav-label">Property Inventory & Queue</span>
+                <span id="sidebarPendingListingsBadge" class="sidebar-badge" style="margin-left:auto; background:rgba(239,68,68,0.25); color:#f87171; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
             </button>
 
             <button type="button" data-panel="enquiries" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('enquiries');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-
-                Client Leads &amp; Enquiries
-                <span id="sidebarEnquiriesBadge" style="margin-left:auto; background:rgba(59,130,246,0.25); color:#60a5fa; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span class="nav-label">Client Leads &amp; Enquiries</span>
+                <span id="sidebarEnquiriesBadge" class="sidebar-badge" style="margin-left:auto; background:rgba(59,130,246,0.25); color:#60a5fa; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
             </button>
 
             <button type="button" data-panel="reports" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('reports');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-
-                Reports & Complaints
-
-                <span id="sidebarOpenReportsBadge" style="margin-left:auto; background:rgba(239,68,68,0.25); color:#f87171; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span class="nav-label">Complaints</span>
+                <span id="sidebarOpenReportsBadge" class="sidebar-badge" style="margin-left:auto; background:rgba(239,68,68,0.25); color:#f87171; font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:800; display:none;">0</span>
             </button>
 
             <button type="button" data-panel="audit" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('audit');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-
-                Notifications & Audit
-
-            </button>
-
-            <button type="button" data-panel="add-property" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('add-property');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-
-                Post Listing on Behalf
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span class="nav-label">Notifications</span>
             </button>
 
             <button type="button" data-panel="profile" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('profile');}return false;">
-
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:8px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-
-                Admin Profile
-
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="nav-label">Admin Profile</span>
             </button>
 
         </nav>
 
         <div class="sidebar-user-card">
-
-            <a class="logout" href="/dashboards/logout?platform=propertydirect" title="Logout">
-
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-avatar">PA</div>
+                <div class="sidebar-user-details">
+                    <strong class="sidebar-user-name">Platform Admin</strong>
+                    <span class="sidebar-user-role">Super Admin / Governance</span>
+                </div>
+            </div>
+            <a class="logout" href="/dashboards/logout?platform=propertydirect" title="Sign Out">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-
                     <polyline points="16 17 21 12 16 7"></polyline>
-
                     <line x1="21" y1="12" x2="9" y2="12"></line>
-
                 </svg>
-
                 <span>Logout</span>
-
             </a>
-
         </div>
 
     </aside>
@@ -4553,7 +5551,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
             <div>
 
-                <p class="propertydirect-section-eyebrow">PROPERTYDIRECT ADMIN OPERATIONS</p>
+                <p class="propertydirect-section-eyebrow">ADMIN DASHBOARD</p>
 
                 <h1 id="panelTitle">Dashboard</h1>
 
@@ -4563,7 +5561,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
                 <span class="status active" style="padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: 0.78rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; white-space: nowrap;">✓ Platform Admin</span>
 
-                <button onclick="if (window.PropertyDirectDashboardControls) { window.PropertyDirectDashboardControls.setPanel('users'); return false; }" class="primary" data-panel="users" style="display:inline-flex; align-items:center; gap:8px;">
+                <button id="headerManageUsersBtn" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('users');}else if(window.PropertyDirectDashboardControls?.setPanel){window.PropertyDirectDashboardControls.setPanel('users');}return false;" class="primary" data-panel="users" style="display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
 
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
 
@@ -4571,7 +5569,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
                 </button>
 
-                <div class="user-avatar-badge" title="Platform Administrator Profile" data-panel="profile"
+                <div class="user-avatar-badge" title="Platform Administrator Profile" data-panel="profile" onclick="if(window.switchTabAndFilter){window.switchTabAndFilter('profile');}return false;"
 
                     style="cursor: pointer; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(37,99,235,0.25);">
 
@@ -4592,26 +5590,6 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                     <h2>Platform Operations Overview</h2>
 
                     <p>Live platform metrics & moderation activity.</p>
-
-                </div>
-
-                <div style="display:flex; align-items:center; gap:12px;">
-
-                    <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:750; color:#059669; background:#ecfdf5; padding:6px 14px; border-radius:999px; border:1px solid #a7f3d0;">
-
-                        <span style="width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block;"></span>
-
-                        Live Real-Time
-
-                    </span>
-
-                    <button type="button" onclick="loadOverview()" class="primary small" style="background:#0f172a; display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer; box-shadow:0 2px 8px rgba(15,23,42,0.12);">
-
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-
-                        Sync Now
-
-                    </button>
 
                 </div>
 
@@ -4740,19 +5718,6 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                         </div>
                         <p style="font-size:0.82rem; color:#64748b; margin:0;">Chronological stream of property approvals, seller verifications, account modifications, and reports.</p>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:0.75rem; font-weight:700; color:#16a34a; background:#f0fdf4; border:1px solid #bbf7d0; padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:5px;">
-                            <span style="width:6px; height:6px; border-radius:50%; background:#16a34a;"></span> Live Stream
-                        </span>
-                        <button type="button" onclick="loadOverview()" title="Refresh Activity Stream"
-                            style="padding:7px 12px; border-radius:10px; border:1px solid #cbd5e1; background:#f8fafc; color:#475569; font-size:0.8rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.15s ease;">
-                            <span>↻</span> Refresh
-                        </button>
-                        <button type="button" onclick="switchTabAndFilter('audit', 'ALL')"
-                            style="padding:7px 14px; border-radius:10px; border:1px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:0.8rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s ease;">
-                            View Full Audit Log →
-                        </button>
-                    </div>
                 </div>
 
                 <div id="overviewRecentActivity" class="overview-activity-list">
@@ -4778,17 +5743,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
                 </div>
 
-                <div style="display:flex; align-items:center; gap:10px;">
-
-                    <button type="button" id="refreshUsersBtn" onclick="loadUsers()" class="primary small" style="background:#0f172a; display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer; box-shadow:0 2px 8px rgba(15,23,42,0.12);">
-
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-
-                        Refresh Directory
-
-                    </button>
-
-                </div>
+                
 
             </div>
 
@@ -4842,17 +5797,17 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-            <!-- Search and Filter Toolbar -->
+            <!-- Search and Filter Toolbar (Aligned Single Row) -->
 
-            <div class="dash-card" style="margin-bottom:18px; padding:16px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0;">
+            <div class="dash-card admin-toolbar-card" style="margin-bottom:18px; padding:14px 18px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; width:100%; box-sizing:border-box;">
 
-                <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                <div class="admin-filter-toolbar" style="display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; flex-wrap:wrap;">
 
-                    <div style="flex:1; min-width:240px; position:relative;">
+                    <div style="flex:1 1 280px; min-width:240px; position:relative;">
 
                         <input id="userSearchInput" type="text" placeholder="Search by name, email, phone, ID, or company..."
 
-                            style="width:100%; box-sizing:border-box; padding:11px 16px 11px 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none;">
+                            style="width:100%; height:42px; box-sizing:border-box; padding:0 16px 0 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none; background:#ffffff;">
 
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2"
 
@@ -4866,9 +5821,9 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div class="admin-filter-selects" style="display:flex; align-items:center; gap:10px; flex-shrink:0; flex-wrap:wrap;">
 
-                        <select id="userRoleFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
+                        <select id="userRoleFilter" style="width:auto !important; min-width:130px; max-width:210px; height:42px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; box-sizing:border-box; cursor:pointer;">
 
                             <option value="">All Roles</option>
 
@@ -4884,7 +5839,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-                        <select id="userStatusFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
+                        <select id="userStatusFilter" style="width:auto !important; min-width:120px; max-width:160px; height:42px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; box-sizing:border-box; cursor:pointer;">
 
                             <option value="">All Statuses</option>
 
@@ -4896,7 +5851,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-                        <select id="userVerifyFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
+                        <select id="userVerifyFilter" style="width:auto !important; min-width:140px; max-width:200px; height:42px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; box-sizing:border-box; cursor:pointer;">
 
                             <option value="">All Verification</option>
 
@@ -4910,7 +5865,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
 
-                        <button type="button" id="userFilterResetBtn" style="padding:10px 16px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#475569; font-size:0.84rem; font-weight:700; cursor:pointer;">
+                        <button type="button" id="userFilterResetBtn" style="height:42px; padding:0 18px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#475569; font-size:0.84rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; white-space:nowrap; box-sizing:border-box;">
 
                             Reset
 
@@ -4955,17 +5910,11 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                         </thead>
 
                         <tbody id="usersTableBody">
-
                             <tr>
-
-                                <td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">
-
+                                <td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important;">
                                     Loading registered customer accounts...
-
                                 </td>
-
                             </tr>
-
                         </tbody>
 
                     </table>
@@ -4995,10 +5944,40 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                 </div>
             </div>
 
-            <div class="dash-card table-card">
+            <!-- Search and Filter Toolbar for Owner & Builder Verifications -->
+            <div class="dash-card admin-toolbar-card" style="margin-bottom:18px; padding:14px 18px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; width:100%; box-sizing:border-box;">
+                <div class="admin-filter-toolbar" style="display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; flex-wrap:wrap;">
+                    <div style="flex:1 1 280px; min-width:240px; position:relative;">
+                        <input id="appSearchInput" type="text" placeholder="Search applicant, email, phone, company, or registration reference..."
+                            style="width:100%; height:42px; box-sizing:border-box; padding:0 16px 0 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none; background:#ffffff;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2"
+                            style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
+                            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
 
+                    <div class="admin-filter-selects" style="display:flex; align-items:center; gap:10px; flex-shrink:0; flex-wrap:wrap;">
+                        <select id="appRoleFilter" style="width:auto !important; min-width:130px; max-width:210px; height:42px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; box-sizing:border-box; cursor:pointer;">
+                            <option value="ALL">All Roles</option>
+                            <option value="OWNER">Property Owner</option>
+                            <option value="BUILDER">Builder / Developer</option>
+                        </select>
 
+                        <select id="appDecisionFilter" style="width:auto !important; min-width:140px; max-width:200px; height:42px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; box-sizing:border-box; cursor:pointer;">
+                            <option value="ALL">All Decisions</option>
+                            <option value="PENDING">Pending Review</option>
+                            <option value="APPROVED">Approved / Verified</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
 
+                        <button type="button" id="appFilterResetBtn" onclick="resetAppFilters()" style="height:42px; padding:0 18px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#475569; font-size:0.84rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; white-space:nowrap; box-sizing:border-box;">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card table-card" style="padding:0; overflow:hidden; border-radius:16px; border:1px solid #e2e8f0; background:#ffffff;">
                 <div class="dashboard-table-scroll">
 
                     <table class="data-table" style="width:100%; border-collapse:collapse; text-align:left;">
@@ -5024,17 +6003,11 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                         </thead>
 
                         <tbody id="verificationsTableBody">
-
                             <tr>
-
-                                <td colspan="6" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">
-
+                                <td colspan="6" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important;">
                                     Loading posting applications...
-
                                 </td>
-
                             </tr>
-
                         </tbody>
 
                     </table>
@@ -5059,9 +6032,6 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                     <p>Listing inventory & marketplace moderation.</p>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <button type="button" onclick="switchTabAndFilter('add-property')" class="primary small" style="background:#0f172a; display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer;">
-                        ＋ Create Listing on Behalf
-                    </button>
                     <button type="button" onclick="loadInventory()" class="small" style="padding:8px 14px; border-radius:10px; border:1px solid #cbd5e1; background:#ffffff; color:#334155; font-weight:700; font-size:0.82rem; cursor:pointer;">
                         Refresh
                     </button>
@@ -5071,71 +6041,46 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
 
             <!-- Toolbar Filters -->
-
-            <div class="dash-card" style="margin-bottom:18px; padding:16px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0;">
-
-                <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-
-                    <div style="flex:1; min-width:240px; position:relative;">
-
+            <div class="dash-card admin-toolbar-card" style="margin-bottom:18px; padding:14px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; width:100%;">
+                    <div style="flex:1 1 280px; min-width:240px; position:relative;">
                         <input id="inventorySearchInput" type="text" placeholder="Search by title, code, owner, locality, or city..."
-
-                            style="width:100%; box-sizing:border-box; padding:11px 16px 11px 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none;">
-
+                            style="width:100%; box-sizing:border-box; height:42px; padding:0 16px 0 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none; background:#ffffff;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2"
-
                             style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
-
                             <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-
                         </svg>
-
                     </div>
 
-
-
-                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-
-                        <select id="inventoryStatusFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
-
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:nowrap;">
+                        <select id="inventoryStatusFilter" style="height:42px; padding:0 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; cursor:pointer; min-width:180px;">
                             <option value="">All Statuses</option>
-
-                            <option value="PENDING_APPROVAL">⏳ Pending Approval (Queue)</option>
-
+                            <option value="PENDING_APPROVAL">⏳ Pending Approval</option>
                             <option value="CHANGES_REQUESTED">✎ Changes Requested</option>
-
                             <option value="ACTIVE">✓ Active / Live</option>
-
                             <option value="SOLD">Sold</option>
-
                             <option value="RENTED">Rented</option>
-
                             <option value="REJECTED">Rejected</option>
-
                             <option value="INACTIVE">Inactive</option>
-
                             <option value="DRAFT">Draft</option>
-
                         </select>
 
-
-
-                        <select id="inventoryTypeFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
-
+                        <select id="inventoryTypeFilter" style="height:42px; padding:0 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; cursor:pointer; min-width:160px;">
                             <option value="">All Listing Types</option>
-
                             <option value="SELL">For Sale</option>
-
                             <option value="RENT">For Rent</option>
-
                             <option value="LEASE">For Lease</option>
-
                         </select>
 
+                        <button type="button" onclick="resetInventoryFilters()"
+                            style="height:42px; padding:0 16px; border-radius:10px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; white-space:nowrap; transition:all 0.15s ease;"
+                            onmouseover="this.style.background='#f1f5f9';"
+                            onmouseout="this.style.background='#ffffff';">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                            <span>Reset</span>
+                        </button>
                     </div>
-
                 </div>
-
             </div>
 
 
@@ -5171,9 +6116,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                         </thead>
 
                         <tbody id="inventoryTableBody">
-
-                            <tr><td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">Loading property inventory...</td></tr>
-
+                            <tr><td colspan="7" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">Loading property inventory...</td></tr>
                         </tbody>
 
                     </table>
@@ -6049,10 +6992,6 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
                         style="padding:7px 16px; border-radius:10px; font-weight:700; font-size:0.82rem; cursor:pointer; border:1px solid #cbd5e1; background:#ffffff; color:#334155;">
                         Scheduled Visits
                     </button>
-                    <button type="button" onclick="openAdminLeadModal()" class="primary small"
-                        style="background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,0.2);">
-                        ＋ Record Client Lead
-                    </button>
                 </div>
             </div>
 
@@ -6146,23 +7085,20 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
         <!-- ================= REPORTS & COMPLAINTS PANEL ================= -->
 
-        <section class="dash-panel hidden" data-view="reports">
+        <section class="dash-panel hidden" data-view="reports" style="width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
 
-            <div class="overview-hero-bar">
+            <div class="overview-hero-bar" style="margin-bottom:20px;">
                 <div>
-                    <h2>Reports &amp; Moderation Complaints</h2>
-                    <p>User reports &amp; marketplace violations.</p>
+                    <h2>Complaints</h2>
+                    <p>User complaints &amp; marketplace violations.</p>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <select id="reportStatusFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
-                        <option value="">All Reports</option>
+                    <select id="reportStatusFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155; cursor:pointer;">
+                        <option value="">All Complaints</option>
                         <option value="OPEN">🚨 Open Complaints Only</option>
                         <option value="RESOLVED">✓ Resolved</option>
                         <option value="DISMISSED">Dismissed</option>
                     </select>
-                    <button type="button" onclick="loadReports()" class="primary small" style="background:#0f172a; display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer;">
-                        Refresh
-                    </button>
                 </div>
             </div>
 
@@ -6196,7 +7132,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
                         <tbody id="reportsTableBody">
 
-                            <tr><td colspan="6" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">Loading reports & complaints...</td></tr>
+                            <tr><td colspan="6" style="text-align:center !important; padding:44px 20px !important; color:#64748b !important; font-size:0.88rem !important; vertical-align:middle !important; min-width:0 !important; width:auto !important; white-space:normal !important;">Loading complaints...</td></tr>
 
                         </tbody>
 
@@ -6217,113 +7153,174 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
         <!-- ================= NOTIFICATIONS & AUDIT HISTORY PANEL ================= -->
 
-        <section class="dash-panel hidden" data-view="audit">
+        <section class="dash-panel hidden" data-view="audit" style="width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
 
-            <div class="overview-hero-bar">
+            <div class="overview-hero-bar" style="display:flex !important; justify-content:space-between !important; align-items:center !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; margin:0 0 20px 0 !important; padding:20px 24px !important; background:#ffffff !important; border-radius:16px !important; border:1px solid #e2e8f0 !important; box-shadow:0 2px 8px rgba(15,23,42,0.03) !important;">
                 <div>
-                    <h2>Administrative Audit History &amp; Event Logs</h2>
-                    <p>Tamper-evident audit trail &amp; system activity.</p>
-                </div>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <button type="button" onclick="loadAudit()" class="primary small" style="background:#0f172a; display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:10px; font-weight:750; font-size:0.82rem; cursor:pointer;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                        Refresh Audit Log
-                    </button>
+                    <h2 style="font-size:1.35rem !important; font-weight:800 !important; color:#0f172a !important; margin:0 0 4px 0 !important; letter-spacing:-0.01em !important;">Notifications &amp; Audit Trail</h2>
+                    <p style="font-size:0.84rem !important; color:#64748b !important; margin:0 !important; line-height:1.4 !important;">System activity alerts, administrative actions, and chronological platform events.</p>
                 </div>
             </div>
 
+            <!-- Stats Ribbon for Notifications & Events -->
+            <div class="dash-grid" style="display:grid !important; grid-template-columns:repeat(4, minmax(0, 1fr)) !important; gap:16px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; margin-bottom:20px !important;">
+                <article onclick="if(window.setAuditActionQuickFilter) window.setAuditActionQuickFilter('');"
+                    style="cursor:pointer; padding:16px 20px; border-radius:16px; background:#f8fafc; border:1px solid #e2e8f0; box-shadow:0 1px 4px rgba(0,0,0,0.03); transition:transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div class="stat-card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="stat-card-title" style="font-size:0.82rem; font-weight:700; color:#475569;">All System Events</span>
+                        <span class="stat-card-icon" style="font-size:1.1rem; background:#e2e8f0; width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;">📜</span>
+                    </div>
+                    <strong id="auditTotalLogsStat" style="font-size:1.55rem; font-weight:800; color:#0f172a; display:block; line-height:1.2;">0</strong>
+                    <small style="font-size:0.75rem; color:#64748b; font-weight:600;">Total recorded logs →</small>
+                </article>
 
+                <article onclick="if(window.setAuditActionQuickFilter) window.setAuditActionQuickFilter('APPROVED');"
+                    style="cursor:pointer; padding:16px 20px; border-radius:16px; background:#f0fdf4; border:1px solid #bbf7d0; box-shadow:0 1px 4px rgba(5,150,105,0.04); transition:transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div class="stat-card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="stat-card-title" style="font-size:0.82rem; font-weight:700; color:#166534;">Approvals &amp; Creations</span>
+                        <span class="stat-card-icon" style="font-size:1.1rem; background:#dcfce7; width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;">✅</span>
+                    </div>
+                    <strong id="auditApprovedLogsStat" style="font-size:1.55rem; font-weight:800; color:#15803d; display:block; line-height:1.2;">0</strong>
+                    <small style="font-size:0.75rem; color:#166534; font-weight:600;">Verified &amp; created →</small>
+                </article>
+
+                <article onclick="if(window.setAuditActionQuickFilter) window.setAuditActionQuickFilter('REJECTED');"
+                    style="cursor:pointer; padding:16px 20px; border-radius:16px; background:#fff1f2; border:1px solid #fecdd3; box-shadow:0 1px 4px rgba(225,29,72,0.04); transition:transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div class="stat-card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="stat-card-title" style="font-size:0.82rem; font-weight:700; color:#9f1239;">Rejections &amp; Warnings</span>
+                        <span class="stat-card-icon" style="font-size:1.1rem; background:#ffe4e6; width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;">🚨</span>
+                    </div>
+                    <strong id="auditRejectedLogsStat" style="font-size:1.55rem; font-weight:800; color:#b91c1c; display:block; line-height:1.2;">0</strong>
+                    <small style="font-size:0.75rem; color:#9f1239; font-weight:600;">Revoked or denied →</small>
+                </article>
+
+                <article onclick="if(window.setAuditActionQuickFilter) window.setAuditActionQuickFilter('UPDATED');"
+                    style="cursor:pointer; padding:16px 20px; border-radius:16px; background:#eff6ff; border:1px solid #bfdbfe; box-shadow:0 1px 4px rgba(37,99,235,0.04); transition:transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div class="stat-card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="stat-card-title" style="font-size:0.82rem; font-weight:700; color:#1e40af;">Updates &amp; Messages</span>
+                        <span class="stat-card-icon" style="font-size:1.1rem; background:#dbeafe; width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;">🔄</span>
+                    </div>
+                    <strong id="auditUpdatesLogsStat" style="font-size:1.55rem; font-weight:800; color:#2563eb; display:block; line-height:1.2;">0</strong>
+                    <small style="font-size:0.75rem; color:#1e40af; font-weight:600;">Status modifications →</small>
+                </article>
+            </div>
 
             <!-- Toolbar Filters -->
-
-            <div class="dash-card" style="margin-bottom:18px; padding:16px 20px; background:#ffffff; border-radius:16px; border:1px solid #e2e8f0;">
-
-                <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-
-                    <div style="flex:1; min-width:240px; position:relative;">
-
-                        <input id="auditSearchInput" type="text" placeholder="Search by actor, detail note, or target ID..."
-
-                            style="width:100%; box-sizing:border-box; padding:11px 16px 11px 38px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; outline:none;">
-
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2"
-
-                            style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
-
+            <div class="dash-card" style="margin-bottom:20px !important; padding:16px 20px !important; background:#ffffff !important; border-radius:16px !important; border:1px solid #e2e8f0 !important; box-shadow:0 2px 8px rgba(0,0,0,0.02) !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:280px; max-width:540px; position:relative; display:flex; align-items:center;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.3"
+                            style="position:absolute; left:14px; top:50%; transform:translateY(-50%); pointer-events:none; z-index:2;">
                             <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-
                         </svg>
-
+                        <input id="auditSearchInput" type="text" placeholder="Search by actor, detail note, action, or target ID..."
+                            autocomplete="off"
+                            style="width:100% !important; box-sizing:border-box !important; padding:10px 36px 10px 42px !important; height:42px !important; min-height:42px !important; border-radius:10px !important; border:1px solid #cbd5e1 !important; font-size:0.86rem !important; background:#ffffff !important; color:#0f172a !important; outline:none !important; transition:border-color 0.2s, box-shadow 0.2s !important;">
+                        <button type="button" id="auditSearchClearBtn" onclick="if(window.clearAuditSearch){window.clearAuditSearch();}else{var s=document.getElementById('auditSearchInput');if(s){s.value='';if(window.loadAudit)window.loadAudit();}}" title="Clear search"
+                            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; cursor:pointer; color:#94a3b8; font-size:1.15rem; line-height:1; display:none; padding:4px;">
+                            ×
+                        </button>
                     </div>
-
-
 
                     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-
-                        <select id="auditTargetTypeFilter" style="padding:10px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:700; background:#f8fafc; color:#334155;">
-
+                        <select id="auditTargetTypeFilter" style="height:42px !important; min-height:42px !important; box-sizing:border-box !important; padding:0 14px !important; border-radius:10px !important; border:1px solid #cbd5e1 !important; font-size:0.84rem !important; font-weight:700 !important; background:#f8fafc !important; color:#334155 !important; cursor:pointer;">
                             <option value="">All Entities</option>
-
-                            <option value="LISTING">Listings</option>
-
-                            <option value="APPLICATION">Applications</option>
-
                             <option value="ACCOUNT">User Accounts</option>
-
+                            <option value="APPLICATION">Applications</option>
+                            <option value="LISTING">Listings</option>
                             <option value="REPORT">Reports</option>
-
                             <option value="VISIT">Visits</option>
-
                             <option value="ENQUIRY">Enquiries</option>
-
                             <option value="METADATA">Metadata</option>
-
                         </select>
 
+                        <select id="auditActionFilter" style="height:42px !important; min-height:42px !important; box-sizing:border-box !important; padding:0 14px !important; border-radius:10px !important; border:1px solid #cbd5e1 !important; font-size:0.84rem !important; font-weight:700 !important; background:#f8fafc !important; color:#334155 !important; cursor:pointer;">
+                            <option value="">All Actions</option>
+                            <option value="APPROVED">Approved / Verified</option>
+                            <option value="REJECTED">Rejected</option>
+                            <option value="REVOKED">Revoked / Suspended</option>
+                            <option value="SUBMITTED">Submitted / Pending</option>
+                            <option value="CREATED">Created</option>
+                            <option value="UPDATED">Updated / Modified</option>
+                        </select>
+
+                        <button type="button" id="auditResetBtn" onclick="if(window.resetAuditFilters) window.resetAuditFilters();"
+                            style="height:42px !important; min-height:42px !important; padding:0 16px !important; border-radius:10px !important; border:1px solid #e2e8f0 !important; background:#f1f5f9 !important; color:#475569 !important; font-size:0.84rem !important; font-weight:700 !important; cursor:pointer !important; display:inline-flex !important; align-items:center !important; gap:6px !important; white-space:nowrap !important; transition:all 0.15s ease !important;"
+                            onmouseover="this.style.background='#e2e8f0';"
+                            onmouseout="this.style.background='#f1f5f9';">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                            Reset
+                        </button>
+
+                        <span id="auditEventCountBadge" style="font-size:0.80rem; font-weight:750; color:#64748b; background:#f8fafc; padding:6px 14px; border-radius:10px; border:1px solid #e2e8f0; white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">
+                            <span>Logs:</span> <strong id="auditCountNumber" style="color:#0f172a;">0</strong>
+                        </span>
                     </div>
-
                 </div>
-
             </div>
 
+            <style>
+                .dash-panel[data-view="audit"] {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                .dash-panel[data-view="audit"] .dashboard-table-scroll {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    overflow-x: hidden !important;
+                    box-sizing: border-box !important;
+                }
+                #auditTable {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    border-collapse: collapse !important;
+                    text-align: left !important;
+                }
+                #auditTable th,
+                #auditTable td {
+                    text-align: left !important;
+                    vertical-align: middle !important;
+                    box-sizing: border-box !important;
+                }
+                #auditTable th:first-child, #auditTable td:first-child {
+                    padding-left: 20px !important;
+                }
+                #auditTable th:last-child, #auditTable td:last-child {
+                    text-align: right !important;
+                    padding-right: 20px !important;
+                }
+                #auditSearchInput:focus {
+                    border-color: #3b82f6 !important;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+                }
+            </style>
 
-
-            <div class="dash-card table-card" style="padding:0; overflow:hidden; border-radius:16px; border:1px solid #e2e8f0; background:#ffffff;">
-
-                <div class="dashboard-table-scroll">
-
-                    <table style="width:100%; border-collapse:collapse; text-align:left;">
-
+            <div class="dash-card table-card" style="padding:0 !important; overflow:hidden !important; border-radius:16px !important; border:1px solid #e2e8f0 !important; background:#ffffff !important; box-shadow:0 2px 10px rgba(0,0,0,0.02) !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                <div class="dashboard-table-scroll" style="width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                    <table id="auditTable" style="width:100% !important; border-collapse:collapse !important; text-align:left !important;">
+                        <colgroup>
+                            <col style="width:23%;">
+                            <col style="width:22%;">
+                            <col style="width:21%;">
+                            <col style="width:18%;">
+                            <col style="width:16%;">
+                        </colgroup>
                         <thead>
-
                             <tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
-
-                                <th style="padding:14px 18px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase;">Timestamp</th>
-
-                                <th style="padding:14px 18px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase;">Action</th>
-
-                                <th style="padding:14px 18px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase;">Target Entity</th>
-
-                                <th style="padding:14px 18px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase;">Actor</th>
-
-                                <th style="padding:14px 18px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase;">Detail / Justification</th>
-
+                                <th style="padding:14px 16px 14px 20px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.04em; box-sizing:border-box;">Timestamp</th>
+                                <th style="padding:14px 16px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.04em; box-sizing:border-box;">Action</th>
+                                <th style="padding:14px 16px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.04em; box-sizing:border-box;">Target Entity</th>
+                                <th style="padding:14px 16px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.04em; box-sizing:border-box;">Actor</th>
+                                <th style="padding:14px 20px 14px 16px; font-size:0.76rem; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.04em; text-align:right; box-sizing:border-box;">Actions</th>
                             </tr>
-
                         </thead>
-
                         <tbody id="auditTableBody">
-
-                            <tr><td colspan="5" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">Loading audit trail...</td></tr>
-
+                            <tr><td colspan="5" style="text-align:center; padding:36px; color:#64748b; font-size:0.88rem;">Loading notifications &amp; audit trail...</td></tr>
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
-
         </section>
 
 
@@ -6332,27 +7329,52 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
         <section class="dash-panel hidden" data-view="profile">
 
-            <div class="overview-hero-bar">
-                <div>
-                    <h2>Platform Administrator Profile</h2>
-                    <p>Admin credentials &amp; contact settings.</p>
+            <div class="property-profile-layout">
+                <aside class="property-profile-summary">
+                    <div class="property-profile-avatar">PM</div>
+                    <h3>Property Moderator</h3>
+                    <p>Administrator</p>
+                    <span class="status active">Active account</span>
+                    <dl>
+                        <div><dt>Profile ID</dt><dd>PD-AD-014</dd></div>
+                        <div><dt>Member since</dt><dd>August 2026</dd></div>
+                        <div><dt>Last login</dt><dd>Today, 10:42 AM</dd></div>
+                        <div><dt>Profile status</dt><dd>100% complete</dd></div>
+                    </dl>
+                </aside>
+                <div class="property-profile-card">
+                    <div class="property-profile-head">
+                        <div>
+                            <h3>Profile information</h3>
+                            <p>Maintain your personal, contact, address, role and account-security information.</p>
+                        </div>
+                        <div class="property-profile-actions">
+                            <button type="button" class="profile-cancel" data-profile-action="cancel" onclick="window.cancelPropertyProfileEdit && window.cancelPropertyProfileEdit(event)" hidden>Cancel</button>
+                            <button type="button" class="primary" data-profile-action="edit" onclick="window.startPropertyProfileEdit && window.startPropertyProfileEdit(event)">Edit profile</button>
+                            <button type="button" class="primary" data-profile-action="save" onclick="window.savePropertyProfile && window.savePropertyProfile(event)" hidden>Save changes</button>
+                        </div>
+                    </div>
+                    <form class="property-profile-form" id="propertyProfileForm" onsubmit="event.preventDefault(); window.savePropertyProfile && window.savePropertyProfile(event);">
+                        <div class="property-profile-section"><strong>Personal details</strong><small>Your primary identity and communication information.</small></div>
+                        <label>Full name<input name="fullName" value="Property Moderator" required disabled></label>
+                        <label>Email address<input name="email" type="email" value="admin@propertydirect.in" required disabled></label>
+                        <label>Mobile number<input name="phone" value="+91 98765 43211" required disabled></label>
+                        <label>Alternate mobile<input name="alternatePhone" value="" placeholder="Optional" disabled></label>
+                        <div class="property-profile-section"><strong>Role and organisation</strong><small>Account ownership and operational responsibility.</small></div>
+                        <label>Profile / employee ID<input name="employeeId" value="PD-AD-014" disabled></label>
+                        <label>Account role<input value="Administrator" disabled data-permanent-disabled></label>
+                        <label>Department / account type<input name="department" value="Marketplace Operations" disabled></label>
+                        <label>Designation<input name="designation" value="Property Operations Administrator" disabled></label>
+                        <div class="property-profile-section"><strong>Address and preferences</strong><small>Location, language and regional settings.</small></div>
+                        <label class="profile-wide">Address<textarea name="address" disabled>PropertyDirect Operations Centre</textarea></label>
+                        <label>City<input name="city" value="Bengaluru" disabled></label>
+                        <label>State<input name="state" value="Karnataka" disabled></label>
+                        <label>Postal code<input name="postalCode" value="560001" disabled></label>
+                        <label>Timezone<select name="timezone" disabled><option selected>Asia/Kolkata</option><option>UTC</option><option>Asia/Dubai</option></select></label>
+                        <label>Language<select name="language" disabled><option selected>English</option><option>Hindi</option><option>Tamil</option><option>Kannada</option></select></label>
+                        <label>Two-factor authentication<select name="twoFactor" disabled><option selected>Enabled</option><option>Optional</option><option>Disabled</option></select></label>
+                    </form>
                 </div>
-            </div>
-
-            <div class="dash-card">
-
-                <form class="form-grid">
-
-                    <label>Agent Name<input placeholder="Enter Agent Name"></label>
-
-                    <label>RERA License ID<input placeholder="Enter RERA License ID"></label>
-
-                    <label>Phone Number<input placeholder="Enter Phone Number"></label>
-
-                    <label>Email Address<input placeholder="Enter Email Address"></label>
-
-                </form>
-
             </div>
 
         </section>
@@ -6933,7 +7955,7 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
 
     <script src="/shared/js/required-fields.js?v=20260826-v2"></script>
 
-    <script src="/propertydirect/js/dashboard.js?v=20260907-interactions-live-v2"></script>
+    <script src="/propertydirect/js/dashboard.js?v=20261012-profile-buttons-v1"></script>
 
     <script src="/propertydirect/js/market-workflows.js?v=20260928-property-workflow-v5"></script>
 
@@ -7458,9 +8480,76 @@ html body.app-dashboard :is(.dash-sidebar, .sidebar, .vendor-sidebar, .agent-sid
         </div>
     </div>
 
+    <!-- Complaint / Report Action Modal -->
+    <div id="reportActionModal" class="modal hidden" role="dialog" aria-modal="true" style="display:none; position:fixed; inset:0; z-index:9999999; background:rgba(15,23,42,0.6); align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+        <div style="background:#ffffff; border-radius:18px; max-width:540px; width:92%; padding:28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); border:1px solid #e2e8f0; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid #f1f5f9; padding-bottom:14px;">
+                <h3 id="reportModalTitle" style="margin:0; font-size:1.15rem; font-weight:800; color:#0f172a;">Resolve Complaint</h3>
+                <button type="button" onclick="closeReportActionModal()" style="background:transparent; border:none; font-size:1.25rem; line-height:1; color:#94a3b8; cursor:pointer; padding:4px;">✕</button>
+            </div>
+            <div id="reportModalDetails" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px; margin-bottom:18px; font-size:0.84rem; color:#334155;"></div>
+            <div style="margin-bottom:20px;">
+                <label id="reportModalTextLabel" style="display:block; font-size:0.82rem; font-weight:750; color:#334155; margin-bottom:8px;">Resolution Notes &amp; Action Taken *</label>
+                <textarea id="reportModalTextarea" rows="3" style="width:100%; box-sizing:border-box; padding:12px 14px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.86rem; color:#0f172a; resize:vertical; font-family:inherit; outline:none;" placeholder="Enter resolution findings or reason..."></textarea>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:12px;">
+                <button type="button" onclick="closeReportActionModal()" style="padding:10px 18px; border-radius:10px; border:1px solid #cbd5e1; background:#ffffff; color:#334155; font-weight:700; font-size:0.84rem; cursor:pointer;">Cancel</button>
+                <button type="button" id="reportModalConfirmBtn" style="padding:10px 22px; border-radius:10px; border:none; background:#0f172a; color:#ffffff; font-weight:750; font-size:0.84rem; cursor:pointer;">Confirm Resolution</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification & Audit Log Details Modal -->
+    <div id="auditDetailsModal" class="modal hidden" role="dialog" aria-modal="true" style="display:none; position:fixed; inset:0; z-index:9999999; background:rgba(15,23,42,0.6); align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+        <div style="background:#ffffff; border-radius:18px; max-width:560px; width:92%; padding:26px 28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); border:1px solid #e2e8f0; position:relative; box-sizing:border-box;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid #f1f5f9; padding-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:1.15rem;">🔔</div>
+                    <div>
+                        <h3 style="margin:0; font-size:1.15rem; font-weight:800; color:#0f172a;">Notification Details</h3>
+                        <p style="margin:2px 0 0 0; font-size:0.78rem; color:#64748b;">System event and administrative activity record</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAuditDetailsModal()" style="background:transparent; border:none; font-size:1.35rem; line-height:1; color:#94a3b8; cursor:pointer; padding:4px 8px; border-radius:6px;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#94a3b8'">✕</button>
+            </div>
+
+            <!-- Metadata Grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px;">
+                    <span style="display:block; font-size:0.72rem; font-weight:750; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Timestamp</span>
+                    <strong id="auditModalTimestamp" style="font-size:0.86rem; color:#0f172a; font-weight:700;">—</strong>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px;">
+                    <span style="display:block; font-size:0.72rem; font-weight:750; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Action</span>
+                    <span id="auditModalActionBadge">—</span>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px;">
+                    <span style="display:block; font-size:0.72rem; font-weight:750; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Target Entity</span>
+                    <strong id="auditModalTarget" style="font-size:0.86rem; color:#0f172a; font-weight:750; display:inline-flex; align-items:center; gap:6px;">—</strong>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px;">
+                    <span style="display:block; font-size:0.72rem; font-weight:750; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Actor</span>
+                    <code id="auditModalActor" style="font-size:0.82rem; color:#334155; font-family:monospace; background:#e2e8f0; padding:2px 8px; border-radius:6px; display:inline-block;">—</code>
+                </div>
+            </div>
+
+            <!-- Detail note block -->
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:0.76rem; font-weight:750; color:#475569; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Detail / Justification Note</label>
+                <div id="auditModalDetail" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:14px 16px; font-size:0.86rem; color:#0f172a; line-height:1.55; max-height:180px; overflow-y:auto; word-break:break-word; white-space:pre-wrap;">—</div>
+            </div>
+
+            <!-- Footer actions -->
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid #f1f5f9; padding-top:16px;">
+                <div id="auditModalTargetActionContainer"></div>
+                <button type="button" onclick="closeAuditDetailsModal()" style="padding:10px 22px; border-radius:10px; border:none; background:#0f172a; color:#ffffff; font-weight:750; font-size:0.84rem; cursor:pointer; margin-left:auto;">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- PropertyDirect Unified Platform Admin Script -->
 
-    <script src="/propertydirect/js/admin-dashboard.js?v=20260929-admin-v1"></script>
+    <script src="/propertydirect/js/admin-dashboard.js?v=20261012-audit-v3"></script>
 
 
 
