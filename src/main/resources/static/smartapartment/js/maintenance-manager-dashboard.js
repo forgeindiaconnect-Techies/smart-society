@@ -214,7 +214,7 @@
         if (!container) return;
 
         if (!workers || workers.length === 0) {
-            container.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">No maintenance workers registered.</td></tr>`;
+            container.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">No maintenance workers registered.</td></tr>`;
             return;
         }
 
@@ -232,12 +232,6 @@
                 <td><span class="badge bg-light text-dark border">${escapeHtml(w.skill || 'General')}</span></td>
                 <td><span class="badge ${getAttendanceBadge(w.attendanceStatus)}">${escapeHtml(w.attendanceStatus)}</span></td>
                 <td><span class="badge ${getAvailabilityBadge(w.availabilityStatus)}">${escapeHtml(w.availabilityStatus)}</span></td>
-                <td>
-                    ${w.currentRequestNumber ? `<span class="badge bg-primary text-white">${escapeHtml(w.currentRequestNumber)}</span>` : '<span class="text-muted small">None</span>'}
-                </td>
-                <td>
-                    <span class="badge ${w.colorBadgeClass || 'badge-secondary'}">${escapeHtml(w.colorStatus)}</span>
-                </td>
                 <td class="small text-muted">${escapeHtml(w.formattedStartedTime || '--')}</td>
                 <td class="small text-muted">${escapeHtml(w.formattedExpectedCompletionTime || '--')}</td>
                 <td>
@@ -688,6 +682,7 @@
             case 'AVAILABLE': return 'bg-success text-white';
             case 'BUSY': return 'bg-warning text-dark';
             case 'ON_BREAK': return 'bg-info text-dark';
+            case 'ABSENT': return 'bg-dark text-white';
             default: return 'bg-secondary text-white';
         }
     }

@@ -23,6 +23,7 @@ public class ChatService {
     private final MaintenanceRequestRepository maintenanceRequestRepository;
     private final CurrentUserService currentUser;
     private final com.smartapartment.repository.ResidentRepository residents;
+    private final com.smartapartment.repository.AppUserRepository users;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd MMM, hh:mm a");
@@ -31,12 +32,14 @@ public class ChatService {
                        ChatMessageRepository messageRepository,
                        MaintenanceRequestRepository maintenanceRequestRepository,
                        CurrentUserService currentUser,
-                       com.smartapartment.repository.ResidentRepository residents) {
+                       com.smartapartment.repository.ResidentRepository residents,
+                       com.smartapartment.repository.AppUserRepository users) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.maintenanceRequestRepository = maintenanceRequestRepository;
         this.currentUser = currentUser;
         this.residents = residents;
+        this.users = users;
 
     }
 
@@ -295,6 +298,7 @@ public class ChatService {
 
             String convKey = "req_" + conv.getTicketNumber() + (conv.getConversationType().equals("MAINTENANCE_ADMIN") ? "_admin" : "_cust");
 
+            var worker = workerIdentity(conv);
             summaries.add(ConversationSummary.builder()
                     .id(conv.getId())
                     .conversationId(conv.getId())
@@ -307,8 +311,8 @@ public class ChatService {
                     .customerId(conv.getCustomerId())
                     .customerName(conv.getCustomerName())
                     .customerUnit(conv.getCustomerUnit())
-                    .maintenanceUserId(conv.getMaintenanceUserId())
-                    .maintenanceUserName(conv.getMaintenanceUserName())
+                    .maintenanceUserId(worker.map(com.smartapartment.entity.AppUser::getEmail).orElse(null))
+                    .maintenanceUserName(worker.map(com.smartapartment.entity.AppUser::getFullName).orElse("Maintenance team"))
                     .adminId(conv.getAdminId())
                     .adminName(conv.getAdminName())
                     .title(conv.getTicketTitle() != null ? conv.getTicketTitle() : "Ticket #" + conv.getTicketNumber())
@@ -355,6 +359,9 @@ public class ChatService {
             return actor.getEmail().equalsIgnoreCase(customer==null ? "" : customer)
                     || residents.findFirstByUserOrderByIdAsc(actor).map(profile -> String.valueOf(profile.getId()).equals(customer)).orElse(false);
         }
+        if (conversation.getTicketNumber() != null && conversation.getTicketNumber().startsWith("DIRECT-")
+                && actor.getRole()==com.smartapartment.entity.UserRole.MAINTENANCE_STAFF)
+            return actor.getEmail().equalsIgnoreCase(conversation.getMaintenanceUserId()==null ? "" : conversation.getMaintenanceUserId());
         return actor.getRole()==com.smartapartment.entity.UserRole.SOCIETY_ADMIN
                 || actor.getRole()==com.smartapartment.entity.UserRole.FACILITY_MANAGER
                 || actor.getRole()==com.smartapartment.entity.UserRole.MAINTENANCE_STAFF;
@@ -410,7 +417,8 @@ public class ChatService {
                 .conversationType(conv.getConversationType())
                 .senderId(msg.getSenderId())
                 .senderRole(msg.getSenderRole())
-                .senderName(msg.getSenderName())
+                .senderName(accountIdentity(msg.getSenderId(), conv.getTenantId())
+                        .map(com.smartapartment.entity.AppUser::getFullName).orElse(msg.getSenderName()))
                 .senderUnit(msg.getSenderRole().equals("CUSTOMER") ? conv.getCustomerUnit() : (msg.getSenderRole().equals("MAINTENANCE") ? "Maintenance Team" : "Admin Board"))
                 .message(msg.getMessage())
                 .messageType(msg.getMessageType())
@@ -418,6 +426,25 @@ public class ChatService {
                 .createdAt(msg.getCreatedAt())
                 .formattedTime(formatTime(msg.getCreatedAt()))
                 .build();
+    }
+
+    private Optional<com.smartapartment.entity.AppUser> accountIdentity(String identity, String tenant) {
+        if (identity == null || identity.isBlank() || tenant == null) return Optional.empty();
+        return users.findByTenantId(tenant).stream().filter(u ->
+                identity.equalsIgnoreCase(u.getEmail()) || identity.equals(String.valueOf(u.getId()))).findFirst();
+    }
+
+    private Optional<com.smartapartment.entity.AppUser> workerIdentity(ChatConversation conversation) {
+        if (conversation.getMaintenanceRequestId() != null) {
+            var request = maintenanceRequestRepository.findById(conversation.getMaintenanceRequestId());
+            if (request.isPresent() && Objects.equals(request.get().getTenantId(), conversation.getTenantId())) {
+                return accountIdentity(request.get().getAssignedWorkerId() == null ? null :
+                        String.valueOf(request.get().getAssignedWorkerId()), conversation.getTenantId())
+                        .filter(u -> u.getRole() == com.smartapartment.entity.UserRole.MAINTENANCE_STAFF);
+            }
+        }
+        return accountIdentity(conversation.getMaintenanceUserId(), conversation.getTenantId())
+                .filter(u -> u.getRole() == com.smartapartment.entity.UserRole.MAINTENANCE_STAFF);
     }
 
     private String formatTime(LocalDateTime dt) {

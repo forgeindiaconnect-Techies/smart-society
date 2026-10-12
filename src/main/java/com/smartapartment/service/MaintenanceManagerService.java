@@ -116,6 +116,13 @@ public class MaintenanceManagerService {
 
             String attStatus = att.map(WorkerAttendance::getAttendanceStatus).orElse("OFFLINE");
             String avStatus = av != null ? av.getStatus() : "OFFLINE";
+            // Availability from a previous shift must not make an off-duty worker available.
+            boolean absent = "ON_LEAVE".equalsIgnoreCase(attStatus) || "ABSENT".equalsIgnoreCase(attStatus);
+            boolean clockedIn = att.filter(a -> a.getClockIn() != null && a.getClockOut() == null)
+                    .filter(a -> Set.of("PRESENT", "LATE", "HALF_DAY").contains(attStatus.toUpperCase(Locale.ROOT)))
+                    .isPresent();
+            if (absent) avStatus = "ABSENT";
+            else if (!clockedIn) avStatus = "OFFLINE";
 
             if ("ON_LEAVE".equalsIgnoreCase(attStatus)) {
                 workersOnLeave++;
@@ -543,6 +550,13 @@ public class MaintenanceManagerService {
             String attStatus = att.map(WorkerAttendance::getAttendanceStatus).orElse("OFFLINE");
             String avStatus = av != null ? av.getStatus() : "OFFLINE";
 
+            boolean absent = "ON_LEAVE".equalsIgnoreCase(attStatus) || "ABSENT".equalsIgnoreCase(attStatus);
+            boolean clockedIn = att.filter(a -> a.getClockIn() != null && a.getClockOut() == null)
+                    .filter(a -> Set.of("PRESENT", "LATE", "HALF_DAY").contains(attStatus.toUpperCase(Locale.ROOT)))
+                    .isPresent();
+            if (absent) avStatus = "ABSENT";
+            else if (!clockedIn) avStatus = "OFFLINE";
+
             Long curReqId = av != null ? av.getCurrentTaskId() : null;
             String curReqNum = av != null ? av.getCurrentTaskNumber() : null;
             String curStatus = "IDLE";
@@ -578,12 +592,15 @@ public class MaintenanceManagerService {
             String colorStatus;
             String colorBadgeClass;
 
-            if (isOverdue) {
-                colorStatus = "⚠ OVERDUE";
-                colorBadgeClass = "badge-danger animate-pulse";
-            } else if ("ON_LEAVE".equalsIgnoreCase(attStatus) || "ABSENT".equalsIgnoreCase(attStatus)) {
+            if (absent) {
                 colorStatus = "⚫ ABSENT";
                 colorBadgeClass = "badge-dark";
+            } else if (!clockedIn || "OFFLINE".equalsIgnoreCase(avStatus)) {
+                colorStatus = "🔴 OFFLINE";
+                colorBadgeClass = "badge-secondary";
+            } else if (isOverdue) {
+                colorStatus = "⚠ OVERDUE";
+                colorBadgeClass = "badge-danger animate-pulse";
             } else if ("ON_BREAK".equalsIgnoreCase(avStatus)) {
                 colorStatus = "🟠 ON BREAK";
                 colorBadgeClass = "badge-warning";

@@ -31,7 +31,7 @@
                     </div>
                     <div>
                         <h5 class="fw-bold mb-0 text-dark">Gate Management</h5>
-                        <p class="text-muted small mb-0">View gates and their guards, with contact and shift details.</p>
+                        <p class="text-muted small mb-0">Manage society gates, locations, and status.</p>
                     </div>
                 </div>
                 <button class="btn btn-primary rounded-pill btn-sm px-3" type="button" data-gate-new>
@@ -49,7 +49,8 @@
                     <div class="col-12 d-flex justify-content-end gap-2 pt-2"><button class="btn btn-light btn-sm rounded-pill px-3" type="button" data-gate-cancel>Cancel</button><button class="btn btn-primary btn-sm rounded-pill px-3" type="submit">Save Gate</button></div>
                 </form>
                 <div class="table-responsive mb-4"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th class="ps-3">Gate</th><th>Type</th><th>Location</th><th>Status</th><th class="text-end pe-3">Actions</th></tr></thead><tbody id="gateRows"><tr><td colspan="5" class="text-center text-muted py-4">Loading gates…</td></tr></tbody></table></div>
-                <section class="border-top pt-3"><h5 class="fw-bold">Guards at each gate</h5><p class="text-muted small">Gate sign-in shows the guard's active security-console session. Assigned guards are listed separately when they have not signed in.</p><p id="gateAssignmentStatus" role="status" aria-live="polite"></p><div id="gateGuardCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px"><p>Loading guard information…</p></div></section>            </div>`;
+                <p id="gateAssignmentStatus" role="status" aria-live="polite"></p>
+            </div>`;
         const snapshotCard = host.querySelector('.card:not(#gateManagementPanel)');
         if (snapshotCard && snapshotCard.parentElement === host) {
             snapshotCard.after(panel);
@@ -59,28 +60,6 @@
     }
 
     let gateCache = [];
-    let deployments = [];
-    const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    async function renderGuardCards() {
-        deployments = await api('/api/society/gate-guards');
-        const root = document.getElementById('gateGuardCards');
-        if (!root) return;
-        root.innerHTML = deployments.map(gate => `<article style="background:#f8fafc;border:1px solid #dbe3ef;border-radius:16px;padding:20px"><h6 class="fw-bold mb-2">${escape(gate.gateNumber)} · ${escape(gate.gateName)}</h6><p class="small text-muted">${escape(gate.location || 'Location not recorded')} · ${escape(gate.status)}</p>${gate.guards.map(guard => `<div style="padding:16px 0;border-top:1px solid #dbe3ef"><strong>${escape(guard.name)}</strong><p class="small my-2" style="color:${guard.signedInAt ? '#047857' : '#64748b'}">${escape(guard.presence)}</p><p class="small text-muted">${guard.shiftStart && guard.shiftEnd ? `${escape(guard.shiftStart)} – ${escape(guard.shiftEnd)}` : 'Shift times not recorded'}</p><button class="btn btn-primary btn-sm" style="min-height:40px" type="button" data-guard-details="${guard.id}" data-guard-gate="${gate.id}">Details</button></div>`).join('') || '<p class="text-muted mb-0">No guard assigned or signed in at this gate.</p>'}</article>`).join('') || '<p>No gates configured.</p>';
-        assignmentStatus('');
-    }
-    document.addEventListener('click', event => {
-        const button = event.target.closest('[data-guard-details]'); if (!button) return;
-        const gate = deployments.find(g => String(g.id) === button.dataset.guardGate);
-        const guard = gate?.guards.find(g => String(g.id) === button.dataset.guardDetails); if (!guard) return;
-        document.getElementById('guardDetailsDialog')?.remove();
-        const dialog = document.createElement('dialog'); dialog.id = 'guardDetailsDialog';
-        dialog.style.cssText = 'width:min(680px,94vw);max-height:85vh;overflow:auto;border:1px solid #dbe3ef;border-radius:20px;padding:24px;color:#172033;background:white;';
-        const fields = [['Full name',guard.name],['Phone number',guard.phone],['Email',guard.email],['Employee ID',guard.employeeId],['Designation',guard.designation],['Account status',guard.accountStatus],['Joining date',guard.joiningDate],['Gate',`${gate.gateNumber} · ${gate.gateName}`],['Gate location',gate.location],['Presence',guard.presence],['Gate sign-in time',guard.signedInAt ? new Date(guard.signedInAt).toLocaleString('en-IN') : null],['Shift start',guard.shiftStart],['Shift end',guard.shiftEnd],['Work shift',guard.workShift],['Address',guard.address],['Emergency contact',guard.emergencyContactName],['Emergency phone',guard.emergencyContactPhone],['Notes',guard.notes]];
-        dialog.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px"><h3 style="margin:0">Guard details</h3><button type="button" class="btn btn-outline-secondary" aria-label="Close guard details">×</button></div><dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px">${fields.map(([label,value]) => `<div style="overflow-wrap:anywhere"><dt style="font-size:13px;color:#64748b;margin-bottom:6px">${escape(label)}</dt><dd style="margin:0">${escape(value || 'Not recorded')}</dd></div>`).join('')}</dl>`;
-        document.body.appendChild(dialog); dialog.querySelector('button').onclick = () => dialog.close(); dialog.showModal();
-    });
-    setInterval(() => { if (!document.hidden && ['', '#overview'].includes(location.hash) && document.getElementById('gateGuardCards')) renderGuardCards().catch(error => assignmentStatus(error.message,true)); }, 15000);
-
     function assignmentStatus(message, error = false) {
         const status = document.getElementById("gateAssignmentStatus");
         if (status) { status.textContent = message; status.className = error ? "text-danger" : "text-success"; }
@@ -102,7 +81,7 @@
             return row;
         }));
         if (!gateCache.length) rows.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No gates configured.</td></tr>';
-        await renderGuardCards();
+        assignmentStatus('');
     }
 
     function openEditor(gate = null) {

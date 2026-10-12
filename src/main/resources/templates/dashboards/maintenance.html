@@ -3887,8 +3887,6 @@
                                         <th>Skill</th>
                                         <th>Attendance</th>
                                         <th>Availability</th>
-                                        <th>Current Request</th>
-                                        <th>Current Status</th>
                                         <th>Started</th>
                                         <th>Expected Completion</th>
                                         <th class="pe-4">Remaining Time</th>
@@ -3896,7 +3894,7 @@
                                 </thead>
                                 <tbody id="mgr-worker-board-tbody" class="border-top-0">
                                     <tr>
-                                        <td colspan="9" class="text-center py-4 text-muted">Loading worker board...</td>
+                                        <td colspan="7" class="text-center py-4 text-muted">Loading worker board...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -4605,8 +4603,8 @@
                                             <span class="small text-secondary text-truncate" style="max-width:140px; font-size:0.78rem;">${escapeText(req.serviceType || '')}</span>
                                         </div>
                                         <div class="fw-semibold text-dark text-truncate mb-1" style="max-width:240px; font-size:0.85rem;" title="${escapeText(req.title || shortTitle)}">${escapeText(shortTitle)}</div>
-                                        <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-primary fw-semibold" style="font-size:0.75rem;" onclick="viewResidentRequestDetails(${req.id})">
-                                            <i class="fa-solid fa-circle-info me-1"></i>View Details
+                                        <button type="button" class="btn btn-primary btn-sm maintenance-request-details" onclick="viewResidentRequestDetails(${req.id})">
+                                            <i class="fa-solid fa-eye" aria-hidden="true"></i>View Details
                                         </button>
                                     </td>
                                     <td class="text-center">
@@ -5411,7 +5409,7 @@
                                             <span class="badge bg-warning text-dark rounded-pill px-2 py-0.5 small" id="maintActiveCustStatus">Assigned</span>
                                         </div>
                                         <div class="text-muted small mt-0.5" id="maintActiveCustSubtitle" style="font-size:0.78rem;">
-                                            Resident: <strong class="text-dark">Kavya N</strong> · Flat A-101 · Duty Worker: <strong class="text-dark">Kumar (AC Specialist)</strong>
+                                            Resident: <strong class="text-dark">Kavya N</strong> · Flat A-101 · Duty Worker: <strong class="text-dark">Select a saved conversation</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -5446,7 +5444,7 @@
                             <!-- Input Bar -->
                             <div class="bg-white border-top p-2.5 flex-shrink-0">
                                 <form onsubmit="handleMaintCustomerSend(event)" class="d-flex gap-2 align-items-center m-0">
-                                    <input type="text" id="maintCustomerReplyInput" class="form-control rounded-pill px-3 py-2 border-light-subtle shadow-none" placeholder="Reply to resident as Maintenance Team / Kumar..." autocomplete="off" required>
+                                    <input type="text" id="maintCustomerReplyInput" class="form-control rounded-pill px-3 py-2 border-light-subtle shadow-none" placeholder="Reply to resident..." autocomplete="off" required>
                                     <button type="submit" class="chat-send-btn" title="Send Reply">
                                         <i class="fa-solid fa-paper-plane" style="font-size:0.95rem; margin-left:-2px;"></i>
                                     </button>
@@ -6236,13 +6234,26 @@
         }
         window.escapeMaintHtml = escapeMaintHtml;
 
+        let maintenanceChatIdentity = null;
+        async function loadMaintenanceChatIdentity() {
+            if (maintenanceChatIdentity) return maintenanceChatIdentity;
+            const response = await fetch('/api/society/me', {headers:{Accept:'application/json'}});
+            if (response.ok && !response.redirected) maintenanceChatIdentity = await response.json();
+            return maintenanceChatIdentity;
+        }
+        function maintenanceSenderLabel(message) {
+            const sender = String(message.senderId || '').toLowerCase();
+            const me = maintenanceChatIdentity;
+            const own = me && sender && (sender === String(me.email || '').toLowerCase() || sender === String(me.id || ''));
+            return own ? `You (${me.name || message.senderName || 'Maintenance team'})` : (message.senderName || 'Maintenance team');
+        }
         let activeMaintCustomerChat = {
             conversationId: 'req_REQ-1024_cust',
             ticketNumber: 'REQ-1024',
             ticketTitle: 'AC Repair',
             residentName: 'Kavya N',
             residentUnit: 'Flat A-101',
-            workerName: 'Kumar (AC Specialist)',
+            workerName: 'Maintenance team',
             status: 'Assigned'
         };
 
@@ -6296,7 +6307,7 @@
             const ticketTitle = t ? (t.ticketTitle || t.title || 'Service Request') : 'Service Request';
             const resident = t ? (t.customerName || 'Resident') : 'Resident';
             const unit = t ? (t.customerUnit || t.unit || '') : '';
-            const worker = t ? (t.maintenanceUserName || 'Kumar (AC Specialist)') : 'Kumar (AC Specialist)';
+            const worker = t ? (t.maintenanceUserName || 'Maintenance team') : 'Maintenance team';
             const status = t ? (t.status || 'Assigned') : 'Assigned';
 
             activeMaintCustomerChat = {
@@ -6620,6 +6631,7 @@
                 const res = await fetch(`/api/chat/messages?conversationId=${encodeURIComponent(convId)}&viewerRole=MAINTENANCE`);
                 if (!res.ok) return;
                 const msgs = await res.json();
+                await loadMaintenanceChatIdentity();
                 let html = '';
                 if (!msgs || msgs.length === 0) {
                     html = `<div class="text-center text-muted my-auto py-5"><i class="fa-regular fa-comment-dots fs-3 mb-2 d-block text-secondary"></i>No messages yet in this ticket conversation.<div class="small text-muted mt-1">Send a quick reply below to get started.</div></div>`;
@@ -6631,7 +6643,7 @@
                             html += `
                                 <div class="maint-msg-row maint-msg-out">
                                     <div class="maint-bubble maint-bubble-out">
-                                        <div class="maint-bubble-sender">You (${escapeMaintHtml(m.senderName || 'Kumar')})</div>
+                                        <div class="maint-bubble-sender">${escapeMaintHtml(maintenanceSenderLabel(m))}</div>
                                         <div class="maint-bubble-text">${safeMsg}</div>
                                         <div class="maint-bubble-meta">
                                             <span>${escapeMaintHtml(m.formattedTime || '')}</span>
@@ -6674,6 +6686,7 @@
                 const res = await fetch(`/api/chat/messages?conversationId=${encodeURIComponent(convId)}&viewerRole=MAINTENANCE`);
                 if (!res.ok) return;
                 const msgs = await res.json();
+                await loadMaintenanceChatIdentity();
                 let html = '';
                 if (!msgs || msgs.length === 0) {
                     html = `<div class="text-center text-muted my-auto py-5"><i class="fa-solid fa-lock fs-3 mb-2 d-block text-warning"></i>Internal admin thread.<div class="small text-muted mt-1">Send an escalation or approval request to start!</div></div>`;
@@ -6685,7 +6698,7 @@
                             html += `
                                 <div class="maint-msg-row maint-msg-out">
                                     <div class="maint-bubble maint-bubble-out" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; border-left: 3px solid #f59e0b !important;">
-                                        <div class="maint-bubble-sender" style="color:#fde047;">You (${escapeMaintHtml(m.senderName || 'Kumar')})</div>
+                                        <div class="maint-bubble-sender" style="color:#fde047;">${escapeMaintHtml(maintenanceSenderLabel(m))}</div>
                                         <div class="maint-bubble-text">${safeMsg}</div>
                                         <div class="maint-bubble-meta">
                                             <span>${escapeMaintHtml(m.formattedTime || '')}</span>
@@ -6732,7 +6745,6 @@
                     conversationKey: activeMaintCustomerChat.conversationId,
                     channelType: 'CUSTOMER_MAINTENANCE',
                     senderRole: 'MAINTENANCE',
-                    senderName: activeMaintCustomerChat.workerName || 'Kumar (AC Specialist)',
                     senderUnit: 'Maintenance Crew',
                     ticketNumber: activeMaintCustomerChat.ticketNumber,
                     ticketTitle: activeMaintCustomerChat.ticketTitle,
@@ -6764,7 +6776,6 @@
                     conversationKey: activeMaintAdminChat.conversationId,
                     channelType: 'MAINTENANCE_ADMIN',
                     senderRole: 'MAINTENANCE',
-                    senderName: 'Kumar (Maintenance Team)',
                     senderUnit: 'Maintenance Crew',
                     ticketNumber: activeMaintAdminChat.ticketNumber,
                     ticketTitle: activeMaintAdminChat.ticketTitle,
@@ -10424,7 +10435,7 @@
             <script src="/shared/js/common-maintenance.js?v=20260908-common-maintenance-v1"></script>
             <script src="/smartapartment/js/dashboard-controls.js?v=20260910-backend-bridge-v1"></script>
             <script src="/smartapartment/js/worker-attendance-module.js?v=20261010-live-roster-v5"></script>
-            <script src="/smartapartment/js/maintenance-manager-dashboard.js?v=20261010-manager-access-v4"></script>
+            <script src="/smartapartment/js/maintenance-manager-dashboard.js?v=20261012-worker-board-v5"></script>
             <script src="/smartapartment/js/maintenance-asset-demo.js?v=20261008-demo-v1"></script>
 <style id="maintenance-workers-layout-fix">
 body.dashboard-body[data-dashboard-role="maintenance"] header.topbar { display: flex !important; flex-wrap: wrap !important; gap: 12px !important; height: auto !important; min-height: 80px !important; max-height: none !important; flex: 0 0 auto !important; padding: 16px 24px !important; width: 100% !important; overflow: visible !important; }
@@ -10535,5 +10546,38 @@ body.dashboard-body[data-dashboard-role="maintenance"] #dashboardPasswordForm .p
 .maintenance-announcements .maintenance-notice-icon { display:inline-grid; place-items:center; width:64px; height:64px; border-radius:20px; background:#eff4ff; color:#2864ee; font-size:26px; margin-bottom:20px; }
 </style>
 
+<style id="maintenance-request-details-style">
+body.dashboard-body:is([data-platform="smartapartment"], [data-platform="smartsociety"])[data-dashboard-role="maintenance"] [data-view="resident-requests"] .btn.maintenance-request-details {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 38px !important;
+    padding: 9px 16px !important;
+    margin-top: 6px !important;
+    border: 1px solid #1d4ed8 !important;
+    border-radius: 10px !important;
+    background: #2563eb !important;
+    color: #fff !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(37,99,235,.18) !important;
+    transition: background-color .15s ease, box-shadow .15s ease;
+}
+body.dashboard-body:is([data-platform="smartapartment"], [data-platform="smartsociety"])[data-dashboard-role="maintenance"] [data-view="resident-requests"] .btn.maintenance-request-details i {
+    color: inherit !important;
+    margin: 0 !important;
+}
+body.dashboard-body:is([data-platform="smartapartment"], [data-platform="smartsociety"])[data-dashboard-role="maintenance"] [data-view="resident-requests"] .btn.maintenance-request-details:hover {
+    background: #1d4ed8 !important;
+    box-shadow: 0 4px 12px rgba(37,99,235,.25) !important;
+}
+body.dashboard-body:is([data-platform="smartapartment"], [data-platform="smartsociety"])[data-dashboard-role="maintenance"] [data-view="resident-requests"] .btn.maintenance-request-details:focus-visible {
+    outline: 3px solid #93c5fd !important;
+    outline-offset: 3px;
+}
+</style>
 </body>
 </html>

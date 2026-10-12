@@ -2732,7 +2732,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gap-1">
-                                    <button type="button" class="wa-header-icon-btn" title="New Maintenance Chat" onclick="openMaintenanceWorkflowWizard()">
+                                    <button type="button" class="wa-header-icon-btn" title="New Maintenance Chat" aria-label="Choose a maintenance worker to chat with" onclick="openMaintenanceWorkerPicker()">
                                         <i class="fa-solid fa-square-plus"></i>
                                     </button>
                                     <button type="button" class="wa-header-icon-btn" title="Refresh Messages" onclick="loadResidentChatMessages('residentChatMessagesContainer')">
@@ -2765,15 +2765,15 @@
                             
                             <!-- WhatsApp Chat Header -->
                             <div class="wa-chat-header">
-                                <div class="wa-target-profile" onclick="showTrackWorkerModal('Kumar', 'REQ-1024')">
+                                <div class="wa-target-profile" onclick="showTrackWorkerModal()">
                                     <div class="wa-target-avatar">
                                         <i class="fa-solid fa-screwdriver-wrench"></i>
                                         <div class="wa-online-dot"></div>
                                     </div>
                                     <div>
-                                        <div class="wa-target-title" id="panelChatWorkerTitle">Kumar · AC Specialist</div>
+                                        <div class="wa-target-title" id="panelChatWorkerTitle">Select a maintenance worker</div>
                                         <div class="wa-target-status online" id="panelChatWorkerSubtitle">
-                                            <i class="fa-solid fa-circle" style="font-size:0.55rem; color:#00a884; margin-right:3px;"></i>online · Ticket <span id="panelChatTicketBadge">#REQ-1024</span> (<span id="panelChatTitle">AC Repair</span>)
+                                            Choose a conversation or use the plus button. <span id="panelChatTicketBadge"></span><span id="panelChatTitle"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -2784,7 +2784,7 @@
                                     <button type="button" class="wa-action-btn" title="Video Inspection Call" onclick="triggerVideoCall('Kumar', 'REQ-1024')">
                                         <i class="fa-solid fa-video"></i>
                                     </button>
-                                    <button type="button" class="wa-action-btn" title="Track Technician Live Location" onclick="showTrackWorkerModal('Kumar', 'REQ-1024')">
+                                    <button type="button" class="wa-action-btn" title="Track Technician Live Location" onclick="showTrackWorkerModal()">
                                         <i class="fa-solid fa-location-dot"></i>
                                     </button>
                                 </div>
@@ -2794,9 +2794,9 @@
                             <div class="wa-pinned-ticket">
                                 <div class="d-flex align-items-center">
                                     <span class="wa-pinned-badge"><i class="fa-solid fa-thumbtack me-1"></i>PINNED TICKET</span>
-                                    <span id="waPinnedTicketDetails"><strong>Ticket #REQ-1024: AC Repair</strong> &bull; Worker: <strong>Kumar</strong> &bull; Status: <strong class="text-success">Worker Assigned</strong> &bull; ETA: <strong>15 Mins</strong></span>
+                                    <span id="waPinnedTicketDetails">Select a saved request to view worker progress.</span>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0.5 fw-semibold" id="waPinnedTrackBtn" style="font-size:0.75rem;" onclick="showTrackWorkerModal('Kumar', 'REQ-1024')">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0.5 fw-semibold" id="waPinnedTrackBtn" style="font-size:0.75rem;" onclick="showTrackWorkerModal()">
                                     Track Worker
                                 </button>
                             </div>
@@ -3098,53 +3098,14 @@
                     </div>
                 </div>
 
-                <!-- Track Worker Modal -->
-                <div id="trackWorkerModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1070; justify-content: center; align-items: center; padding: 1rem;">
-                    <div style="background: #ffffff; width: 100%; max-width: 520px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); padding: 2rem;" class="animate__animated animate__zoomIn">
-                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-primary text-white p-2 rounded-circle"><i class="fa-solid fa-location-dot"></i></span>
-                                <h5 class="fw-bold mb-0 text-dark">Track Worker</h5>
-                            </div>
-                            <button type="button" class="btn-close" onclick="closeTrackWorkerModal()"></button>
-                        </div>
-                        <div class="p-3 bg-light rounded-4 border mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div style="background:#2563eb; color:#fff; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem;"><i class="fa-solid fa-user-gear"></i></div>
-                                    <div>
-                                        <strong class="text-dark d-block">Kumar (AC Specialist)</strong>
-                                        <span class="text-muted small">Assigned Worker &bull; Flat A-204</span>
-                                    </div>
-                                </div>
-                                <span class="badge bg-success rounded-pill px-3 py-1.5"><i class="fa-solid fa-circle me-1" style="font-size:0.5rem;"></i>En Route</span>
-                            </div>
-                            <div class="d-flex justify-content-between text-muted small mt-3 pt-2 border-top">
-                                <span>Status: <strong class="text-dark">Worker Assigned (En Route)</strong></span>
-                                <span>ETA: <strong class="text-primary">15 mins</strong></span>
-                            </div>
-                        </div>
-                        <!-- Progress Tracking Stages -->
-                        <div class="py-2">
-                            <div class="d-flex align-items-center justify-content-between text-center small fw-bold">
-                                <div class="text-success"><i class="fa-solid fa-circle-check fs-5 d-block mb-1"></i>Assigned</div>
-                                <div class="flex-grow-1 border-top border-2 border-success mx-2"></div>
-                                <div class="text-primary"><i class="fa-solid fa-person-walking fs-5 d-block mb-1"></i>En Route</div>
-                                <div class="flex-grow-1 border-top border-2 border-secondary-subtle mx-2"></div>
-                                <div class="text-muted"><i class="fa-regular fa-circle fs-5 d-block mb-1"></i>Arrived</div>
-                                <div class="flex-grow-1 border-top border-2 border-secondary-subtle mx-2"></div>
-                                <div class="text-muted"><i class="fa-regular fa-circle fs-5 d-block mb-1"></i>Completed</div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
-                            <button type="button" class="btn btn-light rounded-pill px-4" onclick="closeTrackWorkerModal()">Close</button>
-                            <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" onclick="closeTrackWorkerModal(); openResidentChat('req_REQ-1024_cust', 'REQ-1024', 'AC Repair', 'Kumar', true);">
-                                <i class="fa-solid fa-comments me-2"></i>Chat with Kumar
-                            </button>
-                        </div>
+                <!-- Tracking is populated from saved resident requests. -->
+                <div id="trackWorkerModal" role="dialog" aria-modal="true" aria-labelledby="residentTrackingTitle" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:1070;justify-content:center;align-items:center;padding:1rem;">
+                    <div style="background:white;width:100%;max-width:560px;max-height:85vh;overflow:auto;border-radius:20px;padding:24px;">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h5 id="residentTrackingTitle">Track Worker</h5><button type="button" class="btn-close" aria-label="Close tracking" onclick="closeTrackWorkerModal()"></button></div>
+                        <div id="residentTrackingDetails" aria-live="polite">Loading saved request status…</div>
+                        <div class="d-flex justify-content-end mt-3"><button type="button" class="btn btn-light" onclick="closeTrackWorkerModal()">Close</button></div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -3454,6 +3415,8 @@
         window.showTrackWorkerModal = function(workerName, ticketNum) {
             const modal = document.getElementById('trackWorkerModal');
             if (modal) modal.style.display = 'flex';
+            const details = document.getElementById('residentTrackingDetails');
+            if (details) details.textContent = 'Worker tracking could not start. Refresh the page and try again.';
         };
 
         window.closeTrackWorkerModal = function() {
@@ -4907,5 +4870,5 @@ body.dashboard-body[data-dashboard-role="resident"] header.topbar { height: var(
 body.dashboard-body[data-dashboard-role="resident"] header.topbar { min-width: 0 !important; gap: 16px !important; }
 body.dashboard-body[data-dashboard-role="resident"] header.topbar #title { min-width: 0 !important; font-size: 20px !important; }
 @media(max-width:600px) { body.dashboard-body[data-dashboard-role="resident"] { --resident-header-height: 72px; --dashboard-topbar-height: 72px !important; } }
-</style></body>
+</style><script src="/smartapartment/js/resident-worker-chat.js?v=20261012-tracking-platform-v2"></script></body>
 </html>

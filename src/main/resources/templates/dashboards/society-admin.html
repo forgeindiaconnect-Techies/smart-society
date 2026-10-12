@@ -2311,25 +2311,25 @@
 
                 <!-- Payments -->
                 <section id="payments" class="d-none animate__animated animate__fadeIn" data-view="payments">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head">
+                    <div class="card shadow-sm border-0 rounded-4 payments-panel">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center card-head payments-heading">
                             <div><h4 class="fw-bold mb-1">Payment Summary</h4><p class="text-muted mb-0">Review society collections, payment references, billing cycles, and outstanding dues.</p></div>
                             <button class="btn btn-outline-primary rounded-pill btn-sm" type="button" id="exportPayments"><i class="fa-solid fa-download me-1"></i> Export Payments</button>
                         </div>
-                        <div class="card-body px-4 pb-4">
-                            <div class="row g-4 mb-4">
-                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Collected</span><strong class="d-block fs-2 fw-bold text-success mt-2" id="paymentsCollected">Rs. 0</strong><small class="text-muted mt-2" id="paymentsCount">0 successful payments</small></article></div>
-                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Outstanding bills</span><strong class="d-block fs-2 fw-bold text-danger mt-2" id="paymentsOutstanding">Rs. 0</strong><small class="text-muted mt-2" id="paymentsDueCount">0 pending bills</small></article></div>
-                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">This month</span><strong class="d-block fs-2 fw-bold text-primary mt-2" id="paymentsThisMonth">Rs. 0</strong><small class="text-muted mt-2">Collections in current cycle</small></article></div>
-                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0"><span class="text-muted small text-uppercase fw-bold">Digital payments</span><strong class="d-block fs-2 fw-bold text-info mt-2" id="paymentsDigitalRate">0%</strong><small class="text-muted mt-2">UPI, cards and transfers</small></article></div>
+                        <div class="card-body px-4 pb-4 payments-body">
+                            <div class="row g-4 mb-4 payments-metrics">
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0 payment-metric"><span class="text-muted small text-uppercase fw-bold">Collected</span><strong class="d-block fs-2 fw-bold text-success mt-2" id="paymentsCollected">Rs. 0</strong><small class="text-muted mt-2" id="paymentsCount">0 successful payments</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0 payment-metric"><span class="text-muted small text-uppercase fw-bold">Outstanding bills</span><strong class="d-block fs-2 fw-bold text-danger mt-2" id="paymentsOutstanding">Rs. 0</strong><small class="text-muted mt-2" id="paymentsDueCount">0 pending bills</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0 payment-metric"><span class="text-muted small text-uppercase fw-bold">This month</span><strong class="d-block fs-2 fw-bold text-primary mt-2" id="paymentsThisMonth">Rs. 0</strong><small class="text-muted mt-2">Collections in current cycle</small></article></div>
+                                <div class="col-xl-3 col-md-6"><article class="card p-4 h-100 shadow-sm border-0 payment-metric"><span class="text-muted small text-uppercase fw-bold">Digital payments</span><strong class="d-block fs-2 fw-bold text-info mt-2" id="paymentsDigitalRate">0%</strong><small class="text-muted mt-2">UPI, cards and transfers</small></article></div>
                             </div>
-                            <div class="row g-3 align-items-end mb-3 bg-light rounded-4 p-3">
-                                <div class="col-md-4"><label class="form-label small fw-bold">Search flat or reference</label><input id="paymentSearch" class="form-control" placeholder="e.g. A-204 or transaction ID"></div>
-                                <div class="col-md-3"><label class="form-label small fw-bold">Payment method</label><select id="paymentModeFilter" class="form-select"><option value="">All methods</option><option value="UPI">UPI</option><option value="BANK_TRANSFER">Bank transfer</option><option value="CARD">Card</option><option value="ONLINE">Online</option><option value="CASH">Cash</option><option value="CHEQUE">Cheque</option></select></div>
-                                <div class="col-md-3"><label class="form-label small fw-bold">Billing month</label><input id="paymentMonthFilter" type="month" class="form-control"></div>
+                            <div class="row g-3 align-items-end mb-3 bg-light rounded-4 p-3 payments-filters">
+                                <div class="col-md-4"><label for="paymentSearch" class="form-label small fw-bold">Search flat or reference</label><input id="paymentSearch" class="form-control" placeholder="e.g. A-204 or transaction ID"></div>
+                                <div class="col-md-3"><label for="paymentModeFilter" class="form-label small fw-bold">Payment method</label><select id="paymentModeFilter" class="form-select"><option value="">All methods</option><option value="UPI">UPI</option><option value="BANK_TRANSFER">Bank transfer</option><option value="CARD">Card</option><option value="ONLINE">Online</option><option value="CASH">Cash</option><option value="CHEQUE">Cheque</option></select></div>
+                                <div class="col-md-3"><label for="paymentMonthFilter" class="form-label small fw-bold">Billing month</label><input id="paymentMonthFilter" type="month" class="form-control"></div>
                                 <div class="col-md-2"><button id="clearPaymentFilters" type="button" class="btn btn-outline-secondary w-100">Clear filters</button></div>
                             </div>
-                            <div class="table-responsive">
+                            <div class="table-responsive payments-table">
                                 <table class="table table-hover align-middle mb-0" data-table="payments"><thead class="table-light"><tr><th>Flat / billing cycle</th><th>Amount</th><th>Payment method</th><th>Transaction reference</th><th>Paid at</th><th>Status</th><th>Receipt</th></tr></thead><tbody></tbody></table>
                             </div>
                         </div>
@@ -3204,5 +3204,5 @@ body.dashboard-body[data-platform="smartsociety"] .resident-registration-link-ca
 body.dashboard-body[data-platform="smartsociety"] .resident-registration-link-card input {flex:1!important;}
 body.dashboard-body[data-platform="smartsociety"] .resident-registration-link-card :is(#residentSelfLinkOutput,#residentInviteStatus) {width:100%;}
 @media(max-width:650px){body.dashboard-body[data-platform="smartsociety"] #dashboardActionFields .resident-registration-link-card {padding:18px!important;}body.dashboard-body[data-platform="smartsociety"] .resident-registration-link-card div:has(> input) {display:flex!important;flex-wrap:wrap!important;gap:12px!important;}body.dashboard-body[data-platform="smartsociety"] .resident-registration-link-card div:has(> input) > input {flex-basis:100%!important;width:100%!important;}}
-</style></body>
+</style><link rel="stylesheet" href="/smartapartment/css/admin-payments.css?v=20261012-alignment-v1"></body>
 </html>
