@@ -3610,11 +3610,10 @@
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav {
         flex: 1 1 auto !important;
         min-height: 0 !important;
-        height: calc(100vh - 76px - 64px) !important;
-        max-height: calc(100vh - 76px - 64px) !important;
+        height: auto !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
-        padding: 14px 12px 14px 12px !important;
+        padding: 14px 12px !important;
         margin: 0 !important;
         display: flex !important;
         flex-direction: column !important;
@@ -3630,8 +3629,7 @@
         border-radius: 99px !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button,
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout {
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button {
         display: flex !important;
         align-items: center !important;
         gap: 12px !important;
@@ -3658,8 +3656,7 @@
         white-space: nowrap !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button span,
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout span {
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button span {
         color: inherit !important;
         font-size: inherit !important;
         font-weight: inherit !important;
@@ -3669,8 +3666,7 @@
         text-overflow: ellipsis !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button svg,
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout svg {
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav button svg {
         width: 18px !important;
         height: 18px !important;
         min-width: 18px !important;
@@ -3705,68 +3701,49 @@
         stroke: #ffffff !important;
     }
 
-    /* Distinct Logout Navigation Link */
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout {
-        color: #f87171 !important;
-        margin-top: 4px !important;
-    }
-
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout svg {
-        color: #f87171 !important;
-        stroke: #f87171 !important;
-    }
-
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout:hover {
-        color: #ffffff !important;
-        background: rgba(239, 68, 68, 0.16) !important;
-        border-left-color: #ef4444 !important;
-        transform: translateX(2px) !important;
-    }
-
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-nav a.sidebar-nav-logout:hover svg {
-        color: #fca5a5 !important;
-        stroke: #fca5a5 !important;
-        transform: scale(1.08) !important;
-    }
-
     /* User Profile & Logout Bottom Card */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card,
+    html body.app-dashboard[data-platform="propertydirect"] .dash-sidebar .sidebar-user-card,
     body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card {
-        position: absolute !important;
+        position: relative !important;
         top: auto !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        margin-top: auto !important;
         width: 100% !important;
-        height: 64px !important;
-        min-height: 64px !important;
-        max-height: 64px !important;
-        padding: 10px 14px !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        padding: 12px 14px 14px !important;
+        border: none !important;
         border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-        background: #081120 !important;
+        background: rgba(8, 17, 32, 0.85) !important;
         display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
+        flex-direction: column !important;
         gap: 10px !important;
         box-sizing: border-box !important;
         flex-shrink: 0 !important;
         z-index: 10 !important;
     }
 
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-info,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-info {
         display: flex !important;
         align-items: center !important;
         gap: 10px !important;
-        padding: 0 !important;
-        min-width: 0 !important;
-        flex: 1 1 auto !important;
+        padding: 2px 2px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-avatar,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-avatar {
         width: 36px !important;
         height: 36px !important;
         min-width: 36px !important;
+        max-width: 36px !important;
         border-radius: 9px !important;
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
         color: #ffffff !important;
@@ -3780,15 +3757,19 @@
         flex-shrink: 0 !important;
     }
 
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-details,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-details {
         display: flex !important;
         flex-direction: column !important;
         min-width: 0 !important;
         text-align: left !important;
+        flex: 1 1 auto !important;
         overflow: hidden !important;
     }
 
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-name,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-name {
+        display: block !important;
         color: #ffffff !important;
         font-size: 0.84rem !important;
         font-weight: 700 !important;
@@ -3798,7 +3779,9 @@
         text-overflow: ellipsis !important;
     }
 
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-role,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-role {
+        display: block !important;
         color: #94a3b8 !important;
         font-size: 0.72rem !important;
         font-weight: 600 !important;
@@ -3809,37 +3792,42 @@
         text-overflow: ellipsis !important;
     }
 
-    /* Compact Logout Icon Button in User Card */
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn,
+    /* Red Logout Button */
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout-action-btn,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout-action-btn,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout,
     body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout {
-        width: 36px !important;
-        min-width: 36px !important;
-        max-width: 36px !important;
-        height: 36px !important;
-        min-height: 36px !important;
-        max-height: 36px !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border-radius: 9px !important;
-        background: rgba(239, 68, 68, 0.12) !important;
-        border: 1px solid rgba(239, 68, 68, 0.28) !important;
-        color: #f87171 !important;
-        display: flex !important;
+        display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        flex-shrink: 0 !important;
+        gap: 8px !important;
+        width: 100% !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        padding: 0 14px !important;
+        border-radius: 9px !important;
+        background: rgba(239, 68, 68, 0.08) !important;
+        border: 1px solid rgba(239, 68, 68, 0.22) !important;
+        color: #f87171 !important;
+        font-family: inherit !important;
+        font-size: 0.84rem !important;
+        font-weight: 700 !important;
         text-decoration: none !important;
         box-sizing: border-box !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         cursor: pointer !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: none !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout-action-btn svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout-action-btn svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout svg,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout svg,
     body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout svg {
-        width: 17px !important;
-        height: 17px !important;
+        width: 16px !important;
+        height: 16px !important;
         stroke: currentColor !important;
         stroke-width: 2.2 !important;
         fill: none !important;
@@ -3847,20 +3835,36 @@
         transition: transform 0.2s ease !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn:hover,
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout:hover,
-    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout:hover {
-        background: rgba(239, 68, 68, 0.25) !important;
-        border-color: rgba(248, 113, 113, 0.6) !important;
-        color: #ffffff !important;
-        transform: scale(1.06) !important;
-        box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3) !important;
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout-action-btn span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout-action-btn span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout span,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout span,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout span {
+        display: inline !important;
+        color: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: 1 !important;
     }
 
-    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-logout-btn:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout-action-btn:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout-action-btn:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout:hover,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout:hover,
+    body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout:hover {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(220, 38, 38, 0.32) 100%) !important;
+        border-color: rgba(248, 113, 113, 0.6) !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
+    }
+
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout-action-btn:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout-action-btn:hover svg,
+    html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .dash-sidebar .sidebar-user-card .logout:hover svg,
     html body.app-dashboard[data-platform="propertydirect"][data-dashboard-role="customer"] .sidebar-user-card .logout:hover svg,
     body.app-dashboard[data-platform="propertydirect"] .sidebar-user-card .logout:hover svg {
-        transform: translateX(1px) !important;
+        transform: translateX(3px) !important;
     }
 
     /* ==========================================================================
@@ -4055,29 +4059,22 @@
                 </svg>
                 <span>Profile</span>
             </button>
-            <a href="/dashboards/logout?platform=propertydirect" class="sidebar-nav-logout" title="Sign out of PropertyDirect">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span>Logout</span>
-            </a>
         </nav>
         <div class="sidebar-user-card">
             <div class="sidebar-user-info">
                 <div class="sidebar-user-avatar">CU</div>
                 <div class="sidebar-user-details">
-                    <strong class="sidebar-user-name" id="sidebarCustomerName">Customer</strong>
+                    <strong class="sidebar-user-name" id="sidebarCustomerName">Property Customer</strong>
                     <span class="sidebar-user-role">Buyer / Tenant</span>
                 </div>
             </div>
-            <a class="sidebar-user-logout-btn logout" href="/dashboards/logout?platform=propertydirect" title="Sign Out">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <a class="logout-action-btn logout" href="/dashboards/logout?platform=propertydirect" title="Sign out of PropertyDirect">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
+                <span>Logout</span>
             </a>
         </div>
     </aside>
