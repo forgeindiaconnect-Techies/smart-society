@@ -1,0 +1,68 @@
+spring:
+  thymeleaf:
+    cache: false
+  application:
+    name: smartapartment
+  mail:
+    # Brevo SMTP configuration for live forgot-password OTP emails.
+    # Set these environment variables before running the app:
+    # SMTP_HOST=smtp-relay.brevo.com
+    # SMTP_PORT=587
+    # SMTP_USERNAME=<your Brevo SMTP login>
+    # SMTP_PASSWORD=<your Brevo SMTP key>
+    # APP_MAIL_FROM=<verified Brevo sender email>
+    host: ${SMTP_HOST:${BREVO_SMTP_HOST:}}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:${BREVO_SMTP_USERNAME:}}
+    password: ${SMTP_PASSWORD:${BREVO_SMTP_PASSWORD:}}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS:true}
+  datasource:
+    # Stored on disk so society, subscription, billing and notice updates survive restarts.
+    url: ${DB_URL:jdbc:h2:file:./data/smartsociety;AUTO_SERVER=TRUE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+  jpa:
+    open-in-view: ${OPEN_IN_VIEW:false}
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:false}
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: strict
+        secure: ${SESSION_COOKIE_SECURE:false}
+
+app:
+  mail:
+    from: ${APP_MAIL_FROM:${BREVO_SENDER_EMAIL:${SMTP_USERNAME:forgeindiaconnectfic@gmail.com}}}
+    brevo-api-key: ${BREVO_API_KEY:}
+    expose-otp-preview: ${APP_MAIL_EXPOSE_OTP_PREVIEW:true}
+  # Configure both PROPERTYDIRECT_CONTACT_EMAIL and SMTP settings in production
+  # to deliver contact-message notifications to the support team.
+  propertydirect:
+    contact-recipient: ${PROPERTYDIRECT_CONTACT_EMAIL:}
+  jwt:
+    secret: ${JWT_SECRET:this_is_a_very_secure_and_long_jwt_secret_for_local_dev_12345}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+  emergency:
+    # Emergency dispatch contract from the dual-track maintenance specification.
+    offer-timeout-seconds: ${EMERGENCY_OFFER_TIMEOUT_SECONDS:45}
+    max-dispatch-cycles: ${EMERGENCY_MAX_DISPATCH_CYCLES:2}
+    geofence-arrival-radius-km: ${EMERGENCY_GEOFENCE_RADIUS_KM:1.0}
+    enforce-geofence: ${EMERGENCY_ENFORCE_GEOFENCE:false}
