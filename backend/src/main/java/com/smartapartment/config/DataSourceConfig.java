@@ -124,13 +124,28 @@ public class DataSourceConfig {
                             .append(port)
                             .append(StringUtils.hasText(path) ? path : "");
 
-                    if (StringUtils.hasText(query)) {
-                        jdbc.append("?").append(query);
-                        if (!query.contains("sslmode")) {
-                            jdbc.append("&sslmode=require");
+                    boolean isInternalHost = !host.contains(".") || host.endsWith(".internal") || host.matches("dpg-[a-z0-9]+-a");
+
+                    if (isInternalHost) {
+                        // Render internal connections do not use public SSL; use sslmode=prefer to avoid SSL handshake errors
+                        String cleanQuery = StringUtils.hasText(query) ? query.replaceAll("sslmode=require", "sslmode=prefer") : "";
+                        if (StringUtils.hasText(cleanQuery)) {
+                            jdbc.append("?").append(cleanQuery);
+                            if (!cleanQuery.contains("sslmode")) {
+                                jdbc.append("&sslmode=prefer");
+                            }
+                        } else {
+                            jdbc.append("?sslmode=prefer");
                         }
                     } else {
-                        jdbc.append("?sslmode=require");
+                        if (StringUtils.hasText(query)) {
+                            jdbc.append("?").append(query);
+                            if (!query.contains("sslmode")) {
+                                jdbc.append("&sslmode=require");
+                            }
+                        } else {
+                            jdbc.append("?sslmode=require");
+                        }
                     }
                     url = jdbc.toString();
                     log.info("Normalized PostgreSQL JDBC URL for host {}:{}", host, port);
