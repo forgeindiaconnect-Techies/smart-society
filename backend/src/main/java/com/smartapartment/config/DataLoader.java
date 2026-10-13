@@ -111,7 +111,6 @@ public class DataLoader {
             AppUser residentUser = createDemoUser(users, encoder, "green-heights", "Demo Resident",
                     residentEmail, residentPassword, UserRole.RESIDENT);
 
-            if (seedDemo) {
                 // Seed @smartapartment domain accounts (matching login page buttons)
                 createDemoUser(users, encoder, "platform", "Platform Super Admin",
                         "superadmin@smartapartment", "superadmin123", UserRole.SUPER_ADMIN);
@@ -125,6 +124,8 @@ public class DataLoader {
                         "maintenance@smartapartment", "maintenance123", UserRole.MAINTENANCE_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Society Accountant",
                         "accountant@smartapartment", "accountant123", UserRole.ACCOUNTANT);
+                createDemoUser(users, encoder, "green-heights", "Maintenance Worker",
+                        "worker@smartapartment", "worker123", UserRole.MAINTENANCE_STAFF);
 
                 // Seed @smartsociety domain accounts (matching alternative domain format)
                 createDemoUser(users, encoder, "platform", "Platform Super Admin",
@@ -139,10 +140,22 @@ public class DataLoader {
                         "maintenance@smartsociety", "maintenance123", UserRole.MAINTENANCE_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Society Accountant",
                         "accountant@smartsociety", "accountant123", UserRole.ACCOUNTANT);
+                createDemoUser(users, encoder, "green-heights", "Maintenance Worker",
+                        "worker@smartsociety", "worker123", UserRole.MAINTENANCE_STAFF);
                 createDemoUser(users, encoder, "green-heights", "Selva Kumar",
                         "selvakumarc029@gmail.com", "password123", UserRole.RESIDENT);
                 createDemoUser(users, encoder, "green-heights", "Forge India Connect",
                         "forgeindiaconnectfic@gmail.com", "password123", UserRole.SOCIETY_ADMIN);
+
+                // Trade partners also seeded for @smartsociety domain
+                createDemoUser(users, encoder, "green-heights", "Ramesh Plumber",
+                        "plumber@smartsociety", "password123", UserRole.MAINTENANCE_STAFF);
+                createDemoUser(users, encoder, "green-heights", "Suresh Electrician",
+                        "electrician@smartsociety", "password123", UserRole.MAINTENANCE_STAFF);
+                createDemoUser(users, encoder, "green-heights", "Anand Carpenter",
+                        "carpenter@smartsociety", "password123", UserRole.MAINTENANCE_STAFF);
+                createDemoUser(users, encoder, "green-heights", "Manoj Cleaner",
+                        "cleaner@smartsociety", "password123", UserRole.MAINTENANCE_STAFF);
             }
 
             Block block = blocks.findFirstByTenantIdAndNameOrderByIdAsc("green-heights", "Block A").orElseGet(() -> {
@@ -360,9 +373,7 @@ public class DataLoader {
     private static AppUser createDemoUser(AppUserRepository users, PasswordEncoder encoder,
                                           String tenantId, String name, String email,
                                           String password, UserRole role) {
-        var existing = users.findByEmail(email);
-        if (existing.isPresent()) return existing.get();
-        AppUser user = new AppUser();
+        AppUser user = users.findByEmail(email).orElseGet(AppUser::new);
         user.setEmail(email);
         user.setTenantId(tenantId);
         user.setFullName(name);
