@@ -55,4 +55,21 @@ class DataSourceConfigTest {
         assertEquals("secret", hc.getPassword());
         assertEquals("jdbc:postgresql://host.render.com:5432/mydb?sslmode=require", hc.getJdbcUrl());
     }
+
+    @Test
+    void testSupabaseQueryParamUrl() {
+        DataSourceConfig config = new DataSourceConfig();
+        HikariConfig hc = config.buildHikariConfig(
+                "jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:5432/postgres?user=postgres.pwxzsmgidwaexllwnivk&password=mySecretSupabasePassword123",
+                "",
+                "",
+                ""
+        );
+        assertNotNull(hc);
+        assertEquals("org.postgresql.Driver", hc.getDriverClassName());
+        assertEquals("postgres.pwxzsmgidwaexllwnivk", hc.getUsername());
+        assertEquals("mySecretSupabasePassword123", hc.getPassword());
+        assertTrue(hc.getJdbcUrl().startsWith("jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:5432/postgres"));
+        assertTrue(hc.getJdbcUrl().contains("sslmode=require"));
+    }
 }

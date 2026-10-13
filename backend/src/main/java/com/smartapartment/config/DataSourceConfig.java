@@ -117,6 +117,20 @@ public class DataSourceConfig {
                 String path = uri.getPath();
                 String query = uri.getQuery();
 
+                // Extract user and password from query params (?user=...&password=...) commonly used by Supabase JDBC URLs
+                if (StringUtils.hasText(query)) {
+                    for (String param : query.split("&")) {
+                        String[] pair = param.split("=", 2);
+                        if (pair.length == 2) {
+                            if ("user".equalsIgnoreCase(pair[0]) && !StringUtils.hasText(username)) {
+                                username = java.net.URLDecoder.decode(pair[1], StandardCharsets.UTF_8);
+                            } else if ("password".equalsIgnoreCase(pair[0]) && !StringUtils.hasText(password)) {
+                                password = java.net.URLDecoder.decode(pair[1], StandardCharsets.UTF_8);
+                            }
+                        }
+                    }
+                }
+
                 if (StringUtils.hasText(host)) {
                     StringBuilder jdbc = new StringBuilder("jdbc:postgresql://")
                             .append(host)
