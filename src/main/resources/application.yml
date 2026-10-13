@@ -23,10 +23,10 @@ spring:
             enable: ${SMTP_STARTTLS:true}
   datasource:
     # Stored on disk so society, subscription, billing and notice updates survive restarts.
-    url: ${DB_URL:jdbc:h2:file:./data/smartsociety;AUTO_SERVER=TRUE}
+    url: ${DB_URL:${DATABASE_URL:jdbc:h2:file:./data/smartsociety;AUTO_SERVER=TRUE}}
     username: ${DB_USERNAME:sa}
     password: ${DB_PASSWORD:}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    driver-class-name: ${DB_DRIVER:}
   jpa:
     open-in-view: ${OPEN_IN_VIEW:false}
     hibernate:
@@ -35,6 +35,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: ${HIBERNATE_DIALECT:}
   h2:
     console:
       enabled: ${H2_CONSOLE_ENABLED:false}

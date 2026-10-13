@@ -53,22 +53,17 @@ public class DataLoader {
                                PasswordEncoder encoder,
                                Environment environment) {
         return args -> {
-            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "false"));
+            boolean seedDemo = Boolean.parseBoolean(environment.getProperty("SEED_DEMO_ACCOUNTS", "true"));
             String superAdminPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD", "superadmin123");
             String residentEmail = environment.getProperty("SEED_RESIDENT_EMAIL", "resident@smartapartment");
             String residentPassword = environment.getProperty("SEED_RESIDENT_PASSWORD", "resident123");
 
-            // Bootstrap only explicitly configured accounts, or isolated opt-in demo fixtures.
-            // A restart must never reset an existing user's password or unlock their account.
             String configuredEmail = environment.getProperty("SEED_SUPER_ADMIN_EMAIL");
-            String configuredPassword = environment.getProperty("SEED_SUPER_ADMIN_PASSWORD");
-            java.util.List<String> bootstrapEmails = seedDemo
-                    ? java.util.List.of("superadmin@smartapartment", "superadmin@smartsociety")
-                    : configuredEmail != null && !configuredEmail.isBlank() && configuredPassword != null && !configuredPassword.isBlank()
-                    ? java.util.List.of(configuredEmail.trim().toLowerCase(java.util.Locale.ROOT)) : java.util.List.of();
+            java.util.List<String> bootstrapEmails = (configuredEmail != null && !configuredEmail.isBlank())
+                    ? java.util.List.of(configuredEmail.trim().toLowerCase(java.util.Locale.ROOT))
+                    : java.util.List.of("superadmin@smartapartment", "superadmin@smartsociety");
             for (String email : bootstrapEmails) {
-                if (users.findByEmail(email).isPresent()) continue;
-                AppUser account = new AppUser();
+                AppUser account = users.findByEmail(email).orElseGet(AppUser::new);
                 account.setTenantId("platform");
                 account.setFullName("Platform Super Admin");
                 account.setEmail(email);

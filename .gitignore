@@ -1,5 +1,7 @@
-/data/
-/target/
+target/
+**/target/
+data/
+**/data/
 *.log
 mvn-output.txt
 /.kilo/
@@ -15,4 +17,3 @@ scratch/*.log
 *.class
 scratch/*-classes/
 scratch/*.args
-
