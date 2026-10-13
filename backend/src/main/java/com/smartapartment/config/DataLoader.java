@@ -111,6 +111,7 @@ public class DataLoader {
             AppUser residentUser = createDemoUser(users, encoder, "green-heights", "Demo Resident",
                     residentEmail, residentPassword, UserRole.RESIDENT);
 
+            if (seedDemo) {
                 // Seed @smartapartment domain accounts (matching login page buttons)
                 createDemoUser(users, encoder, "platform", "Platform Super Admin",
                         "superadmin@smartapartment", "superadmin123", UserRole.SUPER_ADMIN);
